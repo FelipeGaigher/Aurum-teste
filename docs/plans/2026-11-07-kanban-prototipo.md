@@ -485,7 +485,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Produces: `anunciar(texto) -> void` — escreve na região `#anuncio`, com `aria-live="polite"`.
 - Produces: no DOM, `section.coluna[data-status]` com `tabindex="0"`, a contagem em `.coluna-contagem` e cada card em `article.card[data-id]`.
 
-- [ ] **Step 1: Escrever o dado fictício**
+- [x] **Step 1: Escrever o dado fictício**
 
 O prazo é relativo ao dia de hoje. Assim "vence hoje" e "vencido" aparecem em qualquer dia de demonstração. Os números de processo abaixo têm dígito verificador válido pelo módulo 97 do CNJ.
 
@@ -510,7 +510,7 @@ const ATIVIDADES = [
 ];
 ```
 
-- [ ] **Step 2: Escrever o card**
+- [x] **Step 2: Escrever o card**
 
 O card tem cinco dados, nesta ordem visual:
 
@@ -528,7 +528,7 @@ Siga estas regras:
 - Monte o DOM com `createElement` e `textContent`, nunca com `innerHTML` sobre o dado.
 - O card é `article` com `tabindex="0"` e `draggable="true"`. Ele não é `button`, porque o card da IA tem botões dentro.
 
-- [ ] **Step 3: Escrever a sugestão de IA**
+- [x] **Step 3: Escrever a sugestão de IA**
 
 O card `a5` traz o chip "Sugestão da IA", no mesmo componente e na mesma cor dos outros chips. Nada de roxo à parte e nada de ícone de brilho.
 
@@ -537,7 +537,7 @@ O card `a5` traz o chip "Sugestão da IA", no mesmo componente e na mesma cor do
 - Desfazer tira o card do quadro e atualiza a contagem.
 - Os dois chamam `anunciar()` com o resultado, como "Sugestão confirmada".
 
-- [ ] **Step 4: Escrever as colunas e os estados**
+- [x] **Step 4: Escrever as colunas e os estados**
 
 Cada coluna é `section.coluna` com `data-status`, `tabindex="0"` e `aria-labelledby` no `h2`. O `h2` traz o nome e a contagem em `.coluna-contagem`.
 
@@ -548,7 +548,7 @@ Cada coluna é `section.coluna` com `data-status`, `tabindex="0"` e `aria-labell
 - O `#rodape-demo` traz um grupo de rádios rotulado "Estado da demonstração": Com dados, Carregando, Vazio.
 - Trocar o rádio altera `estado.modo` e chama `render()`.
 
-- [ ] **Step 5: Executar o verificador e confirmar que passa**
+- [x] **Step 5: Executar o verificador e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/kanban.html
@@ -556,7 +556,7 @@ python prototipo/verificar.py prototipo/kanban.html
 
 Esperado: `verificar: 0 erro(s)` e código 0.
 
-- [ ] **Step 6: Provar os estados no navegador headless**
+- [x] **Step 6: Provar os estados no navegador headless**
 
 Use um navegador headless. Nunca abra janela na tela do humano.
 
@@ -568,7 +568,7 @@ Use um navegador headless. Nunca abra janela na tela do humano.
 
 Esperado: A fazer 5, Fazendo 3, Concluído 2. Confirmar tira o chip. Desfazer leva A fazer a 4. Carregando mostra o esqueleto, e Vazio mostra as três colunas vazias. A largura dá `true` nas duas janelas.
 
-- [ ] **Step 7: Entregar**
+- [x] **Step 7: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` e não execute `git commit`. O plano é do pai: ele marca o checkbox e commita por caminho, depois do portão.
 

@@ -52,6 +52,7 @@
   --primitive-leading-145: 1.45;
 
   --primitive-size-18: 18px;
+  --primitive-size-24: 24px;
   --primitive-size-32: 32px;
   --primitive-size-56: 56px;
   --primitive-size-240: 240px;
@@ -103,6 +104,7 @@
   --font-leading-base: var(--primitive-leading-145);
 
   --size-icon: var(--primitive-size-18);
+  --size-chip: var(--primitive-size-24);
   --size-control: var(--primitive-size-32);
   --size-header: var(--primitive-size-56);
   --size-sidebar: var(--primitive-size-240);
@@ -119,6 +121,14 @@
   --component-sidebar-width: var(--size-sidebar);
   --component-menu-item-active-bg: var(--color-bg-subtle);
   --component-card-bg: var(--color-bg-surface);
+  --component-card-border: var(--color-border-default);
+  --component-column-bg: var(--color-bg-subtle);
+  --component-chip-bg: var(--color-bg-subtle);
+  --component-chip-border: var(--color-border-default);
+  --component-chip-height: var(--size-chip);
+  --component-avatar-bg: var(--color-bg-hover);
+  --component-avatar-size: var(--size-chip);
+  --component-skeleton-bg: var(--color-bg-hover);
 }
 /* fim dos componentes */
 
@@ -143,6 +153,18 @@ body {
 }
 
 button, input { font: inherit; color: inherit; }
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 
 svg.icone {
   width: var(--size-icon);
@@ -343,6 +365,187 @@ svg.icone {
   font-weight: var(--font-weight-semibold);
   line-height: var(--font-leading-tight);
 }
+
+/* quadro */
+#quadro {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.coluna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-3);
+  background-color: var(--component-column-bg);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius);
+}
+.coluna h2 {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-3);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--font-leading-tight);
+}
+.coluna-contagem {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+  font-variant-numeric: tabular-nums;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background-color: var(--component-card-bg);
+  border: var(--border-width) solid var(--component-card-border);
+  border-radius: var(--radius);
+  cursor: grab;
+}
+.card:hover { border-color: var(--color-border-strong); }
+.card p { margin: 0; }
+
+.card-prazo {
+  font-size: var(--font-size-3);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--font-leading-tight);
+  font-variant-numeric: tabular-nums;
+}
+.card-prazo[data-alerta="vencido"] { color: var(--color-text-danger); }
+.card-prazo[data-alerta="hoje"] { color: var(--color-text-warning); }
+
+.card h3 {
+  margin: 0;
+  font-size: var(--font-size-2);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.chip {
+  display: inline-flex;
+  align-items: stretch;
+  min-height: var(--component-chip-height);
+  background-color: var(--component-chip-bg);
+  border: var(--border-width) solid var(--component-chip-border);
+  border-radius: var(--radius);
+  color: var(--color-text-default);
+  font-size: var(--font-size-1);
+  line-height: var(--font-leading-tight);
+}
+.chip-rotulo {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-2);
+}
+.chip-acao {
+  padding: 0 var(--space-2);
+  background: none;
+  border: 0;
+  border-left: var(--border-width) solid var(--component-chip-border);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+.chip-acao:hover { background-color: var(--color-bg-hover); text-decoration: underline; }
+
+.card-nota,
+.card-processo {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-1);
+  overflow-wrap: anywhere;
+}
+.card-processo { font-variant-numeric: tabular-nums; }
+
+.card-responsavel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.inicial {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--component-avatar-size);
+  height: var(--component-avatar-size);
+  background-color: var(--component-avatar-bg);
+  border-radius: var(--radius);
+  font-size: var(--font-size-1);
+  font-weight: var(--font-weight-semibold);
+}
+
+.coluna-vazia {
+  padding: var(--space-4) var(--space-3);
+  border: var(--border-width) dashed var(--color-border-strong);
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+}
+.coluna-vazia p { margin: 0; }
+.coluna-vazia p:first-child { color: var(--color-text-default); }
+
+.esqueleto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background-color: var(--component-card-bg);
+  border: var(--border-width) solid var(--component-card-border);
+  border-radius: var(--radius);
+}
+.esqueleto span {
+  display: block;
+  height: var(--space-3);
+  background-color: var(--component-skeleton-bg);
+  border-radius: var(--radius);
+  animation: pulsar 1.2s ease-in-out infinite alternate;
+}
+.esqueleto span:nth-child(1) { width: 45%; height: var(--space-4); }
+.esqueleto span:nth-child(2) { width: 85%; }
+.esqueleto span:nth-child(3) { width: 30%; }
+.esqueleto span:nth-child(4) { width: 60%; }
+@keyframes pulsar { to { opacity: 0.4; } }
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto span { animation: none; }
+}
+
+/* rodapé da demonstração */
+#rodape-demo {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: var(--border-width) solid var(--color-border-default);
+}
+.demo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.demo legend {
+  float: left;
+  padding: 0;
+  color: var(--color-text-muted);
+}
+.demo label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  cursor: pointer;
+}
+.demo input { margin: 0; accent-color: var(--color-action); }
 </style>
 </head>
 <body>
@@ -354,7 +557,7 @@ svg.icone {
     astrea
   </a>
 
-  <form class="busca" role="search" onsubmit="return false">
+  <form class="busca" role="search">
     <label for="busca-global">Buscar</label>
     <div class="busca-campo">
       <input id="busca-global" type="search" placeholder="Contato, processo ou atividade" autocomplete="off">
@@ -439,8 +642,201 @@ svg.icone {
     <h1>Área de trabalho</h1>
     <div id="ferramentas"></div>
     <div id="quadro"></div>
-    <footer id="rodape-demo"></footer>
+    <footer id="rodape-demo">
+      <fieldset class="demo">
+        <legend>Estado da demonstração</legend>
+        <label><input type="radio" name="modo" value="dados" checked> Com dados</label>
+        <label><input type="radio" name="modo" value="carregando"> Carregando</label>
+        <label><input type="radio" name="modo" value="vazio"> Vazio</label>
+      </fieldset>
+    </footer>
+    <div id="anuncio" class="visualmente-oculto" aria-live="polite"></div>
   </main>
 </div>
+<script>
+const COLUNAS = [
+  { status: 'a-fazer', nome: 'A fazer' },
+  { status: 'fazendo', nome: 'Fazendo' },
+  { status: 'concluido', nome: 'Concluído' },
+];
+
+const ATIVIDADES = [
+  { id: 'a1', titulo: 'Protocolar contestação', tipo: 'prazo', processo: '5004213-75.2025.8.24.0023', responsavel: 'Rafael Antunes', prazoEmDias: -2, status: 'a-fazer' },
+  { id: 'a2', titulo: 'Audiência de conciliação', tipo: 'audiencia', processo: '0301877-92.2024.8.24.0008', responsavel: 'Marina Couto', prazoEmDias: 0, status: 'a-fazer' },
+  { id: 'a3', titulo: 'Reunião com a cliente sobre o acordo', tipo: 'evento', processo: '5012940-75.2025.8.24.0038', responsavel: 'Beatriz Lemos', prazoEmDias: 1, status: 'a-fazer' },
+  { id: 'a4', titulo: 'Opor embargos de declaração', tipo: 'prazo', processo: '0007315-64.2023.8.24.0023', responsavel: 'Otávio Prado', prazoEmDias: 2, status: 'a-fazer' },
+  { id: 'a5', titulo: 'Manifestar sobre o laudo pericial', tipo: 'prazo', processo: '5020066-92.2024.8.24.0045', responsavel: 'Rafael Antunes', prazoEmDias: 5, status: 'a-fazer', sugestaoIa: 'Criada pela IA a partir de uma publicação' },
+  { id: 'a6', titulo: 'Juntar procuração atualizada', tipo: 'tarefa', processo: '5001789-08.2025.8.24.0008', responsavel: 'Beatriz Lemos', prazoEmDias: -1, status: 'fazendo' },
+  { id: 'a7', titulo: 'Interpor recurso de apelação', tipo: 'prazo', processo: '0312054-93.2022.8.24.0038', responsavel: 'Marina Couto', prazoEmDias: 3, status: 'fazendo' },
+  { id: 'a8', titulo: 'Calcular custas finais', tipo: 'tarefa', processo: '5009427-81.2024.8.24.0023', responsavel: 'Otávio Prado', prazoEmDias: 4, status: 'fazendo' },
+  { id: 'a9', titulo: 'Preparar rol de testemunhas', tipo: 'tarefa', processo: '5016603-51.2025.8.24.0064', responsavel: 'Marina Couto', prazoEmDias: 8, status: 'concluido' },
+  { id: 'a10', titulo: 'Apresentar contrarrazões', tipo: 'prazo', processo: '0004981-88.2023.8.24.0045', responsavel: 'Rafael Antunes', prazoEmDias: 10, status: 'concluido' },
+];
+
+const TIPOS = { tarefa: 'Tarefa', evento: 'Evento', prazo: 'Prazo', audiencia: 'Audiência' };
+
+const estado = {
+  atividades: ATIVIDADES.map((atividade) => ({ ...atividade })),
+  modo: 'dados',
+};
+
+function el(tag, classe, texto) {
+  const no = document.createElement(tag);
+  if (classe) no.className = classe;
+  if (texto !== undefined) no.textContent = texto;
+  return no;
+}
+
+function anunciar(texto) {
+  document.getElementById('anuncio').textContent = texto;
+}
+
+function dataDoPrazo(dias) {
+  const data = new Date();
+  data.setDate(data.getDate() + dias);
+  return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+}
+
+function descreverPrazo(atividade) {
+  const dias = atividade.prazoEmDias;
+  if (atividade.status === 'concluido') {
+    return { texto: (dias < 0 ? 'Venceu em ' : 'Vence em ') + dataDoPrazo(dias), alerta: null };
+  }
+  if (dias < 0) {
+    const n = -dias;
+    return { texto: 'Vencido há ' + n + (n === 1 ? ' dia' : ' dias'), alerta: 'vencido' };
+  }
+  if (dias === 0) return { texto: 'Vence hoje', alerta: 'hoje' };
+  return { texto: 'Vence em ' + dataDoPrazo(dias), alerta: null };
+}
+
+function chipSugestao(atividade) {
+  const chip = el('span', 'chip');
+  chip.append(el('span', 'chip-rotulo', 'Sugestão da IA'));
+  const acoes = [['Confirmar', confirmarSugestao], ['Desfazer', desfazerSugestao]];
+  for (const [rotulo, acao] of acoes) {
+    const botao = el('button', 'chip-acao', rotulo);
+    botao.type = 'button';
+    botao.setAttribute('aria-label', rotulo + ' a sugestão da IA: ' + atividade.titulo);
+    botao.addEventListener('click', () => acao(atividade.id));
+    chip.append(botao);
+  }
+  return chip;
+}
+
+function criarCard(atividade) {
+  const card = el('article', 'card');
+  card.dataset.id = atividade.id;
+  card.tabIndex = 0;
+  card.draggable = true;
+  const tituloId = 'card-' + atividade.id + '-titulo';
+  card.setAttribute('aria-labelledby', tituloId);
+
+  const prazo = descreverPrazo(atividade);
+  const linhaPrazo = el('p', 'card-prazo', prazo.texto);
+  if (prazo.alerta) linhaPrazo.dataset.alerta = prazo.alerta;
+
+  const titulo = el('h3', null, atividade.titulo);
+  titulo.id = tituloId;
+
+  const chips = el('div', 'card-chips');
+  const tipo = el('span', 'chip');
+  tipo.append(el('span', 'chip-rotulo', TIPOS[atividade.tipo]));
+  chips.append(tipo);
+  if (atividade.sugestaoIa) chips.append(chipSugestao(atividade));
+
+  const processo = el('p', 'card-processo');
+  processo.append(el('span', 'visualmente-oculto', 'Processo '), atividade.processo);
+
+  const responsavel = el('p', 'card-responsavel');
+  const inicial = el('span', 'inicial', atividade.responsavel.charAt(0));
+  inicial.setAttribute('aria-hidden', 'true');
+  responsavel.append(inicial, el('span', 'visualmente-oculto', 'Responsável: '), atividade.responsavel);
+
+  card.append(linhaPrazo, titulo, chips);
+  if (atividade.sugestaoIa) card.append(el('p', 'card-nota', atividade.sugestaoIa));
+  card.append(processo, responsavel);
+  return card;
+}
+
+function criarEsqueleto() {
+  const bloco = el('div', 'esqueleto');
+  bloco.setAttribute('aria-hidden', 'true');
+  for (let i = 0; i < 4; i += 1) bloco.append(el('span'));
+  return bloco;
+}
+
+function criarVazio(coluna) {
+  const bloco = el('div', 'coluna-vazia');
+  bloco.append(el('p', null, 'Nenhuma atividade em ' + coluna.nome + '.'), el('p', null, 'Arraste um card para cá.'));
+  return bloco;
+}
+
+function atividadesDaColuna(status) {
+  if (estado.modo === 'vazio') return [];
+  return estado.atividades
+    .filter((atividade) => atividade.status === status)
+    .sort((a, b) => a.prazoEmDias - b.prazoEmDias);
+}
+
+function criarColuna(coluna) {
+  const secao = el('section', 'coluna');
+  secao.dataset.status = coluna.status;
+  secao.tabIndex = 0;
+  const tituloId = 'coluna-' + coluna.status + '-titulo';
+  secao.setAttribute('aria-labelledby', tituloId);
+
+  const titulo = el('h2');
+  titulo.id = tituloId;
+  const contagem = el('span', 'coluna-contagem');
+  titulo.append(el('span', 'coluna-nome', coluna.nome), ' ', contagem);
+  secao.append(titulo);
+
+  if (estado.modo === 'carregando') {
+    secao.setAttribute('aria-busy', 'true');
+    for (let i = 0; i < 3; i += 1) secao.append(criarEsqueleto());
+    return secao;
+  }
+  const atividades = atividadesDaColuna(coluna.status);
+  contagem.textContent = String(atividades.length);
+  if (atividades.length === 0) secao.append(criarVazio(coluna));
+  for (const atividade of atividades) secao.append(criarCard(atividade));
+  return secao;
+}
+
+function render() {
+  document.getElementById('quadro').replaceChildren(...COLUNAS.map(criarColuna));
+}
+
+function nomeDaColuna(status) {
+  return COLUNAS.find((coluna) => coluna.status === status).nome;
+}
+
+function confirmarSugestao(id) {
+  const atividade = estado.atividades.find((item) => item.id === id);
+  delete atividade.sugestaoIa;
+  render();
+  document.querySelector('.card[data-id="' + id + '"]').focus();
+  anunciar('Sugestão confirmada. ' + atividade.titulo + ' segue no quadro.');
+}
+
+function desfazerSugestao(id) {
+  const atividade = estado.atividades.find((item) => item.id === id);
+  estado.atividades = estado.atividades.filter((item) => item.id !== id);
+  render();
+  document.querySelector('.coluna[data-status="' + atividade.status + '"]').focus();
+  anunciar('Sugestão desfeita. ' + atividade.titulo + ' saiu do quadro. '
+    + nomeDaColuna(atividade.status) + ': ' + atividadesDaColuna(atividade.status).length + '.');
+}
+
+document.querySelector('.busca').addEventListener('submit', (evento) => evento.preventDefault());
+
+document.querySelector('.demo').addEventListener('change', (evento) => {
+  estado.modo = evento.target.value;
+  render();
+});
+
+render();
+</script>
 </body>
 </html>
