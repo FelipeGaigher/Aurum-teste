@@ -210,6 +210,33 @@ Hipótese:
   produto, depois da primeira atividade criada.
 - O campo sem rótulo repete o padrão da tela 07.
 
+### 10. Tudo pronto
+
+Print: `07-onboarding-tudo-pronto.png`.
+
+Fato:
+
+- Título "Tudo pronto! Sua conta está configurada." com ilustração de
+  check azul.
+- Dois cartões de texto. O primeiro retoma o objetivo escolhido: "O Astrea
+  é perfeito para gerenciar tarefas. Quadros Kanban e lembretes
+  automáticos". O segundo informa o limite do trial: até 40 processos
+  vinculados ao tribunal.
+- Botão único "Abrir tarefas", em caixa alta. O destino muda conforme o
+  objetivo escolhido na tela 05.
+- O stepper ainda mostra "Convidar usuário" sem check, embora a tela diga
+  que tudo está pronto.
+
+Hipótese:
+
+- A personalização existe. O objetivo da tela 05 muda o texto e o destino
+  de entrada. A hipótese de "levantamento disfarçado" cai. Resta ver se a
+  tela inicial do produto também muda.
+- Stepper incompleto em tela de conclusão é bug visual pequeno, mas na
+  última tela do funil. Quem pulou o convite vê um passo em aberto.
+- O limite de 40 processos aparece só aqui, no fim. Quem tem mil
+  processos descobre o teto depois de buscar pela OAB. Vale avisar antes.
+
 ## Produto logado
 
 Sem tela ainda. Próximas: Área de Trabalho, Agenda, Kanban, criar
