@@ -404,6 +404,12 @@ python ~/.claude/skills/sem-plastico/scripts/contraste.py "#ffffff" "#0072ab"
 
 Esperado: `5.26:1  AA texto normal: passa`. Todo par de texto do protótipo passa no AA normal.
 
+> nota: o logotipo "astrea" em texto é a exceção. Ele usa o azul da marca,
+> `#008fd5`, com 3,57:1 sobre branco. O WCAG 1.4.3 isenta logotipo. O token
+> do logo se chama `--color-logo`, e nenhum outro elemento o usa. Assim a
+> exceção não vaza para texto comum. `--color-text-brand` sai.
+> Decisão do pai na revisão 1, reversível.
+
 - [ ] **Step 4: Escrever a moldura**
 
 A moldura é a da tela 11, sem a faixa de campanha, sem o selo e sem o botão verde.
