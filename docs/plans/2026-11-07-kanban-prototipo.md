@@ -88,7 +88,7 @@ As skills moram fora do repositório. Por isso ficam fora do campo `Fontes`, que
 - Produces: `checar(caminho: Path) -> list[str]` — escolhe a regra pela extensão.
 - Produces: os marcadores de bloco `/* primitivos */`, `/* fim dos primitivos */`, `/* semanticos */` e `/* fim dos semanticos */`, que a Task 2 escreve no CSS.
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 Grave `prototipo/test_verificar.py` com este conteúdo:
 
@@ -158,7 +158,7 @@ if __name__ == '__main__':
     unittest.main()
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 python prototipo/test_verificar.py
@@ -166,7 +166,7 @@ python prototipo/test_verificar.py
 
 Esperado: `ModuleNotFoundError: No module named 'verificar'`.
 
-- [ ] **Step 3: Implementar**
+- [x] **Step 3: Implementar**
 
 Grave `prototipo/verificar.py` com este conteúdo. O rascunho passou nos oito testes acima.
 
@@ -276,7 +276,7 @@ if __name__ == '__main__':
     sys.exit(main())
 ```
 
-- [ ] **Step 4: Executar e confirmar que passa**
+- [x] **Step 4: Executar e confirmar que passa**
 
 ```bash
 python prototipo/test_verificar.py
@@ -284,7 +284,7 @@ python prototipo/test_verificar.py
 
 Esperado: `Ran 8 tests` e `OK`.
 
-- [ ] **Step 5: Confirmar o vermelho da Task 2**
+- [x] **Step 5: Confirmar o vermelho da Task 2**
 
 ```bash
 python prototipo/verificar.py prototipo/kanban.html
@@ -292,7 +292,7 @@ python prototipo/verificar.py prototipo/kanban.html
 
 Esperado: `prototipo/kanban.html: arquivo nao existe.` e código 1. A Task 2 cria o arquivo.
 
-- [ ] **Step 6: Entregar**
+- [x] **Step 6: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` e não execute `git commit`. O plano é do pai: ele marca o checkbox e commita por caminho, depois do portão.
 
