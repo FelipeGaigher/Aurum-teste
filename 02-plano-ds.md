@@ -31,16 +31,19 @@ Legenda:
 
 ---
 
-## Slide 1 — Tese e arquitetura
+## Slide 1 — Arquitetura
 
-### A tese em uma frase
+> decisão: o título responde a pergunta da banca ao pé da letra, sem tese e
+> sem IA. "Primeiro os tokens semânticos. Depois, os componentes." A tese
+> "usado por pessoas e por IA" era interpretação e tirava o foco. A IA fica no
+> passo 5 da ordem de construção e no kit do slide 3.
 
-Um design system usado por pessoas e por IA. Designer, dev e feature de IA
-geram interface a partir da mesma fonte.
+### A abertura
 
-Por que essa tese: o briefing diz que IA vai entrar nos fluxos e precisa nascer
-dentro dos mesmos padrões. Um DS que só vive no Figma não resolve isso. Um DS
-que vive em repositório, com tokens, componentes, skills e agentes, resolve.
+O Astrea cresceu com times diferentes construindo partes diferentes. O
+resultado é conhecido: padrão que varia por módulo e componente duplicado. A
+resposta é uma fonte só, que o front novo e o legado consomem do mesmo lugar.
+A ordem de construção é o que faz essa fonte valer desde o primeiro mês.
 
 ### As camadas
 
