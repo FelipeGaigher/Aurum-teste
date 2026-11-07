@@ -290,5 +290,148 @@ Hipótese:
   sem tema próprio. Se confirmar, o token semântico entra por cima do tema
   do Mantine, e o custo cai.
 
-Próximas telas: Agenda e Kanban. Criar atividade com todos os campos
-abertos. Detalhe de uma atividade. A troca para Processos e casos.
+### 12. Contato, detalhe
+
+Print: `09-contato-detalhe.png`. URL `#/main/contacts/detail/<id>/data`.
+
+Fato:
+
+- Cabeçalho do registro: nome, "Criado em" e chip "TIPO: CLIENTE" em caixa
+  alta. Ícones de lápis e lixeira sem rótulo. Link "Voltar" no canto.
+- Oito abas: Cadastro, Documentos, Atendimentos, Processos, Despesas,
+  Honorários, Timesheets, Notificações.
+- Formulário em leitura: rótulos em caixa alta, alinhados à direita, e
+  valor à esquerda da coluna seguinte. Quase todos os campos vazios e
+  mostrados mesmo assim: nascimento, estado civil, CPF, RG, CTPS, PIS,
+  título de eleitor.
+- Foto de perfil como círculo cinza com ícone de câmera.
+
+Hipótese:
+
+- Tela de leitura que mostra vinte campos vazios é formulário disfarçado.
+  Quem lê quer o que existe. Campo vazio vira ruído e empurra o conteúdo
+  real para baixo.
+- Rótulo em caixa alta alinhado à direita é o terceiro padrão de rótulo
+  do produto. Os outros dois: rótulo acima e placeholder.
+- Felipe aponta esta tela como candidata a melhoria. Entra no backlog.
+
+### 13. Agenda, estado vazio
+
+Print: `11-agenda-vazia.png`. URL `#/main/calendar`.
+
+Fato:
+
+- Ilustração grande no centro e título "Gerencie todas as atividades do
+  seu escritório". Texto de apoio, botão "Adicionar atividade" com seta
+  de menu e link "Saiba mais".
+- Aqui a palavra é "atividade". Na Área de trabalho era "tarefa".
+- Nenhum calendário visível no estado vazio. A grade só aparece depois
+  da primeira atividade, nas telas 17 a 20.
+
+Hipótese:
+
+- Estado vazio que esconde a estrutura da tela não ensina a tela. Mostrar
+  a grade vazia com o convite dentro dela orienta melhor.
+- Felipe propõe: calendário já visível, lista de prioridades por prazo a
+  vencer, filtros de dia, semana e mês. Entra no backlog.
+
+### 14. Modal adicionar tarefa
+
+Print: `12-modal-adicionar-tarefa.png`.
+
+Fato:
+
+- Título "Adicionar tarefa", link "Adicionar etiqueta" em caixa alta no
+  canto. Seis campos. Descrição da tarefa, obrigatório, em área de texto.
+  Data, com calendário e link "Adicionar recorrência". Lista de tarefas,
+  obrigatório. Processo, caso ou atendimento, por busca. Responsável,
+  obrigatório, por busca, com link "Envolver mais pessoas". Prioridade,
+  obrigatório, Baixa por padrão.
+- Rótulos acima dos campos. Asterisco vermelho nos obrigatórios. Botões
+  "Cancelar" e "Salvar" como texto em caixa alta.
+- O botão da Agenda diz "atividade" e o modal diz "tarefa". Tarefa é um
+  dos tipos de atividade, segundo o levantamento público.
+- A descrição é o único campo de texto. Não existe título separado.
+
+Hipótese:
+
+- Descrição como único texto livre vira título longo no card. Separar
+  título curto de descrição ajuda o Kanban.
+- Felipe propõe etiquetas sugeridas a partir do histórico de descrições.
+  Entra no backlog como padrão de IA.
+- Quatro campos obrigatórios para uma tarefa simples é atrito. Lista de
+  tarefas obrigatória com um só valor padrão é o caso mais claro.
+
+### 15. Data no passado
+
+Prints: `13-modal-data-passada.png`, `15-dialogo-data-no-passado.png`.
+
+Fato:
+
+- O campo Data aceita 01/10/2026, anterior ao dia do teste. Ao salvar,
+  abre o diálogo "Data no passado. A data selecionada já passou. Você
+  deseja continuar mesmo assim?", com Cancelar e Continuar.
+
+Hipótese:
+
+- O produto permite registrar atividade retroativa, com confirmação. O
+  padrão é defensável: escritório registra o que já fez. O que falta é o
+  motivo no próprio diálogo e a opção de já marcar como concluída.
+- Felipe pergunta se pode começar antes e qual a prioridade dessa
+  informação. Resposta a buscar com suporte: quantas atividades nascem
+  com data passada e por quê.
+
+### 16. Envolver mais pessoas
+
+Print: `14-modal-envolver-pessoas.png`.
+
+Fato:
+
+- Popover sobre o modal, com busca "Encontre alguém", lista "Pessoas" com
+  caixa de seleção e botão "Confirmar" em caixa alta. Um só usuário no
+  trial.
+- A Lista de tarefas aceitou "Teste tarefas 1" e o processo ligou a um
+  caso real da OAB consultada.
+
+Hipótese:
+
+- Popover dentro de modal é camada sobre camada. Um seletor de pessoas
+  com chips no próprio campo resolve sem a segunda camada.
+- Felipe propõe reaproveitar o componente de participantes que ele já
+  tem, com avatares e um botão de mais. Referência em
+  `referencias/modal-tarefa-crm.png`.
+
+### 17 a 20. Agenda com visões
+
+Prints: `16-agenda-por-dia.png`, `17-agenda-em-lista.png`,
+`18-agenda-por-semana.png`, `19-agenda-por-mes.png`.
+
+Fato:
+
+- Depois da primeira tarefa, a Agenda ganha barra de filtros em caixa
+  alta. Visão com quatro opções: Por dia, Em lista, Por semana, Por mês.
+  Depois Minhas atribuições, Todas as atividades, etiqueta e busca.
+  Ícones de atualizar, menu e mais no canto.
+- Por dia: grade de horas a partir das 19h, linha do horário atual, e
+  painel "Nenhuma atividade" à direita. A tarefa criada não aparece.
+- Em lista: linha "Nenhuma atividade" com caixa de seleção e ilustração
+  de busca vazia. Painel lateral "Tarefas sem data e a con..." truncado.
+- Por semana e por mês: grade com células altas, fonte grande, sete dias
+  por linha. O mês mostra duas semanas por tela de 1920 por 960.
+- Toast verde "A tarefa foi adicionada" no canto inferior esquerdo.
+
+Hipótese:
+
+- A tarefa foi salva e não aparece em nenhuma visão do dia. Ou o filtro
+  "Minhas atribuições" esconde, ou a data retroativa a tirou da tela.
+  Bug ou confusão de filtro, a confirmar.
+- Densidade baixa: a grade do mês cabe duas semanas por tela. Quem
+  precisa ver o mês para planejar prazo não vê o mês. Felipe aponta
+  fonte e células grandes demais. Entra no backlog como densidade.
+- Quatro visões em um seletor, mais uma lista sem data num painel
+  lateral truncado. A informação de prazo está espalhada.
+
+### Pendente
+
+Kanban: ainda não encontrado no menu nem na Agenda. Buscar no seletor
+de visão da Agenda ou na Área de trabalho com tarefas.
