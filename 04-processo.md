@@ -21,8 +21,11 @@ com data. O que foi entregue fica no commit, não aqui.
   pista. Evidência: os prints na página Extra do Figma.
 - Consequência para a Q3: o acesso ao produto voltou. A tela escolhida pode
   partir do Astrea real, e não só de material público.
-- O enunciado pede telefone no cadastro, mas o formulário pede e-mail. Outro
-  achado de consistência entre o que a empresa escreve e o que o produto faz.
+- O enunciado cita telefone no cadastro e a primeira tela pede e-mail. O
+  telefone existe, no quarto passo. A divergência é de ordem, não de campo.
+  Registro corrigido depois de ver o passo seguinte.
+- As telas do cadastro e, depois, do produto ficam em
+  `01-telas-observadas.md`, com os prints em `evidencias/`.
 
 ### O MCP do Figma bateu a cota
 
