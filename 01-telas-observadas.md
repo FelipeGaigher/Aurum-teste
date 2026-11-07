@@ -239,5 +239,56 @@ Hipótese:
 
 ## Produto logado
 
-Sem tela ainda. Próximas: Área de Trabalho, Agenda, Kanban, criar
-atividade com todos os campos abertos, e a navegação entre módulos.
+### 11. Área de trabalho, estado vazio
+
+Print: `08-area-de-trabalho-vazia.png`. Primeira tela depois do onboarding,
+destino do botão "Abrir tarefas".
+
+Fato, moldura:
+
+- Faixa de marketing "Novembro Black" no topo do produto logado. Tem
+  contador "Termina em 2 dias", botão "Quero aproveitar" e um X.
+<!-- lint-ignore: deriva-terminologica — "Pesquisar" é o texto literal do campo -->
+- Cabeçalho: logo, busca global com o texto "Pesquisar contato, processo
+  ou tarefa", e cinco ícones sem rótulo. IA em destaque, mais, nuvem,
+  relógio, engrenagem. À direita, nome do usuário, selo "1 ano grátis" e
+  botão verde "Contratar". Três chamadas comerciais na mesma linha.
+- Menu lateral com dez itens e ícone. Área de trabalho, Agenda, Contatos,
+  Atendimentos, Processos e casos. Publicações, Financeiro, Documentos,
+  Indicadores, Alertas. Abaixo de um divisor, "Conheça as IAs" em roxo
+  com fundo lilás, e Suporte.
+- Não existe item "Kanban" no menu. Ele deve ser uma visão dentro de
+  Área de trabalho ou de Agenda. A confirmar.
+
+Fato, conteúdo:
+
+- Título "Área de trabalho". Estado vazio com o título "Comece adicionando
+  suas tarefas" e uma caixa cinza com quatro passos numerados. Abaixo,
+  botão primário "Adicionar primeira tarefa" em caixa alta e link "Saiba
+  mais".
+- Coluna direita com três widgets, cada um com "Ocultar" e um botão de
+  mais. Processos e casos tem seletor nativo "Últimos 30 dias" e duas
+  linhas: "4 não tiveram movimentação", "0 tiveram movimentação".
+  Estatísticas tem seis números em azul. Lembretes mostra "HOJE".
+- A OAB trouxe 4 processos. O número que faltava na tela 08 está aqui.
+- O produto fala "tarefa". O enunciado e o menu falam "atividade" e
+  "Agenda". Dois nomes para o mesmo objeto, a confirmar na criação.
+
+Hipótese:
+
+- A moldura já carrega três chamadas comerciais e uma faixa de campanha.
+  Para quem vive no produto o dia inteiro, é ruído permanente. Entra como
+  problema de hierarquia na Q1.
+- IA com cor própria, roxo, e ícone de brilho. O briefing pede que IA
+  nasça no mesmo padrão. Aqui ela nasce com paleta à parte.
+- Azul usado para link, para número de estatística e para botão. Quando
+  tudo é azul, nada parece clicável. Problema de affordance.
+- Seletor nativo do navegador ao lado de componentes customizados. Sinal
+  de componente faltando na biblioteca.
+- Cores de botão, divisor e fundo batem com a paleta padrão do Mantine
+  (`#228be6`, `#dee2e6`, `#f1f3f4`). Inferência: o front novo usa Mantine
+  sem tema próprio. Se confirmar, o token semântico entra por cima do tema
+  do Mantine, e o custo cai.
+
+Próximas telas: Agenda e Kanban. Criar atividade com todos os campos
+abertos. Detalhe de uma atividade. A troca para Processos e casos.
