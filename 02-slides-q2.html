@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q2: design system e redesign incremental do Astrea</title>
+<style>
+  :root {
+    --paper: #ffffff;
+    --surface: #eef1f6;
+    --ink: #1b2a4a;
+    --text: #1b2a4a;
+    --muted: #5b6478;
+    --inverse: #ffffff;
+    --line: #c9cfda;
+    --line-strong: #1b2a4a;
+    --stamp: #b3261e;
+    --page: #f3f4f7;
+    --radius: 4px;
+    --serif: "Fraunces", "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "Geist", "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  }
+  /* Tema escuro: segue o sistema; a chave inverte o que o sistema disser. */
+  @media (prefers-color-scheme: dark) {
+    body:not(:has(#tema:checked)) {
+      --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0;
+      --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0;
+      --stamp: #e0665c; --page: #0a0f1c;
+    }
+  }
+  @media (prefers-color-scheme: light) {
+    body:has(#tema:checked) {
+      --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0;
+      --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0;
+      --stamp: #e0665c; --page: #0a0f1c;
+    }
+  }
+  @media (prefers-color-scheme: no-preference) {
+    body:has(#tema:checked) {
+      --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0;
+      --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0;
+      --stamp: #e0665c; --page: #0a0f1c;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--page);
+    color: var(--text);
+    font-family: var(--sans);
+    padding: 24px 16px 64px;
+  }
+
+  .tema {
+    position: fixed; top: 12px; right: 16px; z-index: 2;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--muted);
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 6px 10px; cursor: pointer;
+  }
+  .tema input { accent-color: var(--stamp); margin: 0; }
+
+  .capa {
+    max-width: 1600px; margin: 0 auto 24px; color: var(--muted); font-size: 14px; line-height: 1.5;
+  }
+  .capa strong { color: var(--text); font-weight: 500; }
+
+  /* Cada slide é um frame de 1920 × 1080. As medidas em cqw escalam a partir dele:
+     1cqw = 19,2px no tamanho original. */
+  .slide {
+    container-type: inline-size;
+    width: min(100%, 1600px);
+    aspect-ratio: 16 / 9;
+    margin: 0 auto 32px;
+    background: var(--paper);
+    color: var(--text);
+    display: flex; flex-direction: column;
+    padding: 3.333cqw 5cqw 2.917cqw;       /* 64 96 56 */
+    gap: 2.083cqw;                          /* 40 */
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .pergunta { font-size: 0.9375cqw; line-height: 1.3; color: var(--muted); margin: 0 0 0.833cqw; max-width: 78cqw; }
+  h2 { font-family: var(--serif); font-weight: 400; font-size: 2.917cqw; line-height: 1.1; margin: 0; max-width: 78cqw; letter-spacing: -0.005em; }
+  .corpo { flex: 1; display: flex; gap: 4.167cqw; align-items: flex-start; min-height: 0; }
+  .corpo.vertical { flex-direction: column; gap: 2.083cqw; }
+  .col { display: flex; flex-direction: column; gap: 1.25cqw; min-width: 0; }
+  .col.fixa { width: 42.917cqw; flex: none; }   /* 824 */
+  .col.larga { width: 46.875cqw; flex: none; }  /* 900 */
+  .col.fill { flex: 1; }
+  .rodape { display: flex; justify-content: space-between; font-size: 0.729cqw; color: var(--muted); }
+
+  p { margin: 0; line-height: 1.45; }
+  .tese { font-size: 1.146cqw; }     /* 22 */
+  .texto { font-size: 0.9375cqw; }   /* 18 */
+  .nota { font-size: 0.78cqw; color: var(--muted); }
+  h3 { font-size: 0.833cqw; font-weight: 500; color: var(--muted); margin: 0; line-height: 1.3; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.885cqw; line-height: 1.35; }
+  th { text-align: left; font-weight: 500; font-size: 0.729cqw; color: var(--muted); padding: 0 0 0.417cqw; border-bottom: 1px solid var(--line-strong); }
+  td { padding: 0.573cqw 1.25cqw 0.573cqw 0; vertical-align: top; border-bottom: 1px solid var(--line); }
+  td:last-child, th:last-child { padding-right: 0; }
+  td:first-child { font-weight: 500; }
+  td.muted { color: var(--muted); }
+
+  ol.passos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.625cqw; counter-reset: passo; }
+  ol.passos li { display: grid; grid-template-columns: 1.563cqw 1fr; gap: 0.729cqw; align-items: start; }
+  ol.passos li::before { counter-increment: passo; content: counter(passo); font-family: var(--serif); font-size: 1.25cqw; line-height: 1.1; }
+  ol.passos b { display: block; font-weight: 500; font-size: 0.9375cqw; line-height: 1.35; }
+  ol.passos span { display: block; font-size: 0.833cqw; color: var(--muted); line-height: 1.4; }
+  ol.passos.compacto li { font-size: 0.885cqw; line-height: 1.4; }
+  ol.passos.compacto li::before { font-size: 1.146cqw; }
+
+  .decisao { display: flex; gap: 0.833cqw; align-items: flex-start; }
+  .carimbo {
+    flex: none; border: 2px solid var(--stamp); border-radius: var(--radius); color: var(--stamp);
+    font-size: 0.677cqw; font-weight: 600; letter-spacing: 0.04em; padding: 0.26cqw 0.52cqw; line-height: 1.2;
+  }
+  .decisao p { font-weight: 500; font-size: 1cqw; line-height: 1.35; }
+
+  ul.lista { list-style: none; margin: 0; padding: 0; }
+  ul.lista li { padding: 0.625cqw 0; border-bottom: 1px solid var(--line); }
+  ul.lista li:first-child { padding-top: 0; }
+  ul.lista li:last-child { border-bottom: 0; }
+  ul.lista b { display: block; font-weight: 500; font-size: 0.9375cqw; line-height: 1.35; }
+  ul.lista span { display: block; font-size: 0.833cqw; color: var(--muted); line-height: 1.4; margin-top: 0.156cqw; }
+
+  .fases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.083cqw; width: 100%; }
+  .fase { border-top: 2px solid var(--line-strong); padding-top: 0.729cqw; display: flex; flex-direction: column; gap: 0.52cqw; }
+  .fase .periodo { display: flex; gap: 0.52cqw; align-items: baseline; }
+  .fase .periodo i { font-style: normal; font-family: var(--serif); font-size: 1.458cqw; line-height: 1.1; }
+  .fase .periodo b { font-weight: 500; font-size: 0.9375cqw; }
+  .fase p { font-size: 0.833cqw; }
+  .fase .entrega { font-weight: 500; color: var(--muted); font-size: 0.78cqw; }
+  .formula { font-family: var(--serif); font-size: 1.563cqw; line-height: 1.2; margin: 0; }
+
+  ol.riscos { list-style: none; margin: 0; padding: 0; counter-reset: risco; }
+  ol.riscos li { display: grid; grid-template-columns: 2.292cqw 1fr; gap: 1.042cqw; padding: 0.9375cqw 0; border-bottom: 1px solid var(--line); }
+  ol.riscos li:first-child { padding-top: 0; }
+  ol.riscos li:last-child { border-bottom: 0; }
+  ol.riscos li::before { counter-increment: risco; content: counter(risco); font-family: var(--serif); font-size: 2.083cqw; line-height: 1; }
+  ol.riscos b { display: block; font-weight: 500; font-size: 1.042cqw; line-height: 1.3; margin-bottom: 0.3cqw; }
+  ol.riscos p { font-size: 0.833cqw; }
+
+  .fluxo { width: 100%; height: auto; display: block; }
+  .fluxo text { font-family: var(--sans); }
+  .fluxo .caixa { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.5; }
+  .fluxo .caixa.suave { fill: var(--surface); }
+  .fluxo .caixa.tinta { fill: var(--ink); stroke: none; }
+  .fluxo .t { fill: var(--text); font-size: 15px; font-weight: 500; }
+  .fluxo .s { fill: var(--muted); font-size: 12.5px; }
+  .fluxo .tinta ~ .inv, .fluxo .inv { fill: var(--inverse); }
+  .fluxo .linha { stroke: var(--line-strong); stroke-width: 1.5; fill: none; stroke-linecap: round; }
+  .fluxo .linha.tracejada { stroke-dasharray: 5 5; }
+
+  .rascunho { border: 1px dashed var(--line-strong); padding: 1.25cqw; border-radius: var(--radius); }
+  .rascunho .texto { max-width: 70cqw; }
+
+  @media (max-width: 720px) {
+    .slide { aspect-ratio: auto; }
+    .corpo { flex-direction: column; }
+    .col.fixa, .col.larga { width: 100%; }
+    .fases { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<label class="tema" for="tema"><input type="checkbox" id="tema"> Trocar tema</label>
+
+<p class="capa"><strong>Questão 2, documento-fonte dos slides.</strong> Cada bloco abaixo é um frame de 1920 por 1080. Papel branco, tinta azul, vermelho só no carimbo de decisão. Títulos em Fraunces, texto em Geist, raio único de 4px. Número só onde a ordem é real.</p>
+
+<!-- ============ 1 ============ -->
+<section class="slide" id="s1">
+  <header>
+    <p class="pergunta">Arquitetura do design system: como organizar fundamentos, tokens, componentes e padrões, e o que vem primeiro</p>
+    <h2>Um design system usado por pessoas e por IA</h2>
+  </header>
+  <div class="corpo">
+    <div class="col fixa">
+      <p class="tese">Designer, dev e feature de IA geram interface a partir da mesma fonte. O briefing diz que IA vai entrar nos fluxos do escritório e precisa nascer no mesmo padrão. Um DS que só vive no Figma não resolve isso. Um que vive em repositório, com tokens, componentes, skills e agentes, resolve.</p>
+      <h3>As camadas</h3>
+      <table>
+        <thead><tr><th>Camada</th><th>O que é</th><th>Exemplo no Astrea</th></tr></thead>
+        <tbody>
+          <tr><td>Tokens primitivos</td><td>Valores brutos, sem significado</td><td>blue.600, space.16</td></tr>
+          <tr><td>Tokens semânticos</td><td>Valores com papel na interface</td><td>color.bg.surface, color.text.danger</td></tr>
+          <tr><td>Componentes</td><td>Peças com comportamento e estados</td><td>Card de atividade, filtro de prazo, seletor de responsável</td></tr>
+          <tr><td>Padrões</td><td>Combinações com regra de uso</td><td>Lista de atividades, formulário de prazo, estado vazio</td></tr>
+          <tr><td>Templates</td><td>Telas-modelo por módulo</td><td>Agenda, Área de Trabalho, Kanban</td></tr>
+        </tbody>
+      </table>
+      <p class="nota">O mesmo token que colore o botão é o que o agente lê para gerar a tela. Por isso a fonte é uma só.</p>
+    </div>
+    <div class="col fill">
+      <div class="decisao"><span class="carimbo">Decisão</span><p>Tokens semânticos antes de qualquer componente.</p></div>
+      <p class="texto">O motivo é a convivência. O código legado consome token semântico como variável CSS sem ser reescrito. Troca-se o valor, não o componente. Tela antiga e tela nova se aproximam no visual antes de a migração do front chegar nelas.</p>
+      <h3>A ordem de construção</h3>
+      <ol class="passos">
+        <li><div><b>Tokens semânticos</b><span>Cor, tipografia, espaço, raio e foco. Em JSON, no repositório.</span></div></li>
+        <li><div><b>Moldura</b><span>Cabeçalho, menu lateral, ações e filtros. Depois de padronizada, não muda mais.</span></div></li>
+        <li><div><b>Componentes da gestão de atividades</b><span>Nascem da primeira tela nova, com todos os estados.</span></div></li>
+        <li><div><b>Padrões e templates por módulo</b><span>Lista, filtro, formulário de prazo, estado vazio.</span></div></li>
+        <li><div><b>Padrões de IA</b><span>Sugestão, confirmação e erro, nos mesmos componentes.</span></div></li>
+      </ol>
+    </div>
+  </div>
+  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>1 de 6</span></footer>
+</section>
+
+<!-- ============ 2 ============ -->
+<section class="slide" id="s2">
+  <header>
+    <p class="pergunta">Governança, primeira parte: como o Figma e o código se mantêm alinhados</p>
+    <h2>Uma fonte só. O Figma lê a fonte, ele não é a fonte</h2>
+  </header>
+  <div class="corpo">
+    <div class="col fixa">
+      <div class="decisao"><span class="carimbo">Decisão</span><p>Uma biblioteca, Astrea DS, publicada para todos os squads. As parciais de hoje são absorvidas ou arquivadas. Nenhum squad publica componente próprio.</p></div>
+      <h3>No repositório: o documento-base do DS</h3>
+      <table>
+        <thead><tr><th>Peça</th><th>Papel</th></tr></thead>
+        <tbody>
+          <tr><td>tokens/ em JSON, padrão DTCG</td><td>Fonte única. Muda aqui, muda em todo lugar</td></tr>
+          <tr><td>Style Dictionary</td><td>Gera CSS e TS para o front novo e para o legado</td></tr>
+          <tr><td>Code Connect</td><td>Liga cada componente do Figma ao código</td></tr>
+          <tr><td>Storybook</td><td>Cada componente, com estados e regra de uso</td></tr>
+          <tr><td>README</td><td>Princípios, regras de uso, como contribuir</td></tr>
+          <tr><td>skills/astrea-ds</td><td>A mesma regra, no formato que o agente lê</td></tr>
+          <tr><td>Changelog por versão</td><td>O que mudou, para designer e para dev</td></tr>
+        </tbody>
+      </table>
+      <p class="nota">Uma página de wiki envelhece em silêncio. O repositório muda junto com o código, e o changelog mostra o que mudou.</p>
+    </div>
+    <div class="col fill">
+      <h3>No Figma: três coleções de variáveis</h3>
+      <table>
+        <thead><tr><th>Coleção</th><th>Conteúdo</th><th>Modos</th></tr></thead>
+        <tbody>
+          <tr><td>Primitives</td><td>Escalas de cor, espaço, tipografia e raio</td><td>Nenhum</td></tr>
+          <tr><td>Semantic</td><td>Papéis da interface. Apontam para Primitives</td><td>Claro, escuro</td></tr>
+          <tr><td>Component</td><td>Valor específico de um componente. Aponta para Semantic</td><td>Nenhum</td></tr>
+        </tbody>
+      </table>
+      <p class="nota">Nome no formato categoria.papel.variante: color.bg.surface, color.text.danger, space.4.</p>
+      <h3>Como as variáveis nascem</h3>
+      <ol class="passos compacto">
+        <li><div>Primitives: escalas numeradas, de blue.50 a blue.900. Sem modo.</div></li>
+        <li><div>Semantic: cada variável aponta para uma primitiva. Modos claro e escuro na mesma coleção.</div></li>
+        <li><div>Escopo em cada variável: cor de texto só em texto, raio só em canto. O Figma bloqueia o uso errado antes da revisão.</div></li>
+        <li><div>Publicar a biblioteca. Squad consome, nunca copia.</div></li>
+        <li><div>O JSON do repositório gera as três coleções pela API de variáveis.</div></li>
+      </ol>
+    </div>
+  </div>
+  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>2 de 6</span></footer>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="slide" id="s3">
+  <header>
+    <p class="pergunta">Governança, segunda parte: quem decide sobre um componente novo e como os squads e a Engenharia participam</p>
+    <h2>Quem decide, quem contribui, quem veta</h2>
+  </header>
+  <div class="corpo">
+    <div class="col larga">
+      <h3>A estrutura. Linha cheia é decisão. Linha tracejada é contribuição. Ninguém se reporta à direção do DS.</h3>
+      <svg class="fluxo" viewBox="0 0 900 600" role="img" aria-label="Fluxograma da estrutura de governança do design system">
+        <!-- Líderes -->
+        <rect class="caixa" x="250" y="0" width="400" height="64" rx="4"/>
+        <text class="t" x="450" y="26" text-anchor="middle">Líderes dos squads</text>
+        <text class="s" x="450" y="46" text-anchor="middle">Patrocínio: garantem o tempo dos designers e a prioridade no roadmap</text>
+        <path class="linha" d="M450 64 V96 M240 96 H660 M240 96 V124 M660 96 V124"/>
+        <!-- Direção -->
+        <rect class="caixa tinta" x="40" y="124" width="400" height="84" rx="4"/>
+        <text class="t inv" x="240" y="162" text-anchor="middle" font-size="16">Direção do DS, a vaga</text>
+        <text class="s inv" x="240" y="182" text-anchor="middle">Decide o que entra, mantém a fonte, lidera o redesign</text>
+        <!-- Ponto técnico -->
+        <rect class="caixa" x="480" y="124" width="360" height="84" rx="4"/>
+        <text class="t" x="660" y="156" text-anchor="middle">Ponto técnico de front</text>
+        <text class="s" x="660" y="174" text-anchor="middle">Engenharia. Mantém o pacote de código.</text>
+        <text class="s" x="660" y="190" text-anchor="middle">Veto técnico, com justificativa</text>
+        <!-- Direção -> designers -->
+        <path class="linha" d="M240 208 V240 M135 240 H765 M135 240 V268 M345 240 V268 M555 240 V268 M765 240 V268"/>
+        <!-- Designers -->
+        <g>
+          <rect class="caixa" x="40" y="268" width="190" height="60" rx="4"/>
+          <text class="t" x="135" y="292" text-anchor="middle">Designer do squad 1</text>
+          <text class="s" x="135" y="312" text-anchor="middle">Contribui a partir do roadmap</text>
+          <rect class="caixa" x="250" y="268" width="190" height="60" rx="4"/>
+          <text class="t" x="345" y="292" text-anchor="middle">Designer do squad 2</text>
+          <text class="s" x="345" y="312" text-anchor="middle">Contribui a partir do roadmap</text>
+          <rect class="caixa" x="460" y="268" width="190" height="60" rx="4"/>
+          <text class="t" x="555" y="292" text-anchor="middle">Designer do squad 3</text>
+          <text class="s" x="555" y="312" text-anchor="middle">Contribui a partir do roadmap</text>
+          <rect class="caixa" x="670" y="268" width="190" height="60" rx="4"/>
+          <text class="t" x="765" y="292" text-anchor="middle">Designer do squad 4</text>
+          <text class="s" x="765" y="312" text-anchor="middle">Contribui a partir do roadmap</text>
+        </g>
+        <!-- Designers -> biblioteca (contribuição) -->
+        <path class="linha tracejada" d="M135 328 V360 M345 328 V360 M555 328 V360 M765 328 V360 M135 360 H765 M240 360 V392"/>
+        <!-- Ponto técnico -> repositório -->
+        <path class="linha" d="M840 166 H880 V432 H840"/>
+        <!-- Biblioteca e repositório -->
+        <rect class="caixa suave" x="40" y="392" width="400" height="80" rx="4"/>
+        <text class="t" x="240" y="426" text-anchor="middle">Biblioteca Figma: Astrea DS</text>
+        <text class="s" x="240" y="446" text-anchor="middle">Variáveis e componentes publicados. Squad consome, nunca copia</text>
+        <rect class="caixa suave" x="480" y="392" width="360" height="80" rx="4"/>
+        <text class="t" x="660" y="426" text-anchor="middle">Repositório do DS</text>
+        <text class="s" x="660" y="446" text-anchor="middle">Tokens JSON, pacote de código, skills, agentes, Storybook</text>
+        <path class="linha" d="M440 432 H480"/>
+        <!-- -> produto -->
+        <path class="linha" d="M240 472 V504 M660 472 V504 M240 504 H660 M450 504 V536"/>
+        <rect class="caixa tinta" x="150" y="536" width="600" height="64" rx="4"/>
+        <text class="t inv" x="450" y="562" text-anchor="middle" font-size="16">Produto</text>
+        <text class="s inv" x="450" y="582" text-anchor="middle">Telas novas, telas legadas e features de IA, da mesma fonte</text>
+      </svg>
+    </div>
+    <div class="col fill">
+      <h3>Como um componente novo entra</h3>
+      <ol class="passos compacto">
+        <li><div>O designer abre um pedido com template: problema, onde aparece, quem mais usa.</div></li>
+        <li><div>Triagem semanal de 30 minutos: direção do DS e ponto técnico.</div></li>
+        <li><div>Regra: dois ou mais squads usam, entra no DS. Só um usa, fica local no squad.</div></li>
+        <li><div>A direção decide. A Engenharia veta por motivo técnico, com justificativa.</div></li>
+        <li><div>Versão nova do pacote, com changelog.</div></li>
+      </ol>
+      <div class="decisao"><span class="carimbo">Decisão</span><p>O kit de IA é parte do DS, não um extra. O padrão se mantém por ferramenta, não por cobrança.</p></div>
+      <table>
+        <thead><tr><th>Peça do kit</th><th>O que faz</th></tr></thead>
+        <tbody>
+          <tr><td>Skill astrea-ds</td><td>Regras, tokens e componentes. Todo agente que gera tela consulta ela</td></tr>
+          <tr><td>Agente revisor</td><td>Avisa frame sem variável e componente desvinculado, antes da entrega</td></tr>
+          <tr><td>Skill de UX writing</td><td>Tom, termos jurídicos e microcopy padrão</td></tr>
+          <tr><td>Agente gerador de tela</td><td>Monta o frame no Figma pela biblioteca, via MCP</td></tr>
+          <tr><td>Agente de handoff</td><td>Lê o frame e devolve o código com os tokens certos</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>3 de 6</span></footer>
+</section>
+
+<!-- ============ 4 ============ -->
+<section class="slide" id="s4">
+  <header>
+    <p class="pergunta">Plano de redesign em fases: por onde começar, com qual critério, e como novo e legado convivem sem confundir quem usa</p>
+    <h2>A moldura fica fixa primeiro. O conteúdo migra depois</h2>
+  </header>
+  <div class="corpo vertical">
+    <div class="fases">
+      <div class="fase">
+        <div class="periodo"><i>1</i><b>Mês 1</b></div>
+        <p>Inventário de componentes e variações. Discovery com os 4 designers. Linha de base das métricas. Leitura dos dados de suporte.</p>
+        <p class="entrega">Entrega: mapa do que existe e do time</p>
+      </div>
+      <div class="fase">
+        <div class="periodo"><i>2</i><b>Meses 2 e 3</b></div>
+        <p>Tokens semânticos. O legado ganha a pele nova só por token: cor, tipografia, espaçamento e foco acessível. Nenhum componente reescrito.</p>
+        <p class="entrega">Entrega: legado e novo com a mesma pele</p>
+      </div>
+      <div class="fase">
+        <div class="periodo"><i>3</i><b>Meses 3 a 6</b></div>
+        <p>Componentes principais. Piloto na gestão de atividades, atrás de feature flag, com grupo beta de escritórios.</p>
+        <p class="entrega">Entrega: primeira tela nova em produção</p>
+      </div>
+      <div class="fase">
+        <div class="periodo"><i>4</i><b>Meses 6 a 12</b></div>
+        <p>Outros módulos, no ritmo da migração do front. Padrões de IA nos mesmos componentes.</p>
+        <p class="entrega">Entrega: o DS cobre o produto</p>
+      </div>
+    </div>
+    <div class="corpo" style="flex: 1; width: 100%;">
+      <div class="col fixa">
+        <h3>Critério de priorização</h3>
+        <p class="formula">Frequência de uso × dor relatada × onde a migração do front já está acontecendo</p>
+        <p class="texto">Pegar carona na migração custa menos. A tela já vai ser reescrita, então nasce no padrão novo sem trabalho dobrado. A gestão de atividades vem primeiro: é o fluxo diário de prazo, onde a dor é maior e a migração começa.</p>
+      </div>
+      <div class="col fill">
+        <div class="decisao"><span class="carimbo">Decisão</span><p>O que é moldura fica fixo. O que é conteúdo migra.</p></div>
+        <ul class="lista">
+          <li><b>A moldura unifica primeiro e depois não muda mais</b><span>Cabeçalho, menu lateral, botões de ação e filtros. São a âncora que o usuário reconhece ao cruzar de uma tela nova para uma legada.</span></li>
+          <li><b>Nunca misturar padrão novo e antigo na mesma tela</b><span>Uma tela é toda nova ou toda legada. A moldura é a única coisa em comum.</span></li>
+          <li><b>Cor, tipografia e fluxos principais mudam o mínimo</b><span>O novo se adapta ao que existe, não o contrário. Sem curva de reaprendizado brusca.</span></li>
+          <li><b>Toda mudança é avisada dentro do produto</b><span>Changelog visível, antes de a tela mudar.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>4 de 6</span></footer>
+</section>
+
+<!-- ============ 5 ============ -->
+<section class="slide" id="s5">
+  <header>
+    <p class="pergunta">Como envolver o time: distribuir o trabalho entre os quatro designers dos squads sem tirar o foco dos roadmaps deles</p>
+    <h2>A contribuição sai do roadmap, não de tarefa extra</h2>
+  </header>
+  <div class="corpo">
+    <div class="col fixa">
+      <div class="decisao"><span class="carimbo">Decisão</span><p>A divisão do trabalho não se define agora. Ela sai do discovery.</p></div>
+      <p class="texto">Nas duas primeiras semanas, uma conversa individual com cada designer. Cinco perguntas: como é o fluxo do pedido à entrega, o que o roadmap pede em três meses, como usa o Figma, se usa IA no dia a dia, o que mais frustra no produto. Dela sai um mapa simples por pessoa.</p>
+      <h3>O mapa de perfil</h3>
+      <table>
+        <thead><tr><th>Eixo</th><th>O que medir</th></tr></thead>
+        <tbody>
+          <tr><td>Onde o trabalho pesa</td><td>Produto, marketing e aquisição, ou perto do código</td></tr>
+          <tr><td>Maturidade no Figma</td><td>Variáveis, componentes, bibliotecas</td></tr>
+          <tr><td>Uso de IA</td><td>Nenhum, pontual, diário</td></tr>
+          <tr><td>Dor principal</td><td>O que o roadmap dele pede e trava</td></tr>
+        </tbody>
+      </table>
+      <p class="nota">Marketing entra pela borda. Os mesmos tokens de marca alimentam produto e criativos. Se houver demanda, uma biblioteca de peças prontas para escolher e publicar.</p>
+    </div>
+    <div class="col fill">
+      <h3>A frente de cada um sai do mapa, não de um organograma pronto</h3>
+      <table>
+        <thead><tr><th>Perfil</th><th>Frente natural no DS</th></tr></thead>
+        <tbody>
+          <tr><td>Perto do código</td><td>Code Connect, Storybook, revisão do pacote com o ponto técnico</td></tr>
+          <tr><td>Forte em Figma</td><td>Estrutura da biblioteca, variantes, auditoria de componente desvinculado</td></tr>
+          <tr><td>Perto do marketing</td><td>Tokens de marca e a ponte com o time de marketing</td></tr>
+          <tr><td>Perto do usuário</td><td>Padrões de UX writing, pesquisa nos fluxos de atividades</td></tr>
+        </tbody>
+      </table>
+      <h3>Como o trabalho acontece</h3>
+      <ul class="lista">
+        <li><b>Construção conjunta, no fluxo</b><span>O ponto de atenção aparece na demanda real do squad. A gente senta junto, decide, constrói. Sem ritual novo com nome próprio.</span></li>
+        <li><b>A contribuição sai do roadmap</b><span>O designer entrega a tela do squad. No caminho, o componente entra no DS. O tempo é acordado por squad, no discovery.</span></li>
+        <li><b>O kit de IA baixa o custo de seguir o padrão</b><span>Seguir o DS vira o caminho mais rápido. É isso que faz o time adotar sem a direção ser gestora de ninguém.</span></li>
+      </ul>
+    </div>
+  </div>
+  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>5 de 6</span></footer>
+</section>
+
+<!-- ============ 6 ============ -->
+<section class="slide" id="s6">
+  <header>
+    <p class="pergunta">Riscos e métricas: os três principais riscos do plano, como mitigar, e como medir se o design system e o redesign estão dando certo</p>
+    <h2>Três riscos, e o que prova que está dando certo</h2>
+  </header>
+  <div class="corpo">
+    <div class="col larga">
+      <h3>Os três riscos, do mais provável ao menos</h3>
+      <ol class="riscos">
+        <li><div><b>O DS vira projeto paralelo que ninguém adota</b><p>Mitigação: construir a partir das telas do roadmap, nunca em paralelo a elas. Kit de skills e agentes no repositório: melhoria vira pull request, todo mundo puxa. O padrão se mantém por ferramenta, não por cobrança.</p></div></li>
+        <li><div><b>Ruptura visual para quem vive no produto o dia inteiro</b><p>Mitigação: moldura fixa primeiro. Cor, tipografia e fluxos principais mudam o mínimo. Feature flag e grupo beta na primeira tela nova. Chamados de suporte por módulo acompanhados semana a semana.</p></div></li>
+        <li><div><b>O roadmap dos squads toma o tempo dos designers</b><p>Mitigação: líderes como patrocinadores, com o tempo acordado no discovery. A tese: com skills e agentes o tempo de produção cai, e o DS devolve mais tempo do que toma. A métrica de eficiência prova ou derruba isso.</p></div></li>
+      </ol>
+    </div>
+    <div class="col fill">
+      <h3>Como medir</h3>
+      <table>
+        <thead><tr><th>Eixo</th><th>Métrica</th><th>Fonte</th></tr></thead>
+        <tbody>
+          <tr><td>Adoção</td><td>Telas com componentes do DS, em %</td><td class="muted">Inventário trimestral</td></tr>
+          <tr><td>Adoção</td><td>Cores vindas de token no código, em %</td><td class="muted">Lint no CI</td></tr>
+          <tr><td>Adoção</td><td>Componentes desvinculados da biblioteca</td><td class="muted">Figma Library Analytics</td></tr>
+          <tr><td>Eficiência</td><td>Tempo do design até o dev</td><td class="muted">Ferramenta de gestão do squad</td></tr>
+          <tr><td>Eficiência</td><td>Bugs visuais abertos</td><td class="muted">Backlog</td></tr>
+          <tr><td>Experiência</td><td>Chamados de suporte por módulo</td><td class="muted">Suporte</td></tr>
+          <tr><td>Experiência</td><td>Tempo para criar um prazo</td><td class="muted">Analytics do produto</td></tr>
+          <tr><td>Experiência</td><td>Sucesso na tarefa e CSAT nos fluxos principais</td><td class="muted">Pesquisa recorrente</td></tr>
+        </tbody>
+      </table>
+      <p class="nota">A linha de base das três frentes sai no mês 1. Sem ela, a métrica só mostra o número de hoje, não o que mudou.</p>
+    </div>
+  </div>
+  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>6 de 6</span></footer>
+</section>
+
+<!-- ============ Fechamento ============ -->
+<section class="slide" id="s7">
+  <header>
+    <p class="pergunta">Fechamento da entrega, fora da conta da Q2: quais ferramentas de IA, em quais etapas, e o que foi feito com o resultado</p>
+    <h2>Como a IA entrou neste trabalho</h2>
+  </header>
+  <div class="corpo">
+    <div class="col fill rascunho">
+      <h3>Rascunho. Fecha quando as três questões estiverem prontas.</h3>
+      <p class="texto">Usei o Claude Code como par de trabalho, com o MCP do Figma ligado. A IA não escreveu a estratégia. Ela recebeu as minhas decisões em conversa e as transformou em documento-fonte, em markdown, que eu iterei linha a linha. O mesmo documento gerou os seis slides no Figma, com cor por variável, e este HTML.</p>
+      <p class="texto">Duas skills minhas guardaram o padrão. Uma de português técnico lintou cada frase do documento. Uma anti-cara-de-IA barrou o grid de cards iguais, o rótulo em caixa alta e a paleta creme com terracota que o modelo propôs primeiro. A direção visual final foi decisão minha, e o modelo a aplicou.</p>
+      <p class="texto">O kit de agentes e skills que o slide 3 propõe para o Astrea é o mesmo modelo que usei aqui. Regra escrita uma vez, no repositório, e lida por toda ferramenta que gera tela. Este deck é a prova de conceito da própria Q2.</p>
+    </div>
+  </div>
+  <footer class="rodape"><span>Astrea. Atividade prática, UX/UI Designer Especialista</span><span>Uso de IA</span></footer>
+</section>
+
+</body>
+</html>
