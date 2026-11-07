@@ -38,6 +38,10 @@ Legenda:
 > "usado por pessoas e por IA" era interpretação e tirava o foco. A IA fica no
 > passo 5 da ordem de construção e no kit do slide 3.
 
+> decisão: o espaço em branco abaixo das tabelas fica como respiro. O slide é
+> para apresentação ao vivo, e a banca lê em 30 segundos. Nada mais entra no
+> slide 1.
+
 ### A abertura
 
 O Astrea cresceu com times diferentes construindo partes diferentes. O
