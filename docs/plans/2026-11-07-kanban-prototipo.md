@@ -331,7 +331,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 O pedido nomeia as camadas primitiva e semântica. A camada de componente não tem prefixo no pedido. Este plano usa `--component-*`, pelo nome da coleção Component do slide 1. Um token de componente aponta só para token semântico. Uma regra CSS usa só token semântico ou de componente, nunca primitivo.
 
-- [ ] **Step 1: Escrever a direção visual**
+- [x] **Step 1: Escrever a direção visual**
 
 Leia a `frontend-design` e a `sem-plastico` antes do código. Escreva o plano de direção no seu relatório, não no HTML. Um comentário no HTML com hex derruba o verificador.
 
@@ -344,7 +344,7 @@ O plano cobre quatro itens:
 
 Compare o plano com o default que você produziria para qualquer Kanban. Altere o que for default e registre o porquê no relatório.
 
-- [ ] **Step 2: Executar o verificador e confirmar a falha**
+- [x] **Step 2: Executar o verificador e confirmar a falha**
 
 ```bash
 python prototipo/verificar.py prototipo/kanban.html
@@ -352,7 +352,7 @@ python prototipo/verificar.py prototipo/kanban.html
 
 Esperado: `prototipo/kanban.html: arquivo nao existe.` e código 1.
 
-- [ ] **Step 3: Escrever os tokens e o tema**
+- [x] **Step 3: Escrever os tokens e o tema**
 
 O rascunho abaixo mostra a forma. Os valores de hex saem da direção do Step 1.
 
@@ -410,7 +410,7 @@ Esperado: `5.26:1  AA texto normal: passa`. Todo par de texto do protótipo pass
 > exceção não vaza para texto comum. `--color-text-brand` sai.
 > Decisão do pai na revisão 1, reversível.
 
-- [ ] **Step 4: Escrever a moldura**
+- [x] **Step 4: Escrever a moldura**
 
 A moldura é a da tela 11, sem a faixa de campanha, sem o selo e sem o botão verde.
 
@@ -432,7 +432,7 @@ A moldura é a da tela 11, sem a faixa de campanha, sem o selo e sem o botão ve
 
 O `#quadro` fica vazio nesta task. Os cards nascem na Task 3.
 
-- [ ] **Step 5: Executar o verificador e confirmar que passa**
+- [x] **Step 5: Executar o verificador e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/kanban.html
@@ -440,7 +440,7 @@ python prototipo/verificar.py prototipo/kanban.html
 
 Esperado: `verificar: 0 erro(s)` e código 0. Avisos do detector saem na tela e não reprovam. Leia cada aviso e justifique no relatório.
 
-- [ ] **Step 6: Provar largura, tema e rede no navegador headless**
+- [x] **Step 6: Provar largura, tema e rede no navegador headless**
 
 Use um navegador headless, como o Playwright MCP. Nunca abra janela na tela do humano. Sem navegador headless, registre os três critérios como não provados no relatório.
 
@@ -452,7 +452,7 @@ Use um navegador headless, como o Playwright MCP. Nunca abra janela na tela do h
 
 Esperado: `true` nas duas larguras. O fundo troca pelo sistema e pela chave, sem recarregar. A rede mostra só o próprio arquivo.
 
-- [ ] **Step 7: Entregar**
+- [x] **Step 7: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` e não execute `git commit`. O plano é do pai: ele marca o checkbox e commita por caminho, depois do portão.
 
