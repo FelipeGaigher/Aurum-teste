@@ -55,7 +55,7 @@ Hipótese:
   urgência. A pessoa ainda nem viu o produto. Padrão escuro leve. Confirmar
   com o time se é teste A/B ou padrão permanente.
 - Emoji no texto de apoio é escolha de tom. Para advogado em dia de prazo,
-  pode soar leve demais. Hipótese fraca, depende de pesquisa.
+  pode soar leve demais. Hipótese fraca, depende de entrevista com usuário.
 
 ### 04. Senha
 
@@ -77,6 +77,65 @@ Hipótese:
   validação em tempo real.
 - O anel de foco padrão do navegador indica que não há token de foco. Se
   o produto logado repetir isso, vira item de acessibilidade na Q1.
+
+## Onboarding dentro do produto
+
+### 05. Definir objetivo
+
+Print: `05-onboarding-objetivo.png`. URL `astrea.net.br/#/main/workspace/`.
+
+Fato:
+
+- Primeira tela depois do cadastro. Stepper de cinco passos, com rótulo em
+  cada um: Criar conta, Definir objetivo, Buscar processos, Confirmar
+  informações, Convidar usuário. Passo concluído em verde com check.
+- Pergunta "O que você quer alcançar com o Astrea?" e quatro opções em
+  cartão. Controlar financeiro, Organizar processos e prazos, Gerenciar
+  tarefas do escritório, Acompanhar publicações. Ícone em caixa cinza à
+  esquerda de cada opção.
+- Botão "Continuar" em caixa alta, cinza, desabilitado até escolher.
+- Tipografia diferente da do cadastro do site. Cor de progresso verde, e
+  não o azul do site.
+- Escolha feita para o teste: Gerenciar tarefas do escritório, que é o
+  recorte do enunciado.
+
+Hipótese:
+
+- Dois padrões de progresso em sequência: barra azul sem rótulo no site,
+  stepper verde com rótulo no produto. Mesma jornada, duas linguagens. É o
+  primeiro sinal concreto da fronteira entre times de que o briefing fala.
+- O stepper com rótulo é o padrão melhor dos dois. Candidato a padrão
+  único de progresso no DS.
+- A escolha de objetivo sugere personalização do onboarding. Vale ver se a
+  tela inicial muda de acordo com a opção. Se não muda, a pergunta é
+  levantamento de marketing disfarçado de personalização.
+
+### 06. Objetivo definido
+
+Print: não guardado. A imagem veio no chat sem arquivo. Recapturar.
+
+Fato:
+
+- Tela de confirmação depois de escolher o objetivo. Ilustração de alvo e
+  título "Objetivo definido!". Abaixo, a frase "O Astrea tem tudo o que
+  você precisa para gerenciar tarefas do escritório". O objetivo em azul.
+- Caixa "No Astrea você conta com:" e quatro itens com check azul. Quadros
+  Kanban por etapa. Lembretes automáticos de prazos. Delegação de tarefas
+  com controle de responsáveis. Visão geral de produtividade da equipe.
+- Botão "Continuar" azul, em caixa alta, largura total. Link "Voltar à tela
+  anterior" em caixa alta, cinza.
+- O stepper continua em "Definir objetivo". A confirmação é uma tela a
+  mais dentro do mesmo passo.
+
+Hipótese:
+
+- Tela que só confirma e lista promessas, sem ação do usuário, é um passo a
+  mais antes do produto. Em onboarding de cinco passos, custa atenção. Hipótese de corte, a validar com taxa de abandono por passo.
+- Os quatro itens listados são a promessa pública da gestão de atividades.
+  Vale conferir, tela a tela, se o produto cumpre cada um. Em especial a
+  "visão geral de produtividade da equipe".
+- Botões em caixa alta aqui, em caixa baixa no cadastro do site. Mais uma
+  divergência de padrão na mesma jornada.
 
 ## Produto logado
 
