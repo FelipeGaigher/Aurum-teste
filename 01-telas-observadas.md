@@ -43,8 +43,8 @@ Fato:
 - Barra de progresso sem rótulo e sem contagem de passos.
 - Texto de apoio com emoji: "Usaremos seu número apenas para te ajudar
   durante o teste do Astrea. 🙂".
-- Coluna esquerda com oferta "Novembro Black", contador regressivo e três
-  lotes de desconto, dentro do fluxo de criar conta de teste.
+- Coluna esquerda com a oferta "Novembro Black": contador regressivo e três
+  lotes de desconto. Tudo dentro do fluxo de criar conta de teste.
 - Botão primário azul `#0096d6`, campo com raio de 8px, fonte Open Sans.
 
 Hipótese:
@@ -52,7 +52,7 @@ Hipótese:
 - A barra sem contagem não diz quanto falta. Em quatro passos, dizer
   "passo 3 de 4" custa nada e reduz abandono.
 - Contador e lote de desconto dentro do cadastro de trial são pressão de
-  urgência antes de a pessoa ver o produto. Padrão escuro leve. Confirmar
+  urgência. A pessoa ainda nem viu o produto. Padrão escuro leve. Confirmar
   com o time se é teste A/B ou padrão permanente.
 - Emoji no texto de apoio é escolha de tom. Para advogado em dia de prazo,
   pode soar leve demais. Hipótese fraca, depende de pesquisa.
