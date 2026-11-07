@@ -74,7 +74,7 @@ Hipótese:
 
 - Os chips de regra de senha são um bom padrão: feedback imediato, sem
   mensagem de erro depois do envio. Vale levar para o DS como componente de
-  validação em tempo real.
+  regra de campo com feedback em tempo real.
 - O anel de foco padrão do navegador indica que não há token de foco. Se
   o produto logado repetir isso, vira item de acessibilidade na Q1.
 
@@ -130,12 +130,85 @@ Fato:
 Hipótese:
 
 - Tela que só confirma e lista promessas, sem ação do usuário, é um passo a
-  mais antes do produto. Em onboarding de cinco passos, custa atenção. Hipótese de corte, a validar com taxa de abandono por passo.
+  mais antes do produto. Em onboarding de cinco passos, custa atenção. Hipótese de corte, a verificar com taxa de abandono por passo.
 - Os quatro itens listados são a promessa pública da gestão de atividades.
-  Vale conferir, tela a tela, se o produto cumpre cada um. Em especial a
+  Vale verificar, tela a tela, se o produto cumpre cada um. Em especial a
   "visão geral de produtividade da equipe".
 - Botões em caixa alta aqui, em caixa baixa no cadastro do site. Mais uma
   divergência de padrão na mesma jornada.
+
+### 07. Buscar processos pela OAB
+
+Print: `06-onboarding-buscar-processos.png`.
+
+Fato:
+
+- Terceiro passo do stepper. Cartão à esquerda com o título "Todos os seus
+  processos no Astrea com apenas um clique". Dentro dele, campo de OAB,
+  seletor de estado e botão "Buscar processos" em caixa alta.
+- Os dois campos não têm rótulo visível. O valor ocupa o lugar do rótulo.
+- Link "Por que informar a OAB?" com seta, dentro do cartão. À direita, a
+  mesma pergunta já respondida, aberta, com três itens de check azul.
+- Caixa cinza com escudo: "Este dado é protegido e usado somente para
+  localizar processos públicos nos tribunais".
+- Caixa "Dica: quem busca processos com a OAB começa a gerenciar
+  processos 2x mais rápido". Sem fonte do número.
+- Seletor de estado com anel de foco azul, cor da marca. No site, o anel
+  era preto, padrão do navegador.
+
+Hipótese:
+
+- A explicação em dobro é sintoma de teste A/B ou de dois times mexendo na
+  mesma tela. Um dos dois blocos sobra.
+- Campo sem rótulo quebra quando preenchido: o usuário perde o nome do
+  campo. Em formulário de duas entradas custa pouco, mas o padrão se repete
+  no produto e vira item de acessibilidade.
+- Dois estilos de foco na mesma jornada confirmam a ausência de token de
+  foco. Entra na lista de verificação do produto logado.
+- "2x mais rápido" sem fonte é copy de marketing dentro do produto. Vale
+  perguntar ao time se o dado existe.
+
+### 08. Confirmar informações
+
+Print: não guardado. A imagem veio no chat sem arquivo. Recapturar.
+
+Fato:
+
+- Quarto passo. Título "Encontramos os processos! Este é o seu cadastro?".
+- Cartão azul-claro com check, nome do advogado titular da OAB, inscrição
+  58628, UF SC e tipo ADVOGADO. Botão "Confirmar" em caixa alta.
+- Sem opção visível de "não sou eu" ou de corrigir a OAB. Só confirmar.
+- O título diz que encontrou processos, mas não mostra quantos.
+
+Hipótese:
+
+- Quem errou a OAB não tem saída nessa tela além do botão voltar do
+  navegador. Falta o caminho de erro.
+- "Encontramos os processos" sem número é promessa sem prova. Mostrar a
+  contagem aqui aumentaria a confiança antes de confirmar.
+- A tela exibe dado público de terceiro, nome e inscrição, para qualquer
+  OAB digitada. É assim que o registro da OAB funciona, mas vale registrar.
+
+### 09. Convidar usuário
+
+Print: não guardado. A imagem veio no chat sem arquivo. Recapturar.
+
+Fato:
+
+- Quinto e último passo. Título "Faça fluir a colaboração em equipe".
+  Texto de apoio fala em compartilhar "atendimentos, tarefas, agendas e
+  vitórias".
+- Um campo de e-mail, sem rótulo visível, com placeholder "E-mail". Botão
+  "Enviar convite" em caixa alta. Link "Continuar sem convidar" em cinza.
+- Nota: "Você pode convidar mais usuários e configurar as permissões de
+  acesso de cada usuário na página de Administração".
+
+Hipótese:
+
+- Convidar antes de ver o produto é cedo. A pessoa ainda não sabe o que
+  vai mostrar ao colega. Hipótese de mover o convite para dentro do
+  produto, depois da primeira atividade criada.
+- O campo sem rótulo repete o padrão da tela 07.
 
 ## Produto logado
 
