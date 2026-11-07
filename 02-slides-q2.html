@@ -81,7 +81,20 @@
     overflow: hidden;
     border: 1px solid var(--line);
   }
+  .item { font-size: 0.833cqw; font-weight: 500; line-height: 1.3; color: var(--text); margin: 0 0 0.26cqw; }
   .pergunta { font-size: 0.9375cqw; line-height: 1.3; color: var(--muted); margin: 0 0 0.833cqw; max-width: 78cqw; }
+  .pergunta::before { content: "“"; } .pergunta::after { content: "”"; }
+  .fluxo-h { width: 100%; height: auto; display: block; }
+  .fluxo-h text { font-family: var(--sans); }
+  .fluxo-h .caixa { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.5; }
+  .fluxo-h .caixa.suave { fill: var(--surface); }
+  .fluxo-h .caixa.tinta { fill: var(--ink); stroke: none; }
+  .fluxo-h .t { fill: var(--text); font-size: 15px; font-weight: 500; }
+  .fluxo-h .s { fill: var(--muted); font-size: 12.5px; }
+  .fluxo-h .inv { fill: var(--inverse); }
+  .fluxo-h .linha { stroke: var(--line-strong); stroke-width: 1.5; fill: none; }
+  .fluxo-h .seta { fill: var(--line-strong); }
+  .fluxo-h .nota-svg { fill: var(--muted); font-size: 13px; }
   h2 { font-family: var(--serif); font-weight: 400; font-size: 2.917cqw; line-height: 1.1; margin: 0; max-width: 78cqw; letter-spacing: -0.005em; }
   .corpo { flex: 1; display: flex; gap: 4.167cqw; align-items: flex-start; min-height: 0; }
   .corpo.vertical { flex-direction: column; gap: 2.083cqw; }
@@ -174,24 +187,42 @@
 <!-- ============ 1 ============ -->
 <section class="slide" id="s1">
   <header>
-    <p class="pergunta">Arquitetura do design system: como organizar fundamentos, tokens, componentes e padrões, e o que vem primeiro</p>
+    <p class="item">Questão 2, item 1 de 5. Arquitetura do design system</p>
+    <p class="pergunta">Como você organizaria fundamentos, tokens, componentes e padrões. O que vem primeiro e por quê?</p>
     <h2>Primeiro os tokens semânticos. Depois, os componentes</h2>
   </header>
   <div class="corpo">
     <div class="col fixa">
       <p class="tese">O Astrea cresceu com times diferentes construindo partes diferentes. O resultado é conhecido: padrão que varia por módulo e componente duplicado. A resposta é uma fonte só, que o front novo e o legado consomem do mesmo lugar. A ordem de construção é o que faz essa fonte valer desde o primeiro mês.</p>
-      <h3>As camadas</h3>
-      <table>
-        <thead><tr><th>Camada</th><th>O que é</th><th>Exemplo no Astrea</th></tr></thead>
-        <tbody>
-          <tr><td>Tokens primitivos</td><td>Valores brutos, sem significado</td><td>blue.600, space.16</td></tr>
-          <tr><td>Tokens semânticos</td><td>Valores com papel na interface</td><td>color.bg.surface, color.text.danger</td></tr>
-          <tr><td>Componentes</td><td>Peças com comportamento e estados</td><td>Card de atividade, filtro de prazo, seletor de responsável</td></tr>
-          <tr><td>Padrões</td><td>Combinações com regra de uso</td><td>Lista de atividades, formulário de prazo, estado vazio</td></tr>
-          <tr><td>Templates</td><td>Telas-modelo por módulo</td><td>Agenda, Área de Trabalho, Kanban</td></tr>
-        </tbody>
-      </table>
-      <p class="nota">Cada camada só aponta para a de baixo. Componente não carrega cor solta, e padrão não inventa componente.</p>
+      <h3>As cinco camadas. Cada uma aponta só para a de baixo.</h3>
+      <svg class="fluxo-h" viewBox="0 0 824 410" role="img" aria-label="As cinco camadas do design system, de templates a tokens primitivos, e quem consome cada uma">
+        <defs><marker id="seta1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="seta" d="M0 0 L10 5 L0 10 z"/></marker></defs>
+        <rect class="caixa" x="0" y="0" width="500" height="58" rx="4"/>
+        <text class="t" x="16" y="24">Templates</text>
+        <text class="s" x="16" y="44">Telas-modelo por módulo: Agenda, Área de Trabalho, Kanban</text>
+        <path class="linha" d="M250 58 V86" marker-end="url(#seta1)"/>
+        <rect class="caixa" x="0" y="88" width="500" height="58" rx="4"/>
+        <text class="t" x="16" y="112">Padrões</text>
+        <text class="s" x="16" y="132">Combinações com regra de uso: lista de atividades, formulário de prazo, estado vazio</text>
+        <path class="linha" d="M250 146 V174" marker-end="url(#seta1)"/>
+        <rect class="caixa" x="0" y="176" width="500" height="58" rx="4"/>
+        <text class="t" x="16" y="200">Componentes</text>
+        <text class="s" x="16" y="220">Peças com comportamento e estados: card de atividade, filtro de prazo, seletor de responsável</text>
+        <path class="linha" d="M250 234 V262" marker-end="url(#seta1)"/>
+        <rect class="caixa tinta" x="0" y="264" width="500" height="58" rx="4"/>
+        <text class="t inv" x="16" y="288">Tokens semânticos. Vêm primeiro</text>
+        <text class="s inv" x="16" y="308">Valor com papel na interface: color.bg.surface, color.text.danger, space.4</text>
+        <path class="linha" d="M250 322 V350" marker-end="url(#seta1)"/>
+        <rect class="caixa" x="0" y="352" width="500" height="58" rx="4"/>
+        <text class="t" x="16" y="376">Tokens primitivos</text>
+        <text class="s" x="16" y="396">Valor bruto, sem significado: blue.600, space.16. Ninguém usa direto</text>
+        <path class="linha" d="M500 205 H540"/>
+        <text class="nota-svg" x="548" y="200">O front novo consome o pacote</text>
+        <text class="nota-svg" x="548" y="217">de componentes</text>
+        <path class="linha" d="M500 293 H540"/>
+        <text class="nota-svg" x="548" y="288">O legado consome como variável CSS,</text>
+        <text class="nota-svg" x="548" y="305">sem reescrever componente</text>
+      </svg>
     </div>
     <div class="col fill">
       <div class="decisao"><span class="carimbo">Decisão</span><p>Tokens semânticos antes de qualquer componente.</p></div>
@@ -202,7 +233,7 @@
         <li><div><b>Moldura</b><span>Cabeçalho, menu lateral, ações e filtros. Depois de padronizada, não muda mais.</span></div></li>
         <li><div><b>Componentes da gestão de atividades</b><span>Nascem da primeira tela nova, com todos os estados.</span></div></li>
         <li><div><b>Padrões e templates por módulo</b><span>Lista, filtro, formulário de prazo, estado vazio.</span></div></li>
-        <li><div><b>Padrões de IA</b><span>Sugestão, confirmação e erro, nos mesmos componentes.</span></div></li>
+        <li><div><b>Padrões para funcionalidade com IA</b><span>Como o sistema sugere, como o usuário confirma, como desfaz, e como aparece quando a IA erra. Mesmos componentes, mesma moldura.</span></div></li>
       </ol>
     </div>
   </div>
@@ -212,10 +243,36 @@
 <!-- ============ 2 ============ -->
 <section class="slide" id="s2">
   <header>
-    <p class="pergunta">Governança, primeira parte: como o Figma e o código se mantêm alinhados</p>
+    <p class="item">Questão 2, item 2 de 5. Governança, primeira parte</p>
+    <p class="pergunta">Como o Figma e o código se mantêm alinhados.</p>
     <h2>Uma fonte só. O Figma lê a fonte, ele não é a fonte</h2>
   </header>
-  <div class="corpo">
+  <div class="corpo vertical" style="gap: 1.25cqw;">
+    <svg class="fluxo-h" style="width: 88%; margin: 0 auto;" viewBox="0 0 1728 236" role="img" aria-label="O JSON de tokens no repositório alimenta o código legado, o código novo, a biblioteca do Figma e os agentes">
+      <defs><marker id="seta2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="seta" d="M0 0 L10 5 L0 10 z"/></marker></defs>
+      <rect class="caixa tinta" x="0" y="88" width="280" height="60" rx="4"/>
+      <text class="t inv" x="140" y="113" text-anchor="middle">tokens/ em JSON, padrão DTCG</text>
+      <text class="s inv" x="140" y="133" text-anchor="middle">A fonte. Muda aqui, muda em todo lugar</text>
+      <path class="linha" d="M280 118 H330 M330 24 V212 M330 24 H372 M330 86 H372 M330 150 H372 M330 212 H372"/>
+      <rect class="caixa" x="380" y="0" width="240" height="48" rx="4"/><text class="t" x="500" y="29" text-anchor="middle">Style Dictionary</text>
+      <rect class="caixa" x="380" y="62" width="240" height="48" rx="4"/><text class="t" x="500" y="91" text-anchor="middle">Style Dictionary</text>
+      <rect class="caixa" x="380" y="126" width="240" height="48" rx="4"/><text class="t" x="500" y="155" text-anchor="middle">API de variáveis do Figma</text>
+      <rect class="caixa" x="380" y="188" width="240" height="48" rx="4"/><text class="t" x="500" y="217" text-anchor="middle">skills/astrea-ds</text>
+      <path class="linha" d="M620 24 H692 M620 86 H692 M620 150 H692 M620 212 H692" marker-end="url(#seta2)"/>
+      <rect class="caixa suave" x="700" y="0" width="300" height="48" rx="4"/><text class="t" x="850" y="29" text-anchor="middle">Variáveis CSS</text>
+      <rect class="caixa suave" x="700" y="62" width="300" height="48" rx="4"/><text class="t" x="850" y="91" text-anchor="middle">Pacote de componentes em TS</text>
+      <rect class="caixa suave" x="700" y="126" width="300" height="48" rx="4"/><text class="t" x="850" y="155" text-anchor="middle">Biblioteca Figma: Astrea DS</text>
+      <rect class="caixa suave" x="700" y="188" width="300" height="48" rx="4"/><text class="t" x="850" y="217" text-anchor="middle">Agentes do kit</text>
+      <path class="linha" d="M1000 24 H1072 M1000 86 H1072 M1000 150 H1072 M1000 212 H1072" marker-end="url(#seta2)"/>
+      <rect class="caixa" x="1080" y="0" width="300" height="48" rx="4"/><text class="t" x="1230" y="29" text-anchor="middle">Telas legadas, sem reescrita</text>
+      <rect class="caixa" x="1080" y="62" width="300" height="48" rx="4"/><text class="t" x="1230" y="91" text-anchor="middle">Telas novas</text>
+      <rect class="caixa" x="1080" y="126" width="300" height="48" rx="4"/><text class="t" x="1230" y="155" text-anchor="middle">Designers dos quatro squads</text>
+      <rect class="caixa" x="1080" y="188" width="300" height="48" rx="4"/><text class="t" x="1230" y="217" text-anchor="middle">Telas e features geradas com IA</text>
+      <path class="linha" d="M1380 86 H1420 V150 H1380" stroke-dasharray="5 5"/>
+      <text class="nota-svg" x="1436" y="112">Code Connect liga cada componente</text>
+      <text class="nota-svg" x="1436" y="129">do Figma ao do pacote</text>
+    </svg>
+    <div class="corpo" style="flex: 1; width: 100%;">
     <div class="col fixa">
       <div class="decisao"><span class="carimbo">Decisão</span><p>Uma biblioteca, Astrea DS, publicada para todos os squads. As parciais de hoje são absorvidas ou arquivadas. Nenhum squad publica componente próprio.</p></div>
       <h3>No repositório: o documento-base do DS</h3>
@@ -231,7 +288,6 @@
           <tr><td>Changelog por versão</td><td>O que mudou, para designer e para dev</td></tr>
         </tbody>
       </table>
-      <p class="nota">Uma página de wiki envelhece em silêncio. O repositório muda junto com o código, e o changelog mostra o que mudou.</p>
     </div>
     <div class="col fill">
       <h3>No Figma: três coleções de variáveis</h3>
@@ -253,6 +309,7 @@
         <li><div>O JSON do repositório gera as três coleções pela API de variáveis.</div></li>
       </ol>
     </div>
+    </div>
   </div>
   <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>2 de 6</span></footer>
 </section>
@@ -260,7 +317,8 @@
 <!-- ============ 3 ============ -->
 <section class="slide" id="s3">
   <header>
-    <p class="pergunta">Governança, segunda parte: quem decide sobre um componente novo e como os squads e a Engenharia participam</p>
+    <p class="item">Questão 2, item 2 de 5. Governança, segunda parte</p>
+    <p class="pergunta">Como designers dos squads contribuem, quem decide sobre um componente novo, como Engenharia participa.</p>
     <h2>Quem decide, quem contribui, quem veta</h2>
   </header>
   <div class="corpo">
@@ -345,7 +403,8 @@
 <!-- ============ 4 ============ -->
 <section class="slide" id="s4">
   <header>
-    <p class="pergunta">Plano de redesign em fases: por onde começar, com qual critério, e como novo e legado convivem sem confundir quem usa</p>
+    <p class="item">Questão 2, item 3 de 5. Plano de redesign em fases</p>
+    <p class="pergunta">Por onde começar e com qual critério de priorização; como lidar com a convivência entre telas novas e legadas sem confundir quem usa o produto.</p>
     <h2>A moldura fica fixa primeiro. O conteúdo migra depois</h2>
   </header>
   <div class="corpo vertical">
@@ -367,7 +426,7 @@
       </div>
       <div class="fase">
         <div class="periodo"><i>4</i><b>Meses 6 a 12</b></div>
-        <p>Outros módulos, no ritmo da migração do front. Padrões de IA nos mesmos componentes.</p>
+        <p>Outros módulos, no ritmo da migração do front. As primeiras funcionalidades com IA nascem nos mesmos componentes e na mesma moldura.</p>
         <p class="entrega">Entrega: o DS cobre o produto</p>
       </div>
     </div>
@@ -379,6 +438,7 @@
       </div>
       <div class="col fill">
         <div class="decisao"><span class="carimbo">Decisão</span><p>O que é moldura fica fixo. O que é conteúdo migra.</p></div>
+        <div class="decisao"><span class="carimbo">Decisão</span><p>Nenhuma mudança chega ao fluxo de prazo sem feature flag. Flag desligada desfaz em minutos, sem deploy. É assim que o produto não para.</p></div>
         <ul class="lista">
           <li><b>A moldura unifica primeiro e depois não muda mais</b><span>Cabeçalho, menu lateral, botões de ação e filtros. São a âncora que o usuário reconhece ao cruzar de uma tela nova para uma legada.</span></li>
           <li><b>Nunca misturar padrão novo e antigo na mesma tela</b><span>Uma tela é toda nova ou toda legada. A moldura é a única coisa em comum.</span></li>
@@ -394,10 +454,30 @@
 <!-- ============ 5 ============ -->
 <section class="slide" id="s5">
   <header>
-    <p class="pergunta">Como envolver o time: distribuir o trabalho entre os quatro designers dos squads sem tirar o foco dos roadmaps deles</p>
+    <p class="item">Questão 2, item 4 de 5. Como envolver o time</p>
+    <p class="pergunta">Como você distribuiria o trabalho entre os quatro designers dos squads sem tirar o foco deles dos seus roadmaps.</p>
     <h2>A contribuição sai do roadmap, não de tarefa extra</h2>
   </header>
-  <div class="corpo">
+  <div class="corpo vertical" style="gap: 1.5cqw;">
+    <svg class="fluxo-h" viewBox="0 0 1728 64" role="img" aria-label="Do discovery ao componente no design system, em quatro passos">
+      <defs><marker id="seta5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="seta" d="M0 0 L10 5 L0 10 z"/></marker></defs>
+      <rect class="caixa tinta" x="0" y="0" width="380" height="64" rx="4"/>
+      <text class="t inv" x="190" y="27" text-anchor="middle">Discovery, duas semanas</text>
+      <text class="s inv" x="190" y="47" text-anchor="middle">Uma conversa com cada designer</text>
+      <path class="linha" d="M380 32 H440" marker-end="url(#seta5)"/>
+      <rect class="caixa" x="448" y="0" width="380" height="64" rx="4"/>
+      <text class="t" x="638" y="27" text-anchor="middle">Mapa de perfil</text>
+      <text class="s" x="638" y="47" text-anchor="middle">Onde o trabalho pesa, Figma, IA, dor</text>
+      <path class="linha" d="M828 32 H888" marker-end="url(#seta5)"/>
+      <rect class="caixa" x="896" y="0" width="380" height="64" rx="4"/>
+      <text class="t" x="1086" y="27" text-anchor="middle">Frente de cada um no DS</text>
+      <text class="s" x="1086" y="47" text-anchor="middle">O que o roadmap dele já pede</text>
+      <path class="linha" d="M1276 32 H1336" marker-end="url(#seta5)"/>
+      <rect class="caixa suave" x="1344" y="0" width="384" height="64" rx="4"/>
+      <text class="t" x="1536" y="27" text-anchor="middle">Componente entra no DS</text>
+      <text class="s" x="1536" y="47" text-anchor="middle">No caminho da tela do squad</text>
+    </svg>
+    <div class="corpo" style="flex: 1; width: 100%;">
     <div class="col fixa">
       <div class="decisao"><span class="carimbo">Decisão</span><p>A divisão do trabalho não se define agora. Ela sai do discovery.</p></div>
       <p class="texto">Nas duas primeiras semanas, uma conversa individual com cada designer. Cinco perguntas: como é o fluxo do pedido à entrega, o que o roadmap pede em três meses, como usa o Figma, se usa IA no dia a dia, o que mais frustra no produto. Dela sai um mapa simples por pessoa.</p>
@@ -431,6 +511,7 @@
         <li><b>O kit de IA baixa o custo de seguir o padrão</b><span>Seguir o DS vira o caminho mais rápido. É isso que faz o time adotar sem a direção ser gestora de ninguém.</span></li>
       </ul>
     </div>
+    </div>
   </div>
   <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>5 de 6</span></footer>
 </section>
@@ -438,7 +519,8 @@
 <!-- ============ 6 ============ -->
 <section class="slide" id="s6">
   <header>
-    <p class="pergunta">Riscos e métricas: os três principais riscos do plano, como mitigar, e como medir se o design system e o redesign estão dando certo</p>
+    <p class="item">Questão 2, item 5 de 5. Riscos e métricas</p>
+    <p class="pergunta">Os 3 principais riscos do plano, como mitigá-los e como você mediria se o design system e o redesign estão dando certo.</p>
     <h2>Três riscos, e o que prova que está dando certo</h2>
   </header>
   <div class="corpo">
@@ -474,7 +556,8 @@
 <!-- ============ Fechamento ============ -->
 <section class="slide" id="s7">
   <header>
-    <p class="pergunta">Fechamento da entrega, fora da conta da Q2: quais ferramentas de IA, em quais etapas, e o que foi feito com o resultado</p>
+    <p class="item">Fechamento da entrega, fora da conta da Q2. Uso de IA</p>
+    <p class="pergunta">Inclua um parágrafo contando quais ferramentas usou, em quais etapas e o que fez com o resultado.</p>
     <h2>Como a IA entrou neste trabalho</h2>
   </header>
   <div class="corpo">
