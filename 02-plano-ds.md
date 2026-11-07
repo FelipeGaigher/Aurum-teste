@@ -8,14 +8,22 @@ Legenda:
 - `> decisão:` algo que já fechamos na conversa.
 - `> aberto:` algo que ainda depende de você.
 
-> nota: no Figma, a governança ocupa dois slides. O slide 2 responde "como o
-> Figma e o código se mantêm alinhados" e o slide 3 responde "quem decide, quem
-> contribui, quem veta", com o fluxograma. O parágrafo de uso de IA sai da
-> conta da Q2 e vira o slide de fechamento da entrega inteira, como o enunciado
-> pede. A ordem no Figma: 1 Tese e arquitetura, 2 Uma fonte, um lugar,
-> 3 Governança, 4 Fases e convivência, 5 Como envolver o time, 6 Riscos e
-> métricas. Página "Questão 2", frames `Q2 / 01` a `Q2 / 06`, cor por variável
-> da coleção `Deck Q2`.
+> nota: no Figma, a governança ocupa dois slides. O slide 2 responde como o
+> Figma e o código se mantêm alinhados. O slide 3 responde quem decide, quem
+> contribui e quem veta, com o fluxograma. O parágrafo de uso de IA sai da
+> conta da Q2. Ele vira o slide de fechamento da entrega inteira, como o
+> enunciado pede.
+>
+> A ordem no Figma, na página "Questão 2", frames `Q2 / 01` a `Q2 / 06`:
+>
+> 1. Tese e arquitetura
+> 2. Uma fonte, um lugar
+> 3. Governança
+> 4. Fases e convivência
+> 5. Como envolver o time
+> 6. Riscos e métricas
+>
+> Toda cor vem de variável da coleção `Deck Q2`.
 
 > decisão: a Q2 não depende do trial. O cadastro não logou e seguimos sem as
 > telas. Os prints da página Extra do Figma guardam a evidência da falha. As
