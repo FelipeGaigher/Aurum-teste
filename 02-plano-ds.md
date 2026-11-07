@@ -8,6 +8,10 @@ Legenda:
 - `> decisão:` algo que já fechamos na conversa.
 - `> aberto:` algo que ainda depende de você.
 
+> decisão: a Q2 não depende do trial. O cadastro não logou e seguimos sem as
+> telas. Os prints da página Extra do Figma guardam a evidência da falha. As
+> telas só pesam na Q1 e na Q3.
+
 ---
 
 ## Slide 1 — Tese e arquitetura
@@ -40,7 +44,11 @@ como variável CSS sem ser reescrito. Troca-se o valor, não o componente. Assim
 tela antiga e tela nova se aproximam no visual antes de a migração do front
 chegar nelas.
 
-### No Figma
+### No Figma: um lugar só
+
+> decisão: uma biblioteca só, `Astrea DS`, publicada para todos os squads. As
+> bibliotecas parciais de hoje são absorvidas ou arquivadas. Nenhum squad
+> publica componente próprio.
 
 Três coleções de variáveis:
 
@@ -52,6 +60,33 @@ Três coleções de variáveis:
 
 Nomes no formato `categoria.papel.variante`: `color.bg.surface`,
 `color.text.danger`, `space.4`.
+
+Como as variáveis nascem, nesta ordem:
+
+1. Primitives: escalas numeradas, `blue.50` a `blue.900`, `space.4` a
+   `space.64`. Sem modo.
+2. Semantic: cada variável aponta para uma primitiva, por alias. Modos claro e
+   escuro na mesma coleção. Densidade vira coleção à parte, só se o Kanban pedir.
+3. Escopo em cada variável: cor de texto só em texto, raio só em canto. O
+   Figma bloqueia o uso errado antes da revisão.
+4. Component: só quando dois componentes divergem do semântico. Caso raro.
+5. Publicar a biblioteca. Squad consome, nunca copia.
+6. O JSON do repositório gera as três coleções, por plugin ou pela REST API de
+   variáveis. O Figma lê a fonte. Ele não é a fonte.
+
+### O documento-base do DS
+
+> decisão: o documento-base é o repositório, não uma página de wiki.
+
+| Peça | O que guarda |
+|---|---|
+| `README` | Princípios, regras de uso, como contribuir |
+| `tokens/` | O JSON no padrão DTCG |
+| Storybook | Cada componente, com estados e uso |
+| `skills/astrea-ds` | A mesma regra, no formato que o agente lê |
+
+Uma página de wiki envelhece em silêncio. O repositório muda junto com o
+código, e o changelog mostra o que mudou.
 
 ---
 
@@ -68,6 +103,31 @@ Nomes no formato `categoria.papel.variante`: `color.bg.surface`,
 | Patrocínio | Líderes dos squads | Garantem o tempo dos designers e a prioridade no roadmap |
 | Contribuição | Os 4 designers | Propõem e constroem a partir do trabalho real do squad |
 | Ponto técnico | Um dev de front por indicação da Engenharia | Mantém o pacote de código e tem veto técnico |
+
+### O desenho da estrutura
+
+Vira fluxograma no slide. Linha cheia é decisão. Linha tracejada é
+contribuição.
+
+```
+        Líderes dos squads (patrocínio: tempo e prioridade)
+                            │
+         Direção do DS ─────┼───── Ponto técnico de front (Engenharia)
+                            │                       │
+        ┌─────────┬─────────┼─────────┬─────────┐   │
+       D1        D2        D3        D4  ········┘   │   contribuem a partir
+        └─────────┴────┬────┴─────────┘               │   do roadmap do squad
+                       ▼                              ▼
+        Biblioteca Figma `Astrea DS`  ◄════►  Repositório do DS
+        (variáveis, componentes)              (tokens JSON, pacote, skills,
+                       │                       agentes, Storybook)
+                       └──────────────┬────────────────┘
+                                      ▼
+                 Produto: telas novas, telas legadas, features de IA
+```
+
+A fonte fica embaixo, uma só. Os dois lados leem dela. Ninguém se reporta à
+direção do DS. A direção decide sobre o DS, e os líderes garantem o tempo.
 
 ### Como um componente novo entra
 
@@ -99,10 +159,16 @@ A fonte única é um JSON de tokens no repositório, no padrão DTCG.
 | Skill `astrea-ds` | Regras, tokens e componentes. Qualquer agente que gera tela consulta ela | Designer, dev, feature de IA |
 | Agente revisor | Avisa frame sem variável e componente desvinculado (detach) | Designer, antes de entregar |
 | Skill de UX writing | Tom, termos jurídicos, microcopy padrão | Designer, dev, feature de IA |
+| Agente gerador de tela | Monta o frame no Figma a partir da biblioteca, via MCP. Só usa componente e variável publicados | Designer, no rascunho da tela |
+| Agente de handoff | Lê o frame e devolve o código com os tokens e o Code Connect certos | Dev, ao implementar |
 
 O modelo é o de toolkit compartilhado: melhoria vira pull request, todo mundo
 puxa, todo mundo anda igual. O padrão se mantém por ferramenta, não por
 cobrança.
+
+Um instalador puxa o kit do repositório para a máquina de cada designer e de
+cada dev. A versão é a mesma em todo lugar. Quem não usa IA hoje recebe o kit
+pronto e um par para a primeira semana.
 
 ---
 
@@ -154,8 +220,32 @@ Nas duas primeiras semanas, uma conversa individual com cada designer:
 | Usa IA no dia a dia? Como? | Quem já está pronto para o kit de agentes |
 | O que mais te frustra no produto hoje? | Dor que vira prioridade |
 
-A divisão de responsabilidades nasce desse mapa. Cada um fica com o que o
-próprio roadmap já pede e com o que ele faz melhor.
+### O mapa de perfil
+
+Das conversas sai um mapa simples por designer:
+
+| Eixo | O que medir |
+|---|---|
+| Onde o trabalho pesa | Produto, marketing e aquisição, ou perto do código |
+| Maturidade no Figma | Variáveis, componentes, bibliotecas |
+| Uso de IA | Nenhum, pontual, diário |
+| Dor principal | O que o roadmap dele pede e trava |
+
+A frente de cada um sai do mapa, não de um organograma pronto:
+
+| Perfil | Frente natural no DS |
+|---|---|
+| Perto do código | Code Connect, Storybook, revisão do pacote com o ponto técnico |
+| Forte em Figma | Estrutura da biblioteca, variantes, auditoria de detach |
+| Perto do marketing | Tokens de marca e a ponte com o time de marketing |
+| Perto do usuário | Padrões de UX writing, pesquisa nos fluxos de atividades |
+
+Cada um fica com o que o próprio roadmap já pede e com o que ele faz melhor.
+
+Marketing entra pela borda. Os mesmos tokens de marca alimentam produto e
+criativos. Se houver demanda, nasce uma biblioteca de peças prontas, para
+escolher e publicar, igual ao que fizemos na Flovi. É uma linha no slide, não
+uma seção. A Q2 é sobre o produto.
 
 ### Como o trabalho acontece
 
@@ -208,6 +298,6 @@ propõe. Ferramentas usadas, em quais etapas, o que foi feito com o resultado.
 
 ## Fora do escopo da Q2
 
-- Marketing e criativos. Vale uma linha só, se couber: os tokens de marca
-  alimentam produto e marketing da mesma fonte.
-- Seleção de pessoas. Os 4 designers já estão no cargo.
+- Marketing e criativos como frente própria. Entram só pela linha do slide 4.
+- Seleção de pessoas. Os 4 designers já estão no cargo. O que se decide é a
+  frente de cada um, pelo mapa de perfil.
