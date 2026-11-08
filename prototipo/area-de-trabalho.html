@@ -81,8 +81,15 @@
   .secao .estado-vazio { padding: var(--space-4) var(--space-3); }
 
   /* Filtros e alternância na mesma linha: a barra do DS tem largura total, aqui ela divide a linha. */
-  .area-topo .barra-filtros { flex: 1 1 auto; width: auto; }
-  .area-direita { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin-left: auto; min-height: var(--component-control-height); }
+  /* Uma linha só: os filtros encolhem entre p e m, e o lado direito nunca quebra. */
+  .area-topo { flex-wrap: nowrap; }
+  .area-topo .barra-filtros { flex: 1 1 auto; flex-wrap: nowrap; width: auto; }
+  .area-topo .barra-filtros .campo { flex: 1 1 0; width: auto; min-width: var(--component-field-width-p); max-width: var(--component-field-width-m); }
+  .area-direita { display: flex; flex: 0 0 auto; flex-wrap: nowrap; align-items: center; gap: var(--space-3); margin-left: auto; min-height: var(--component-control-height); }
+  @media (max-width: 1100px) {
+    .area-topo, .area-topo .barra-filtros, .area-direita { flex-wrap: wrap; }
+    .area-topo .barra-filtros .campo { max-width: none; }
+  }
   /* Alternância de formato, a mesma de Contatos. */
   .formato {
     display: inline-flex;
