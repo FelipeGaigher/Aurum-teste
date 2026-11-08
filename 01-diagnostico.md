@@ -9,9 +9,9 @@ Legenda:
 - `> decisão:` algo que já fechamos na conversa.
 - `> aberto:` algo que ainda depende de você.
 
-> decisão: quatro problemas na gestão de atividades e um no funil de
-> entrada. O recorte do enunciado manda, e o funil é o achado mais forte
-> que temos. Default assumido na conversa de 07/11.
+> decisão: os cinco problemas ficam na gestão de atividades. Cadastro,
+> onboarding e Contatos saem da Q1 e vivem no backlog, para a Parte B.
+> Decisão de Felipe em 07/11, que reverteu o default anterior.
 
 ---
 
@@ -27,9 +27,9 @@ mostra isso.**
 |---|---|---|---|
 | P1 | O prazo não domina a tela que existe para ele | Hierarquia e densidade | 14, 17 a 20 |
 | P2 | Dois nomes e três lugares para a mesma atividade | Arquitetura de informação | 10, 11, 13, 14 |
-| P3 | Criar uma atividade interrompe quem cria | Usabilidade de fluxo | 14, 15, 16, 22 |
-| P4 | Três azuis, três cinzas, três rótulos, dois focos | Consistência e acessibilidade | 03, 04, 07, 11, 21 a 24 |
-| P5 | O funil de entrada falha em silêncio | Usabilidade e feedback | 01 a 10 |
+| P3 | Criar uma atividade interrompe quem cria | Usabilidade de fluxo | 14, 15, 16 |
+| P4 | Três azuis, três cinzas, três jeitos de criar | Consistência | 11, 13, 14, 17 a 20 |
+| P5 | A moldura compete com o trabalho | Hierarquia e ruído | 11, 13 |
 
 Separar sintoma de causa é o que a banca pede. Cada slide de problema traz
 o sintoma visto, a causa provável e o porquê de importar.
@@ -86,7 +86,6 @@ Sintoma:
 - Quatro campos obrigatórios para uma tarefa simples. "Lista de tarefas" é
   obrigatório com um só valor possível. Tela 14.
 - "Envolver mais pessoas" abre um popover dentro do modal. Tela 16.
-- Criar etiqueta leva para outra tela e abandona o cadastro. Tela 22.
 - Data no passado só pergunta "deseja continuar?", sem motivo nem opção
   de salvar como concluída. Tela 15.
 
@@ -98,7 +97,7 @@ Por que importa: criar atividade é a ação mais repetida do dia. Atrito
 pequeno vezes trinta vezes ao dia vira o motivo de a equipe anotar prazo
 fora do sistema.
 
-### P4. Três azuis, três cinzas, três rótulos, dois focos
+### P4. Três azuis, três cinzas, três jeitos de criar
 
 Sintoma, medido no inventário:
 
@@ -106,39 +105,42 @@ Sintoma, medido no inventário:
   `#0255c4`, na mesma tela. Tela 11.
 - Cinza de texto `#202124` do Material, `#6c757d` do Bootstrap, divisor
   `#dee2e6` do Mantine. Três bibliotecas.
-- Rótulo acima no cadastro, placeholder no onboarding, caixa alta à direita
-  no contato. Telas 04, 07 e 12.
-- Anel de foco preto no site, azul no produto. Telas 04 e 07.
-- Botão em caixa baixa no site, caixa alta no produto. Campos sem grade de
-  largura. Telas 22 a 24.
+- Três jeitos de criar. "Adicionar primeira tarefa" em caixa alta.
+  "Adicionar atividade" com seta de menu. Um "+" redondo na Agenda.
+  Telas 11, 13 e 17.
+- Seletor nativo do navegador no widget, customizado no modal. Telas 11
+  e 14.
+- A mesma cor azul para link, número de estatística e botão. Tela 11.
 
 Causa provável: não existe fonte única. Cada time puxou a biblioteca que
 tinha à mão. É a terceira restrição do briefing, com hex.
 
 Por que importa: cada divergência é um reaprendizado pequeno para o
-usuário e um custo de manutenção para o time. E sem token de foco, quem
-navega por teclado perde o rastro.
+usuário e um custo de manutenção para o time. Quando tudo é azul, nada
+parece clicável.
 
 ---
 
 ## Slide 4 — P5 e os princípios
 
-### P5. O funil de entrada falha em silêncio
+### P5. A moldura compete com o trabalho
 
 Sintoma:
 
-- Com bloqueador de anúncios, o botão "Continuar" fica cinza e sem
-  mensagem. O formulário depende de script de terceiro. Telas 01 e 02.
-- Barra de progresso sem contagem no site, stepper com rótulo no produto.
-  Telas 03 e 05.
-- A confirmação da OAB não tem saída para quem errou. O limite de 40
-  processos aparece só no fim. Telas 08 e 10.
+- Faixa de campanha com contador regressivo no topo do produto logado,
+  em toda tela. Tela 11.
+- Três chamadas comerciais no cabeçalho: selo "1 ano grátis", botão
+  verde "Contratar" e a faixa. Tela 11.
+- "Conheça as IAs" com cor própria e fundo lilás no menu. A IA nasce fora
+  do padrão. Telas 11 e 13.
+- Estatísticas da coluna direita em azul de link, sem ação por trás.
+  Tela 11.
 
-Causa provável: site e produto são de times diferentes, e o funil cruza a
-fronteira sem dono.
+Causa provável: a moldura não tem dono de produto. Marketing e IA entram
+nela sem passar por um padrão.
 
-Por que importa: é a primeira impressão, e é aquisição. Quem não entra não
-vira cliente, e ninguém fica sabendo por quê.
+Por que importa: quem vive no produto o dia inteiro lê o ruído trinta
+vezes. E o briefing pede que a IA nasça no mesmo padrão do resto.
 
 ### Princípios de design
 
@@ -170,7 +172,7 @@ como".
 | P2: "tarefa" e "atividade" confundem | Chamados de suporte com "onde está" ou "não achei". Teste de cinco segundos com a tela da Agenda | Suporte, pesquisa |
 | P3: o modal de criar tem abandono | Funil do modal: aberto, preenchido, salvo. Tempo até salvar. Quantas atividades nascem com data passada e por quê | Analytics, suporte |
 | P4: a inconsistência custa reaprendizado | Não precisa de usuário para provar que existe: o inventário já prova. Medir o custo por bugs visuais abertos e por tempo de handoff | Backlog, time de design |
-| P5: o funil perde quem usa bloqueador | Taxa de conversão da página por navegador e extensão. Confirmar com marketing se o teste A/B está ativo | Analytics de marketing |
+| P5: o ruído da moldura custa atenção | Cliques na faixa e no X dela por usuário ativo. Conversão da faixa dentro do produto contra o custo em CSAT, com o marketing | Analytics de marketing, CSAT |
 
 A regra: hipótese que custa caro corrigir se confirma antes. Hipótese que
 se corrige por token segue direto para o plano da Q2.

@@ -47,7 +47,24 @@ Legenda:
 
 ## A decisão difícil
 
-> aberto: escolher entre as duas candidatas depois de ver o Kanban real.
+> decisão: candidata 2. O prazo fatal fica acima do título do card, como
+> o dado dominante. Default assumido na conversa de 07/11, sem o Kanban
+> real, que não apareceu em nenhuma tela do trial.
+
+O trade-off escrito para o slide:
+
+O card de um Kanban comum abre pelo título. O nosso abre pelo prazo. Isso
+contraria o hábito de quem vem do Trello e deixa o título em segundo
+plano. Escolhi assim porque o escritório não perde uma tarefa por não
+saber o nome dela. Perde por não ver a data. A primeira restrição do
+briefing é essa. O custo é uma estranheza na primeira semana. O ganho é
+que o olho encontra o vencido antes de ler qualquer coisa. Para reduzir o
+custo, o título continua na segunda linha, em peso médio. O prazo leva
+texto e cor, nunca só cor.
+
+O que eu não escolhi: manter a moldura criticada. Isso era convivência
+pura, e a convivência já está garantida pela regra da moldura no slide 4
+da Q2. Não precisava virar o trade-off da tela.
 
 Candidata 1. Manter a moldura atual, com o menu lateral e o cabeçalho que
 existem. Isso mesmo sabendo que eles carregam os problemas da tela 11. O ganho

@@ -8,6 +8,9 @@ Documentos-fonte da atividade prática. Cada questão tem um arquivo.
 - `01-melhorias.md` — backlog de ideias de melhoria, com tela de origem e questão que alimentam
 - `referencias/` — telas de outros produtos e resumos usados como referência, não como evidência
 - `01-diagnostico.md` — Q1, derivada do registro de telas e do inventário
+- `01-slides-q1.html` — Q1, os 5 slides em HTML para reproduzir no Figma
+- `03-componentes.html` — Q3, os 5 componentes com estados e o token de cada propriedade
+- `prototipo/` — Q3, o Kanban navegável, o painel do redesign e o verificador
 - `02-plano-ds.md` — Q2, documento-fonte
 - `02-slides-q2.html` — Q2, os 6 slides mais o fechamento de IA, em HTML para reproduzir no Figma
 - `03-tela.md` — Q3
