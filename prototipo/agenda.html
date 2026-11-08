@@ -182,7 +182,7 @@
     flex-direction: column;
     gap: var(--space-3);
     min-width: 0;
-    max-height: var(--grade-altura, calc(100vh - var(--component-header-height) - 2 * var(--space-5)));
+    max-height: var(--grade-altura, calc(var(--altura-da-tela) - var(--component-header-height) - 2 * var(--space-5)));
     overflow-x: hidden;
     overflow-y: auto;
     scrollbar-gutter: stable;
@@ -788,8 +788,9 @@
   const gradeEl = document.getElementById('grade-agenda');
   function ajustarAltura() {
     document.documentElement.style.removeProperty('--grade-altura');
+    // Topo e janela em pixel de tela; a altura vai para o estilo em pixel de CSS.
     const topo = gradeEl.getBoundingClientRect().top + window.scrollY;
-    const sobra = window.innerHeight - topo - 32;
+    const sobra = (window.innerHeight - topo) / DS.escalaDaPagina() - 32;
     document.documentElement.style.setProperty('--grade-altura', `${Math.max(320, Math.round(sobra))}px`);
   }
   window.addEventListener('resize', ajustarAltura);

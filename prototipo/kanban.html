@@ -338,6 +338,12 @@ body {
   line-height: var(--font-leading-base);
 }
 
+/* A tela inteira a 90%: os tokens são em px, e o tamanho da fonte na raiz não escala nada. Na impressão, tamanho real.
+   O zoom também encolhe vh; a altura da tela divide pela escala para voltar a ocupar a janela. */
+:root { --escala-da-pagina: 1; --altura-da-tela: calc(100vh / var(--escala-da-pagina)); }
+@media screen { :root { --escala-da-pagina: 0.9; } }
+body { zoom: var(--escala-da-pagina); }
+
 :focus-visible {
   outline: var(--focus-width) solid var(--color-focus);
   outline-offset: var(--focus-width);
@@ -499,14 +505,14 @@ svg.icone {
 .corpo {
   display: grid;
   grid-template-columns: var(--component-sidebar-width) minmax(0, 1fr);
-  min-height: calc(100vh - var(--component-header-height));
+  min-height: calc(var(--altura-da-tela) - var(--component-header-height));
 }
 
 .menu-lateral {
   position: sticky;
   top: var(--component-header-height);
   align-self: start;
-  height: calc(100vh - var(--component-header-height));
+  height: calc(var(--altura-da-tela) - var(--component-header-height));
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -592,7 +598,7 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: calc(100vh - var(--component-header-height));
+  min-height: calc(var(--altura-da-tela) - var(--component-header-height));
   padding: var(--space-5) var(--space-5) var(--space-6);
 }
 
@@ -2179,13 +2185,19 @@ function atualizarResumoDaSprint() {
   sprintResumo.textContent = 'Sprint ' + numero + ' de ' + SPRINTS.length + (numero === SPRINT_ATUAL ? ', atual. ' : '. ') + fase.nome + ', ' + fase.periodo.charAt(0).toLowerCase() + fase.periodo.slice(1) + '. ' + visiveis + (visiveis === 1 ? ' história' : ' histórias') + ' no quadro.';
 }
 
+// O body tem zoom (bloco de estilo acima). getBoundingClientRect e innerHeight vêm em pixel de tela;
+// estilo e offsetHeight, em pixel de CSS. O mesmo helper de DS.escalaDaPagina, que o Kanban não carrega.
+function escalaDaPagina() {
+  return parseFloat(getComputedStyle(document.body).zoom) || 1;
+}
+
 // O quadro ocupa a altura da tela, como a grade da Agenda; as colunas rolam por dentro.
 function ajustarAlturaDoQuadro() {
   const rodape = document.getElementById('rodape-demo');
   const conteudo = document.getElementById('conteudo');
   const topo = quadro.getBoundingClientRect().top + window.scrollY;
   const abaixo = rodape.offsetHeight + parseFloat(getComputedStyle(rodape).marginTop) + parseFloat(getComputedStyle(conteudo).paddingBottom);
-  quadro.style.setProperty('--quadro-altura', Math.max(320, window.innerHeight - topo - abaixo) + 'px');
+  quadro.style.setProperty('--quadro-altura', Math.max(320, (window.innerHeight - topo) / escalaDaPagina() - abaixo) + 'px');
 }
 window.addEventListener('resize', ajustarAlturaDoQuadro);
 
@@ -2308,12 +2320,15 @@ function criarSeletor({ id, opcoes, valor, aoEscolher }) {
 
   // Abaixo do botão; acima só quando embaixo não cabe e em cima há mais espaço.
   function posicionar() {
-    const caixa = botao.getBoundingClientRect();
+    const e = escalaDaPagina();
+    const r = botao.getBoundingClientRect();
+    const caixa = { top: r.top / e, bottom: r.bottom / e, left: r.left / e, width: r.width / e };
+    const alturaDaTela = innerHeight / e;
     lista.style.setProperty('--seletor-esquerda', caixa.left + 'px');
     lista.style.setProperty('--seletor-largura', caixa.width + 'px');
     const margem = parseFloat(getComputedStyle(lista).marginTop);
     const altura = lista.offsetHeight + 2 * margem;
-    const cabeAbaixo = caixa.bottom + altura <= innerHeight || innerHeight - caixa.bottom >= caixa.top;
+    const cabeAbaixo = caixa.bottom + altura <= alturaDaTela || alturaDaTela - caixa.bottom >= caixa.top;
     lista.style.setProperty('--seletor-topo', (cabeAbaixo ? caixa.bottom : caixa.top - altura) + 'px');
   }
 

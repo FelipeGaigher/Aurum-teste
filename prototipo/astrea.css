@@ -361,6 +361,12 @@ body {
   line-height: var(--font-leading-base);
 }
 
+/* A tela inteira a 90%: os tokens são em px, e o tamanho da fonte na raiz não escala nada. Na impressão, tamanho real.
+   O zoom também encolhe vh; a altura da tela divide pela escala para voltar a ocupar a janela. */
+:root { --escala-da-pagina: 1; --altura-da-tela: calc(100vh / var(--escala-da-pagina)); }
+@media screen { :root { --escala-da-pagina: 0.9; } }
+body { zoom: var(--escala-da-pagina); }
+
 :focus-visible, .is-foco {
   outline: var(--focus-width) solid var(--color-focus);
   outline-offset: var(--focus-width);
@@ -522,14 +528,14 @@ svg.icone {
 .corpo {
   display: grid;
   grid-template-columns: var(--component-sidebar-width) minmax(0, 1fr);
-  min-height: calc(100vh - var(--component-header-height));
+  min-height: calc(var(--altura-da-tela) - var(--component-header-height));
 }
 
 .menu-lateral {
   position: sticky;
   top: var(--component-header-height);
   align-self: start;
-  height: calc(100vh - var(--component-header-height));
+  height: calc(var(--altura-da-tela) - var(--component-header-height));
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -627,7 +633,7 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: calc(100vh - var(--component-header-height));
+  min-height: calc(var(--altura-da-tela) - var(--component-header-height));
   padding: var(--space-5) var(--space-5) var(--space-6);
 }
 
@@ -1767,7 +1773,7 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .painel-detalhe[data-oculto] { flex: none; margin-left: var(--space-2); }
 .painel-detalhe-card {
   display: grid;
-  max-height: calc(100vh - var(--component-header-height) - var(--space-6));
+  max-height: calc(var(--altura-da-tela) - var(--component-header-height) - var(--space-6));
   overflow-y: auto;
   background-color: var(--color-bg-surface);
   border: var(--border-width) solid var(--color-border-default);
@@ -1804,7 +1810,7 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
   display: flex;
   flex: 0 0 var(--space-4);
   justify-content: center;
-  height: calc(100vh - var(--component-header-height) - var(--space-6));
+  height: calc(var(--altura-da-tela) - var(--component-header-height) - var(--space-6));
   border-radius: var(--radius);
   cursor: col-resize;
   touch-action: none;
@@ -2029,7 +2035,7 @@ button.stepper-ir:hover .stepper-nome, button.stepper-ir.is-hover .stepper-nome 
 .qa-botao:hover { color: var(--color-action); background-color: var(--color-bg-subtle); }
 .qa-botao.is-selecionado { color: var(--color-action); font-weight: var(--font-weight-semibold); background-color: var(--color-bg-subtle); box-shadow: inset var(--focus-width) 0 0 var(--color-action); }
 .qa-botao-numero { font-size: var(--font-size-label); }
-.qa-divisor { position: sticky; top: var(--qa-topo); height: calc(100vh - var(--qa-topo) - var(--space-4)); cursor: col-resize; touch-action: none; user-select: none; }
+.qa-divisor { position: sticky; top: var(--qa-topo); height: calc(var(--altura-da-tela) - var(--qa-topo) - var(--space-4)); cursor: col-resize; touch-action: none; user-select: none; }
 .qa-divisor::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: var(--focus-width); background-color: var(--color-border-default); transform: translateX(-50%); }
 .qa-divisor:hover::before, .qa-divisor:focus-visible::before { background-color: var(--color-action); }
 .qa-botao:focus-visible, .qa-divisor:focus-visible, .qa-miniatura:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--border-width); }

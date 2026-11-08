@@ -129,6 +129,23 @@
     return grupo;
   }
 
+  // O body tem zoom (astrea.css). getBoundingClientRect, innerWidth, innerHeight e clientX vêm em pixel
+  // de tela; estilo, offsetWidth e clientWidth, em pixel de CSS. Pixel de tela dividido pela escala dá pixel de CSS.
+  function escalaDaPagina() {
+    return parseFloat(getComputedStyle(document.body).zoom) || 1;
+  }
+
+  function caixaEmCss(el) {
+    const e = escalaDaPagina();
+    const r = el.getBoundingClientRect();
+    return { top: r.top / e, bottom: r.bottom / e, left: r.left / e, right: r.right / e, width: r.width / e, height: r.height / e };
+  }
+
+  function telaEmCss() {
+    const e = escalaDaPagina();
+    return { largura: window.innerWidth / e, altura: window.innerHeight / e };
+  }
+
   // Menu dentro de contêiner que rola (tabela larga, painel) estica o contêiner e cria barras.
   // Fora dele, a lista é posicionada em relação à tela, e some quando a página rola.
   function soltarDoQuadro(raiz, gatilho, lista) {
@@ -141,10 +158,10 @@
     const preso = quadro && quadro !== document.body;
     lista.classList.toggle('is-solto', preso);
     if (!preso) { lista.style.top = ''; lista.style.left = ''; return false; }
-    const r = gatilho.getBoundingClientRect();
+    const r = caixaEmCss(gatilho);
     lista.style.top = `${r.bottom}px`;
     lista.style.left = `${r.left}px`;
-    if (lista.getBoundingClientRect().right > window.innerWidth - MARGEM_DA_TELA_PX) {
+    if (caixaEmCss(lista).right > telaEmCss().largura - MARGEM_DA_TELA_PX) {
       lista.style.left = `${Math.max(MARGEM_DA_TELA_PX, r.right - lista.offsetWidth)}px`;
     }
     const fecharAoRolar = () => { lista.hidden = true; gatilho.setAttribute('aria-expanded', 'false'); quadro.removeEventListener('scroll', fecharAoRolar); window.removeEventListener('scroll', fecharAoRolar, true); };
@@ -165,7 +182,7 @@
     function abrir() {
       lista.hidden = false;
       const solto = soltarDoQuadro(raiz, gatilho, lista);
-      lista.classList.toggle('is-direita', !solto && lista.getBoundingClientRect().right > window.innerWidth);
+      lista.classList.toggle('is-direita', !solto && caixaEmCss(lista).right > telaEmCss().largura);
       gatilho.setAttribute('aria-expanded', 'true');
       document.addEventListener('click', fora);
       itens()[0].focus();
@@ -402,11 +419,12 @@
 
   // Abaixo da âncora; acima só quando embaixo não cabe e em cima há mais espaço.
   function posicionar({ ancora, painel }) {
-    const caixa = ancora.getBoundingClientRect();
+    const caixa = caixaEmCss(ancora);
+    const tela = telaEmCss();
     const margem = parseFloat(getComputedStyle(painel).marginTop);
     const altura = painel.offsetHeight + 2 * margem;
-    const cabeAbaixo = caixa.bottom + altura <= window.innerHeight || window.innerHeight - caixa.bottom >= caixa.top;
-    const limite = window.innerWidth - painel.offsetWidth - MARGEM_DA_TELA_PX;
+    const cabeAbaixo = caixa.bottom + altura <= tela.altura || tela.altura - caixa.bottom >= caixa.top;
+    const limite = tela.largura - painel.offsetWidth - MARGEM_DA_TELA_PX;
     painel.style.setProperty('--flutuante-esquerda', `${Math.max(MARGEM_DA_TELA_PX, Math.min(caixa.left, limite))}px`);
     painel.style.setProperty('--flutuante-largura', `${caixa.width}px`);
     painel.style.setProperty('--flutuante-topo', `${cabeAbaixo ? caixa.bottom : caixa.top - altura}px`);
@@ -2018,7 +2036,7 @@
       el.classList.add('is-arrastando');
     });
     el.addEventListener('pointermove', (e) => {
-      if (inicio) definir(inicio.largura + sentido * (inicio.x - e.clientX));
+      if (inicio) definir(inicio.largura + sentido * (inicio.x - e.clientX) / escalaDaPagina());
     });
     function soltar(e) {
       if (!inicio) return;
@@ -2770,6 +2788,6 @@
     toast, faixaAviso, dialogo, tooltip, progresso, skeleton, estadoVazio, upsell,
     descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade, cardAtividade, cardContato, cardRegistro, paginacao,
     abas, trilha, barraFiltros, painelLateral, painelNotificacoes, barraAcoes, stepper, painelCriarAtividade,
-    painelDetalhe, divisorRedimensionavel, botaoCopiar,
+    painelDetalhe, divisorRedimensionavel, botaoCopiar, escalaDaPagina,
   };
 })();
