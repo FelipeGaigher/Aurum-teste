@@ -59,6 +59,7 @@
     list-style: none;
   }
   .detalhe-numero { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); }
+  .celula-numero { display: inline-flex; align-items: center; gap: var(--space-1); white-space: nowrap; }
   .detalhe-anotacoes-titulo { margin: 0 0 var(--space-2); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
   .tabela .numero-processo, .ficha-leitura .numero-processo { white-space: nowrap; font-variant-numeric: tabular-nums; }
   .texto-apagado { color: var(--color-text-muted); }
@@ -207,14 +208,23 @@
   const fichaDoProcesso = (numero) => `processos.html?ficha=${PROCESSOS.findIndex((p) => p.numero === numero) + 1}`;
 
   // PA-11 e PA-38: o número é texto, e copiar é um botão de ícone com dica.
+  // O DS ainda não exporta botaoCopiar: esta cópia segue o mesmo contrato (data-acao, aviso, volta em 2 s).
   function copiarNumero(numero) {
     const botao = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
+    botao.dataset.acao = 'copiar-numero';
     const envolto = DS.tooltip({ alvo: botao, rotulo: 'Copiar número' });
     const anuncio = elemento('span', 'visualmente-oculto');
     anuncio.setAttribute('role', 'status');
+    let relogio;
     botao.addEventListener('click', () => {
       const area = navigator.clipboard;
-      const dizer = (texto) => { anuncio.textContent = texto; envolto.querySelector('.dica').textContent = texto; };
+      const dica = envolto.querySelector('.dica');
+      const dizer = (texto) => {
+        anuncio.textContent = texto;
+        dica.textContent = texto;
+        clearTimeout(relogio);
+        relogio = setTimeout(() => { dica.textContent = 'Copiar número'; anuncio.textContent = ''; }, 2000);
+      };
       if (!area) { dizer('Não foi possível copiar'); return; }
       area.writeText(numero).then(() => dizer('Número copiado'), () => dizer('Não foi possível copiar'));
     });
@@ -222,8 +232,12 @@
     return envolto;
   }
 
+  // Na tabela, o número leva à ficha do processo e copia ao lado; sem processo, texto apagado.
   function numeroDoProcesso(numero) {
-    return numero ? elemento('span', 'numero-processo', numero) : elemento('span', 'texto-apagado', 'Sem processo');
+    if (!numero) return elemento('span', 'texto-apagado', 'Sem processo');
+    const el = elemento('span', 'celula-numero');
+    el.append(link(numero, fichaDoProcesso(numero), 'numero-processo'), copiarNumero(numero));
+    return el;
   }
 
   // --- formulário de adicionar (painel lateral) ----------------------------------
@@ -816,7 +830,7 @@
         'Adicionar timesheet', foraDoPrototipo('Lançar horas fica fora do protótipo.')],
       ['Documentos', valor(plural(a.documentos, 'documento', 'documentos')),
         'Adicionar documento', foraDoPrototipo('Enviar documentos fica fora do protótipo.')],
-      ['Tarefas e eventos', [tarefas], 'Adicionar tarefa ou evento', (origem) => DS.painelCriarAtividade({ tipo: 'tarefa' }).abrir(origem)],
+      ['Tarefas e eventos', [tarefas], 'Adicionar tarefa ou evento', (origem) => DS.painelCriarAtividade({ tipo: 'tarefa', processo: a.processo || undefined }).abrir(origem)],
     ];
     const direita = elemento('div', 'ficha-coluna');
     lateral.forEach(([titulo, corpo, rotulo, aoClicar]) => {

@@ -152,6 +152,7 @@
 
   /* Painel de detalhe ao lado da lista: atividades do processo escolhido. */
   .detalhe-numero { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); }
+  .celula-numero { display: inline-flex; align-items: center; gap: var(--space-1); white-space: nowrap; }
   .detalhe-atividades-titulo { margin: 0 0 var(--space-2); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
   .detalhe-atividades-lista { margin: 0; padding: 0; list-style: none; }
   .detalhe-atividade { display: grid; justify-items: start; gap: var(--space-1); padding: var(--space-2) 0; }
@@ -284,19 +285,34 @@
   }
 
   // PA-11 e PA-38: o número é texto, e copiar é um botão de ícone com dica.
+  // O DS ainda não exporta botaoCopiar: esta cópia segue o mesmo contrato (data-acao, aviso, volta em 2 s).
   function copiarNumero(numero) {
     const botao = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
+    botao.dataset.acao = 'copiar-numero';
     const envolto = DS.tooltip({ alvo: botao, rotulo: 'Copiar número' });
     const anuncio = elemento('span', 'visualmente-oculto');
     anuncio.setAttribute('role', 'status');
+    let relogio;
     botao.addEventListener('click', () => {
       const area = navigator.clipboard;
-      const dizer = (texto) => { anuncio.textContent = texto; envolto.querySelector('.dica').textContent = texto; };
+      const dica = envolto.querySelector('.dica');
+      const dizer = (texto) => {
+        anuncio.textContent = texto;
+        dica.textContent = texto;
+        clearTimeout(relogio);
+        relogio = setTimeout(() => { dica.textContent = 'Copiar número'; anuncio.textContent = ''; }, 2000);
+      };
       if (!area) { dizer('Não foi possível copiar'); return; }
       area.writeText(numero).then(() => dizer('Número copiado'), () => dizer('Não foi possível copiar'));
     });
     envolto.append(anuncio);
     return envolto;
+  }
+
+  function numeroComCopia(numero) {
+    const el = elemento('span', 'celula-numero');
+    el.append(elemento('span', 'numero-processo', numero), copiarNumero(numero));
+    return el;
   }
 
   function cabecalhoDeSegundoNivel(titulo) {
@@ -395,7 +411,7 @@
       return {
         titulo: link(r.titulo, `${PAGINA}?ficha=${r.id}`),
         tipo: DS.tag({ rotulo: TIPOS[r.tipo] }),
-        numero: r.numero ? elemento('span', 'numero-processo', r.numero) : '',
+        numero: r.numero ? numeroComCopia(r.numero) : '',
         cliente: r.cliente,
         responsavel,
         movimento: movimento(r.movimentoEmDias),
@@ -462,7 +478,7 @@
       const adicionarAtividade = DS.botao({ variante: 'secundario', iconeEsquerda: 'mais', rotulo: 'Adicionar atividade' });
       adicionarAtividade.dataset.abrePainel = 'atividade';
       adicionarAtividade.setAttribute('aria-haspopup', 'dialog');
-      adicionarAtividade.addEventListener('click', () => DS.painelCriarAtividade({ tipo: 'tarefa' }).abrir(adicionarAtividade));
+      adicionarAtividade.addEventListener('click', () => DS.painelCriarAtividade({ tipo: 'tarefa', processo: r.numero || undefined }).abrir(adicionarAtividade));
       return {
         titulo: r.titulo, chips: [TIPOS[r.tipo], 'Ativo'], destaque,
         linhas: [

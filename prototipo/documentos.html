@@ -52,6 +52,7 @@
   .resumo dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
   .resumo dd { margin: 0; overflow-wrap: anywhere; }
   .passo-nota { margin: 0; color: var(--color-text-muted); }
+  .celula-numero { display: inline-flex; align-items: center; gap: var(--space-1); white-space: nowrap; }
   .documentos-aviso:empty { display: none; }
   .documentos-aviso { margin-bottom: var(--space-4); }
 </style>
@@ -412,12 +413,50 @@
   });
   document.getElementById('lista').append(detalhe.casca);
 
+  // O DS ainda não exporta botaoCopiar: esta cópia segue o mesmo contrato (data-acao, aviso, volta em 2 s).
+  function copiarNumero(numero) {
+    const botao = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
+    botao.dataset.acao = 'copiar-numero';
+    const envolto = DS.tooltip({ alvo: botao, rotulo: 'Copiar número' });
+    const anuncio = document.createElement('span');
+    anuncio.className = 'visualmente-oculto';
+    anuncio.setAttribute('role', 'status');
+    let relogio;
+    botao.addEventListener('click', () => {
+      const area = navigator.clipboard;
+      const dica = envolto.querySelector('.dica');
+      const dizer = (texto) => {
+        anuncio.textContent = texto;
+        dica.textContent = texto;
+        clearTimeout(relogio);
+        relogio = setTimeout(() => { dica.textContent = 'Copiar número'; anuncio.textContent = ''; }, 2000);
+      };
+      if (!area) { dizer('Não foi possível copiar'); return; }
+      area.writeText(numero).then(() => dizer('Número copiado'), () => dizer('Não foi possível copiar'));
+    });
+    envolto.append(anuncio);
+    return envolto;
+  }
+
+  // Número de processo leva à ficha (pelo índice em DADOS.PROCESSOS) e copia ao lado; contato fica texto.
+  function processoOuContato(d) {
+    if (!d.processo) return d.contato;
+    const a = document.createElement('a');
+    a.className = 'numero-processo';
+    a.href = `processos.html?ficha=${PROCESSOS.findIndex((p) => p.numero === d.processo) + 1}`;
+    a.textContent = d.processo;
+    const el = document.createElement('span');
+    el.className = 'celula-numero';
+    el.append(a, copiarNumero(d.processo));
+    return el;
+  }
+
   function desenharTabela(itens) {
     const quadro = DS.tabela({
       rotulo: 'Documentos',
       colunas: [['nome', 'Nome'], ['tipo', 'Tipo'], ['ligado', 'Processo ou contato'], ['enviadoPor', 'Enviado por'], ['data', 'Data']],
       linhas: itens.map((d) => ({
-        nome: d.nome, tipo: d.tipo ? DS.tag({ rotulo: d.tipo }) : '', ligado: d.processo || d.contato,
+        nome: d.nome, tipo: d.tipo ? DS.tag({ rotulo: d.tipo }) : '', ligado: processoOuContato(d),
         enviadoPor: d.enviadoPor, data: dataBr(d.enviadoEm),
       })),
     });
