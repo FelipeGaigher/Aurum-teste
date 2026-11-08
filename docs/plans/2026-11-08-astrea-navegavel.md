@@ -1558,7 +1558,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: `DS.abas`, `DS.estadoVazio`, `DS.dialogo` e `DADOS.ATIVIDADES`.
 - Produces: `prototipo/alertas.html` completa.
 
-- [ ] **Step 1: Implementar**
+- [x] **Step 1: Implementar**
 
 - Nove abas na ordem do Astrea.
 - Card com Visualizar, Concluir, Reagendar e Descartar.
@@ -1569,7 +1569,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 Esperado: as nove abas trocam sem recarregar.
 
-- [ ] **Step 2: Executar e confirmar que passa**
+- [x] **Step 2: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/alertas.html
@@ -1578,7 +1578,7 @@ node scripts/verificar-app.js --rf RF-07,RF-12,RF-15 --paginas alertas.html
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 3: Entregar**
+- [x] **Step 3: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 

@@ -6,12 +6,287 @@
 <title>Alertas, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
+<script src="dados.js"></script>
+<style>
+  .alertas-aviso:empty { display: none; }
+  .alertas-aviso { margin-bottom: var(--space-4); }
+
+  /* PA-81: uma barra só, entre as abas e o painel, igual em todas as abas. */
+  .alertas .barra-filtros { padding-bottom: var(--space-3); border-bottom: var(--border-width) solid var(--color-border-default); }
+
+  .lista-alertas { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+  .alerta {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--component-card-bg);
+    border: var(--border-width) solid var(--color-border-default);
+    border-radius: var(--radius-card);
+  }
+  .alerta-topo { display: flex; align-items: flex-start; gap: var(--space-3); min-width: 0; }
+  .alerta-texto { display: grid; flex: 1; gap: var(--space-1); min-width: 0; }
+  .alerta-motivo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-label);
+  }
+  .alerta-titulo {
+    margin: 0;
+    font-size: var(--font-size-emphasis);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--font-leading-tight);
+    overflow-wrap: anywhere;
+  }
+  .alerta-expandir .icone { transition: transform 120ms ease; }
+  .alerta-expandir[aria-expanded="true"] .icone { transform: rotate(180deg); }
+  @media (prefers-reduced-motion: reduce) { .alerta-expandir .icone { transition: none; } }
+
+  .detalhes {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+  }
+  .detalhes dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
+  .detalhes dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); min-width: 0; margin: 0; }
+  .alerta .grupo-botoes { flex-wrap: wrap; }
+</style>
 </head>
 <body data-pagina="alertas.html" data-titulo="Alertas">
 <div class="corpo">
   <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
+    <div class="alertas-aviso" id="alertas-aviso"></div>
+    <div class="alertas" id="alertas"></div>
   </main>
 </div>
+
+<script>
+(function () {
+  // As nove abas na ordem do Astrea (varredura, seção 5). "Todos" reúne as outras.
+  const ABAS = [
+    ['importantes', 'Importantes'], ['todos', 'Todos'], ['andamentos', 'Andamentos'],
+    ['processos', 'Processos'], ['tarefas', 'Tarefas'], ['agenda', 'Agenda'],
+    ['portal', 'Portal do Cliente'], ['integracao', 'Integração'], ['outros', 'Outros'],
+  ];
+  // PA-80: uma frase de vazio para todas as abas.
+  const VAZIO = 'Nenhum alerta nesta aba.';
+  const TIPO = { tarefa: 'Tarefa', prazo: 'Prazo' };
+  const MOTIVO = { tarefa: 'Tarefa atrasada', prazo: 'Prazo atrasado' };
+  const ORDENS = [['recentes', 'Mais recentes primeiro'], ['antigos', 'Mais antigos primeiro']];
+  const REAGENDAR = [[1, 'Para amanhã'], [2, 'Para daqui a 2 dias'], [7, 'Para daqui a 7 dias']];
+
+  // O alerta nasce da atividade aberta e vencida. Tarefa e prazo moram na aba Tarefas.
+  const atividades = window.DADOS.ATIVIDADES.map((a) => ({ ...a }));
+  const descartados = new Set();
+  const expandidos = new Set();
+  let ordem = 'recentes';
+  let abaAtual = 'todos';
+
+  const emAlerta = (a) => a.status !== 'concluido' && a.prazoEmDias < 0 && MOTIVO[a.tipo] && !descartados.has(a.id);
+  const daAba = (aba) => (a) => aba === 'todos' || (aba === 'tarefas' && ['tarefa', 'prazo'].includes(a.tipo));
+  const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
+
+  function alertasDa(aba) {
+    const lista = atividades.filter(emAlerta).filter(daAba(aba));
+    // Mais recente: o que venceu há menos dias.
+    return lista.sort((x, y) => (ordem === 'recentes' ? y.prazoEmDias - x.prazoEmDias : x.prazoEmDias - y.prazoEmDias));
+  }
+
+  // --- ações -------------------------------------------------------------------
+
+  function focarPainel() {
+    const painel = document.querySelector('#alertas [role="tabpanel"]:not([hidden])');
+    if (painel) painel.focus();
+  }
+
+  function avisar(mensagem, desfazer) {
+    const vaga = document.getElementById('alertas-aviso');
+    const faixa = DS.faixaAviso({
+      tipo: 'sucesso', mensagem, fechar: true,
+      acao: { rotulo: 'Desfazer', aoClicar: () => { vaga.replaceChildren(); desfazer(); focarPainel(); } },
+    });
+    vaga.replaceChildren(faixa);
+    faixa.querySelector('button').focus();
+  }
+
+  function alterar(atividade, mudanca, mensagem) {
+    const antes = { status: atividade.status, prazoEmDias: atividade.prazoEmDias };
+    Object.assign(atividade, mudanca);
+    desenhar();
+    avisar(mensagem, () => { Object.assign(atividade, antes); desenhar(); });
+  }
+
+  // PA-78: o botão e o diálogo usam o mesmo verbo. PA-79: o texto diz só o efeito.
+  function confirmarDescarte(atividade, origem) {
+    let descartou = false;
+    const dialogo = DS.dialogo({
+      titulo: 'Descartar alerta?',
+      texto: `O alerta de "${atividade.titulo}" sai da lista. A atividade continua na Área de trabalho.`,
+      acoes: [
+        { rotulo: 'Cancelar', variante: 'secundario' },
+        { rotulo: 'Descartar', variante: 'destrutivo', aoClicar: () => { descartou = true; } },
+      ],
+      aoFechar: () => {
+        dialogo.el.remove();
+        if (!descartou) return;
+        descartados.add(atividade.id);
+        desenhar();
+        focarPainel();
+      },
+    });
+    dialogo.abrir(origem);
+  }
+
+  let painel = null;
+
+  function linhaDeDetalhe(lista, rotulo, ...conteudo) {
+    const dt = document.createElement('dt');
+    dt.textContent = rotulo;
+    const dd = document.createElement('dd');
+    dd.append(...conteudo);
+    lista.append(dt, dd);
+  }
+
+  function detalhes(a) {
+    const prazo = DS.descreverPrazo(a.prazoEmDias, a.status === 'concluido');
+    const dl = document.createElement('dl');
+    dl.className = 'detalhes';
+    linhaDeDetalhe(dl, 'Data', DS.chipPrazo(prazo));
+    linhaDeDetalhe(dl, 'Tipo', DS.tag({ rotulo: TIPO[a.tipo] }));
+    const numero = document.createElement('span');
+    numero.className = 'numero-processo';
+    numero.textContent = a.processo;
+    linhaDeDetalhe(dl, 'Processo', numero);
+    linhaDeDetalhe(dl, 'Responsável', DS.avatar({ nome: a.responsavel, mostrarNome: true }));
+    return dl;
+  }
+
+  function visualizar(a, origem) {
+    const titulo = document.createElement('p');
+    titulo.className = 'alerta-titulo';
+    titulo.textContent = a.titulo;
+    const conteudo = { titulo: TIPO[a.tipo], corpo: [titulo, detalhes(a)] };
+    if (!painel) painel = DS.painelLateral(conteudo);
+    else painel.trocar(conteudo);
+    painel.abrir(origem);
+  }
+
+  // --- desenho -----------------------------------------------------------------
+
+  function cardDeAlerta(a, aba) {
+    const prazo = DS.descreverPrazo(a.prazoEmDias);
+    const raiz = document.createElement('li');
+    raiz.className = 'alerta';
+    raiz.dataset.id = a.id;
+
+    const titulo = document.createElement('h2');
+    titulo.className = 'alerta-titulo';
+    titulo.id = `alerta-${aba}-${a.id}`;
+    titulo.textContent = a.titulo;
+    raiz.setAttribute('aria-labelledby', titulo.id);
+    const motivo = document.createElement('p');
+    motivo.className = 'alerta-motivo';
+    motivo.append(MOTIVO[a.tipo], DS.chipPrazo(prazo));
+    const texto = document.createElement('div');
+    texto.className = 'alerta-texto';
+    texto.append(motivo, titulo);
+
+    const corpo = detalhes(a);
+    corpo.id = `detalhes-${aba}-${a.id}`;
+    const aberto = expandidos.has(a.id);
+    corpo.hidden = !aberto;
+    const expandir = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'seta', rotulo: 'Mostrar detalhes' });
+    expandir.classList.add('alerta-expandir');
+    expandir.setAttribute('aria-expanded', String(aberto));
+    expandir.setAttribute('aria-controls', corpo.id);
+    expandir.addEventListener('click', () => {
+      if (expandidos.has(a.id)) expandidos.delete(a.id); else expandidos.add(a.id);
+      const agora = expandidos.has(a.id);
+      corpo.hidden = !agora;
+      expandir.setAttribute('aria-expanded', String(agora));
+      atualizarBarra();
+    });
+
+    const topo = document.createElement('div');
+    topo.className = 'alerta-topo';
+    topo.append(texto, expandir);
+
+    const ver = DS.botao({ variante: 'texto', rotulo: 'Visualizar' });
+    ver.dataset.abrePainel = '';
+    ver.addEventListener('click', () => visualizar(a, ver));
+    const concluir = DS.botao({ variante: 'secundario', iconeEsquerda: 'marca', rotulo: 'Concluir' });
+    concluir.addEventListener('click', () => alterar(a, { status: 'concluido' }, `"${a.titulo}" concluída. O alerta saiu da lista.`));
+    const reagendar = DS.menuAcoes({
+      rotulo: 'Reagendar',
+      itens: REAGENDAR.map(([dias, rotulo]) => ({
+        rotulo,
+        aoClicar: () => alterar(a, { prazoEmDias: dias },
+          `"${a.titulo}" reagendada: agora ${DS.descreverPrazo(dias).rotulo.toLowerCase()}. O alerta saiu da lista.`),
+      })),
+    });
+    const descartar = DS.botao({ variante: 'texto', rotulo: 'Descartar' });
+    descartar.dataset.abrePainel = '';
+    descartar.addEventListener('click', () => confirmarDescarte(a, descartar));
+
+    raiz.append(topo, corpo, DS.grupoBotoes([ver, concluir, reagendar, descartar]));
+    return raiz;
+  }
+
+  const ordemEl = DS.seletor({
+    rotulo: 'Ordem', opcoes: ORDENS, valor: ordem, largura: 'm',
+    aoEscolher: (valor) => { ordem = valor; desenhar(); },
+  });
+  const expandirTodos = DS.botao({ variante: 'texto', rotulo: 'Expandir todos' });
+  expandirTodos.addEventListener('click', () => {
+    const ids = alertasDa(abaAtual).map((a) => a.id);
+    const fechar = ids.length && ids.every((id) => expandidos.has(id));
+    ids.forEach((id) => (fechar ? expandidos.delete(id) : expandidos.add(id)));
+    desenhar();
+  });
+  const barra = DS.barraFiltros({ rotulo: 'Lista de alertas', itens: [ordemEl, expandirTodos] });
+
+  const conteudos = Object.fromEntries(ABAS.map(([chave]) => [chave, document.createElement('div')]));
+  const abas = DS.abas({
+    rotulo: 'Tipos de alerta', valor: abaAtual,
+    itens: ABAS.map(([chave, rotulo]) => ({ chave, rotulo, conteudo: conteudos[chave] })),
+    aoMudar: (chave) => { abaAtual = chave; atualizarBarra(); },
+  });
+  abas.querySelector('.abas-lista').after(barra.el);
+  document.getElementById('alertas').append(abas);
+  const botoesDeAba = [...abas.querySelectorAll('[role="tab"]')];
+
+  function atualizarBarra() {
+    const ids = alertasDa(abaAtual).map((a) => a.id);
+    expandirTodos.disabled = ids.length === 0;
+    expandirTodos.textContent = ids.length && ids.every((id) => expandidos.has(id)) ? 'Recolher todos' : 'Expandir todos';
+    barra.atualizar({ resultado: plural(ids.length, 'alerta', 'alertas') });
+  }
+
+  function desenhar() {
+    ABAS.forEach(([chave, rotulo], indice) => {
+      const lista = alertasDa(chave);
+      botoesDeAba[indice].textContent = lista.length ? `${rotulo} (${lista.length})` : rotulo;
+      if (!lista.length) {
+        conteudos[chave].replaceChildren(DS.estadoVazio({ titulo: VAZIO }));
+        return;
+      }
+      const ul = document.createElement('ul');
+      ul.className = 'lista-alertas';
+      ul.setAttribute('aria-label', `Alertas: ${rotulo}`);
+      ul.append(...lista.map((a) => cardDeAlerta(a, chave)));
+      conteudos[chave].replaceChildren(ul);
+    });
+    atualizarBarra();
+  }
+
+  desenhar();
+})();
+</script>
 </body>
 </html>
