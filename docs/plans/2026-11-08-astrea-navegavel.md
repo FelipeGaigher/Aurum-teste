@@ -1,6 +1,6 @@
 <!-- gerado de docs/specs/2026-11-08-astrea-navegavel.html
-     sha256 da fonte: d878c611936e9362
-     em: 2026-11-08T12:03
+     sha256 da fonte: c038b0ac6df74d9b
+     em: 2026-11-08T13:16
      NAO ESCREVA NESTE ARQUIVO. Altere o HTML e regenere. -->
 
 # Astrea navegável com design system — Implementation Plan
