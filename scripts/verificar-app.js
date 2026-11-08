@@ -30,7 +30,7 @@ const VARIANTES = {
 const ABRE_PAINEL = ['[data-abre-painel]', '[data-acao="criar-atividade"]', '[data-acao="nova-etiqueta"]']
   .map((s) => s + ':visible').join(', ');
 // Página cujo item ativo do menu é de outro módulo.
-const MODULO_DA_PAGINA = { 'buscas.html': 'processos.html' };
+const MODULO_DA_PAGINA = { 'buscas.html': 'processos.html' , 'alertas.html': 'area-de-trabalho.html' };
 const CONTROLES = 'a[href], button, input:not([type=hidden]), select, textarea, summary, [tabindex], '
   + '[contenteditable="true"], [role="button"], [role="link"], [role="radio"], [role="checkbox"], '
   + '[role="switch"], [role="tab"], [role="combobox"]';

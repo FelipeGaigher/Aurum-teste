@@ -46,13 +46,13 @@
     { rotulo: 'Financeiro', pagina: 'financeiro.html', icone: 'moeda' },
     { rotulo: 'Documentos', pagina: 'documentos.html', icone: 'clipe' },
     { rotulo: 'Indicadores', pagina: 'indicadores.html', icone: 'grafico' },
-    { rotulo: 'Alertas', pagina: 'alertas.html', icone: 'sino' },
     { rotulo: 'Suporte', pagina: 'suporte.html', icone: 'ajuda' },
     { rotulo: 'Conheça as IAs', pagina: 'ias.html', icone: 'chip' },
   ];
 
   // Página de segundo nível: marca o item do módulo e ganha trilha (M14, M16).
-  const MODULO_DA_PAGINA = { 'buscas.html': 'processos.html' };
+  // Alertas saiu do menu: as notificações do cabeçalho assumem. A página segue como lista completa, sob Área de trabalho.
+  const MODULO_DA_PAGINA = { 'buscas.html': 'processos.html', 'alertas.html': 'area-de-trabalho.html' };
 
   const PLANO = 'administracao.html#plano';
 
