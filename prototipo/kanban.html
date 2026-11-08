@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Área de trabalho, Astrea: protótipo do Kanban</title>
+<title>Gestão kanban, Astrea: protótipo</title>
 <style>
 /* primitivos */
 :root {
@@ -135,6 +135,7 @@
   --size-sidebar: var(--primitive-size-260);
   --size-search: var(--primitive-size-480);
   --size-dialog: var(--primitive-size-440);
+  --size-dialog-wide: var(--primitive-size-560);
 }
 /* fim dos semanticos */
 
@@ -176,6 +177,7 @@
   --component-button-primary-text: var(--color-action-text);
   --component-dialog-bg: var(--color-bg-surface);
   --component-dialog-width: var(--size-dialog);
+  --component-dialog-detail-width: var(--size-dialog-wide);
   --component-dialog-radius: var(--radius-dialog);
   --component-dialog-backdrop: var(--color-scrim);
 }
@@ -410,31 +412,6 @@ svg.icone {
   line-height: var(--font-leading-tight);
 }
 
-/* visões do módulo de atividades */
-.visoes {
-  display: inline-flex;
-  gap: var(--space-1);
-  padding: var(--space-1);
-  margin-bottom: var(--space-4);
-  background: var(--color-bg-subtle);
-  border-radius: var(--radius);
-}
-.visoes a {
-  display: inline-flex;
-  align-items: center;
-  height: var(--component-chip-height);
-  padding: 0 var(--space-3);
-  border-radius: var(--radius);
-  font-size: var(--font-size-button);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-muted);
-  text-decoration: none;
-}
-.visoes a[aria-current="page"] {
-  background: var(--color-bg-page);
-  color: var(--color-text-default);
-}
-
 /* quadro */
 #quadro {
   display: grid;
@@ -442,6 +419,7 @@ svg.icone {
   gap: var(--space-4);
   align-items: start;
 }
+#quadro[data-colunas="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
 .coluna {
   display: flex;
@@ -465,6 +443,12 @@ svg.icone {
   margin: 0 var(--space-1) var(--space-1);
   font-size: var(--font-size-emphasis);
   font-weight: var(--font-weight-semibold);
+  line-height: var(--font-leading-tight);
+}
+.coluna-subtitulo {
+  margin: calc(-1 * var(--space-2)) var(--space-1) var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
   line-height: var(--font-leading-tight);
 }
 .coluna-contagem {
@@ -495,6 +479,23 @@ svg.icone {
 }
 .card-prazo[data-alerta="vencido"] { color: var(--color-text-danger); }
 .card-prazo[data-alerta="hoje"] { color: var(--color-text-warning); }
+
+.card-sprint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-2);
+  font-size: var(--font-size-emphasis);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+  font-variant-numeric: tabular-nums;
+}
+.card-situacao {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-regular);
+}
 
 .card h3 {
   margin: 0;
@@ -608,6 +609,7 @@ svg.icone {
   gap: var(--space-4);
   margin-bottom: var(--space-5);
 }
+.filtros[hidden] { display: none; }
 .filtros {
   display: flex;
   flex-wrap: wrap;
@@ -699,14 +701,38 @@ svg.icone {
   gap: var(--space-4);
   margin-top: var(--space-5);
 }
+.painel-rodape-fim { justify-content: flex-end; }
 .painel-rodape p {
   margin: 0;
   color: var(--color-text-muted);
   font-size: var(--font-size-label);
 }
 
+/* detalhe da entrega */
+.painel-detalhe {
+  width: min(var(--component-dialog-detail-width), calc(100vw - var(--space-6)));
+}
+.detalhe-dados {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+}
+.detalhe-dados dt {
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+  color: var(--color-text-muted);
+}
+.detalhe-dados dd { margin: var(--space-1) 0 0; }
+.detalhe-dados ul { margin: 0; padding-left: var(--space-5); }
+.detalhe-largo { grid-column: 1 / -1; }
+
 /* rodapé da demonstração */
 #rodape-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
   margin-top: var(--space-6);
   padding-top: var(--space-4);
   border-top: var(--border-width) solid var(--color-border-default);
@@ -782,12 +808,15 @@ svg.icone {
 <div class="corpo">
   <nav class="menu-lateral" aria-label="Menu principal">
     <ul>
-      <li><a href="#conteudo" aria-current="page">
+      <li><a href="#">
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/></svg>
         Área de trabalho</a></li>
       <li><a href="#">
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></svg>
         Agenda</a></li>
+      <li><a href="#conteudo" aria-current="page">
+        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v11h-4zM16 4h4v7h-4z"/></svg>
+        Gestão kanban</a></li>
       <li><a href="#">
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>
         Contatos</a></li>
@@ -823,16 +852,43 @@ svg.icone {
 
   <main id="conteudo">
     <div class="titulo-pagina">
-      <h1>Área de trabalho</h1>
+      <h1>Gestão kanban</h1>
       <button type="button" id="criar-atividade" class="botao botao-primario" aria-haspopup="dialog">Adicionar atividade</button>
     </div>
-    <nav class="visoes" aria-label="Visão das atividades">
-      <a href="#">Lista</a>
-      <a href="#" aria-current="page">Kanban</a>
-      <a href="#">Agenda</a>
-    </nav>
     <div id="ferramentas">
-      <div class="filtros" role="group" aria-label="Filtros do quadro">
+      <div class="filtros" role="group" aria-label="Filtros do quadro" data-conjunto="plano">
+        <div class="campo">
+          <label for="filtro-equipe">Equipe</label>
+          <span class="seletor">
+            <select id="filtro-equipe" class="controle" data-filtro="equipe">
+              <option value="todas">Todas</option>
+            </select>
+            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
+          </span>
+        </div>
+        <div class="campo">
+          <label for="filtro-dono">Dono</label>
+          <span class="seletor">
+            <select id="filtro-dono" class="controle" data-filtro="dono">
+              <option value="todos">Todos</option>
+            </select>
+            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
+          </span>
+        </div>
+        <div class="campo">
+          <label for="filtro-situacao">Situação</label>
+          <span class="seletor">
+            <select id="filtro-situacao" class="controle" data-filtro="situacao">
+              <option value="todas">Todas</option>
+              <option value="feito">Feito</option>
+              <option value="fazendo">Fazendo</option>
+              <option value="a-fazer">A fazer</option>
+            </select>
+            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
+          </span>
+        </div>
+      </div>
+      <div class="filtros" role="group" aria-label="Filtros do quadro" data-conjunto="escritorio" hidden>
         <div class="campo">
           <label for="filtro-responsavel">Responsável</label>
           <span class="seletor">
@@ -868,6 +924,11 @@ svg.icone {
     <div id="quadro"></div>
     <footer id="rodape-demo">
       <fieldset class="demo">
+        <legend>Conjunto de dados</legend>
+        <label><input type="radio" name="conjunto" value="plano" checked> Plano do redesign</label>
+        <label><input type="radio" name="conjunto" value="escritorio"> Atividades do escritório</label>
+      </fieldset>
+      <fieldset class="demo">
         <legend>Estado da demonstração</legend>
         <label><input type="radio" name="modo" value="dados" checked> Com dados</label>
         <label><input type="radio" name="modo" value="carregando"> Carregando</label>
@@ -875,7 +936,8 @@ svg.icone {
       </fieldset>
     </footer>
     <div id="anuncio" class="visualmente-oculto" aria-live="polite"></div>
-    <p id="dica-mover" class="visualmente-oculto">As setas para a esquerda e para a direita movem a atividade entre as colunas.</p>
+    <p id="dica-mover" class="visualmente-oculto">As setas para a esquerda e para a direita movem o card entre as colunas.</p>
+    <p id="dica-abrir" class="visualmente-oculto">Enter abre o detalhe da entrega.</p>
   </main>
 </div>
 
@@ -918,11 +980,28 @@ svg.icone {
     <button type="button" id="fechar-painel" class="botao">Fechar</button>
   </div>
 </dialog>
+
+<dialog id="painel-detalhe" class="painel painel-detalhe" aria-labelledby="detalhe-titulo">
+  <h2 id="detalhe-titulo"></h2>
+  <dl class="detalhe-dados">
+    <div><dt>Fase</dt><dd id="detalhe-fase"></dd></div>
+    <div><dt>Sprints</dt><dd id="detalhe-sprints"></dd></div>
+    <div><dt>Dono</dt><dd id="detalhe-dono"></dd></div>
+    <div><dt>Situação</dt><dd id="detalhe-situacao"></dd></div>
+    <div class="detalhe-largo"><dt>Objetivo</dt><dd id="detalhe-objetivo"></dd></div>
+    <div class="detalhe-largo"><dt>Entregável</dt><dd id="detalhe-entregavel"></dd></div>
+    <div class="detalhe-largo"><dt>Deveres</dt><dd><ul id="detalhe-deveres"></ul></dd></div>
+    <div class="detalhe-largo"><dt>Pronto quando</dt><dd id="detalhe-pronto"></dd></div>
+  </dl>
+  <div class="painel-rodape painel-rodape-fim">
+    <button type="button" id="fechar-detalhe" class="botao">Fechar</button>
+  </div>
+</dialog>
 <script>
-const COLUNAS = [
-  { status: 'a-fazer', nome: 'A fazer' },
-  { status: 'fazendo', nome: 'Fazendo' },
-  { status: 'concluido', nome: 'Concluído' },
+const COLUNAS_ESCRITORIO = [
+  { id: 'a-fazer', nome: 'A fazer' },
+  { id: 'fazendo', nome: 'Fazendo' },
+  { id: 'concluido', nome: 'Concluído' },
 ];
 
 const ATIVIDADES = [
@@ -949,13 +1028,171 @@ const PERIODOS = {
   'proximos-7': (dias) => dias >= 0 && dias <= 7,
 };
 
+const FASES = [
+  { id: 'f1', nome: 'Fase 1. Inventário e discovery', periodo: 'Mês 1, sprints 1 e 2' },
+  { id: 'f2', nome: 'Fase 2. Tokens semânticos', periodo: 'Meses 2 e 3, sprints 3 a 6' },
+  { id: 'f3', nome: 'Fase 3. Componentes e piloto', periodo: 'Meses 3 a 6, sprints 7 a 12' },
+  { id: 'f4', nome: 'Fase 4. Outros módulos e IA', periodo: 'Meses 6 a 12, sprints 13 a 24' },
+];
+const EQUIPES = ['Direção do DS', 'Engenharia', 'Designer do squad Atividades', 'Designer do squad Processos', 'Designer do squad Financeiro', 'Designer do squad Clientes', 'Suporte', 'Marketing'];
+const STATUS = { 'feito': 'Feito', 'fazendo': 'Fazendo', 'a-fazer': 'A fazer' };
+
+const CARDS = [
+  { id: 'c01', fase: 'f1', sprint: '1', titulo: 'Inventário de componentes em código e no Figma', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia'], status: 'feito',
+    objetivo: 'Saber o que existe antes de propor. Cores, componentes e vocabulário de cada módulo, com o nome da biblioteca de origem.',
+    entregavel: 'Tabela de cores por tela, lista de componentes com variações, lista de palavras em conflito.',
+    deveres: ['Direção do DS: coordena, consolida e publica o inventário.', 'Engenharia: roda o levantamento de variáveis CSS, fontes e classes no produto logado.'],
+    pronto: 'Toda tela do recorte de atividades tem suas cores e componentes listados, com a fonte de cada um.' },
+  { id: 'c02', fase: 'f1', sprint: '1 e 2', titulo: 'Discovery com os quatro designers', dono: 'Direção do DS', equipes: ['Direção do DS', 'Designer do squad Atividades', 'Designer do squad Processos', 'Designer do squad Financeiro', 'Designer do squad Clientes'], status: 'fazendo',
+    objetivo: 'Entender como cada um trabalha antes de dividir o trabalho. Fluxo, roadmap, Figma, IA e dor.',
+    entregavel: 'Mapa de perfil por designer e a frente natural de cada um no DS.',
+    deveres: ['Direção do DS: uma conversa de 45 minutos com cada designer.', 'Cada designer: traz o roadmap dos próximos três meses e uma tela que o frustra.'],
+    pronto: 'Os quatro mapas estão escritos e cada designer concorda com a própria frente.' },
+  { id: 'c03', fase: 'f1', sprint: '2', titulo: 'Linha de base das métricas', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia', 'Suporte'], status: 'a-fazer',
+    objetivo: 'Medir antes de mudar. Sem linha de base, a métrica só mostra o número de hoje.',
+    entregavel: 'Número de hoje para adoção, eficiência e experiência: cores por token, tempo do design ao dev, chamados por módulo.',
+    deveres: ['Engenharia: lint de cores e contagem de componentes no CI.', 'Suporte: chamados dos últimos seis meses por módulo.', 'Direção do DS: tempo de handoff com os squads.'],
+    pronto: 'Cada métrica do slide 6 da Questão 2 tem um valor datado.' },
+  { id: 'c04', fase: 'f1', sprint: '2', titulo: 'Repositório do DS e kit de skills versão zero', dono: 'Engenharia', equipes: ['Engenharia', 'Direção do DS'], status: 'fazendo',
+    objetivo: 'Criar a fonte única antes do primeiro token. README, pasta de tokens vazia, skill com as regras.',
+    entregavel: 'Repositório com README, estrutura de tokens, skill astrea-ds e agente revisor, instalável por um comando.',
+    deveres: ['Engenharia: cria o repositório, o pacote e o CI.', 'Direção do DS: escreve o README e as regras da skill.'],
+    pronto: 'Um designer instala o kit e o agente revisor acusa um frame com cor solta.' },
+
+  { id: 'c05', fase: 'f2', sprint: '3 e 4', titulo: 'Tokens semânticos em JSON, padrão DTCG', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia'], status: 'a-fazer',
+    objetivo: 'Um azul de ação, uma escala de cinza, um token de foco, uma escala de espaço e de raio. Com nome de papel, não de valor.',
+    entregavel: 'Arquivo de tokens com primitivos e semânticos, modos claro e escuro, e o Style Dictionary gerando CSS e TS.',
+    deveres: ['Direção do DS: define nomes e valores, mede contraste de cada par.', 'Engenharia: monta o Style Dictionary e publica o pacote.'],
+    pronto: 'O pacote gera CSS e TS, e todo par de texto passa no AA nos dois temas.' },
+  { id: 'c06', fase: 'f2', sprint: '4', titulo: 'Tema do Mantine ligado aos tokens', dono: 'Engenharia', equipes: ['Engenharia'], status: 'a-fazer',
+    objetivo: 'Se o front novo usa Mantine sem tema, o token entra pelo tema e o custo cai. Confirmar e aplicar.',
+    entregavel: 'Tema do Mantine lendo as variáveis do pacote, sem hex solto no front novo.',
+    deveres: ['Engenharia: confirma a biblioteca no código, escreve o tema e remove os hex.'],
+    pronto: 'O lint do CI acusa zero cores fora de token no front novo.' },
+  { id: 'c07', fase: 'f2', sprint: '4 e 5', titulo: 'Variáveis no Figma geradas do JSON', dono: 'Designer do squad Processos', equipes: ['Designer do squad Processos', 'Engenharia'], status: 'a-fazer',
+    objetivo: 'O Figma lê a fonte, não é a fonte. Três coleções: Primitives, Semantic com modos, Component.',
+    entregavel: 'Biblioteca Astrea DS publicada com as três coleções, escopo em cada variável, bibliotecas parciais arquivadas.',
+    deveres: ['Designer forte em Figma: estrutura as coleções e publica.', 'Engenharia: script que gera as variáveis pela API do Figma.'],
+    pronto: 'Alterar um valor no JSON atualiza a variável no Figma sem edição manual.' },
+  { id: 'c08', fase: 'f2', sprint: '5 e 6', titulo: 'Legado recebe os tokens por variável CSS', dono: 'Engenharia', equipes: ['Engenharia', 'Direção do DS'], status: 'a-fazer',
+    objetivo: 'Tela antiga e nova com a mesma pele antes de qualquer componente ser reescrito.',
+    entregavel: 'Cor, tipografia, espaçamento e foco do legado lendo as variáveis. Nenhum componente alterado.',
+    deveres: ['Engenharia: mapeia os hex do legado para tokens e troca por variável.', 'Direção do DS: aprova o resultado tela a tela, atrás de flag.'],
+    pronto: 'Legado e front novo medem a mesma cor de ação e o mesmo foco, com a flag ligada.' },
+
+  { id: 'c09', fase: 'f3', sprint: '7 e 8', titulo: 'Moldura unificada: cabeçalho, menu, busca e ações', dono: 'Designer do squad Processos', equipes: ['Designer do squad Processos', 'Engenharia'], status: 'a-fazer',
+    objetivo: 'A moldura é a âncora. Depois de padronizada, não muda mais. Sem faixa de campanha nem selo comercial dentro do produto.',
+    entregavel: 'Componentes de cabeçalho e menu lateral no pacote e na biblioteca, com os cinco atalhos rotulados.',
+    deveres: ['Designer forte em Figma: desenha e documenta a moldura.', 'Engenharia: implementa e aplica no legado e no novo.', 'Marketing: campanha migra para fora da moldura, combinada com a Direção.'],
+    pronto: 'Todas as telas do produto mostram a mesma moldura, legado incluído.' },
+  { id: 'c10', fase: 'f3', sprint: '7 a 9', titulo: 'Componentes da gestão de atividades', dono: 'Designer do squad Atividades', equipes: ['Designer do squad Atividades', 'Direção do DS', 'Engenharia'], status: 'a-fazer',
+    objetivo: 'Card de atividade, chip de prazo, seletor, filtro e estado vazio, com todos os estados. Nascem da primeira tela nova.',
+    entregavel: 'Cinco componentes no Figma e no pacote, com padrão, hover, foco, erro, vazio e carregando.',
+    deveres: ['Designer do squad Atividades: desenha a partir do roadmap do squad.', 'Direção do DS: revisa contra o contrato da tela.', 'Engenharia: implementa com Code Connect.'],
+    pronto: 'Os cinco componentes passam no revisor e aparecem no Storybook.' },
+  { id: 'c11', fase: 'f3', sprint: '9 a 11', titulo: 'Kanban piloto atrás de feature flag', dono: 'Designer do squad Atividades', equipes: ['Designer do squad Atividades', 'Engenharia', 'Suporte'], status: 'a-fazer',
+    objetivo: 'A primeira tela nova em produção, sem parar o produto. Flag desligada desfaz em minutos.',
+    entregavel: 'Kanban com prazo dominante, arrastar e teclado, atrás de flag, para um grupo beta de escritórios.',
+    deveres: ['Engenharia: implementa e liga a flag por conta.', 'Designer do squad Atividades: acompanha o beta e ajusta.', 'Suporte: escolhe os escritórios do beta e registra os chamados por semana.'],
+    pronto: 'Vinte escritórios usam o Kanban por quatro semanas sem aumento de chamados.' },
+  { id: 'c12', fase: 'f3', sprint: '8', titulo: 'Uma palavra para a atividade', dono: 'Designer do squad Clientes', equipes: ['Designer do squad Clientes', 'Suporte'], status: 'a-fazer',
+    objetivo: 'Tarefa e atividade são a mesma coisa em dois lugares. Uma palavra, com tipos, em todo o produto.',
+    entregavel: 'Glossário do produto e skill de UX writing, com a troca aplicada nas telas de atividades.',
+    deveres: ['Designer perto do usuário: escreve o glossário e testa os termos.', 'Suporte: valida com os termos que os clientes usam nos chamados.'],
+    pronto: 'Nenhuma tela do recorte usa as duas palavras para o mesmo objeto.' },
+  { id: 'c13', fase: 'f3', sprint: '10 a 12', titulo: 'Code Connect e Storybook para os componentes', dono: 'Designer do squad Financeiro', equipes: ['Designer do squad Financeiro', 'Engenharia'], status: 'a-fazer',
+    objetivo: 'Cada componente do Figma ligado ao do pacote. Documentação viva, não wiki.',
+    entregavel: 'Code Connect para os componentes da fase 3 e Storybook publicado com estados e regras de uso.',
+    deveres: ['Designer perto do código: escreve os mapeamentos e a documentação.', 'Engenharia: publica o Storybook no CI.'],
+    pronto: 'Dev que inspeciona o Figma vê o código do componente certo.' },
+
+  { id: 'c14', fase: 'f4', sprint: '13 a 16', titulo: 'Processos e casos no padrão novo', dono: 'Designer do squad Processos', equipes: ['Designer do squad Processos', 'Engenharia'], status: 'a-fazer',
+    objetivo: 'Segundo módulo, no ritmo da migração do front. Pega carona na reescrita.',
+    entregavel: 'Lista e detalhe de processo com os componentes do DS, atrás de flag.',
+    deveres: ['Designer do squad Processos: desenha com o que já existe no DS e pede o que falta pela triagem.', 'Engenharia: migra junto com a troca de tecnologia.'],
+    pronto: 'Lista e detalhe passam no revisor e ficam quatro semanas em beta.' },
+  { id: 'c15', fase: 'f4', sprint: '15 a 18', titulo: 'Contatos: grade de largura, barra de ações, tabela e cards', dono: 'Designer do squad Clientes', equipes: ['Designer do squad Clientes', 'Engenharia'], status: 'a-fazer',
+    objetivo: 'Formulário com grade de largura por token, ação primária numa barra fixa e a lista com dois modos de ver.',
+    entregavel: 'Três padrões novos no DS: grade de formulário, barra de ações e alternância tabela e cards.',
+    deveres: ['Designer do squad Clientes: desenha e testa com cinco usuários.', 'Engenharia: implementa os três padrões como componentes do pacote.'],
+    pronto: 'Os três padrões entram no DS pela regra de dois squads.' },
+  { id: 'c16', fase: 'f4', sprint: '13 a 20', titulo: 'Padrões para funcionalidade com IA', dono: 'Direção do DS', equipes: ['Direção do DS', 'Designer do squad Atividades', 'Engenharia'], status: 'a-fazer',
+    objetivo: 'Como o sistema sugere, como o usuário confirma, como desfaz, e como aparece quando a IA erra. Mesmos componentes, mesma moldura.',
+    entregavel: 'Padrão de sugestão no chip, padrão de confirmação e desfazer, padrão de erro de IA, documentados e aplicados na primeira funcionalidade.',
+    deveres: ['Direção do DS: escreve os padrões e o critério de aceite.', 'Designer do squad Atividades: aplica na sugestão de prazo por publicação.', 'Engenharia: implementa o desfazer com histórico.'],
+    pronto: 'A primeira funcionalidade com IA passa no revisor sem cor nem ícone à parte.' },
+  { id: 'c17', fase: 'f4', sprint: '17 a 20', titulo: 'Agenda compacta por token de densidade', dono: 'Designer do squad Atividades', equipes: ['Designer do squad Atividades', 'Engenharia'], status: 'a-fazer',
+    objetivo: 'O mês inteiro numa tela. Modo compacto por padrão, respirado por escolha.',
+    entregavel: 'Coleção de densidade na biblioteca e na Agenda, com o modo salvo por usuário.',
+    deveres: ['Designer do squad Atividades: define os dois modos e mede quantas semanas cabem.', 'Engenharia: aplica a coleção e salva a preferência.'],
+    pronto: 'Quatro semanas visíveis em 1920 por 1080 no modo compacto.' },
+  { id: 'c18', fase: 'f4', sprint: '12, 18 e 24', titulo: 'Métricas trimestrais e changelog', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia', 'Suporte'], status: 'a-fazer',
+    objetivo: 'Provar ou derrubar a tese de que o DS devolve mais tempo do que toma.',
+    entregavel: 'Relatório trimestral com adoção, eficiência e experiência contra a linha de base, e changelog por versão do pacote.',
+    deveres: ['Direção do DS: escreve o relatório e apresenta aos líderes.', 'Engenharia: mantém o changelog por versão.', 'Suporte: envia os chamados por módulo a cada trimestre.'],
+    pronto: 'Três relatórios publicados, com a comparação contra o mês 1.' },
+];
+
+const DONOS = [...new Set(CARDS.map((entrega) => entrega.dono))]
+  .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+const CONJUNTOS = {
+  plano: {
+    nome: 'Plano do redesign',
+    colunas: FASES.map((fase) => ({ id: fase.id, nome: fase.nome, subtitulo: fase.periodo })),
+    campo: 'fase',
+    item: 'entrega',
+    filtrosIniciais: { equipe: 'todas', dono: 'todos', situacao: 'todas' },
+    passa: (entrega, { equipe, dono, situacao }) => (equipe === 'todas' || entrega.equipes.includes(equipe))
+      && (dono === 'todos' || entrega.dono === dono)
+      && (situacao === 'todas' || entrega.status === situacao),
+    ordenar: (a, b) => a.ordem - b.ordem,
+    criarCard: criarCardEntrega,
+    abreDetalhe: true,
+  },
+  escritorio: {
+    nome: 'Atividades do escritório',
+    colunas: COLUNAS_ESCRITORIO,
+    campo: 'status',
+    item: 'atividade',
+    filtrosIniciais: { responsavel: 'todos', tipo: 'todos', periodo: 'todos' },
+    passa: (atividade, { responsavel, tipo, periodo }) => (responsavel === 'todos' || atividade.responsavel === responsavel)
+      && (tipo === 'todos' || atividade.tipo === tipo)
+      && (periodo === 'todos' || PERIODOS[periodo](atividade.prazoEmDias)),
+    ordenar: (a, b) => a.prazoEmDias - b.prazoEmDias,
+    criarCard: criarCardAtividade,
+    abreDetalhe: false,
+  },
+};
+
 const TIPO_ARRASTE = 'application/x-atividade';
 
 const estado = {
-  atividades: ATIVIDADES.map((atividade) => ({ ...atividade })),
+  conjunto: 'plano',
   modo: 'dados',
-  filtros: { responsavel: 'todos', tipo: 'todos', periodo: 'todos' },
+  itens: {
+    plano: CARDS.map((entrega, ordem) => ({ ...entrega, ordem })),
+    escritorio: ATIVIDADES.map((atividade) => ({ ...atividade })),
+  },
+  filtros: {
+    plano: { ...CONJUNTOS.plano.filtrosIniciais },
+    escritorio: { ...CONJUNTOS.escritorio.filtrosIniciais },
+  },
 };
+
+function conjuntoAtual() {
+  return CONJUNTOS[estado.conjunto];
+}
+
+function itensAtuais() {
+  return estado.itens[estado.conjunto];
+}
+
+function acharItem(id) {
+  const item = itensAtuais().find((candidato) => candidato.id === id);
+  if (!item) throw new Error('item desconhecido no conjunto ' + estado.conjunto + ': ' + id);
+  return item;
+}
 
 function el(tag, classe, texto) {
   const no = document.createElement(tag);
@@ -987,9 +1224,18 @@ function descreverPrazo(atividade) {
   return { texto: 'Vence em ' + dataDoPrazo(dias), alerta: null };
 }
 
-function chipSugestao(atividade) {
+function textoSprint(sprint) {
+  return (/\D/.test(sprint) ? 'Sprints ' : 'Sprint ') + sprint;
+}
+
+function chipTexto(texto) {
   const chip = el('span', 'chip');
-  chip.append(el('span', 'chip-rotulo', 'Sugestão da IA'));
+  chip.append(el('span', 'chip-rotulo', texto));
+  return chip;
+}
+
+function chipSugestao(atividade) {
+  const chip = chipTexto('Sugestão da IA');
   const acoes = [['Confirmar', confirmarSugestao], ['Desfazer', desfazerSugestao]];
   for (const [rotulo, acao] of acoes) {
     const botao = el('button', 'chip-acao', rotulo);
@@ -1001,39 +1247,65 @@ function chipSugestao(atividade) {
   return chip;
 }
 
-function criarCard(atividade) {
+function criarCardBase(item, dicas) {
   const card = el('article', 'card');
-  card.dataset.id = atividade.id;
+  card.dataset.id = item.id;
   card.tabIndex = 0;
   card.draggable = true;
-  const tituloId = 'card-' + atividade.id + '-titulo';
+  const tituloId = 'card-' + item.id + '-titulo';
   card.setAttribute('aria-labelledby', tituloId);
-  card.setAttribute('aria-describedby', 'dica-mover');
+  card.setAttribute('aria-describedby', dicas);
+  const titulo = el('h3', null, item.titulo);
+  titulo.id = tituloId;
+  return [card, titulo];
+}
+
+function linhaResponsavel(prefixo, nome) {
+  const linha = el('p', 'card-responsavel');
+  const inicial = el('span', 'inicial', nome.charAt(0));
+  inicial.setAttribute('aria-hidden', 'true');
+  linha.append(inicial, el('span', 'visualmente-oculto', prefixo), nome);
+  return linha;
+}
+
+function criarCardAtividade(atividade) {
+  const [card, titulo] = criarCardBase(atividade, 'dica-mover');
 
   const prazo = descreverPrazo(atividade);
   const linhaPrazo = el('p', 'card-prazo', prazo.texto);
   if (prazo.alerta) linhaPrazo.dataset.alerta = prazo.alerta;
 
-  const titulo = el('h3', null, atividade.titulo);
-  titulo.id = tituloId;
-
   const chips = el('div', 'card-chips');
-  const tipo = el('span', 'chip');
-  tipo.append(el('span', 'chip-rotulo', TIPOS[atividade.tipo]));
-  chips.append(tipo);
+  chips.append(chipTexto(TIPOS[atividade.tipo]));
   if (atividade.sugestaoIa) chips.append(chipSugestao(atividade));
 
   const processo = el('p', 'card-processo');
   processo.append(el('span', 'visualmente-oculto', 'Processo '), atividade.processo);
 
-  const responsavel = el('p', 'card-responsavel');
-  const inicial = el('span', 'inicial', atividade.responsavel.charAt(0));
-  inicial.setAttribute('aria-hidden', 'true');
-  responsavel.append(inicial, el('span', 'visualmente-oculto', 'Responsável: '), atividade.responsavel);
-
   card.append(linhaPrazo, titulo, chips);
   if (atividade.sugestaoIa) card.append(el('p', 'card-nota', atividade.sugestaoIa));
-  card.append(processo, responsavel);
+  card.append(processo, linhaResponsavel('Responsável: ', atividade.responsavel));
+  return card;
+}
+
+function criarCardEntrega(entrega) {
+  const [card, titulo] = criarCardBase(entrega, 'dica-mover dica-abrir');
+
+  const linhaSprint = el('p', 'card-sprint');
+  const situacao = el('span', 'card-situacao');
+  situacao.append(el('span', 'visualmente-oculto', 'Situação: '), STATUS[entrega.status]);
+  linhaSprint.append(el('span', null, textoSprint(entrega.sprint)), situacao);
+
+  const chips = el('div', 'card-chips');
+  for (const equipe of entrega.equipes.slice(0, 3)) chips.append(chipTexto(equipe));
+  const resto = entrega.equipes.length - 3;
+  if (resto > 0) {
+    const mais = chipTexto('+' + resto);
+    mais.firstChild.append(el('span', 'visualmente-oculto', resto === 1 ? ' equipe' : ' equipes'));
+    chips.append(mais);
+  }
+
+  card.append(linhaSprint, titulo, chips, linhaResponsavel('Dono: ', entrega.dono));
   return card;
 }
 
@@ -1047,37 +1319,29 @@ function criarEsqueleto() {
 function criarVazio(coluna) {
   const bloco = el('div', 'coluna-vazia');
   const convite = filtrosAtivos() ? 'Ajuste os filtros para ver mais.' : 'Arraste um card para cá.';
-  bloco.append(el('p', null, 'Nenhuma atividade em ' + coluna.nome + '.'), el('p', null, convite));
+  bloco.append(el('p', null, 'Nenhuma ' + conjuntoAtual().item + ' em ' + coluna.nome + '.'), el('p', null, convite));
   return bloco;
 }
 
-function passaNosFiltros(atividade) {
-  const { responsavel, tipo, periodo } = estado.filtros;
-  return (responsavel === 'todos' || atividade.responsavel === responsavel)
-    && (tipo === 'todos' || atividade.tipo === tipo)
-    && (periodo === 'todos' || PERIODOS[periodo](atividade.prazoEmDias));
-}
-
-function atividadesVisiveis() {
-  return estado.atividades.filter(passaNosFiltros);
-}
-
 function filtrosAtivos() {
-  return Object.values(estado.filtros).some((valor) => valor !== 'todos');
+  const iniciais = conjuntoAtual().filtrosIniciais;
+  return Object.entries(estado.filtros[estado.conjunto]).some(([chave, valor]) => valor !== iniciais[chave]);
 }
 
-function atividadesDaColuna(status) {
+function itensDaColuna(colunaId) {
   if (estado.modo === 'vazio') return [];
-  return atividadesVisiveis()
-    .filter((atividade) => atividade.status === status)
-    .sort((a, b) => a.prazoEmDias - b.prazoEmDias);
+  const conjunto = conjuntoAtual();
+  const filtros = estado.filtros[estado.conjunto];
+  return itensAtuais()
+    .filter((item) => item[conjunto.campo] === colunaId && conjunto.passa(item, filtros))
+    .sort(conjunto.ordenar);
 }
 
 function criarColuna(coluna) {
   const secao = el('section', 'coluna');
-  secao.dataset.status = coluna.status;
+  secao.dataset.coluna = coluna.id;
   secao.tabIndex = 0;
-  const tituloId = 'coluna-' + coluna.status + '-titulo';
+  const tituloId = 'coluna-' + coluna.id + '-titulo';
   secao.setAttribute('aria-labelledby', tituloId);
 
   const titulo = el('h2');
@@ -1085,57 +1349,76 @@ function criarColuna(coluna) {
   const contagem = el('span', 'coluna-contagem');
   titulo.append(el('span', 'coluna-nome', coluna.nome), ' ', contagem);
   secao.append(titulo);
+  if (coluna.subtitulo) {
+    const subtitulo = el('p', 'coluna-subtitulo', coluna.subtitulo);
+    subtitulo.id = 'coluna-' + coluna.id + '-periodo';
+    secao.setAttribute('aria-describedby', subtitulo.id);
+    secao.append(subtitulo);
+  }
 
   if (estado.modo === 'carregando') {
     secao.setAttribute('aria-busy', 'true');
     for (let i = 0; i < 3; i += 1) secao.append(criarEsqueleto());
     return secao;
   }
-  const atividades = atividadesDaColuna(coluna.status);
-  contagem.textContent = String(atividades.length);
-  if (atividades.length === 0) secao.append(criarVazio(coluna));
-  for (const atividade of atividades) secao.append(criarCard(atividade));
+  const itens = itensDaColuna(coluna.id);
+  contagem.textContent = String(itens.length);
+  if (itens.length === 0) secao.append(criarVazio(coluna));
+  for (const item of itens) secao.append(conjuntoAtual().criarCard(item));
   return secao;
 }
 
+const quadro = document.getElementById('quadro');
+
 function render() {
-  document.getElementById('quadro').replaceChildren(...COLUNAS.map(criarColuna));
+  const colunas = conjuntoAtual().colunas;
+  quadro.dataset.colunas = String(colunas.length);
+  quadro.replaceChildren(...colunas.map(criarColuna));
 }
 
-function nomeDaColuna(status) {
-  return COLUNAS.find((coluna) => coluna.status === status).nome;
+function nomeDaColuna(colunaId) {
+  return conjuntoAtual().colunas.find((coluna) => coluna.id === colunaId).nome;
 }
 
-function resumoContagem(statuses) {
-  return statuses.map((status) => nomeDaColuna(status) + ': ' + atividadesDaColuna(status).length + '.').join(' ');
+function resumoContagem(colunaIds) {
+  return colunaIds.map((id) => nomeDaColuna(id) + ': ' + itensDaColuna(id).length + '.').join(' ');
 }
 
-function moverAtividade(id, status) {
-  const atividade = estado.atividades.find((item) => item.id === id);
-  if (!atividade) throw new Error('moverAtividade: atividade desconhecida: ' + id);
-  if (atividade.status === status) return;
-  const origem = atividade.status;
-  atividade.status = status;
+function resumoGeral() {
+  return resumoContagem(conjuntoAtual().colunas.map((coluna) => coluna.id));
+}
+
+function focarCard(id) {
+  const card = document.querySelector('.card[data-id="' + id + '"]');
+  if (card) card.focus();
+}
+
+function moverItem(id, colunaId) {
+  const item = acharItem(id);
+  const campo = conjuntoAtual().campo;
+  if (item[campo] === colunaId) return;
+  const origem = item[campo];
+  item[campo] = colunaId;
   render();
-  document.querySelector('.card[data-id="' + id + '"]').focus();
-  anunciar('Movida para ' + nomeDaColuna(status) + '. ' + resumoContagem([origem, status]));
+  focarCard(id);
+  anunciar('Movida para ' + nomeDaColuna(colunaId) + '. ' + resumoContagem([origem, colunaId]));
 }
 
 function confirmarSugestao(id) {
-  const atividade = estado.atividades.find((item) => item.id === id);
+  const atividade = acharItem(id);
   delete atividade.sugestaoIa;
   render();
-  document.querySelector('.card[data-id="' + id + '"]').focus();
+  focarCard(id);
   anunciar('Sugestão confirmada. ' + atividade.titulo + ' segue no quadro.');
 }
 
 function desfazerSugestao(id) {
-  const atividade = estado.atividades.find((item) => item.id === id);
-  estado.atividades = estado.atividades.filter((item) => item.id !== id);
+  const atividade = acharItem(id);
+  estado.itens.escritorio = estado.itens.escritorio.filter((item) => item.id !== id);
   render();
-  document.querySelector('.coluna[data-status="' + atividade.status + '"]').focus();
+  document.querySelector('.coluna[data-coluna="' + atividade.status + '"]').focus();
   anunciar('Sugestão desfeita. ' + atividade.titulo + ' saiu do quadro. '
-    + nomeDaColuna(atividade.status) + ': ' + atividadesDaColuna(atividade.status).length + '.');
+    + nomeDaColuna(atividade.status) + ': ' + itensDaColuna(atividade.status).length + '.');
 }
 
 function marcarDestino(coluna) {
@@ -1154,7 +1437,34 @@ function preencherOpcoes(id, pares) {
   }
 }
 
-const quadro = document.getElementById('quadro');
+const painelDetalhe = document.getElementById('painel-detalhe');
+let detalheAberto = null;
+
+function abrirDetalhe(id) {
+  const entrega = acharItem(id);
+  const campos = {
+    titulo: entrega.titulo,
+    fase: nomeDaColuna(entrega.fase),
+    sprints: entrega.sprint,
+    dono: entrega.dono,
+    situacao: STATUS[entrega.status],
+    objetivo: entrega.objetivo,
+    entregavel: entrega.entregavel,
+    pronto: entrega.pronto,
+  };
+  for (const [campo, texto] of Object.entries(campos)) {
+    document.getElementById('detalhe-' + campo).textContent = texto;
+  }
+  document.getElementById('detalhe-deveres').replaceChildren(...entrega.deveres.map((dever) => el('li', null, dever)));
+  detalheAberto = id;
+  painelDetalhe.showModal();
+}
+
+document.getElementById('fechar-detalhe').addEventListener('click', () => painelDetalhe.close());
+painelDetalhe.addEventListener('close', () => {
+  if (detalheAberto) focarCard(detalheAberto);
+  detalheAberto = null;
+});
 
 quadro.addEventListener('dragstart', (evento) => {
   const card = evento.target.closest('.card');
@@ -1181,35 +1491,52 @@ quadro.addEventListener('drop', (evento) => {
   if (!coluna) return;
   evento.preventDefault();
   marcarDestino(null);
-  moverAtividade(evento.dataTransfer.getData(TIPO_ARRASTE), coluna.dataset.status);
+  moverItem(evento.dataTransfer.getData(TIPO_ARRASTE), coluna.dataset.coluna);
 });
 
 quadro.addEventListener('dragend', () => marcarDestino(null));
 
+quadro.addEventListener('click', (evento) => {
+  const card = evento.target.closest('.card');
+  if (!card || !conjuntoAtual().abreDetalhe || evento.target.closest('button')) return;
+  abrirDetalhe(card.dataset.id);
+});
+
 const SETAS = { ArrowLeft: -1, ArrowRight: 1 };
 
 quadro.addEventListener('keydown', (evento) => {
-  const passo = SETAS[evento.key];
   const modificador = evento.altKey || evento.ctrlKey || evento.metaKey || evento.shiftKey;
-  if (!passo || modificador || !evento.target.matches('.card')) return;
-  const atividade = estado.atividades.find((item) => item.id === evento.target.dataset.id);
-  const destino = COLUNAS[COLUNAS.findIndex((coluna) => coluna.status === atividade.status) + passo];
+  if (modificador || !evento.target.matches('.card')) return;
+  const conjunto = conjuntoAtual();
+  if (evento.key === 'Enter' && conjunto.abreDetalhe) {
+    evento.preventDefault();
+    abrirDetalhe(evento.target.dataset.id);
+    return;
+  }
+  const passo = SETAS[evento.key];
+  if (!passo) return;
+  const item = acharItem(evento.target.dataset.id);
+  const atual = conjunto.colunas.findIndex((coluna) => coluna.id === item[conjunto.campo]);
+  const destino = conjunto.colunas[atual + passo];
   if (!destino) return;
   evento.preventDefault();
-  moverAtividade(atividade.id, destino.status);
+  moverItem(item.id, destino.id);
 });
 
 const paresResponsavel = RESPONSAVEIS.map((nome) => [nome, nome]);
 const paresTipo = Object.entries(TIPOS);
+preencherOpcoes('filtro-equipe', EQUIPES.map((nome) => [nome, nome]));
+preencherOpcoes('filtro-dono', DONOS.map((nome) => [nome, nome]));
 preencherOpcoes('filtro-responsavel', paresResponsavel);
 preencherOpcoes('filtro-tipo', paresTipo);
 preencherOpcoes('criar-responsavel', paresResponsavel);
 preencherOpcoes('criar-tipo', paresTipo);
 
-document.querySelector('.filtros').addEventListener('change', (evento) => {
-  estado.filtros[evento.target.dataset.filtro] = evento.target.value;
+document.getElementById('ferramentas').addEventListener('change', (evento) => {
+  const conjunto = evento.target.closest('.filtros').dataset.conjunto;
+  estado.filtros[conjunto][evento.target.dataset.filtro] = evento.target.value;
   render();
-  anunciar('Filtro aplicado. ' + resumoContagem(COLUNAS.map((coluna) => coluna.status)));
+  anunciar('Filtro aplicado. ' + resumoGeral());
 });
 
 const painel = document.getElementById('painel-criar');
@@ -1220,7 +1547,18 @@ painel.addEventListener('close', () => botaoCriar.focus());
 
 document.querySelector('.busca').addEventListener('submit', (evento) => evento.preventDefault());
 
-document.querySelector('.demo').addEventListener('change', (evento) => {
+function trocarConjunto(chave) {
+  estado.conjunto = chave;
+  for (const grupo of document.querySelectorAll('.filtros')) grupo.hidden = grupo.dataset.conjunto !== chave;
+  render();
+  anunciar(conjuntoAtual().nome + '. ' + resumoGeral());
+}
+
+document.getElementById('rodape-demo').addEventListener('change', (evento) => {
+  if (evento.target.name === 'conjunto') {
+    trocarConjunto(evento.target.value);
+    return;
+  }
   estado.modo = evento.target.value;
   render();
 });
