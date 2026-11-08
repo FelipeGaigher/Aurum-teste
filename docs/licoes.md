@@ -2,6 +2,20 @@
 
 ## Correções
 
+### 2026-11-08 — Limite de páginas do enunciado vale antes do redesign
+
+**Por quê:** a Questão 1 foi refeita em oito slides para ficar mais bonita.
+O enunciado limita a resposta a cinco páginas. A outra sessão pegou o erro
+e refez em cinco. O brief do subagente nasceu sem o limite, e o portão visual
+não enxerga regra de enunciado.
+
+**Regra:** antes de mudar o formato de uma resposta de banca, releia o
+enunciado em `00-briefing.md`. Copie o limite para o brief. O portão da
+task confere a contagem de páginas contra esse limite.
+
+**Virou:** brief de deck com a linha "Limite do enunciado: N páginas". A
+conferência de contagem entra no fim.
+
 ### 2026-11-08 — Slide de banca não é documento
 
 Felipe reprovou o deck da Questão 1: muito texto, pouco visual. O deck tinha
