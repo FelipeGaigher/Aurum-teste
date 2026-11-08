@@ -63,6 +63,14 @@ Este arquivo guarda o que Felipe pediu. O detalhe do app mora na spec e no plano
 - Um documento com os ajustes na plataforma como um todo. Ele cobre fluxos alterados e recursos sem efeito visual, mas com peso no dia a dia. Exemplos: leitura em tabela ou cards, sidebar que colapsa, busca na navbar, economia de espaço. Arquivo: `05-ajustes-plataforma.html`.
 - Toda a documentação do processo de desenvolvimento. Arquivo: `04-processo.html`, com `04-processo.md` como diário.
 
+### Figma como formato da entrega, pedido de 08/11 às 14h15
+
+- A Aurum exige documentar e apresentar no Figma. O arquivo do Figma vira a porta de entrada. O `index.html` segue como link único e aponta para ele.
+- Felipe paga o plano Professional do time onde o arquivo mora. Isso libera a cota do MCP e o limite de três páginas.
+- O arquivo ganha capa com miniatura e uma página por bloco. Os blocos: briefing, Questão 1, Questão 2, Questão 3, design system, protótipo e extras.
+- A página de briefing resume a demanda, o que organizar, os times, o desenvolvimento e o processo. Ela lista todos os links da entrega.
+- Plano: `docs/plans/2026-11-08-figma-entrega.md`.
+
 ### Fechamento
 
 - Parágrafo de uso de IA no fim da entrega.
@@ -78,10 +86,11 @@ Fonte: documento da Aurum, relido em 08/11 às 12h55.
 | Q1: 5 problemas com evidência, princípios, o que validar, até 5 páginas | `01-slides-q1.html`, `01-diagnostico.md` | Pronto |
 | Q2: arquitetura, governança, fases, time, riscos e métricas, até 6 páginas | Deck de 6 slides, `02-plano-ds.md` | Pronto |
 | Q3: tela em alta fidelidade no Figma | Área de trabalho do protótipo, importada para o Figma, nó `26-2` | Pronto |
+| Documentar e apresentar no Figma | Arquivo reorganizado por páginas, com briefing e links | Em andamento, depende do upgrade do plano |
 | Q3: 3 a 5 componentes com estados | `design-system.html` e `03-slides-q3.html` | Pronto; captura do DS no Figma em conversão |
 | Q3: uma decisão difícil | `03-tela.md` | Pronto |
 | Parágrafo de uso de IA | `04-uso-de-ia.md`, fim de `index.html` | Pronto |
-| Um único link com visualização | `index.html` no GitHub Pages | Depende do push |
+| Um único link com visualização | `index.html` no GitHub Pages | Publicado às 14h09 |
 | Parte B, 30 minutos de apresentação | Deck da Q2, protótipo navegável, `04-processo.html` | Pronto |
 
 O enunciado diz que a Aurum prototipa no Figma. A tela da Q3 precisa existir lá, não só no protótipo.

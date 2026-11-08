@@ -192,3 +192,14 @@ com data. O que foi entregue fica no commit, não aqui.
 - Pendências para o link funcionar: enviar os commits ao GitHub e ligar o
   Pages na branch main. O compartilhamento do Figma ainda está restrito ao
   time, e precisa virar "qualquer pessoa com o link pode ver".
+
+### O Figma vira a porta de entrada
+
+- Às 14h15 Felipe decidiu pagar o plano do Figma. A Aurum exige documentar
+  e apresentar lá, e o arquivo precisa reunir todos os links da entrega.
+- O `whoami` do MCP mostrou sete times na conta. O paywall da cota aponta
+  para "Felipe's Starter team", e o assento dele nesse time é View. O
+  upgrade precisa ser nesse time, com assento Full, ou a cota não volta.
+- Até o upgrade, o trabalho segue fora do Figma: plano das oito páginas em
+  `docs/plans/2026-11-08-figma-entrega.md` e texto do briefing em
+  `referencias/figma-briefing.md`.
