@@ -1557,7 +1557,7 @@
   function cardAtividade(props = {}) {
     const {
       titulo, tipo, estadoPrazo, prazo, processo, responsavel, tags = [], aoAbrir,
-      mostrarPrazo = true, mostrarProcesso = true, mostrarResponsavel = true, mostrarTags = true,
+      mostrarPrazo = true, mostrarProcesso = true, mostrarResponsavel = true, mostrarTags = true, copiarNumero = false,
     } = props;
     validarAtividade('cardAtividade', props);
     exigir(Array.isArray(tags), 'cardAtividade', 'tags é uma lista de rótulos');
@@ -1575,7 +1575,12 @@
     etiquetas.append(tagDoTipo(tipo));
     if (mostrarTags) etiquetas.append(...tags.map((rotulo) => tag({ rotulo })));
     raiz.append(etiquetas);
-    if (mostrarProcesso && processo) raiz.append(numeroDoProcesso(processo));
+    if (mostrarProcesso && processo) {
+      const numero = criar('div', 'card-atividade-processo');
+      numero.append(numeroDoProcesso(processo));
+      if (copiarNumero) numero.append(botaoCopiar(processo));
+      raiz.append(numero);
+    }
     if (mostrarResponsavel && responsavel) raiz.append(avatar({ nome: responsavel, mostrarNome: true }));
 
     if (aoAbrir) {

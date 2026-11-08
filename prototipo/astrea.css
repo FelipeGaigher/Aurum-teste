@@ -1387,10 +1387,11 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
   border-radius: var(--component-card-radius);
   box-shadow: var(--component-card-shadow);
 }
-.card-atividade:hover, .card-atividade.is-hover, .card-contato:hover, .card-contato.is-hover { border-color: var(--color-border-strong); }
+.card-atividade:hover, .card-atividade.is-hover, .card-contato:hover, .card-contato.is-hover { border-color: var(--color-action); }
 .card-atividade:active, .card-atividade.is-active { border-color: var(--color-action); }
 .card-atividade-titulo, .card-contato-nome { margin: 0; font-size: var(--font-size-body); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); overflow-wrap: anywhere; }
 .card-atividade-tags { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.card-atividade-processo { display: flex; align-items: center; gap: var(--space-1); }
 
 /* card de contato: o cartão abre a ficha, e pelo teclado o nome é o botão */
 .card-contato { cursor: pointer; }

@@ -80,6 +80,49 @@
   .secao[data-secao="atrasadas"] h2 { color: var(--color-text-danger); }
   .secao-nota { color: var(--color-text-muted); font-size: var(--font-size-label); }
   .secao .estado-vazio { padding: var(--space-4) var(--space-3); }
+
+  .area-direita { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+  /* Alternância de formato, a mesma de Contatos. */
+  .formato {
+    display: inline-flex;
+    gap: var(--border-width);
+    padding: var(--border-width);
+    background-color: var(--color-bg-subtle);
+    border: var(--border-width) solid var(--color-border-default);
+    border-radius: var(--radius);
+  }
+  .formato-opcao {
+    min-height: calc(var(--component-control-height) - var(--space-1));
+    padding: 0 var(--space-3);
+    background: none;
+    border: var(--border-width) solid transparent;
+    border-radius: var(--radius);
+    color: var(--color-text-default);
+    font: inherit;
+    font-size: var(--font-size-button);
+    cursor: pointer;
+  }
+  .formato-opcao:hover { background-color: var(--color-bg-hover); }
+  .formato-opcao[aria-checked="true"] {
+    background-color: var(--color-bg-surface);
+    border-color: var(--color-border-strong);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  /* Cards: cada grupo é um container. Atrasadas ocupa a largura toda e fica acima de Hoje (PA-32). */
+  [data-area-principal][data-visao="cards"] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); align-items: start; gap: var(--space-4); margin-bottom: var(--space-6); }
+  [data-visao="cards"] .secao { margin: 0; padding: var(--space-4); background-color: var(--color-bg-subtle); border-radius: var(--radius-card); }
+  [data-visao="cards"] .secao[data-secao="atrasadas"], [data-visao="cards"] .secao[data-secao="concluidas"] { grid-column: 1 / -1; }
+  [data-visao="cards"] .secao[data-secao="atrasadas"] { background-color: var(--color-bg-danger); }
+  [data-visao="cards"] .secao[data-secao="atrasadas"] h2, [data-visao="cards"] .secao-nota { color: var(--color-text-default); }
+  [data-visao="cards"] .secao-cabeca { padding: 0 0 var(--space-3); border-bottom: 0; }
+  .cards-atividade { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--size-column)), 1fr)); gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+  .cards-atividade > li { display: flex; min-width: 0; }
+  .cards-atividade .card-atividade { width: 100%; }
+  .card-acoes { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: auto; padding-top: var(--space-1); }
+  @media (max-width: 900px) {
+    [data-area-principal][data-visao="cards"] { grid-template-columns: minmax(0, 1fr); }
+  }
 </style>
 </head>
 <body data-pagina="area-de-trabalho.html" data-titulo="Área de trabalho">
@@ -87,7 +130,10 @@
   <main id="conteudo">
     <div class="area-topo">
       <div class="barra-filtros" id="filtros" role="group" aria-label="Filtros da área de trabalho"></div>
-      <p class="area-data" id="area-data"></p>
+      <div class="area-direita">
+        <p class="area-data" id="area-data"></p>
+        <div class="formato" id="formato" role="radiogroup" aria-label="Formato da lista"></div>
+      </div>
     </div>
 
     <ul class="leitura" id="leitura" aria-label="Resumo das atividades"></ul>
@@ -119,6 +165,9 @@
 (function () {
   // PA-37: a escolha dos filtros fica gravada no navegador e volta ao abrir a página.
   const CHAVE_FILTRO = 'astrea-filtro-area';
+  // Cards abre por padrão: cada grupo vira um container, com as ações à vista.
+  const CHAVE_VISAO = 'astrea-area-visao';
+  const VISOES = [['cards', 'Cards'], ['lista', 'Lista']];
   // O usuário logado da moldura. Minhas e Delegadas comparam o responsável com ele (PA-35).
   const EU = 'Marina Couto';
   const OUTRAS_PESSOAS = window.DADOS.RESPONSAVEIS.filter((nome) => nome !== EU).sort();
@@ -168,6 +217,13 @@
 
   const atividades = window.DADOS.ATIVIDADES.map((a) => ({ ...a }));
   const filtro = lerFiltro();
+  let visao = lerVisao();
+
+  function lerVisao() {
+    let salva = null;
+    try { salva = localStorage.getItem(CHAVE_VISAO); } catch (e) { salva = null; }
+    return VISOES.some(([chave]) => chave === salva) ? salva : VISOES[0][0];
+  }
 
   // Valor gravado fora das opções volta ao padrão: a opção pode ter saído da conta.
   function lerFiltro() {
@@ -207,7 +263,7 @@
     avisar(mensagem, () => {
       Object.assign(atividade, antes);
       desenhar();
-      const linha = document.querySelector(`[data-id="${atividade.id}"] .linha-acoes button`);
+      const linha = document.querySelector(`[data-id="${atividade.id}"] .linha-acoes button, [data-id="${atividade.id}"] .card-acoes button`);
       if (linha) linha.focus();
     });
   }
@@ -248,6 +304,45 @@
     document.getElementById('filtros').replaceChildren(...seletores);
   }
 
+  // --- formato: cards ou lista --------------------------------------------------
+
+  function montarFormato() {
+    const grupo = document.getElementById('formato');
+    const opcoes = VISOES.map(([chave, rotulo]) => {
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'formato-opcao';
+      el.textContent = rotulo;
+      el.dataset.visao = chave;
+      el.setAttribute('role', 'radio');
+      el.addEventListener('click', () => escolher(chave, false));
+      return el;
+    });
+    function marcar() {
+      opcoes.forEach((el) => {
+        const marcada = el.dataset.visao === visao;
+        el.setAttribute('aria-checked', String(marcada));
+        el.tabIndex = marcada ? 0 : -1;
+      });
+    }
+    function escolher(chave, focar) {
+      visao = chave;
+      try { localStorage.setItem(CHAVE_VISAO, chave); } catch (e) { /* sem armazenamento */ }
+      marcar();
+      desenhar();
+      if (focar) opcoes.find((el) => el.dataset.visao === chave).focus();
+    }
+    grupo.addEventListener('keydown', (e) => {
+      const passo = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+      if (!passo) return;
+      e.preventDefault();
+      const atual = VISOES.findIndex(([chave]) => chave === visao);
+      escolher(VISOES[(atual + passo + VISOES.length) % VISOES.length][0], true);
+    });
+    grupo.replaceChildren(...opcoes);
+    marcar();
+  }
+
   // --- desenho -----------------------------------------------------------------
 
   function linha(a) {
@@ -258,6 +353,26 @@
     });
     el.dataset.id = a.id;
     return el;
+  }
+
+  function card(a) {
+    const prazo = DS.descreverPrazo(a.prazoEmDias, concluida(a));
+    const el = DS.cardAtividade({
+      titulo: a.titulo, tipo: a.tipo, estadoPrazo: prazo.estadoPrazo, prazo: prazo.rotulo,
+      processo: a.processo, responsavel: a.responsavel, copiarNumero: true,
+    });
+    el.dataset.id = a.id;
+    const acoes = document.createElement('div');
+    acoes.className = 'card-acoes';
+    acoes.append(...acoesDe(a).map((acao, i) => {
+      const botao = DS.botao({ rotulo: acao.rotulo, iconeEsquerda: acao.icone, tamanho: 'pequeno', variante: i === 0 ? 'secundario' : 'texto' });
+      botao.addEventListener('click', acao.aoClicar);
+      return botao;
+    }));
+    el.append(acoes);
+    const li = document.createElement('li');
+    li.append(el);
+    return li;
   }
 
   // Vazio por filtro troca a ação: "Limpar filtros" (03-tela, estado vazio).
@@ -280,9 +395,9 @@
       return daqui.length;
     }
     const ul = document.createElement('ul');
-    ul.className = 'lista-atividades';
+    ul.className = visao === 'cards' ? 'cards-atividade' : 'lista-atividades';
     ul.setAttribute('aria-labelledby', `titulo-${secao.chave}`);
-    ul.append(...daqui.map(linha));
+    ul.append(...daqui.map(visao === 'cards' ? card : linha));
     corpo.replaceChildren(ul);
     return daqui.length;
   }
@@ -317,6 +432,7 @@
   }
 
   function desenhar() {
+    document.querySelector('[data-area-principal]').dataset.visao = visao;
     const lista = atividades.filter(passa);
     const visiveis = SECOES_DA_SITUACAO[filtro.situacao];
     const contagem = {};
@@ -327,6 +443,7 @@
   const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
   document.getElementById('area-data').textContent = hoje.charAt(0).toUpperCase() + hoje.slice(1);
   montarFiltros();
+  montarFormato();
   desenhar();
 })();
 </script>
