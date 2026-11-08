@@ -283,6 +283,78 @@
           "pagina": "design-system.html"
         }
       ]
+    },
+    {
+      "nome": "Design system: Fundamentos",
+      "secao": null,
+      "pagina_figma": "2:13",
+      "quadros": [
+        {
+          "titulo": "Design system, grupo Fundamentos",
+          "pagina": "design-system.html",
+          "seletor": "#fundamentos"
+        }
+      ]
+    },
+    {
+      "nome": "Design system: Ações",
+      "secao": null,
+      "pagina_figma": "2:13",
+      "quadros": [
+        {
+          "titulo": "Design system, grupo Ações",
+          "pagina": "design-system.html",
+          "seletor": "#acoes"
+        }
+      ]
+    },
+    {
+      "nome": "Design system: Formulário",
+      "secao": null,
+      "pagina_figma": "2:13",
+      "quadros": [
+        {
+          "titulo": "Design system, grupo Formulário",
+          "pagina": "design-system.html",
+          "seletor": "#formulario"
+        }
+      ]
+    },
+    {
+      "nome": "Design system: Feedback",
+      "secao": null,
+      "pagina_figma": "2:13",
+      "quadros": [
+        {
+          "titulo": "Design system, grupo Feedback",
+          "pagina": "design-system.html",
+          "seletor": "#feedback"
+        }
+      ]
+    },
+    {
+      "nome": "Design system: Dados",
+      "secao": null,
+      "pagina_figma": "2:13",
+      "quadros": [
+        {
+          "titulo": "Design system, grupo Dados",
+          "pagina": "design-system.html",
+          "seletor": "#dados"
+        }
+      ]
+    },
+    {
+      "nome": "Design system: Navegação",
+      "secao": null,
+      "pagina_figma": "2:13",
+      "quadros": [
+        {
+          "titulo": "Design system, grupo Navegação",
+          "pagina": "design-system.html",
+          "seletor": "#navegacao"
+        }
+      ]
     }
   ],
   "escala_figma": 0.9,

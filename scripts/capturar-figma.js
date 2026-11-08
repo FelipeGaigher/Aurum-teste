@@ -47,6 +47,7 @@ function servir() {
     await page.addStyleTag({ url: 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap' });
     // O código de exemplo usa ui-monospace e Consolas, que o Figma não tem. Só na captura, vira Roboto Mono.
     await page.addStyleTag({ content: ':root { --component-code-font: "Roboto Mono", monospace; }' });
+    // SELETOR='#id' captura só esse elemento, em vez do body inteiro.
     // CSS_EXTRA='seletor { regra }' entra só na captura. Serve para o conversor ver o que o
     // navegador rola, como as colunas do Kanban na largura real, antes do recorte no Figma.
     if (process.env.CSS_EXTRA) await page.addStyleTag({ content: process.env.CSS_EXTRA });
@@ -69,8 +70,8 @@ function servir() {
     }
     await page.waitForTimeout(800);
     const resultado = await page.evaluate(
-      ({ id, destino }) => window.figma.captureForDesign({ captureId: id, endpoint: destino, selector: 'body' }),
-      { id: captureId, destino: endpoint },
+      ({ id, destino, seletor }) => window.figma.captureForDesign({ captureId: id, endpoint: destino, selector: seletor }),
+      { id: captureId, destino: endpoint, seletor: process.env.SELETOR || 'body' },
     );
     console.log(JSON.stringify(resultado));
     await browser.close();

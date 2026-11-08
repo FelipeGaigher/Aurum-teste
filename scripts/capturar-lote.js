@@ -1,5 +1,6 @@
 // Roda as capturas de scripts/capturas-figma.json em lote, com concorrência limitada.
 // Uso: PROMPT_ID=<id> node scripts/capturar-lote.js <ids.json> [concorrencia]
+// PORTA_BASE muda a primeira porta (padrão 8801), para dois lotes ao mesmo tempo.
 // ids.json: { "<indice>": "<captureId>", ... }. O índice é a posição do quadro na lista
 // achatada dos fluxos. Cada captura roda em processo próprio, com porta própria.
 'use strict';
@@ -27,6 +28,7 @@ function capturar(q, porta) {
     const env = { ...process.env, PORTA: String(porta) };
     if (q.estado) env.ESTADO = JSON.stringify(q.estado);
     if (q.cliques) env.CLIQUES = q.cliques;
+    if (q.seletor) env.SELETOR = q.seletor;
     env.CSS_EXTRA = plano.css_base + (q.css === 'kanban' ? ' ' + plano.kanban_css : '');
     const filho = spawn('node', [path.join(raiz, 'scripts', 'capturar-figma.js'), q.pagina, id, endpoint, String(plano.largura)], { env, cwd: raiz });
     let saida = '';
@@ -45,7 +47,7 @@ function capturar(q, porta) {
   const fila = quadros.filter((q) => ids[String(q.indice)]);
   const resultados = [];
   let proximo = 0;
-  let porta = 8801;
+  let porta = Number(process.env.PORTA_BASE) || 8801;
   async function trabalhador() {
     while (proximo < fila.length) {
       const q = fila[proximo];
