@@ -203,3 +203,20 @@ com data. O que foi entregue fica no commit, não aqui.
 - Até o upgrade, o trabalho segue fora do Figma: plano das oito páginas em
   `docs/plans/2026-11-08-figma-entrega.md` e texto do briefing em
   `referencias/figma-briefing.md`.
+- Felipe pagou o Professional no time "Felipe Gaigher" e criou um arquivo
+  novo lá, às 14h20. A cota voltou na hora. O arquivo antigo fica como está.
+- O arquivo novo nasceu com oito páginas: capa, briefing, uma por questão,
+  design system, protótipo e extras. Os 16 PNG dos decks e os dois prints
+  do cadastro entraram pelo `upload_assets`, com `curl`. A capa e o
+  briefing nasceram pelo `use_figma`, em Fraunces e Geist, com os links
+  como hyperlink no texto.
+- A API de plugin não define miniatura nem renomeia o arquivo. Os dois
+  ficam manuais, no menu de contexto da capa.
+- O `capturar-figma.js` não encerra depois do envio: a promessa do
+  `captureForDesign` fica pendente. A captura chega ao Figma, mas o
+  processo segue vivo e trava o próximo passo de um script sequencial.
+  Duas capturas em fila ficaram paradas por dez minutos por isso. Regra:
+  uma captura por processo, em paralelo, com `timeout`.
+- Felipe pediu a página do protótipo dividida por fluxo, e não por tela.
+  Os estados entram pela URL do protótipo: `?criar=prazo`, `?ficha=`,
+  `?adicionar`. Dez capturas em paralelo, cada uma com porta própria.

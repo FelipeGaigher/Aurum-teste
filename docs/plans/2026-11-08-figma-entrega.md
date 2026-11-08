@@ -1,8 +1,9 @@
 # Arquivo do Figma como entrega — plano
 
 Pedido de Felipe em 08/11 às 14h15. A Aurum exige documentar e apresentar no
-Figma. O arquivo `pV95zDdtjirM8i3pDcOcuG` vira a porta de entrada da entrega,
-com todos os links. Escopo em `docs/2026-11-08-escopo-entrega.md`.
+Figma. Felipe criou o arquivo novo `OT2rzDJHctCE9WSfR19c2g` no time pago às 14h20,
+e ele vira a porta de entrada da entrega, com todos os links. O arquivo
+antigo `pV95zDdtjirM8i3pDcOcuG` fica como está. Escopo em `docs/2026-11-08-escopo-entrega.md`.
 
 ## Restrições
 
@@ -86,11 +87,14 @@ sem reescrita. Executa agora, sem MCP.
 Cria as páginas que faltam, renomeia as atuais e move cada nó para a página
 de destino. Nenhum nó é apagado.
 
-- [ ] Step 1: Criar e renomear as páginas
-- [ ] Step 2: Mover os nós
-- [ ] Step 3: Verificar pelo `get_metadata`
+- [x] Step 1: Criar e renomear as páginas
+- [x] Step 2: Mover os nós
+- [x] Step 3: Verificar pelo `get_metadata`
 
 ### Task 3: Capa e miniatura
+
+> nota: a API de plugin não define miniatura. Felipe marca a capa pelo menu
+> de contexto, "Set as thumbnail". O nome do arquivo também é manual.
 
 **Papel:** escrita
 **Verificação:** `get_screenshot` da capa; a miniatura do arquivo mostra a capa
@@ -101,9 +105,9 @@ Frame de 1920 por 1080 na página `00 Capa`, com o visual do protótipo.
 Mostra título da atividade, nome, data, os três blocos da entrega e o link único.
 Marcado como miniatura do arquivo.
 
-- [ ] Step 1: Montar o frame
-- [ ] Step 2: Definir como miniatura
-- [ ] Step 3: Verificar pela captura
+- [x] Step 1: Montar o frame
+- [x] Step 2: Definir como miniatura
+- [x] Step 3: Verificar pela captura
 
 ### Task 4: Página de briefing com os links
 
@@ -116,9 +120,9 @@ Um frame por bloco, em auto layout, com o texto da Task 1. Os links entram
 como hyperlink no texto. Os links de nó do Figma apontam para as páginas 02 a
 05.
 
-- [ ] Step 1: Montar os seis frames
-- [ ] Step 2: Aplicar os hyperlinks
-- [ ] Step 3: Verificar pela captura e pelos links
+- [x] Step 1: Montar os seis frames
+- [x] Step 2: Aplicar os hyperlinks
+- [x] Step 3: Verificar pela captura e pelos links
 
 ### Task 5: Questões 1, 2 e 3 nas páginas próprias
 
@@ -132,9 +136,9 @@ A Q3 traz a Área de trabalho à esquerda e os três slides à direita. Os PNG
 já estão no arquivo. Se algum slide mudou depois da importação, o PNG novo
 entra pelo Chrome, como em 08/11 de manhã.
 
-- [ ] Step 1: Organizar as três páginas
-- [ ] Step 2: Verificar se os PNG batem com `slides/`
-- [ ] Step 3: Verificar pela captura
+- [x] Step 1: Organizar as três páginas
+- [x] Step 2: Verificar se os PNG batem com `slides/`
+- [x] Step 3: Verificar pela captura
 
 ### Task 6: Design system com componentes de verdade
 
@@ -154,6 +158,10 @@ seguem o que a Q2 promete. O nó `28-2` fica como referência visual.
 
 ### Task 7: Protótipo no Figma
 
+> nota: Felipe pediu a página por fluxo, não por tela. Quatro seções:
+> gestão de atividades, processos, contatos e atendimentos, com os estados
+> abertos pela URL do protótipo. Dez capturas em paralelo, uma por processo.
+
 **Papel:** escrita
 **Verificação:** `get_screenshot` da página
 **Aprovação:** nenhuma
@@ -162,9 +170,9 @@ seguem o que a Q2 promete. O nó `28-2` fica como referência visual.
 Importa Kanban, Agenda, Contatos e Processos pelo `capturar-figma.js`, em
 linha, cada um com o link da página no Pages. A Área de trabalho já está lá.
 
-- [ ] Step 1: Importar as quatro páginas
-- [ ] Step 2: Links para o Pages
-- [ ] Step 3: Verificar pela captura
+- [x] Step 1: Importar as quatro páginas
+- [x] Step 2: Links para o Pages
+- [x] Step 3: Verificar pela captura
 
 ### Task 8: index.html e compartilhamento
 
@@ -177,6 +185,6 @@ O link do arquivo do Figma entra no topo do `index.html`, antes da tabela.
 Felipe muda o compartilhamento para "qualquer pessoa com o link pode ver" e
 verifica em janela anônima. Depois, commit e push.
 
-- [ ] Step 1: Link no `index.html`
+- [x] Step 1: Link no `index.html`
 - [ ] Step 2: Compartilhamento, por Felipe
 - [ ] Step 3: Commit e push
