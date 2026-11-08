@@ -1059,7 +1059,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 **Aviso:** RF-02 proíbe alterar `main` fora de `h1` e `#rodape-demo`, e os arrays `HISTORIAS` e `ATIVIDADES`.
 
-- [ ] **Step 1: Confirmar o estado vermelho**
+- [x] **Step 1: Confirmar o estado vermelho**
 
 ```bash
 python prototipo/verificar.py --sincronia
@@ -1067,7 +1067,7 @@ python prototipo/verificar.py --sincronia
 
 Esperado: `kanban: bloco primitivos difere de astrea.css.`
 
-- [ ] **Step 2: Implementar por trecho**
+- [x] **Step 2: Implementar por trecho**
 
 | Linhas | O que fazer |
 |---|---|
@@ -1097,7 +1097,7 @@ await page.click(`[role="radio"][data-grupo="conjunto"][data-valor="${c.conjunto
 
 Use `process.env.CAPTURAS_DESTINO` como destino, quando existir. Esperado: `capturar-kanban.js` segue funcional.
 
-- [ ] **Step 3: Executar e confirmar que passa**
+- [x] **Step 3: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/kanban.html --base-kanban --sincronia
@@ -1107,7 +1107,7 @@ CAPTURAS_DESTINO="$TEMP/capturas-kanban" node scripts/capturar-kanban.js
 
 Esperado: `verificar: 0 erro(s)`, os seis RF com `ok` e três PNG fora do repositório.
 
-- [ ] **Step 4: Entregar**
+- [x] **Step 4: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
