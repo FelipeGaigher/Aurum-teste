@@ -15,6 +15,11 @@ direção, na Q3 como tela, ou fica fora.
 | M6 | 16, Envolver pessoas | Trocar o popover por um seletor de participantes com avatar e botão de mais, no próprio campo. Componente que Felipe já tem no Figma | Q3, componente do DS | Reproduzir o componente com os tokens do Astrea. Link do Figma guardado abaixo |
 | M7 | 17 a 20, Agenda | Densidade: fonte menor, células menores, o mês inteiro visível numa tela. Um modo compacto por token de densidade | Q2, coleção Semantic com modo de densidade; Q1, visão de contexto | Medir quantas semanas cabem hoje e quantas caberiam no modo compacto |
 | M8 | 17 a 20, Agenda | A tarefa salva não aparece em nenhuma visão. Verificar se é o filtro "Minhas atribuições" ou a data retroativa | Q1, bug ou confusão de filtro | Repetir o teste com data de hoje e com o filtro em "Todas" |
+| M9 | 21, Contatos | Alternar a lista entre tabela e cards, com a escolha lembrada por usuário. Padrão já feito na náutica e na Fotus | Q3, componente do DS; Q1, leitura | Ler `referencias/padroes-fotus-nautica.md` e decidir o que o card de contato mostra |
+| M10 | 22 a 24, Adicionar contato | Grade de largura para campos: três ou quatro larguras por token, e o bloco alinhado à margem do título | Q1, consistência; Q2, tokens de tamanho | Medir as larguras atuais e propor a escala |
+| M11 | 24, Adicionar contato | Barra de ações fixa no rodapé do formulário: Salvar, Cancelar e o estado do que acontece, como salvando ou erro. Toast só para o que acontece fora da tela | Q3, componente do DS; Q1, hierarquia | Ler o padrão da Fotus em `referencias/padroes-fotus-nautica.md` e as fontes em `referencias/fontes-ux.md` |
+| M12 | 22, Etiquetas | Criar etiqueta sem sair do cadastro: modal ou painel lateral, e a etiqueta nova já selecionada ao voltar | Q1, fluxo; Q3, componente | Fontes sobre troca de contexto em `referencias/fontes-ux.md` |
+| M13 | 25, Documentação | Anexar o arquivo do documento no contato, com prévia e download, e controle de quem vê. Padrão da Vila Vela, sem copiar a tela, que tem dado real | Q1, tarefa real do escritório | Decidir o nível de acesso por perfil antes de desenhar |
 
 ## Referências externas
 

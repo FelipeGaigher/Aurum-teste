@@ -431,6 +431,77 @@ Hipótese:
 - Quatro visões em um seletor, mais uma lista sem data num painel
   lateral truncado. A informação de prazo está espalhada.
 
+### 21. Contatos, lista
+
+Print: `20-contatos-lista.png`. URL `#/main/contacts`. A faixa de campanha
+não aparece nesta sessão.
+
+Fato:
+
+- Título "Contatos" e botão "Adicionar" em caixa alta no canto direito.
+- Barra de filtro alfabético de A a Z, com "Todos" ativo, e botão de
+  etiqueta.
+<!-- lint-ignore: deriva-terminologica — "Procure" é o texto literal do campo -->
+- Campo de busca com o texto "Procure por nome, apelido ou nome fantasia".
+- Três chips de filtro ativos, em caixa alta, com X: "TIPO: CLIENTE",
+  "NOTIFICAÇÕES: TODOS", "TIPO DE NOTIFICAÇÃO: TODAS".
+- Tabela com caixa de seleção, ícone de tipo, nome em azul, telefone,
+  e-mail e etiquetas. "Nenhum telefone" e "Nenhum e-mail" em itálico
+  cinza em todas as quatro linhas.
+- Os quatro contatos vieram da OAB, como partes dos processos. Rodapé
+  "copyright 2026 Aurum Software Versão 2.02".
+
+Hipótese:
+
+- Só uma forma de ver a lista. Felipe propõe alternar entre tabela e
+  cards, como já faz em outros projetos. Entra no backlog.
+- Filtro alfabético de 26 letras para quatro contatos ocupa uma linha
+  inteira. Vale aparecer só a partir de um volume.
+- "Nenhum telefone" repetido quatro vezes é texto de ausência ocupando
+  coluna. Célula vazia com traço diz o mesmo com menos ruído.
+
+### 22 a 25. Adicionar contato
+
+Prints: `21-adicionar-contato-pessoais.png`,
+`22-adicionar-contato-margens-anotado.png`,
+`23-adicionar-contato-endereco-salvar.png`,
+`24-adicionar-contato-documentacao.png`.
+
+Fato:
+
+- Página inteira, não modal. Rádios Pessoa física e Pessoa jurídica.
+  Três abas: Informações pessoais, Informações complementares,
+  Documentação.
+- Rótulo acima do campo, placeholder "Digite o nome". Só Nome é
+  obrigatório.
+- Larguras de campo variam sem grade. Perfil estreito e Apelido largo na
+  mesma linha. Telefone em três partes. E-mail com seletor e campo. Site
+  em largura cheia. Endereço em duas colunas desiguais.
+- O bloco de campos começa com recuo em relação ao título. Os campos não
+  encostam na margem da tela nem na margem do título.
+- Botão "Salvar" em caixa alta e "Cancelar" como link, alinhados à
+  direita. A linha deles não coincide com a borda dos campos.
+- Aba Documentação: oito documentos em duas colunas, com placeholder
+  descrevendo o formato, como "Número/emissão/emissor". Nenhum lugar
+  para anexar o arquivo do documento.
+- O botão de etiqueta no campo Etiquetas leva a outra tela. Felipe saiu
+  do fluxo de cadastro sem terminar.
+
+Hipótese:
+
+- Sem grade de largura, o olho não acha o fim do campo. É problema de
+  consistência que um token de largura resolve.
+- Ação primária longe dos campos e no fim de uma página longa. Felipe
+  propõe barra de ações fixa no rodapé, com o estado do que acontece na
+  tela. É o padrão do projeto de venda direta. Entra no backlog.
+- Criar etiqueta navegando para fora é o custo de troca de contexto mais
+  caro do fluxo. A pessoa perde o que digitou ou perde o rumo. Modal ou
+  painel lateral mantém o fluxo. Fontes a citar em
+  `referencias/fontes-ux.md`.
+- Documentação pede número e não aceita o arquivo. Para escritório, o
+  arquivo do documento vale mais que o número digitado. Felipe propõe
+  anexos visíveis no contato, com cuidado de acesso. Entra no backlog.
+
 ### Pendente
 
 Kanban: ainda não encontrado no menu nem na Agenda. Buscar no seletor
