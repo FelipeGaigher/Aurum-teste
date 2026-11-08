@@ -49,7 +49,8 @@
   .visao:hover { color: var(--color-text-default); }
   .visao[aria-selected="true"] { border-bottom-color: var(--color-action); color: var(--color-action); font-weight: var(--font-weight-semibold); }
 
-  .grade-agenda { min-width: 0; }
+  /* A grade ocupa a altura que sobra na tela e rola por dentro; o JS mede --grade-altura (pedido de Felipe, 08/11). */
+  .grade-agenda { min-width: 0; height: var(--grade-altura, auto); overflow: auto; }
   .agenda-vazio { margin-bottom: var(--space-3); }
 
   /* mês e semana: sete colunas, domingo a sábado */
@@ -66,7 +67,7 @@
   .mes-dias, .semana-dias { margin: 0; padding: 0; list-style: none; border-left: var(--border-width) solid var(--color-border-default); }
   /* PA-47: a célula do mês tem três linhas da densidade compacta, e o mês inteiro cabe em 1440 por 900 */
   /* O mês e a semana preenchem a altura que sobra na tela; as linhas da hora têm o dobro da altura compacta (pedido de Felipe, 08/11). */
-  .mes-dias { grid-auto-rows: minmax(calc(var(--density-row-compact) * 3), 1fr); min-height: calc(100vh - 250px); }
+  .mes-dias { grid-auto-rows: minmax(calc(var(--density-row-compact) * 3), 1fr); min-height: calc(var(--grade-altura, 640px) - var(--density-row-compact)); }
   .dia {
     display: flex;
     flex-direction: column;
@@ -78,7 +79,7 @@
     border-bottom: var(--border-width) solid var(--color-border-default);
   }
   .semana-dias { border-top: var(--border-width) solid var(--color-border-default); }
-  .semana-dias .dia { min-height: max(calc(var(--density-row-compact) * 10), calc(100vh - 250px)); padding: var(--space-2); }
+  .semana-dias .dia { min-height: calc(var(--grade-altura, 640px) - var(--density-row-compact) - 2 * var(--border-width)); padding: var(--space-2); }
   .dia-numero {
     display: inline-grid;
     place-items: center;
@@ -145,11 +146,14 @@
     border-radius: var(--radius-card);
     position: sticky;
     top: calc(var(--component-header-height) + var(--space-5));
-    max-height: calc(100vh - var(--component-header-height) - 2 * var(--space-5));
+    max-height: var(--grade-altura, calc(100vh - var(--component-header-height) - 2 * var(--space-5)));
     overflow-y: auto;
   }
   .prioridades-ajuda { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-size: var(--font-size-label); }
   .prioridades ol { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+  .prioridade-botao { display: grid; gap: var(--space-1); justify-items: start; width: 100%; padding: var(--space-2); background: none; border: var(--border-width) solid transparent; border-radius: var(--radius); color: inherit; font: inherit; text-align: start; cursor: pointer; }
+  .prioridade-botao:hover { border-color: var(--color-action); background-color: var(--color-bg-subtle); }
+  .prioridade-botao:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-offset); }
   .prioridade { display: grid; justify-items: start; gap: var(--space-1); }
   .prioridade-titulo { font-weight: var(--font-weight-medium); overflow-wrap: anywhere; }
 
@@ -168,7 +172,7 @@
       <div class="agenda-criar" id="agenda-criar"></div>
     </div>
     <div class="agenda">
-      <section class="grade-agenda" id="grade-agenda" role="tabpanel" aria-labelledby="visao-dia"></section>
+      <section class="grade-agenda" id="grade-agenda" tabindex="-1" role="tabpanel" aria-labelledby="visao-dia"></section>
       <aside class="prioridades" aria-labelledby="prioridades-titulo">
         <h2 id="prioridades-titulo">Prioridades por prazo</h2>
         <p class="prioridades-ajuda">Tudo que está em aberto, do prazo mais urgente ao mais distante.</p>
@@ -376,7 +380,17 @@
     const ol = criar('ol');
     ol.append(...abertas.map((a) => {
       const li = criar('li', 'prioridade');
-      li.append(DS.chipPrazo({ estadoPrazo: a.estadoPrazo, rotulo: a.rotulo }), criar('span', 'prioridade-titulo', a.titulo), DS.tag({ rotulo: TIPOS[a.tipo] }));
+      // Cada prioridade é ação: abre o dia da atividade na grade (pergunta de Felipe: "isso é informativo?").
+      const botao = criar('button', 'prioridade-botao');
+      botao.type = 'button';
+      botao.setAttribute('aria-label', `Abrir o dia de ${a.titulo}`);
+      botao.append(DS.chipPrazo({ estadoPrazo: a.estadoPrazo, rotulo: a.rotulo }), criar('span', 'prioridade-titulo', a.titulo), DS.tag({ rotulo: TIPOS[a.tipo] }));
+      botao.addEventListener('click', () => {
+        estado.data = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + a.prazoEmDias);
+        document.getElementById('visao-dia').click();
+        gradeEl.focus({ preventScroll: true });
+      });
+      li.append(botao);
       return li;
     }));
     destino.replaceChildren(ol);
@@ -428,6 +442,15 @@
   proximo.addEventListener('click', () => mover(1));
   document.getElementById('agenda-navegar').append(botaoHoje, anterior, proximo);
 
+  const gradeEl = document.getElementById('grade-agenda');
+  function ajustarAltura() {
+    document.documentElement.style.removeProperty('--grade-altura');
+    const topo = gradeEl.getBoundingClientRect().top + window.scrollY;
+    const sobra = window.innerHeight - topo - 32;
+    document.documentElement.style.setProperty('--grade-altura', `${Math.max(320, Math.round(sobra))}px`);
+  }
+  window.addEventListener('resize', ajustarAltura);
+
   function desenhar() {
     abas.forEach((aba) => {
       const ativa = aba.dataset.visao === estado.visao;
@@ -440,6 +463,7 @@
     document.getElementById('agenda-periodo').textContent = rotuloDoPeriodo(estado.visao, estado.data);
     const pecas = DESENHO[estado.visao](estado.data);
     grade.replaceChildren(...(ATIVIDADES.length ? [] : [avisoVazio()]), ...pecas);
+    ajustarAltura();
   }
 
   // --- criar atividade -----------------------------------------------------

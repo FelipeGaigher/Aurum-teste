@@ -91,6 +91,11 @@
 
   .ficha-processos { display: grid; justify-items: start; gap: var(--space-3); }
   .ficha-processos .tabela-quadro { width: 100%; }
+  .ficha-documentos { display: grid; gap: var(--space-3); }
+  .ficha-documentos-topo { display: flex; justify-content: flex-end; }
+  .ficha-documentos-aviso:empty { display: none; }
+  .documento-acoes { display: flex; align-items: center; gap: var(--space-2); }
+  .documento-nome { overflow-wrap: anywhere; }
   .ficha-filtro { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
 
   /* PA-67 e M10: linhas de campos com larguras por token, alinhadas à margem do título. */
@@ -461,15 +466,83 @@
     return DS.estadoVazio({ titulo, texto });
   }
 
+  // PA-70: o protótipo não guarda arquivo. Baixar, anexar e as ações por linha só avisam.
+  const SEM_ARQUIVO = 'Este protótipo não abre nem guarda arquivos. Anexar e baixar documentos fica para uma próxima versão.';
+
+  function dataCurta(iso) {
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function tamanho(kb) {
+    return kb < 1024 ? `${kb} KB` : `${(kb / 1024).toFixed(1).replace('.', ',')} MB`;
+  }
+
+  function documentosDoContato(docs) {
+    const secao = criar('div', 'ficha-documentos');
+    const aviso = criar('div', 'ficha-documentos-aviso');
+    const avisar = () => aviso.replaceChildren(DS.faixaAviso({ tipo: 'info', mensagem: SEM_ARQUIVO, fechar: true }));
+    const adicionar = { rotulo: 'Adicionar documento', iconeEsquerda: 'mais', aoClicar: avisar };
+
+    if (!docs.length) {
+      secao.append(aviso, DS.estadoVazio({
+        titulo: 'Nenhum documento deste contato.',
+        texto: 'Documentos anexados ao contato aparecem aqui.',
+        acao: adicionar,
+      }));
+      return secao;
+    }
+
+    const topo = criar('div', 'ficha-documentos-topo');
+    const botaoAdicionar = DS.botao({ variante: 'primario', iconeEsquerda: 'mais', rotulo: adicionar.rotulo });
+    botaoAdicionar.addEventListener('click', avisar);
+    topo.append(botaoAdicionar);
+
+    function acoes(d) {
+      const caixa = criar('div', 'documento-acoes');
+      const baixar = DS.botao({ variante: 'texto', tamanho: 'pequeno', rotulo: 'Baixar' });
+      baixar.setAttribute('aria-label', `Baixar ${d.nome}`);
+      baixar.addEventListener('click', avisar);
+      const mais = DS.menuAcoes({
+        rotulo: 'Mais ações',
+        itens: [
+          { rotulo: 'Renomear', aoClicar: avisar },
+          { rotulo: 'Ligar a outro processo', aoClicar: avisar },
+          { rotulo: 'Excluir documento', destrutivo: true, aoClicar: avisar },
+        ],
+      });
+      mais.querySelector('[aria-haspopup="menu"]').setAttribute('aria-label', `Mais ações de ${d.nome}`);
+      caixa.append(baixar, mais);
+      return caixa;
+    }
+
+    secao.append(topo, aviso, DS.tabela({
+      rotulo: 'Documentos do contato',
+      colunas: [['nome', 'Nome'], ['tipo', 'Tipo'], ['processo', 'Processo'], ['enviadoPor', 'Enviado por'],
+        ['data', 'Data'], ['tamanho', 'Tamanho'], ['acoes', 'Ações']],
+      linhas: docs.map((d) => ({
+        nome: criar('span', 'documento-nome', d.nome),
+        tipo: DS.tag({ rotulo: d.tipo }),
+        processo: d.processo,
+        enviadoPor: d.enviadoPor,
+        data: dataCurta(d.enviadoEm),
+        tamanho: tamanho(d.tamanhoKb),
+        acoes: acoes(d),
+      })),
+    }));
+    return secao;
+  }
+
   function montarFicha(id) {
     const c = CONTATOS.find((x) => x.id === id) || CONTATOS[0];
+    const docs = (window.DADOS.DOCUMENTOS_DE_CONTATO || {})[c.id] || [];
     main.append(topoDoRegistro(c.nome, [DS.tag({ rotulo: 'Tipo: Cliente' }), DS.tag({ rotulo: c.tipo })]));
     // Oito abas na ordem do Astrea.
     main.append(DS.abas({
       rotulo: 'Seções do contato',
       itens: [
         { chave: 'cadastro', rotulo: 'Cadastro', conteudo: leitura(c) },
-        { chave: 'documentos', rotulo: 'Documentos', conteudo: vazio('Nenhum documento deste contato.', 'Documentos anexados ao contato aparecem aqui.') },
+        { chave: 'documentos', rotulo: docs.length ? `Documentos (${docs.length})` : 'Documentos', conteudo: documentosDoContato(docs) },
         { chave: 'atendimentos', rotulo: 'Atendimentos', conteudo: vazio('Nenhum atendimento deste contato.', 'Atendimentos registrados com este contato aparecem aqui.') },
         { chave: 'processos', rotulo: 'Processos', conteudo: processosDoContato(c) },
         { chave: 'despesas', rotulo: 'Despesas', conteudo: bloqueio('Despesas fazem parte do Financeiro') },

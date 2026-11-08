@@ -89,4 +89,39 @@ const MOVIMENTACOES_MODELO = [
 ];
 
 Object.assign(window.DADOS, { FICHAS, COMENTARIOS_DE_ATIVIDADE, MOVIMENTACOES_MODELO });
+
+// Documentos anexados ao contato, pela id de CONTATOS. Arquivos fictícios: o protótipo não guarda o arquivo.
+// tipo: PDF, DOCX ou Imagem. processo: número de NUMEROS, ou vazio quando o documento é só do contato.
+const DOCUMENTOS_DE_CONTATO = {
+  c1: [
+    { id: 'd1', nome: 'Procuracao_Yara_Monteverde.pdf', tipo: 'PDF', tamanhoKb: 184, enviadoEm: '2026-09-02', enviadoPor: 'Rafael Antunes', processo: NUMEROS[0] },
+    { id: 'd2', nome: 'Contrato_de_honorarios_assinado.pdf', tipo: 'PDF', tamanhoKb: 412, enviadoEm: '2026-09-02', enviadoPor: 'Rafael Antunes', processo: NUMEROS[0] },
+    { id: 'd3', nome: 'RG_frente_e_verso.jpg', tipo: 'Imagem', tamanhoKb: 1630, enviadoEm: '2026-08-28', enviadoPor: 'Beatriz Lemos', processo: '' },
+  ],
+  c2: [
+    { id: 'd4', nome: 'Peticao_inicial_conciliacao.docx', tipo: 'DOCX', tamanhoKb: 96, enviadoEm: '2026-07-15', enviadoPor: 'Marina Couto', processo: NUMEROS[1] },
+    { id: 'd5', nome: 'Comprovante_de_residencia_junho.pdf', tipo: 'PDF', tamanhoKb: 238, enviadoEm: '2026-07-11', enviadoPor: 'Marina Couto', processo: '' },
+  ],
+  c4: [
+    { id: 'd6', nome: 'Procuracao_ad_judicia_Nestor_Fontes.pdf', tipo: 'PDF', tamanhoKb: 201, enviadoEm: '2026-10-21', enviadoPor: 'Otávio Prado', processo: NUMEROS[3] },
+    { id: 'd7', nome: 'Contrato_de_honorarios_2026.docx', tipo: 'DOCX', tamanhoKb: 74, enviadoEm: '2026-10-21', enviadoPor: 'Otávio Prado', processo: NUMEROS[3] },
+    { id: 'd8', nome: 'Peticao_inicial_protocolada.pdf', tipo: 'PDF', tamanhoKb: 2870, enviadoEm: '2026-10-09', enviadoPor: 'Rafael Antunes', processo: NUMEROS[3] },
+    { id: 'd9', nome: 'Laudo_pericial_contabil.pdf', tipo: 'PDF', tamanhoKb: 5340, enviadoEm: '2026-09-30', enviadoPor: 'Beatriz Lemos', processo: NUMEROS[3] },
+    { id: 'd10', nome: 'RG_digitalizado.png', tipo: 'Imagem', tamanhoKb: 912, enviadoEm: '2026-09-18', enviadoPor: 'Marina Couto', processo: '' },
+    { id: 'd11', nome: 'Comprovante_de_residencia.pdf', tipo: 'PDF', tamanhoKb: 156, enviadoEm: '2026-09-18', enviadoPor: 'Marina Couto', processo: '' },
+  ],
+  c6: [
+    { id: 'd12', nome: 'Procuracao_Estaleiro_Tres_Mares.pdf', tipo: 'PDF', tamanhoKb: 230, enviadoEm: '2026-10-30', enviadoPor: 'Beatriz Lemos', processo: NUMEROS[5] },
+    { id: 'd13', nome: 'Contrato_social_consolidado.pdf', tipo: 'PDF', tamanhoKb: 1480, enviadoEm: '2026-10-30', enviadoPor: 'Beatriz Lemos', processo: '' },
+    { id: 'd14', nome: 'Contrato_de_honorarios_empresa.docx', tipo: 'DOCX', tamanhoKb: 88, enviadoEm: '2026-10-28', enviadoPor: 'Otávio Prado', processo: NUMEROS[5] },
+    { id: 'd15', nome: 'Laudo_de_vistoria_do_casco.pdf', tipo: 'PDF', tamanhoKb: 7210, enviadoEm: '2026-10-12', enviadoPor: 'Rafael Antunes', processo: NUMEROS[5] },
+  ],
+  c9: [
+    { id: 'd16', nome: 'Peticao_inicial_testemunhas.docx', tipo: 'DOCX', tamanhoKb: 112, enviadoEm: '2026-06-03', enviadoPor: 'Marina Couto', processo: NUMEROS[8] },
+    { id: 'd17', nome: 'RG_digitalizado_Dalva.jpg', tipo: 'Imagem', tamanhoKb: 1205, enviadoEm: '2026-05-27', enviadoPor: 'Marina Couto', processo: '' },
+    { id: 'd18', nome: 'Procuracao_Dalva_Castanho.pdf', tipo: 'PDF', tamanhoKb: 176, enviadoEm: '2026-05-27', enviadoPor: 'Marina Couto', processo: NUMEROS[8] },
+  ],
+};
+
+Object.assign(window.DADOS, { DOCUMENTOS_DE_CONTATO });
 })();

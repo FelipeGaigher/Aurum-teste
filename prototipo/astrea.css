@@ -47,6 +47,7 @@
   --primitive-radius-8: 8px;
   --primitive-radius-12: 12px;
   --primitive-radius-round: 50%;
+  --primitive-radius-pill: 9999px;
   --primitive-border-1: 1px;
   --primitive-border-2: 2px;
 
@@ -128,6 +129,7 @@
   --radius-card: var(--primitive-radius-8);
   --radius-dialog: var(--primitive-radius-12);
   --radius-round: var(--primitive-radius-round);
+  --radius-pill: var(--primitive-radius-pill);
   --border-width: var(--primitive-border-1);
   --focus-width: var(--primitive-border-2);
 
@@ -1129,7 +1131,7 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
   width: var(--component-switch-width);
   height: var(--component-switch-height);
   background-color: var(--color-bg-hover);
-  border-radius: var(--radius-round);
+  border-radius: var(--radius-pill);
   transition: background-color 150ms;
 }
 .chave-botao {
