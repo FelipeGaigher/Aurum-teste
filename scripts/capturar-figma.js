@@ -47,6 +47,9 @@ function servir() {
     await page.addStyleTag({ url: 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap' });
     // O código de exemplo usa ui-monospace e Consolas, que o Figma não tem. Só na captura, vira Roboto Mono.
     await page.addStyleTag({ content: ':root { --component-code-font: "Roboto Mono", monospace; }' });
+    // CSS_EXTRA='seletor { regra }' entra só na captura. Serve para o conversor ver o que o
+    // navegador rola, como as colunas do Kanban na largura real, antes do recorte no Figma.
+    if (process.env.CSS_EXTRA) await page.addStyleTag({ content: process.env.CSS_EXTRA });
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(500);
     const resposta = await page.context().request.get('https://mcp.figma.com/mcp/html-to-design/capture.js');
