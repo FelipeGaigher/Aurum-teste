@@ -27,8 +27,9 @@ Legenda:
 > `prototipo/area-de-trabalho.html` a 1440 de largura, direto no arquivo
 > da entrega, nó `26-2`. O protótipo em HTML continua a fonte.
 
-> aberto: o nó `26-2` é anterior ao painel de detalhe, às visões e à
-> tabela. Default: recapturar a tela no Figma num nó novo, no lugar do `26-2`.
+> fechado: o nó `26-2` era anterior ao painel de detalhe, às visões e à
+> tabela. A outra sessão recapturou a Área de trabalho na seção `8-2` do arquivo
+> `OT2rzDJHctCE9WSfR19c2g`.
 
 ## O contrato: cada decisão nossa, visível na tela
 

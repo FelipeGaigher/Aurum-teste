@@ -1023,11 +1023,15 @@
   function pecaTabela() {
     const comHover = tabelaDemo({ linhas: linhasDeContato(3) });
     comHover.querySelector('tbody tr:nth-child(2)').classList.add('is-hover');
+    const comSelecao = tabelaDemo({ linhas: linhasDeContato(3) });
+    comSelecao.querySelectorAll('tbody tr').forEach((tr) => tr.setAttribute('data-selecionavel', ''));
+    comSelecao.querySelector('tbody tr:nth-child(2)').setAttribute('aria-selected', 'true');
     return pecaComEstados({
       id: 'tabela', titulo: 'Tabela', nota: 'Padrão para lista longa, como processos e prazos. Larga, ela rola dentro do quadro e nunca a página.',
       estados: [
         ['default', tabelaDemo({ linhas: linhasDeContato(3) })],
         ['hover', comHover],
+        ['selecionado', comSelecao],
         ['carregando', tabelaDemo({ carregando: true })],
         ['vazio', tabelaDemo({ linhas: [], vazio: { titulo: 'Nenhum contato com estes filtros.', texto: 'Ajuste os filtros para ver mais.' } })],
       ],
