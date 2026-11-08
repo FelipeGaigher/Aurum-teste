@@ -140,6 +140,6 @@ com data. O que foi entregue fica no commit, não aqui.
   `hidden`, e o campo de comentário aparecia antes da hora. Regra global
   `[hidden] { display: none !important; }` resolveu.
 - Felipe pediu o item do Kanban num grupo "Especialista UX/UI" no topo do
-  menu, como os grupos da Náutica. E a sidebar abraçando o conteúdo: a
+  menu, como os grupos da Náutica. E a sidebar abraçando o conteúdo. A
   largura caiu de 260px para 200px, a do item "Processos e casos" com
   8px de folga. A 192px o item quebrava em duas linhas.
