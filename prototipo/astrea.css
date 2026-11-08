@@ -1507,6 +1507,43 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .card-contato-dados dt { color: var(--color-text-muted); }
 .card-contato-dados dd { margin: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
 
+/* card de registro: título, destaque e linhas em três pesos (pedido de Felipe, 08/11) */
+.card-registro {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  padding: var(--space-3);
+  background-color: var(--component-card-bg);
+  border: var(--border-width) solid var(--component-card-border);
+  border-radius: var(--component-card-radius);
+  box-shadow: var(--component-card-shadow);
+}
+.card-registro.is-selecionavel { cursor: pointer; }
+.card-registro:hover, .card-registro.is-hover { border-color: var(--color-action); background-color: var(--color-bg-hover); }
+.card-registro.is-selecionado { border-color: var(--color-action); box-shadow: inset 0 0 0 var(--border-width) var(--color-action); }
+.card-registro-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); min-width: 0; }
+.card-registro-titulo {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--font-size-emphasis);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--font-leading-tight);
+  color: var(--color-text-default);
+  overflow-wrap: anywhere;
+}
+.card-registro-titulo a { border-radius: var(--radius); color: var(--color-action); text-decoration: none; }
+.card-registro-titulo a:hover { text-decoration: underline; }
+.card-registro-topo > .tag { flex: none; }
+.card-registro-rotulo { color: var(--color-text-muted); font-size: var(--font-size-label); }
+.card-registro-destaque { display: grid; gap: var(--space-1); margin-top: var(--space-3); padding-bottom: var(--space-3); border-bottom: var(--border-width) solid var(--color-border-accent); }
+.card-registro-destaque-valor { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); min-height: var(--component-person-size); }
+.card-registro-numero { font-size: var(--font-size-body); font-variant-numeric: tabular-nums; color: var(--color-text-default); overflow-wrap: anywhere; }
+.card-registro-linhas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2) var(--space-3); margin: var(--space-3) 0 0; }
+.card-registro-linha { display: grid; gap: var(--space-1); min-width: 0; }
+.card-registro-linha dd { margin: 0; min-width: 0; font-size: var(--font-size-body); color: var(--color-text-default); overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.card-registro-rodape { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-top: auto; padding-top: var(--space-3); }
+
 /* tabela: rola dentro do quadro, nunca a página */
 .tabela-quadro { max-width: 100%; overflow-x: auto; border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); background-color: var(--color-bg-surface); }
 .tabela { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }

@@ -1676,6 +1676,57 @@
     return raiz;
   }
 
+  // Card de registro: título, destaque e linhas em três pesos. A página cuida da seleção;
+  // o botão de copiar e o link do título seguem a própria ação e não escolhem o card.
+  function cardRegistro(props = {}) {
+    const { titulo, href, chip, destaque, linhas = [], rodape = [], selecionavel = false } = props;
+    exigir(titulo, 'cardRegistro', 'titulo é obrigatório');
+    exigir(Array.isArray(linhas) && Array.isArray(rodape), 'cardRegistro', 'linhas e rodape são listas');
+    const raiz = criar('article', 'card-registro');
+    if (selecionavel) { raiz.tabIndex = 0; raiz.classList.add('is-selecionavel'); }
+    const topo = criar('div', 'card-registro-topo');
+    const tituloEl = criar('h3', 'card-registro-titulo');
+    tituloEl.id = novoId('registro');
+    raiz.setAttribute('aria-labelledby', tituloEl.id);
+    if (href) {
+      const link = criar('a', null, titulo);
+      link.href = href;
+      tituloEl.append(link);
+    } else tituloEl.textContent = titulo;
+    topo.append(tituloEl);
+    if (chip) topo.append(chip instanceof HTMLElement ? chip : tag({ rotulo: chip }));
+    raiz.append(topo);
+
+    if (destaque) {
+      exigir(destaque.rotulo, 'cardRegistro', 'destaque tem rotulo');
+      const bloco = criar('div', 'card-registro-destaque');
+      const valor = criar('div', 'card-registro-destaque-valor');
+      valor.append(preencherValor(criar('span', 'card-registro-numero'), destaque.valor));
+      if (destaque.copiar) valor.append(botaoCopiar(destaque.copiar));
+      bloco.append(criar('span', 'card-registro-rotulo', destaque.rotulo), valor);
+      raiz.append(bloco);
+    }
+    if (linhas.length) {
+      const grade = criar('dl', 'card-registro-linhas');
+      linhas.forEach(({ rotulo, valor, pessoa }) => {
+        exigir(rotulo, 'cardRegistro', 'cada linha tem rotulo');
+        const item = criar('div', 'card-registro-linha');
+        const dd = criar('dd');
+        if (pessoa && valor) dd.append(avatar({ nome: valor, mostrarNome: true }));
+        else preencherValor(dd, valor);
+        item.append(criar('dt', 'card-registro-rotulo', rotulo), dd);
+        grade.append(item);
+      });
+      raiz.append(grade);
+    }
+    if (rodape.length) {
+      const pe = criar('div', 'card-registro-rodape');
+      pe.append(...rodape);
+      raiz.append(pe);
+    }
+    return raiz;
+  }
+
   // PA-66: valor ausente mostra traço, e o leitor de tela ouve "Não informado".
   function preencherValor(alvo, valor) {
     if (valor instanceof HTMLElement) alvo.append(valor);
@@ -2516,7 +2567,7 @@
     ICONES: Object.keys(ICONES), icone, botao, grupoBotoes, menuAcoes,
     campo, areaTexto, busca, seletor, seletorMultiplo, seletorPessoas, data, periodo, caixa, radio, chave,
     toast, faixaAviso, dialogo, tooltip, progresso, skeleton, estadoVazio, upsell,
-    descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade, cardAtividade, cardContato, paginacao,
+    descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade, cardAtividade, cardContato, cardRegistro, paginacao,
     abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper, painelCriarAtividade,
     painelDetalhe, divisorRedimensionavel,
   };

@@ -47,9 +47,6 @@
     padding: 0;
     list-style: none;
   }
-  .documentos-cards .card-contato { width: auto; height: 100%; }
-  /* O tipo no canto do card, o nome do arquivo ocupa o resto da linha. */
-  .documentos-cards .card-contato-topo { align-self: stretch; align-items: flex-start; justify-content: space-between; }
   .resumo { display: grid; gap: var(--space-2); margin: 0; }
   .resumo div { display: grid; gap: var(--space-1); }
   .resumo dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
@@ -435,37 +432,20 @@
     return quadro;
   }
 
-  // O card de contatos.html, com as classes do DS. O card inteiro é o alvo: foco, clique e Enter escolhem.
+  // Card de registro do DS: o nome do arquivo no topo, o processo em destaque com copiar.
   function cardDoDocumento(d) {
-    const card = document.createElement('article');
-    card.className = 'card-contato';
-    card.dataset.id = d.id;
-    card.tabIndex = 0;
-    const titulo = document.createElement('h3');
-    titulo.className = 'card-contato-nome';
-    titulo.id = `documento-${d.id}-nome`;
-    titulo.textContent = d.nome;
-    card.setAttribute('aria-labelledby', titulo.id);
-    const topo = document.createElement('div');
-    topo.className = 'card-contato-topo';
-    topo.append(titulo);
-    if (d.tipo) topo.append(DS.tag({ rotulo: d.tipo }));
-    const dados = document.createElement('dl');
-    dados.className = 'card-contato-dados';
-    const campos = [
-      [d.processo ? 'Processo' : 'Contato', d.processo || d.contato],
-      ['Enviado por', d.enviadoPor ? DS.avatar({ nome: d.enviadoPor, mostrarNome: true }) : ''],
-      ['Data', dataBr(d.enviadoEm)],
-      ['Tamanho', tamanho(d.tamanhoKb)],
-    ].filter(([, valor]) => valor);
-    campos.forEach(([rotulo, valor]) => {
-      const dt = document.createElement('dt');
-      const dd = document.createElement('dd');
-      dt.textContent = rotulo;
-      dd.append(valor);
-      dados.append(dt, dd);
+    const card = DS.cardRegistro({
+      titulo: d.nome,
+      chip: d.tipo || null,
+      destaque: d.processo ? { rotulo: 'Processo', valor: d.processo, copiar: d.processo } : { rotulo: 'Contato', valor: d.contato },
+      linhas: [
+        { rotulo: 'Enviado por', valor: d.enviadoPor, pessoa: true },
+        { rotulo: 'Data', valor: dataBr(d.enviadoEm) },
+        { rotulo: 'Tamanho', valor: tamanho(d.tamanhoKb) },
+      ],
+      selecionavel: true,
     });
-    card.append(topo, dados);
+    card.dataset.id = d.id;
     return card;
   }
 

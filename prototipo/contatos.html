@@ -57,7 +57,6 @@
     padding: 0;
     list-style: none;
   }
-  .contatos-cards .card-contato { width: auto; height: 100%; }
 
   /* Painel do contato: atividades do processo ligado, uma por linha, o prazo primeiro. */
   .detalhe-atividades-titulo { margin: 0 0 var(--space-2); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
@@ -218,16 +217,31 @@
       return quadro;
     }
 
+    // Card de registro do DS: o nome segue para a ficha, o processo ligado copia, o resto do card escolhe.
+    function cardDoContato(c) {
+      const processo = window.DADOS.PROCESSOS.find((p) => p.numero === c.processo);
+      return DS.cardRegistro({
+        titulo: c.nome,
+        href: urlDaFicha(c),
+        chip: c.tipo || null,
+        destaque: { rotulo: 'Processo ligado', valor: c.processo, copiar: c.processo || undefined },
+        linhas: [
+          { rotulo: 'Telefone', valor: c.telefone },
+          { rotulo: 'E-mail', valor: c.email },
+          { rotulo: 'Responsável', valor: processo ? processo.responsavel : '', pessoa: true },
+        ],
+        rodape: c.etiquetas.map((rotulo) => DS.tag({ rotulo })),
+        selecionavel: true,
+      });
+    }
+
     function desenharCards(itens) {
       const ul = criar('ul', 'contatos-cards');
       ul.setAttribute('aria-label', 'Contatos');
       ul.append(...itens.map((c) => {
         const li = criar('li');
         li.dataset.id = c.id;
-        li.append(DS.cardContato({
-          nome: c.nome, tipo: c.tipo, email: c.email, telefone: c.telefone, processo: c.processo,
-          aoAbrir: () => detalhe.escolher(c.id),
-        }));
+        li.append(cardDoContato(c));
         return li;
       }));
       return ul;
@@ -251,11 +265,13 @@
 
     const detalhe = detalheDosContatos(resultado, filtrados);
     resultado.addEventListener('click', (e) => {
-      const tr = e.target.closest('tr[data-id]');
-      if (tr && !e.target.closest('a, button')) detalhe.escolher(tr.dataset.id);
+      const item = e.target.closest('tr[data-id], li[data-id]');
+      if (item && !e.target.closest('a, button')) detalhe.escolher(item.dataset.id);
     });
     resultado.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && e.target.matches('tr[data-id]')) { e.preventDefault(); detalhe.escolher(e.target.dataset.id); }
+      if (e.key !== 'Enter' || !e.target.matches('tr[data-id], li[data-id] > .card-registro')) return;
+      e.preventDefault();
+      detalhe.escolher(e.target.closest('[data-id]').dataset.id);
     });
 
     // --- formato: radiogroup com foco itinerante (padrão Segmentado) -----------
@@ -455,10 +471,10 @@
     lista.querySelectorAll('[data-id]').forEach((el) => {
       const sim = el.dataset.id === id;
       if (el.tagName === 'TR') { el.setAttribute('aria-selected', String(sim)); return; }
-      const card = el.querySelector('.card-contato');
-      if (card) card.classList.toggle('is-selecionado', sim);
-      const nome = el.querySelector('.card-contato-abrir');
-      if (nome) nome.setAttribute('aria-pressed', String(sim));
+      const card = el.querySelector('.card-registro');
+      if (!card) return;
+      card.classList.toggle('is-selecionado', sim);
+      if (sim) card.setAttribute('aria-current', 'true'); else card.removeAttribute('aria-current');
     });
   }
 

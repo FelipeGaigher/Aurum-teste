@@ -20,7 +20,7 @@
   .lista-filtros { margin-bottom: var(--space-4); }
   .pagina-aviso:empty { display: none; }
   .pagina-aviso { margin-bottom: var(--space-4); }
-  .tabela a, .atendimentos-cards .card-contato-nome a { border-radius: var(--radius); color: var(--color-action); font-weight: var(--font-weight-medium); }
+  .tabela a { border-radius: var(--radius); color: var(--color-action); font-weight: var(--font-weight-medium); }
 
   /* Formato da lista no controle segmentado de contatos.html: o marcado ganha fundo e peso, nunca só a cor. */
   .formato {
@@ -58,8 +58,6 @@
     padding: 0;
     list-style: none;
   }
-  .atendimentos-cards .card-contato { width: auto; height: 100%; }
-  .atendimentos-cards .card-contato-topo { align-self: stretch; justify-content: space-between; align-items: flex-start; }
   .detalhe-numero { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); }
   .detalhe-anotacoes-titulo { margin: 0 0 var(--space-2); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
   .tabela .numero-processo, .ficha-leitura .numero-processo { white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -415,27 +413,21 @@
       detalhe.sincronizar(lista);
     }
 
-    // Card do atendimento na peça de contatos.html: o assunto segue para a ficha, o resto do card escolhe.
+    // Card de registro do DS: o assunto segue para a ficha, o processo copia, o resto do card escolhe.
     function cardDoAtendimento(a) {
-      const card = elemento('article', 'card-contato');
-      card.tabIndex = 0;
-      const topo = elemento('div', 'card-contato-topo');
-      const titulo = elemento('h3', 'card-contato-nome');
-      titulo.id = `card-atendimento-${a.id}`;
-      titulo.append(link(a.assunto, enderecoDaFicha(a)));
-      card.setAttribute('aria-labelledby', titulo.id);
-      topo.append(titulo, chipStatus(a.status));
-      const dados = elemento('dl', 'card-contato-dados');
-      [['Cliente', a.cliente], ['Processo', numeroDoProcesso(a.processo)],
-        ['Responsável', DS.avatar({ nome: a.responsavel, mostrarNome: true })], ['Início', dataCurta(a.inicio)]]
-        .forEach(([rotulo, valor]) => {
-          const dd = elemento('dd');
-          dd.append(valor);
-          dados.append(elemento('dt', null, rotulo), dd);
-        });
-      card.append(topo, dados);
-      if (a.area) card.append(DS.tag({ rotulo: a.area }));
-      return card;
+      return DS.cardRegistro({
+        titulo: a.assunto,
+        href: enderecoDaFicha(a),
+        chip: chipStatus(a.status),
+        destaque: a.processo ? { rotulo: 'Processo', valor: a.processo, copiar: a.processo } : { rotulo: 'Processo', valor: 'Sem processo' },
+        linhas: [
+          { rotulo: 'Cliente', valor: a.cliente },
+          { rotulo: 'Responsável', valor: a.responsavel, pessoa: true },
+          { rotulo: 'Início', valor: dataCurta(a.inicio) },
+        ],
+        rodape: a.area ? [DS.tag({ rotulo: a.area })] : [],
+        selecionavel: true,
+      });
     }
 
     function desenharCards(itens) {
@@ -646,7 +638,7 @@
       divisor.el.hidden = !x || painel.oculto();
       const id = x ? String(x.id) : '';
       lista.querySelectorAll('tbody tr[data-id]').forEach((tr) => tr.setAttribute('aria-selected', String(tr.dataset.id === id)));
-      lista.querySelectorAll('li[data-id] > .card-contato').forEach((card) => {
+      lista.querySelectorAll('li[data-id] > .card-registro').forEach((card) => {
         const sim = card.parentElement.dataset.id === id;
         card.classList.toggle('is-selecionado', sim);
         if (sim) card.setAttribute('aria-current', 'true');
@@ -671,7 +663,7 @@
       if (item && !e.target.closest('a, button')) escolher(item.dataset.id);
     });
     lista.addEventListener('keydown', (e) => {
-      if (e.key !== 'Enter' || !e.target.matches('tr[data-id], li[data-id] > .card-contato')) return;
+      if (e.key !== 'Enter' || !e.target.matches('tr[data-id], li[data-id] > .card-registro')) return;
       e.preventDefault();
       escolher(e.target.closest('[data-id]').dataset.id);
     });
