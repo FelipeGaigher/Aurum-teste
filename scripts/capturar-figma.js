@@ -58,6 +58,15 @@ function servir() {
       el.textContent = fonte;
       document.head.appendChild(el);
     }, await resposta.text());
+    // CLIQUES='seletor1;;seletor2' clica em sequência antes da captura, para abrir modal, aba ou popover.
+    // Seletor que começa com "texto=" clica no botão ou link com esse texto visível.
+    if (process.env.CLIQUES) {
+      for (const sel of process.env.CLIQUES.split(';;').map((x) => x.trim()).filter(Boolean)) {
+        const alvo = sel.startsWith('texto=') ? page.getByText(sel.slice(6), { exact: true }).first() : page.locator(sel).first();
+        await alvo.click({ timeout: 5000 });
+        await page.waitForTimeout(400);
+      }
+    }
     await page.waitForTimeout(800);
     const resultado = await page.evaluate(
       ({ id, destino }) => window.figma.captureForDesign({ captureId: id, endpoint: destino, selector: 'body' }),
