@@ -14,7 +14,8 @@ const fs = require('fs');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const raiz = path.resolve(__dirname, '..');
 const destino = path.join(raiz, 'slides');
-const FONTES = 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Geist:wght@400;500;600&display=swap';
+// Os decks declaram Museo Sans, Open Sans e Segoe UI, nessa ordem. Open Sans é a fonte livre do protótipo.
+const FONTES = 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap';
 const DECKS = [
   ['01-slides-q1.html', 'q1'],
   ['02-slides-q2.html', 'q2'],
