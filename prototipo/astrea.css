@@ -1622,6 +1622,13 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .barra-filtros { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-3) var(--space-4); width: 100%; }
 .barra-filtros-itens { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-3); min-width: 0; }
 .barra-filtros-fim { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); min-height: var(--component-control-height); margin-left: auto; }
+/* Acima de 1100px a barra fica numa linha só: os campos encolhem entre as larguras p e m, e o fim nunca quebra. */
+@media (min-width: 1101px) {
+  .barra-filtros, .barra-filtros-itens, .barra-filtros-fim { flex-wrap: nowrap; }
+  .barra-filtros-itens { flex: 1 1 auto; }
+  .barra-filtros-itens > .campo { flex: 1 1 0; width: auto; min-width: var(--component-field-width-p); max-width: var(--component-field-width-m); }
+  .barra-filtros-fim { flex: 0 0 auto; }
+}
 .barra-filtros-resultado { display: inline-flex; align-items: center; gap: var(--space-1); margin: 0; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
 
 /* painel lateral: a camada única (PA-27). Conteúdo novo troca dentro dele. */
