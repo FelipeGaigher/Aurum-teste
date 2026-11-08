@@ -7,27 +7,19 @@
 <style>
 /* primitivos */
 :root {
-  --primitive-blue-300: #6cc4f2;
-  --primitive-blue-500: #008fd5;
-  --primitive-blue-600: #0072ab;
-  --primitive-blue-700: #005a87;
-  --primitive-gray-0: #ffffff;
-  --primitive-gray-50: #f3f5f7;
-  --primitive-gray-100: #e8ecef;
-  --primitive-gray-200: #d4dae0;
-  --primitive-gray-400: #9aa6b2;
-  --primitive-gray-500: #78838e;
-  --primitive-gray-600: #56616c;
-  --primitive-gray-700: #36414c;
-  --primitive-gray-750: #2e3741;
-  --primitive-gray-800: #242c34;
-  --primitive-gray-850: #1c232a;
-  --primitive-gray-900: #1b2127;
-  --primitive-gray-950: #161c22;
-  --primitive-red-300: #ff9a8f;
-  --primitive-red-700: #b3261e;
-  --primitive-amber-300: #f2b85b;
-  --primitive-amber-800: #8a5100;
+  /* Espelham as variaveis do CSS do Astrea logado. O nome original vai no comentario. */
+  --primitive-blue-logo: #008fd5; /* logo; nao e variavel do produto */
+  --primitive-blue-900: #1d6bb7; /* --primary900 */
+  --primitive-blue-1000: #17558f; /* derivado do --primary900, um degrau abaixo, para hover */
+  --primitive-gray-0: #ffffff; /* branco da pagina */
+  --primitive-gray-100: #f1f3f4; /* --gray100 */
+  --primitive-gray-300: #dee2e6; /* --gray300 */
+  --primitive-gray-500: #6c757d; /* --gray500 */
+  --primitive-gray-900: #202124; /* --gray900 */
+  --primitive-danger-500: #e70202; /* --danger */
+  --primitive-warning-1000: #8a6900; /* derivado do --warning900, que nao passa no AA */
+
+  --primitive-shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06);
 
   --primitive-space-4: 4px;
   --primitive-space-8: 8px;
@@ -35,8 +27,11 @@
   --primitive-space-16: 16px;
   --primitive-space-24: 24px;
   --primitive-space-32: 32px;
+  --primitive-space-40: 40px;
 
-  --primitive-radius-4: 4px;
+  --primitive-radius-8: 8px;
+  --primitive-radius-12: 12px;
+  --primitive-radius-round: 50%;
   --primitive-border-1: 1px;
   --primitive-border-2: 2px;
 
@@ -45,40 +40,51 @@
   --primitive-font-16: 16px;
   --primitive-font-20: 20px;
   --primitive-font-24: 24px;
+  --primitive-font-28: 28px;
   --primitive-weight-400: 400;
   --primitive-weight-500: 500;
   --primitive-weight-600: 600;
   --primitive-leading-125: 1.25;
   --primitive-leading-145: 1.45;
+  --primitive-tracking-04: 0.04em;
 
   --primitive-size-18: 18px;
+  --primitive-size-20: 20px;
+  --primitive-size-22: 22px;
   --primitive-size-24: 24px;
-  --primitive-size-32: 32px;
-  --primitive-size-56: 56px;
-  --primitive-size-240: 240px;
+  --primitive-size-28: 28px;
+  --primitive-size-40: 40px;
+  --primitive-size-44: 44px;
+  --primitive-size-48: 48px;
+  --primitive-size-88: 88px;
+  --primitive-size-300: 300px;
   --primitive-size-440: 440px;
+  --primitive-size-560: 560px;
 }
 /* fim dos primitivos */
 
 /* semanticos */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 
-  --color-bg-page: light-dark(var(--primitive-gray-0), var(--primitive-gray-950));
-  --color-bg-surface: light-dark(var(--primitive-gray-0), var(--primitive-gray-800));
-  --color-bg-subtle: light-dark(var(--primitive-gray-50), var(--primitive-gray-850));
-  --color-bg-hover: light-dark(var(--primitive-gray-100), var(--primitive-gray-750));
-  --color-text-default: light-dark(var(--primitive-gray-900), var(--primitive-gray-50));
-  --color-text-muted: light-dark(var(--primitive-gray-600), var(--primitive-gray-400));
-  --color-text-danger: light-dark(var(--primitive-red-700), var(--primitive-red-300));
-  --color-text-warning: light-dark(var(--primitive-amber-800), var(--primitive-amber-300));
-  --color-logo: light-dark(var(--primitive-blue-500), var(--primitive-blue-300));
-  --color-border-default: light-dark(var(--primitive-gray-200), var(--primitive-gray-700));
-  --color-border-strong: light-dark(var(--primitive-gray-500), var(--primitive-gray-500));
-  --color-action: light-dark(var(--primitive-blue-600), var(--primitive-blue-500));
-  --color-action-hover: light-dark(var(--primitive-blue-700), var(--primitive-blue-300));
-  --color-action-text: light-dark(var(--primitive-gray-0), var(--primitive-gray-950));
-  --color-focus: light-dark(var(--primitive-blue-600), var(--primitive-blue-300));
+  --color-bg-page: var(--primitive-gray-0);
+  --color-bg-surface: var(--primitive-gray-0);
+  --color-bg-subtle: var(--primitive-gray-100);
+  --color-bg-hover: var(--primitive-gray-300);
+  --color-text-default: var(--primitive-gray-900);
+  --color-text-muted: var(--primitive-gray-500);
+  --color-text-danger: var(--primitive-danger-500);
+  --color-text-warning: var(--primitive-warning-1000);
+  --color-logo: var(--primitive-blue-logo);
+  --color-border-default: var(--primitive-gray-300);
+  --color-border-strong: var(--primitive-gray-500);
+  --color-action: var(--primitive-blue-900);
+  --color-action-hover: var(--primitive-blue-1000);
+  --color-action-text: var(--primitive-gray-0);
+  --color-focus: var(--primitive-blue-900);
+  --color-scrim: color-mix(in srgb, var(--primitive-gray-900) 45%, transparent);
+
+  --shadow-card: var(--primitive-shadow-1);
 
   --space-1: var(--primitive-space-4);
   --space-2: var(--primitive-space-8);
@@ -86,46 +92,67 @@
   --space-4: var(--primitive-space-16);
   --space-5: var(--primitive-space-24);
   --space-6: var(--primitive-space-32);
+  --space-7: var(--primitive-space-40);
 
-  --radius: var(--primitive-radius-4);
+  --radius: var(--primitive-radius-8);
+  --radius-card: var(--primitive-radius-8);
+  --radius-dialog: var(--primitive-radius-12);
+  --radius-round: var(--primitive-radius-round);
   --border-width: var(--primitive-border-1);
   --focus-width: var(--primitive-border-2);
 
-  --font-sans: "IBM Plex Sans", system-ui, "Segoe UI", Roboto, sans-serif;
-  --font-size-1: var(--primitive-font-12);
-  --font-size-2: var(--primitive-font-14);
-  --font-size-3: var(--primitive-font-16);
-  --font-size-4: var(--primitive-font-20);
-  --font-size-5: var(--primitive-font-24);
+  --font-sans: "Museo Sans", "museo-sans", "Open Sans", "Segoe UI", system-ui, sans-serif;
+  --font-size-label: var(--primitive-font-12);
+  --font-size-button: var(--primitive-font-14);
+  --font-size-body: var(--primitive-font-14);
+  --font-size-emphasis: var(--primitive-font-16);
+  --font-size-dialog: var(--primitive-font-20);
+  --font-size-title: var(--primitive-font-24);
+  --font-size-logo: var(--primitive-font-28);
   --font-weight-regular: var(--primitive-weight-400);
   --font-weight-medium: var(--primitive-weight-500);
   --font-weight-semibold: var(--primitive-weight-600);
   --font-leading-tight: var(--primitive-leading-125);
   --font-leading-base: var(--primitive-leading-145);
+  --font-tracking-caps: var(--primitive-tracking-04);
 
   --size-icon: var(--primitive-size-18);
+  --size-icon-field: var(--primitive-size-20);
+  --size-icon-nav: var(--primitive-size-22);
   --size-chip: var(--primitive-size-24);
-  --size-control: var(--primitive-size-32);
-  --size-header: var(--primitive-size-56);
-  --size-sidebar: var(--primitive-size-240);
-  --size-search: var(--primitive-size-440);
+  --size-logo: var(--primitive-size-28);
+  --size-control: var(--primitive-size-40);
+  --size-shortcut: var(--primitive-size-44);
+  --size-search-height: var(--primitive-size-48);
+  --size-header: var(--primitive-size-88);
+  --size-sidebar: var(--primitive-size-300);
+  --size-search: var(--primitive-size-560);
   --size-dialog: var(--primitive-size-440);
-
-  --color-scrim: light-dark(color-mix(in srgb, var(--primitive-gray-900) 45%, transparent), color-mix(in srgb, var(--primitive-gray-950) 70%, transparent));
 }
-:root:has(#tema-claro:checked) { color-scheme: light; }
-:root:has(#tema-escuro:checked) { color-scheme: dark; }
 /* fim dos semanticos */
 
 /* componentes */
 :root {
   --component-header-height: var(--size-header);
   --component-header-bg: var(--color-bg-page);
+  --component-logo-mark: var(--color-logo);
+  --component-logo-cut: var(--color-bg-page);
+  --component-logo-text: var(--color-text-default);
+  --component-search-width: var(--size-search);
+  --component-search-height: var(--size-search-height);
+  --component-shortcut-size: var(--size-shortcut);
+  --component-shortcut-active-bg: var(--color-bg-subtle);
   --component-sidebar-width: var(--size-sidebar);
+  --component-sidebar-bg: var(--color-bg-page);
+  --component-menu-item-height: var(--size-search-height);
   --component-menu-item-active-bg: var(--color-bg-subtle);
+  --component-menu-item-active-text: var(--color-action);
   --component-card-bg: var(--color-bg-surface);
   --component-card-border: var(--color-border-default);
+  --component-card-radius: var(--radius-card);
+  --component-card-shadow: var(--shadow-card);
   --component-column-bg: var(--color-bg-subtle);
+  --component-column-radius: var(--radius-card);
   --component-chip-bg: var(--color-bg-subtle);
   --component-chip-border: var(--color-border-default);
   --component-chip-height: var(--size-chip);
@@ -142,6 +169,7 @@
   --component-button-primary-text: var(--color-action-text);
   --component-dialog-bg: var(--color-bg-surface);
   --component-dialog-width: var(--size-dialog);
+  --component-dialog-radius: var(--radius-dialog);
   --component-dialog-backdrop: var(--color-scrim);
 }
 /* fim dos componentes */
@@ -157,7 +185,7 @@ body {
   background-color: var(--color-bg-page);
   color: var(--color-text-default);
   font-family: var(--font-sans);
-  font-size: var(--font-size-2);
+  font-size: var(--font-size-body);
   line-height: var(--font-leading-base);
 }
 
@@ -204,7 +232,7 @@ svg.icone {
 }
 .pular:focus { top: var(--space-2); }
 
-/* cabeçalho */
+/* navbar */
 .cabecalho {
   position: sticky;
   top: 0;
@@ -212,7 +240,7 @@ svg.icone {
   display: grid;
   grid-template-columns: var(--component-sidebar-width) minmax(0, 1fr) auto;
   align-items: center;
-  column-gap: var(--space-5);
+  column-gap: var(--space-6);
   height: var(--component-header-height);
   padding-right: var(--space-5);
   background-color: var(--component-header-bg);
@@ -225,39 +253,39 @@ svg.icone {
   gap: var(--space-2);
   justify-self: start;
   margin-left: var(--space-5);
-  color: var(--color-logo);
-  font-size: var(--font-size-5);
+  color: var(--component-logo-text);
+  font-size: var(--font-size-logo);
   font-weight: var(--font-weight-regular);
   line-height: var(--font-leading-tight);
   text-decoration: none;
 }
-.logo svg { width: var(--size-icon); height: var(--size-icon); fill: currentColor; }
+.logo svg { width: var(--size-logo); height: var(--size-logo); flex: none; }
+.logo-marca { fill: var(--component-logo-mark); }
+.logo-recorte { fill: var(--component-logo-cut); }
 
 .busca {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  max-width: var(--size-search);
+  justify-self: start;
+  width: 100%;
+  max-width: var(--component-search-width);
 }
-.busca label { color: var(--color-text-muted); }
-.busca-campo {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-}
+.busca-campo { position: relative; }
 .busca input {
   width: 100%;
-  height: var(--size-control);
-  padding: 0 var(--space-6) 0 var(--space-3);
+  height: var(--component-search-height);
+  padding: 0 var(--space-7) 0 var(--space-4);
   background-color: var(--color-bg-surface);
-  border: var(--border-width) solid var(--color-border-strong);
+  border: var(--border-width) solid var(--component-control-border);
   border-radius: var(--radius);
 }
-.busca input::placeholder { color: var(--color-text-muted); }
+.busca input::placeholder { color: var(--color-text-muted); opacity: 1; }
+.busca-campo svg.icone {
+  width: var(--size-icon-field);
+  height: var(--size-icon-field);
+}
 .busca-campo svg,
 .seletor svg {
   position: absolute;
-  right: var(--space-2);
+  right: var(--space-3);
   top: 50%;
   translate: 0 -50%;
   color: var(--color-text-muted);
@@ -267,7 +295,7 @@ svg.icone {
 .acoes {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-5);
 }
 .atalhos {
   display: flex;
@@ -279,8 +307,8 @@ svg.icone {
 .atalho {
   display: inline-grid;
   place-items: center;
-  width: var(--size-control);
-  height: var(--size-control);
+  width: var(--component-shortcut-size);
+  height: var(--component-shortcut-size);
   padding: 0;
   background: none;
   border: 0;
@@ -288,35 +316,14 @@ svg.icone {
   color: var(--color-text-muted);
   cursor: pointer;
 }
+.atalho svg.icone { width: var(--size-icon-nav); height: var(--size-icon-nav); }
 .atalho:hover { background-color: var(--color-bg-hover); color: var(--color-text-default); }
+.atalho-ativo { background-color: var(--component-shortcut-active-bg); color: var(--color-text-default); }
 .atalho-ia {
-  font-size: var(--font-size-1);
+  font-size: var(--font-size-label);
   font-weight: var(--font-weight-semibold);
   line-height: var(--font-leading-tight);
 }
-
-.tema {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: var(--font-size-1);
-}
-.tema legend {
-  float: left;
-  padding: 0;
-  margin-right: var(--space-1);
-  color: var(--color-text-muted);
-}
-.tema label {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  cursor: pointer;
-}
-.tema input { margin: 0; accent-color: var(--color-action); }
 
 .usuario {
   display: inline-flex;
@@ -327,11 +334,12 @@ svg.icone {
   background: none;
   border: 0;
   border-radius: var(--radius);
+  white-space: nowrap;
   cursor: pointer;
 }
 .usuario:hover { background-color: var(--color-bg-hover); }
 
-/* corpo: menu lateral e conteúdo */
+/* corpo: sidebar e conteúdo */
 .corpo {
   display: grid;
   grid-template-columns: var(--component-sidebar-width) minmax(0, 1fr);
@@ -344,7 +352,8 @@ svg.icone {
   align-self: start;
   height: calc(100vh - var(--component-header-height));
   overflow-y: auto;
-  padding: var(--space-4) var(--space-3);
+  padding: var(--space-5) var(--space-2);
+  background-color: var(--component-sidebar-bg);
   border-right: var(--border-width) solid var(--color-border-default);
 }
 .menu-lateral ul { margin: 0; padding: 0; list-style: none; }
@@ -356,28 +365,41 @@ svg.icone {
 .menu-lateral a {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  min-height: var(--size-control);
-  padding: 0 var(--space-3);
+  gap: var(--space-4);
+  min-height: var(--component-menu-item-height);
+  padding: 0 var(--space-4);
   border-radius: var(--radius);
-  color: var(--color-text-muted);
+  color: var(--color-text-default);
+  font-size: var(--font-size-emphasis);
+  line-height: var(--font-leading-tight);
   text-decoration: none;
 }
-.menu-lateral a:hover { background-color: var(--color-bg-hover); color: var(--color-text-default); }
+.menu-lateral a svg { color: var(--color-text-muted); }
+.menu-lateral a:hover { background-color: var(--color-bg-hover); }
 .menu-lateral a[aria-current="page"] {
   background-color: var(--component-menu-item-active-bg);
-  color: var(--color-text-default);
+  color: var(--component-menu-item-active-text);
   font-weight: var(--font-weight-semibold);
 }
+.menu-lateral a[aria-current="page"] svg { color: currentColor; }
 
 #conteudo {
   min-width: 0;
-  padding: var(--space-5) var(--space-6) var(--space-6);
+  padding: var(--space-7) var(--space-6) var(--space-6);
 }
-#conteudo h1 {
-  margin: 0 0 var(--space-5);
-  font-size: var(--font-size-5);
-  font-weight: var(--font-weight-semibold);
+
+.titulo-pagina {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+.titulo-pagina h1 {
+  margin: 0;
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-medium);
   line-height: var(--font-leading-tight);
 }
 
@@ -392,12 +414,12 @@ svg.icone {
 .coluna {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-3);
   min-width: 0;
-  padding: var(--space-3);
+  padding: var(--space-4) var(--space-3) var(--space-3);
   background-color: var(--component-column-bg);
-  border: var(--border-width) solid var(--color-border-default);
-  border-radius: var(--radius);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--component-column-radius);
 }
 .coluna[data-destino] {
   background-color: var(--component-column-drop-bg);
@@ -408,13 +430,13 @@ svg.icone {
   display: flex;
   align-items: baseline;
   gap: var(--space-2);
-  margin: 0 0 var(--space-1);
-  font-size: var(--font-size-3);
+  margin: 0 var(--space-1) var(--space-1);
+  font-size: var(--font-size-emphasis);
   font-weight: var(--font-weight-semibold);
   line-height: var(--font-leading-tight);
 }
 .coluna-contagem {
-  color: var(--color-text-muted);
+  color: var(--color-text-default);
   font-weight: var(--font-weight-regular);
   font-variant-numeric: tabular-nums;
 }
@@ -423,17 +445,18 @@ svg.icone {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-3);
+  padding: var(--space-4);
   background-color: var(--component-card-bg);
   border: var(--border-width) solid var(--component-card-border);
-  border-radius: var(--radius);
+  border-radius: var(--component-card-radius);
+  box-shadow: var(--component-card-shadow);
   cursor: grab;
 }
 .card:hover { border-color: var(--color-border-strong); }
 .card p { margin: 0; }
 
 .card-prazo {
-  font-size: var(--font-size-3);
+  font-size: var(--font-size-emphasis);
   font-weight: var(--font-weight-semibold);
   line-height: var(--font-leading-tight);
   font-variant-numeric: tabular-nums;
@@ -443,7 +466,7 @@ svg.icone {
 
 .card h3 {
   margin: 0;
-  font-size: var(--font-size-2);
+  font-size: var(--font-size-body);
   font-weight: var(--font-weight-medium);
   line-height: var(--font-leading-tight);
   overflow-wrap: anywhere;
@@ -462,7 +485,7 @@ svg.icone {
   border: var(--border-width) solid var(--component-chip-border);
   border-radius: var(--radius);
   color: var(--color-text-default);
-  font-size: var(--font-size-1);
+  font-size: var(--font-size-label);
   line-height: var(--font-leading-tight);
 }
 .chip-rotulo {
@@ -478,12 +501,16 @@ svg.icone {
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
 }
+.chip-acao:last-child {
+  border-start-end-radius: var(--radius);
+  border-end-end-radius: var(--radius);
+}
 .chip-acao:hover { background-color: var(--color-bg-hover); text-decoration: underline; }
 
 .card-nota,
 .card-processo {
   color: var(--color-text-muted);
-  font-size: var(--font-size-1);
+  font-size: var(--font-size-label);
   overflow-wrap: anywhere;
 }
 .card-processo { font-variant-numeric: tabular-nums; }
@@ -500,15 +527,16 @@ svg.icone {
   width: var(--component-avatar-size);
   height: var(--component-avatar-size);
   background-color: var(--component-avatar-bg);
-  border-radius: var(--radius);
-  font-size: var(--font-size-1);
+  border-radius: var(--radius-round);
+  font-size: var(--font-size-label);
   font-weight: var(--font-weight-semibold);
 }
 
 .coluna-vazia {
   padding: var(--space-4) var(--space-3);
+  background-color: var(--component-card-bg);
   border: var(--border-width) dashed var(--color-border-strong);
-  border-radius: var(--radius);
+  border-radius: var(--radius-card);
   color: var(--color-text-muted);
 }
 .coluna-vazia p { margin: 0; }
@@ -518,10 +546,11 @@ svg.icone {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-3);
+  padding: var(--space-4);
   background-color: var(--component-card-bg);
   border: var(--border-width) solid var(--component-card-border);
-  border-radius: var(--radius);
+  border-radius: var(--component-card-radius);
+  box-shadow: var(--component-card-shadow);
 }
 .esqueleto span {
   display: block;
@@ -539,7 +568,7 @@ svg.icone {
   .esqueleto span { animation: none; }
 }
 
-/* ferramentas: filtros e botão */
+/* filtros */
 #ferramentas {
   display: flex;
   flex-wrap: wrap;
@@ -553,7 +582,6 @@ svg.icone {
   align-items: flex-end;
   gap: var(--space-4);
 }
-#ferramentas .botao-primario { margin-left: auto; }
 
 .campo {
   display: flex;
@@ -562,7 +590,7 @@ svg.icone {
   min-width: 0;
 }
 .campo label {
-  font-size: var(--font-size-1);
+  font-size: var(--font-size-label);
   font-weight: var(--font-weight-medium);
   line-height: var(--font-leading-tight);
 }
@@ -580,7 +608,7 @@ svg.icone {
 }
 .seletor select {
   appearance: none;
-  padding-right: var(--space-6);
+  padding-right: var(--space-7);
   cursor: pointer;
 }
 
@@ -597,9 +625,14 @@ svg.icone {
 }
 .botao:hover { background-color: var(--color-bg-hover); }
 .botao-primario {
+  padding: 0 var(--space-5);
   background-color: var(--component-button-primary-bg);
   border-color: var(--component-button-primary-bg);
   color: var(--component-button-primary-text);
+  font-size: var(--font-size-button);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-tracking-caps);
+  text-transform: uppercase;
 }
 .botao-primario:hover {
   background-color: var(--component-button-primary-bg-hover);
@@ -613,12 +646,12 @@ svg.icone {
   background-color: var(--component-dialog-bg);
   color: var(--color-text-default);
   border: var(--border-width) solid var(--color-border-default);
-  border-radius: var(--radius);
+  border-radius: var(--component-dialog-radius);
 }
 .painel::backdrop { background-color: var(--component-dialog-backdrop); }
 .painel h2 {
   margin: 0 0 var(--space-4);
-  font-size: var(--font-size-4);
+  font-size: var(--font-size-dialog);
   font-weight: var(--font-weight-semibold);
   line-height: var(--font-leading-tight);
 }
@@ -637,7 +670,7 @@ svg.icone {
 .painel-rodape p {
   margin: 0;
   color: var(--color-text-muted);
-  font-size: var(--font-size-1);
+  font-size: var(--font-size-label);
 }
 
 /* rodapé da demonstração */
@@ -673,27 +706,31 @@ svg.icone {
 <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
 <header class="cabecalho">
-  <a class="logo" href="#conteudo">
-    <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M0 4h14v14H0z"/><path d="M14 0h4v4h-4z"/></svg>
-    astrea
+  <a class="logo" href="#conteudo" aria-label="Astrea, Área de trabalho">
+    <svg viewBox="0 0 28 28" aria-hidden="true">
+      <rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/>
+      <rect class="logo-recorte" x="14" y="0" width="14" height="14"/>
+      <rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/>
+    </svg>
+    <span aria-hidden="true">astrea</span>
   </a>
 
   <form class="busca" role="search">
-    <label for="busca-global">Buscar</label>
+    <label for="busca-global" class="visualmente-oculto">Pesquisar</label>
     <div class="busca-campo">
-      <input id="busca-global" type="search" placeholder="Contato, processo ou atividade" autocomplete="off">
+      <input id="busca-global" type="search" placeholder="Pesquisar contato, processo ou atividade" autocomplete="off">
       <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>
     </div>
   </form>
 
   <div class="acoes">
     <ul class="atalhos">
-      <li><button type="button" class="atalho atalho-ia" aria-label="Assistente de IA" title="Assistente de IA">IA</button></li>
+      <li><button type="button" class="atalho atalho-ativo atalho-ia" aria-label="Assistente de IA" title="Assistente de IA">IA</button></li>
       <li><button type="button" class="atalho" aria-label="Criar novo" title="Criar novo">
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
       </button></li>
       <li><button type="button" class="atalho" aria-label="Enviar arquivos" title="Enviar arquivos">
-        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-8A6 6 0 0 0 6.1 11.4 3.4 3.4 0 0 0 7 18z"/></svg>
+        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .6-8A6 6 0 0 0 6.1 11.4 3.4 3.4 0 0 0 7 18z"/><path d="M12 15v-5M9.8 12.2 12 10l2.2 2.2"/></svg>
       </button></li>
       <li><button type="button" class="atalho" aria-label="Histórico" title="Histórico">
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
@@ -702,13 +739,6 @@ svg.icone {
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button></li>
     </ul>
-
-    <fieldset class="tema">
-      <legend>Tema</legend>
-      <label><input type="radio" name="tema" id="tema-sistema" checked> Sistema</label>
-      <label><input type="radio" name="tema" id="tema-claro"> Claro</label>
-      <label><input type="radio" name="tema" id="tema-escuro"> Escuro</label>
-    </fieldset>
 
     <button type="button" class="usuario">
       Helena Duarte
@@ -760,7 +790,10 @@ svg.icone {
   </nav>
 
   <main id="conteudo">
-    <h1>Área de trabalho</h1>
+    <div class="titulo-pagina">
+      <h1>Área de trabalho</h1>
+      <button type="button" id="criar-atividade" class="botao botao-primario" aria-haspopup="dialog">Adicionar atividade</button>
+    </div>
     <div id="ferramentas">
       <div class="filtros" role="group" aria-label="Filtros do quadro">
         <div class="campo">
@@ -794,7 +827,6 @@ svg.icone {
           </span>
         </div>
       </div>
-      <button type="button" id="criar-atividade" class="botao botao-primario" aria-haspopup="dialog">Criar atividade</button>
     </div>
     <div id="quadro"></div>
     <footer id="rodape-demo">
@@ -811,7 +843,7 @@ svg.icone {
 </div>
 
 <dialog id="painel-criar" class="painel" aria-labelledby="painel-criar-titulo" aria-describedby="painel-criar-nota">
-  <h2 id="painel-criar-titulo">Criar atividade</h2>
+  <h2 id="painel-criar-titulo">Adicionar atividade</h2>
   <div class="painel-campos">
     <div class="campo">
       <label for="criar-titulo">Título</label>

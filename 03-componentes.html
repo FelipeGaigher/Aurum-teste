@@ -5,148 +5,383 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Q3: componentes do Kanban e seus estados</title>
 <style>
-  /* primitivos */
-  :root {
-    --primitive-blue-300: #6cc4f2; --primitive-blue-500: #008fd5; --primitive-blue-600: #0072ab;
-    --primitive-gray-0: #ffffff; --primitive-gray-50: #f3f5f8; --primitive-gray-100: #e8ecf1; --primitive-gray-300: #cfd6df;
-    --primitive-gray-600: #5b6878; --primitive-gray-800: #273039; --primitive-gray-850: #1e262f; --primitive-gray-900: #161c22; --primitive-gray-950: #16202c;
-    --primitive-red-600: #b3261e; --primitive-red-300: #ff7b6e; --primitive-amber-700: #8a5a00; --primitive-amber-300: #f2c14e;
-    --primitive-green-700: #1f6b3a; --primitive-green-300: #6fcf97;
-    --primitive-space-4: 4px; --primitive-space-8: 8px; --primitive-space-12: 12px; --primitive-space-16: 16px; --primitive-space-24: 24px; --primitive-space-32: 32px;
-    --primitive-radius-4: 4px;
-  }
-  /* fim dos primitivos */
-  /* semanticos */
-  :root {
-    color-scheme: light dark;
-    --color-bg-page: light-dark(var(--primitive-gray-0), var(--primitive-gray-900));
-    --color-bg-surface: light-dark(var(--primitive-gray-50), var(--primitive-gray-850));
-    --color-bg-subtle: light-dark(var(--primitive-gray-100), var(--primitive-gray-800));
-    --color-text-default: light-dark(var(--primitive-gray-950), var(--primitive-gray-100));
-    --color-text-muted: light-dark(var(--primitive-gray-600), #9aa7b6);
-    --color-text-danger: light-dark(var(--primitive-red-600), var(--primitive-red-300));
-    --color-text-warning: light-dark(var(--primitive-amber-700), var(--primitive-amber-300));
-    --color-text-success: light-dark(var(--primitive-green-700), var(--primitive-green-300));
-    --color-border-default: light-dark(var(--primitive-gray-300), #38434f);
-    --color-border-strong: light-dark(var(--primitive-gray-950), var(--primitive-gray-100));
-    --color-action: light-dark(var(--primitive-blue-600), var(--primitive-blue-300));
-    --color-action-text: light-dark(var(--primitive-gray-0), var(--primitive-gray-900));
-    --color-focus: light-dark(var(--primitive-red-600), var(--primitive-red-300));
-    --space-1: var(--primitive-space-4); --space-2: var(--primitive-space-8); --space-3: var(--primitive-space-12); --space-4: var(--primitive-space-16); --space-5: var(--primitive-space-24); --space-6: var(--primitive-space-32);
-    --radius: var(--primitive-radius-4);
-    --font-sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  }
-  :root:has(#tema-claro:checked) { color-scheme: light; }
-  :root:has(#tema-escuro:checked) { color-scheme: dark; }
-  /* fim dos semanticos */
+/* primitivos */
+:root {
+  /* Espelham as variaveis do CSS do Astrea logado. O nome original vai no comentario. */
+  --primitive-blue-900: #1d6bb7; /* --primary900 */
+  --primitive-blue-1000: #17558f; /* derivado do --primary900, um degrau abaixo, para hover */
+  --primitive-gray-0: #ffffff; /* branco da pagina */
+  --primitive-gray-100: #f1f3f4; /* --gray100 */
+  --primitive-gray-300: #dee2e6; /* --gray300 */
+  --primitive-gray-500: #6c757d; /* --gray500 */
+  --primitive-gray-900: #202124; /* --gray900 */
+  --primitive-danger-500: #e70202; /* --danger */
+  --primitive-warning-1000: #8a6900; /* derivado do --warning900, que nao passa no AA */
+  --primitive-success-500: #02883c; /* --success */
 
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--color-bg-subtle); color: var(--color-text-default); font-family: var(--font-sans); font-size: 15px; line-height: 1.45; padding: var(--space-5) var(--space-4) var(--space-6); }
-  :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-  .pagina { max-width: 1200px; margin: 0 auto; display: grid; gap: var(--space-6); }
-  header h1 { font-size: 26px; font-weight: 600; margin: 0 0 var(--space-2); }
-  header p { margin: 0; color: var(--color-text-muted); max-width: 70ch; }
-  .tema { display: inline-flex; gap: var(--space-3); margin-top: var(--space-3); border: 0; padding: 0; font-size: 13px; color: var(--color-text-muted); }
-  .tema label { display: inline-flex; gap: 4px; align-items: center; }
-  section.comp { background: var(--color-bg-page); border: 1px solid var(--color-border-default); border-radius: var(--radius); padding: var(--space-5); display: grid; gap: var(--space-4); }
-  section.comp h2 { font-size: 18px; font-weight: 600; margin: 0; }
-  section.comp > p { margin: 0; color: var(--color-text-muted); max-width: 80ch; }
-  .estados { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-4); }
-  .estado { display: grid; gap: var(--space-2); align-content: start; }
-  .estado > span { font-size: 12px; color: var(--color-text-muted); }
-  table.tokens { width: 100%; border-collapse: collapse; font-size: 13px; }
-  table.tokens th { text-align: left; font-weight: 500; color: var(--color-text-muted); border-bottom: 1px solid var(--color-border-strong); padding: 0 0 6px; }
-  table.tokens td { padding: 6px 12px 6px 0; border-bottom: 1px solid var(--color-border-default); vertical-align: top; }
-  code { font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+  --primitive-shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06);
 
-  /* componentes */
-  .card { background: var(--color-bg-page); border: 1px solid var(--color-border-default); border-radius: var(--radius); padding: var(--space-3); display: grid; gap: var(--space-2); }
-  .card.hover { border-color: var(--color-border-strong); }
-  .card.foco { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-  .card .prazo { font-weight: 600; font-size: 14px; }
-  .card .prazo[data-alerta="vencido"] { color: var(--color-text-danger); }
-  .card .prazo[data-alerta="hoje"] { color: var(--color-text-warning); }
-  .card .prazo[data-alerta="concluido"] { color: var(--color-text-muted); font-weight: 500; }
-  .card h3 { margin: 0; font-size: 15px; font-weight: 500; line-height: 1.3; }
-  .card .meta { font-size: 13px; color: var(--color-text-muted); display: grid; gap: 2px; }
-  .card .pessoa { display: inline-flex; align-items: center; gap: 6px; }
-  .inicial { width: 22px; height: 22px; border-radius: var(--radius); background: var(--color-bg-subtle); border: 1px solid var(--color-border-default); display: inline-grid; place-items: center; font-size: 11px; font-weight: 600; }
-  .card.esqueleto > * { background: var(--color-bg-subtle); color: transparent; border-radius: var(--radius); }
-  .card.esqueleto .prazo { height: 14px; width: 40%; }
-  .card.esqueleto h3 { height: 18px; width: 90%; }
-  .card.esqueleto .meta { height: 30px; width: 70%; }
-  .chip { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; font-size: 12px; border-radius: var(--radius); border: 1px solid var(--color-border-default); background: var(--color-bg-surface); color: var(--color-text-default); }
-  .chip.ia { border-color: var(--color-border-strong); }
-  .chip button { font: inherit; font-weight: 600; border: 0; background: transparent; color: var(--color-action); cursor: pointer; padding: 0; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .campo { display: grid; gap: 4px; font-size: 13px; color: var(--color-text-muted); }
-  .campo .sel { appearance: none; -webkit-appearance: none; width: 100%; background: var(--color-bg-page); border: 1px solid var(--color-border-default); border-radius: var(--radius); padding: 7px 32px 7px 10px; color: var(--color-text-default); font: inherit; font-size: 14px;
-    background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
-  .campo .sel.hover { border-color: var(--color-border-strong); }
-  .campo .sel.foco { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-  .campo .sel.erro { border-color: var(--color-text-danger); }
-  .campo .erro-msg { color: var(--color-text-danger); font-size: 12px; }
-  .campo .sel:disabled, .campo .sel.desab { color: var(--color-text-muted); background-color: var(--color-bg-subtle); }
-  .btn { display: inline-flex; align-items: center; border: 1px solid var(--color-border-strong); background: transparent; color: var(--color-text-default); border-radius: var(--radius); padding: 8px 14px; font: inherit; font-weight: 500; cursor: pointer; }
-  .btn.primario { background: var(--color-action); border-color: var(--color-action); color: var(--color-action-text); }
-  .btn.hover { border-color: var(--color-border-strong); }
-  .btn.primario.hover { filter: brightness(0.92); }
-  .btn.foco { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-  .btn.desab { opacity: 0.55; cursor: default; }
-  .vazio { border: 1px dashed var(--color-border-default); border-radius: var(--radius); padding: var(--space-4); color: var(--color-text-muted); font-size: 13px; display: grid; gap: 4px; }
-  .vazio b { color: var(--color-text-default); font-weight: 500; }
-  .coluna-mini { background: var(--color-bg-surface); border-radius: var(--radius); padding: var(--space-3); display: grid; gap: var(--space-2); }
-  .coluna-mini h4 { margin: 0; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; }
-  .coluna-mini h4 small { color: var(--color-text-muted); font-weight: 400; }
-  .coluna-mini.alvo { outline: 2px dashed var(--color-text-muted); outline-offset: -2px; }
-  @media (prefers-reduced-motion: no-preference) { .card.esqueleto > * { animation: pulso 1.2s ease-in-out infinite; } @keyframes pulso { 50% { opacity: 0.6; } } }
+  --primitive-space-2: 2px;
+  --primitive-space-4: 4px;
+  --primitive-space-8: 8px;
+  --primitive-space-12: 12px;
+  --primitive-space-16: 16px;
+  --primitive-space-24: 24px;
+  --primitive-space-32: 32px;
+  --primitive-space-40: 40px;
+
+  --primitive-radius-8: 8px;
+  --primitive-radius-12: 12px;
+  --primitive-radius-round: 50%;
+  --primitive-border-1: 1px;
+  --primitive-border-2: 2px;
+
+  --primitive-font-12: 12px;
+  --primitive-font-14: 14px;
+  --primitive-font-16: 16px;
+  --primitive-font-20: 20px;
+  --primitive-font-24: 24px;
+  --primitive-weight-400: 400;
+  --primitive-weight-500: 500;
+  --primitive-weight-600: 600;
+  --primitive-leading-125: 1.25;
+  --primitive-leading-145: 1.45;
+  --primitive-tracking-04: 0.04em;
+  --primitive-opacity-55: 0.55;
+
+  --primitive-size-18: 18px;
+  --primitive-size-24: 24px;
+  --primitive-size-40: 40px;
+  --primitive-size-240: 240px;
+  --primitive-size-1200: 1200px;
+}
+/* fim dos primitivos */
+
+/* semanticos */
+:root {
+  color-scheme: light;
+
+  --color-bg-page: var(--primitive-gray-0);
+  --color-bg-surface: var(--primitive-gray-0);
+  --color-bg-subtle: var(--primitive-gray-100);
+  --color-bg-hover: var(--primitive-gray-300);
+  --color-text-default: var(--primitive-gray-900);
+  --color-text-muted: var(--primitive-gray-500);
+  --color-text-danger: var(--primitive-danger-500);
+  --color-text-warning: var(--primitive-warning-1000);
+  --color-text-success: var(--primitive-success-500);
+  --color-border-default: var(--primitive-gray-300);
+  --color-border-strong: var(--primitive-gray-500);
+  --color-action: var(--primitive-blue-900);
+  --color-action-hover: var(--primitive-blue-1000);
+  --color-action-text: var(--primitive-gray-0);
+  --color-focus: var(--primitive-blue-900);
+
+  --shadow-card: var(--primitive-shadow-1);
+
+  --space-0: var(--primitive-space-2);
+  --space-1: var(--primitive-space-4);
+  --space-2: var(--primitive-space-8);
+  --space-3: var(--primitive-space-12);
+  --space-4: var(--primitive-space-16);
+  --space-5: var(--primitive-space-24);
+  --space-6: var(--primitive-space-32);
+  --space-7: var(--primitive-space-40);
+
+  --radius: var(--primitive-radius-8);
+  --radius-card: var(--primitive-radius-8);
+  --radius-dialog: var(--primitive-radius-12);
+  --radius-round: var(--primitive-radius-round);
+  --border-width: var(--primitive-border-1);
+  --focus-width: var(--primitive-border-2);
+
+  --font-sans: "Museo Sans", "museo-sans", "Open Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, Consolas, monospace;
+  --font-size-label: var(--primitive-font-12);
+  --font-size-button: var(--primitive-font-14);
+  --font-size-body: var(--primitive-font-14);
+  --font-size-emphasis: var(--primitive-font-16);
+  --font-size-section: var(--primitive-font-20);
+  --font-size-title: var(--primitive-font-24);
+  --font-weight-regular: var(--primitive-weight-400);
+  --font-weight-medium: var(--primitive-weight-500);
+  --font-weight-semibold: var(--primitive-weight-600);
+  --font-leading-tight: var(--primitive-leading-125);
+  --font-leading-base: var(--primitive-leading-145);
+  --font-tracking-caps: var(--primitive-tracking-04);
+  --opacity-disabled: var(--primitive-opacity-55);
+
+  --size-icon: var(--primitive-size-18);
+  --size-chip: var(--primitive-size-24);
+  --size-control: var(--primitive-size-40);
+  --size-state-min: var(--primitive-size-240);
+  --size-page: var(--primitive-size-1200);
+}
+/* fim dos semanticos */
+
+/* componentes */
+:root {
+  --component-card-bg: var(--color-bg-surface);
+  --component-card-border: var(--color-border-default);
+  --component-card-radius: var(--radius-card);
+  --component-card-shadow: var(--shadow-card);
+  --component-column-bg: var(--color-bg-subtle);
+  --component-column-radius: var(--radius-card);
+  --component-column-drop-bg: var(--color-bg-hover);
+  --component-column-drop-border: var(--color-text-muted);
+  --component-chip-bg: var(--color-bg-subtle);
+  --component-chip-border: var(--color-border-default);
+  --component-chip-height: var(--size-chip);
+  --component-avatar-bg: var(--color-bg-hover);
+  --component-avatar-size: var(--size-chip);
+  --component-skeleton-bg: var(--color-bg-hover);
+  --component-control-bg: var(--color-bg-surface);
+  --component-control-border: var(--color-border-strong);
+  --component-control-height: var(--size-control);
+  --component-button-primary-bg: var(--color-action);
+  --component-button-primary-bg-hover: var(--color-action-hover);
+  --component-button-primary-text: var(--color-action-text);
+}
+/* fim dos componentes */
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: var(--space-5) var(--space-4) var(--space-6);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-default);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-body);
+  line-height: var(--font-leading-base);
+}
+:focus-visible, .foco {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-width);
+}
+.pagina { display: grid; gap: var(--space-6); max-width: var(--size-page); margin: 0 auto; }
+header h1 { margin: 0 0 var(--space-2); font-size: var(--font-size-title); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); }
+header p { max-width: 70ch; margin: 0; color: var(--color-text-muted); }
+
+section.comp {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background-color: var(--color-bg-surface);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+}
+section.comp h2 { margin: 0; font-size: var(--font-size-section); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); }
+section.comp > p { max-width: 80ch; margin: 0; color: var(--color-text-muted); }
+.estados { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--size-state-min), 1fr)); gap: var(--space-4); }
+.estado { display: grid; align-content: start; gap: var(--space-2); }
+.estado-nome { color: var(--color-text-muted); font-size: var(--font-size-label); }
+.anuncio { color: var(--color-text-success); font-size: var(--font-size-label); }
+
+table.tokens { width: 100%; border-collapse: collapse; font-size: var(--font-size-body); }
+table.tokens th {
+  padding: 0 0 var(--space-2);
+  border-bottom: var(--border-width) solid var(--color-border-strong);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  text-align: left;
+}
+table.tokens td {
+  padding: var(--space-2) var(--space-3) var(--space-2) 0;
+  border-bottom: var(--border-width) solid var(--color-border-default);
+  vertical-align: top;
+}
+code { font-family: var(--font-mono); font-size: var(--font-size-label); }
+
+/* card */
+.card {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background-color: var(--component-card-bg);
+  border: var(--border-width) solid var(--component-card-border);
+  border-radius: var(--component-card-radius);
+  box-shadow: var(--component-card-shadow);
+}
+.card.hover { border-color: var(--color-border-strong); }
+.card .prazo { font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.card .prazo[data-alerta="vencido"] { color: var(--color-text-danger); }
+.card .prazo[data-alerta="hoje"] { color: var(--color-text-warning); }
+.card h3 { margin: 0; font-size: var(--font-size-body); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); }
+.card .meta { display: grid; gap: var(--space-1); color: var(--color-text-muted); font-size: var(--font-size-label); }
+.card .pessoa { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--color-text-default); font-size: var(--font-size-body); }
+.inicial {
+  display: inline-grid;
+  place-items: center;
+  width: var(--component-avatar-size);
+  height: var(--component-avatar-size);
+  background-color: var(--component-avatar-bg);
+  border-radius: var(--radius-round);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+}
+.card.esqueleto > * { background-color: var(--component-skeleton-bg); color: transparent; border-radius: var(--radius); }
+.card.esqueleto .prazo { width: 40%; height: var(--space-4); }
+.card.esqueleto h3 { width: 90%; height: var(--space-3); }
+.card.esqueleto .meta { width: 70%; height: var(--space-3); }
+@media (prefers-reduced-motion: no-preference) {
+  .card.esqueleto > * { animation: pulso 1.2s ease-in-out infinite alternate; }
+  @keyframes pulso { to { opacity: 0.4; } }
+}
+
+/* chip */
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.chip {
+  display: inline-flex;
+  align-items: stretch;
+  min-height: var(--component-chip-height);
+  background-color: var(--component-chip-bg);
+  border: var(--border-width) solid var(--component-chip-border);
+  border-radius: var(--radius);
+  color: var(--color-text-default);
+  font-size: var(--font-size-label);
+  line-height: var(--font-leading-tight);
+}
+.chip-rotulo { display: inline-flex; align-items: center; padding: 0 var(--space-2); }
+.chip-acao {
+  padding: 0 var(--space-2);
+  background: none;
+  border: 0;
+  border-left: var(--border-width) solid var(--component-chip-border);
+  color: inherit;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+.chip-acao:last-child { border-start-end-radius: var(--radius); border-end-end-radius: var(--radius); }
+
+/* seletor */
+.campo { display: grid; gap: var(--space-1); }
+.campo label { font-size: var(--font-size-label); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); }
+.seletor { position: relative; display: grid; }
+.seletor select {
+  height: var(--component-control-height);
+  padding: 0 var(--space-7) 0 var(--space-3);
+  appearance: none;
+  background-color: var(--component-control-bg);
+  border: var(--border-width) solid var(--component-control-border);
+  border-radius: var(--radius);
+  color: var(--color-text-default);
+  font: inherit;
+  cursor: pointer;
+}
+.seletor svg {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  translate: 0 -50%;
+  width: var(--size-icon);
+  height: var(--size-icon);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+.seletor select.hover { background-color: var(--color-bg-subtle); }
+.seletor select.erro { border-color: var(--color-text-danger); }
+.erro-msg { color: var(--color-text-danger); font-size: var(--font-size-label); }
+.seletor select:disabled { color: var(--color-text-muted); border-color: var(--color-border-default); cursor: default; }
+
+/* botão */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  height: var(--component-control-height);
+  padding: 0 var(--space-4);
+  background: none;
+  border: var(--border-width) solid var(--component-control-border);
+  border-radius: var(--radius);
+  color: var(--color-text-default);
+  font: inherit;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+.botao.hover { background-color: var(--color-bg-hover); }
+.botao-primario {
+  padding: 0 var(--space-5);
+  background-color: var(--component-button-primary-bg);
+  border-color: var(--component-button-primary-bg);
+  color: var(--component-button-primary-text);
+  font-size: var(--font-size-button);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-tracking-caps);
+  text-transform: uppercase;
+}
+.botao-primario.hover { background-color: var(--component-button-primary-bg-hover); border-color: var(--component-button-primary-bg-hover); }
+.botao:disabled { opacity: var(--opacity-disabled); cursor: default; }
+
+/* coluna e estado vazio */
+.coluna {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-3) var(--space-3);
+  background-color: var(--component-column-bg);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--component-column-radius);
+}
+.coluna.alvo { background-color: var(--component-column-drop-bg); border-style: dashed; border-color: var(--component-column-drop-border); }
+.coluna h4 { display: flex; gap: var(--space-2); margin: 0 var(--space-1); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.coluna h4 span { font-weight: var(--font-weight-regular); }
+.vazio {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-3);
+  background-color: var(--component-card-bg);
+  border: var(--border-width) dashed var(--color-border-strong);
+  border-radius: var(--radius-card);
+  color: var(--color-text-muted);
+}
+.vazio b { color: var(--color-text-default); font-weight: var(--font-weight-regular); }
 </style>
 </head>
 <body>
 <div class="pagina">
   <header>
     <h1>Componentes que nasceram do Kanban</h1>
-    <p>Cinco componentes da Questão 3, com os estados principais. Todos os valores vêm dos tokens semânticos; o hex só existe no bloco de primitivos. Esta página é a especificação para reproduzir no Figma, com o nome do token ao lado de cada propriedade.</p>
-    <fieldset class="tema"><legend>Tema</legend>
-      <label><input type="radio" name="tema" id="tema-sistema" checked> Sistema</label>
-      <label><input type="radio" name="tema" id="tema-claro"> Claro</label>
-      <label><input type="radio" name="tema" id="tema-escuro"> Escuro</label>
-    </fieldset>
+    <p>Cinco componentes da Questão 3, com os estados principais, no visual do Astrea logado. Os primitivos espelham as variáveis do CSS do produto; o hex só existe no bloco de primitivos. Esta página é a especificação para reproduzir no Figma, com o nome do token ao lado de cada propriedade.</p>
   </header>
 
   <section class="comp" id="card">
     <h2>1. Card de atividade</h2>
     <p>Unidade autônoma: arrasta, foca, abre. Prazo é o primeiro dado e o mais visível, sempre com texto e cor. Usado no Kanban, na Área de trabalho e na lista lateral da Agenda: três lugares, um componente.</p>
     <div class="estados">
-      <div class="estado"><span>Padrão</span><article class="card"><div class="prazo">Vence em 12/11</div><h3>Manifestar sobre o laudo pericial</h3><div class="meta"><span>5020066-92.2024.8.24.0045</span><span class="pessoa"><span class="inicial">R</span>Rafael Antunes</span></div><div class="chips"><span class="chip">Prazo</span></div></article></div>
-      <div class="estado"><span>Hover</span><article class="card hover"><div class="prazo">Vence em 12/11</div><h3>Manifestar sobre o laudo pericial</h3><div class="meta"><span>5020066-92.2024.8.24.0045</span><span class="pessoa"><span class="inicial">R</span>Rafael Antunes</span></div><div class="chips"><span class="chip">Prazo</span></div></article></div>
-      <div class="estado"><span>Foco de teclado</span><article class="card foco"><div class="prazo">Vence em 12/11</div><h3>Manifestar sobre o laudo pericial</h3><div class="meta"><span>5020066-92.2024.8.24.0045</span><span class="pessoa"><span class="inicial">R</span>Rafael Antunes</span></div><div class="chips"><span class="chip">Prazo</span></div></article></div>
-      <div class="estado"><span>Vencido</span><article class="card"><div class="prazo" data-alerta="vencido">Vencido há 2 dias</div><h3>Protocolar contestação</h3><div class="meta"><span>5004213-75.2025.8.24.0023</span><span class="pessoa"><span class="inicial">R</span>Rafael Antunes</span></div><div class="chips"><span class="chip">Prazo</span></div></article></div>
-      <div class="estado"><span>Vence hoje</span><article class="card"><div class="prazo" data-alerta="hoje">Vence hoje</div><h3>Audiência de conciliação</h3><div class="meta"><span>0301877-92.2024.8.24.0008</span><span class="pessoa"><span class="inicial">M</span>Marina Couto</span></div><div class="chips"><span class="chip">Audiência</span></div></article></div>
-      <div class="estado"><span>Concluído</span><article class="card"><div class="prazo" data-alerta="concluido">Venceu em 05/11</div><h3>Preparar rol de testemunhas</h3><div class="meta"><span>5016603-51.2025.8.24.0064</span><span class="pessoa"><span class="inicial">M</span>Marina Couto</span></div><div class="chips"><span class="chip">Tarefa</span></div></article></div>
-      <div class="estado"><span>Carregando</span><article class="card esqueleto" aria-busy="true"><div class="prazo">.</div><h3>.</h3><div class="meta">.</div></article></div>
+      <div class="estado"><span class="estado-nome">Padrão</span><article class="card"><div class="prazo">Vence em 12/11</div><h3>Manifestar sobre o laudo pericial</h3><div class="chips"><span class="chip"><span class="chip-rotulo">Prazo</span></span></div><div class="meta"><span>5020066-92.2024.8.24.0045</span><span class="pessoa"><span class="inicial" aria-hidden="true">R</span>Rafael Antunes</span></div></article></div>
+      <div class="estado"><span class="estado-nome">Hover</span><article class="card hover"><div class="prazo">Vence em 12/11</div><h3>Manifestar sobre o laudo pericial</h3><div class="chips"><span class="chip"><span class="chip-rotulo">Prazo</span></span></div><div class="meta"><span>5020066-92.2024.8.24.0045</span><span class="pessoa"><span class="inicial" aria-hidden="true">R</span>Rafael Antunes</span></div></article></div>
+      <div class="estado"><span class="estado-nome">Foco de teclado</span><article class="card foco"><div class="prazo">Vence em 12/11</div><h3>Manifestar sobre o laudo pericial</h3><div class="chips"><span class="chip"><span class="chip-rotulo">Prazo</span></span></div><div class="meta"><span>5020066-92.2024.8.24.0045</span><span class="pessoa"><span class="inicial" aria-hidden="true">R</span>Rafael Antunes</span></div></article></div>
+      <div class="estado"><span class="estado-nome">Vencido</span><article class="card"><div class="prazo" data-alerta="vencido">Vencido há 2 dias</div><h3>Protocolar contestação</h3><div class="chips"><span class="chip"><span class="chip-rotulo">Prazo</span></span></div><div class="meta"><span>5004213-75.2025.8.24.0023</span><span class="pessoa"><span class="inicial" aria-hidden="true">R</span>Rafael Antunes</span></div></article></div>
+      <div class="estado"><span class="estado-nome">Vence hoje</span><article class="card"><div class="prazo" data-alerta="hoje">Vence hoje</div><h3>Audiência de conciliação</h3><div class="chips"><span class="chip"><span class="chip-rotulo">Audiência</span></span></div><div class="meta"><span>0301877-92.2024.8.24.0008</span><span class="pessoa"><span class="inicial" aria-hidden="true">M</span>Marina Couto</span></div></article></div>
+      <div class="estado"><span class="estado-nome">Concluído</span><article class="card"><div class="prazo">Venceu em 05/11</div><h3>Preparar rol de testemunhas</h3><div class="chips"><span class="chip"><span class="chip-rotulo">Tarefa</span></span></div><div class="meta"><span>5016603-51.2025.8.24.0064</span><span class="pessoa"><span class="inicial" aria-hidden="true">M</span>Marina Couto</span></div></article></div>
+      <div class="estado"><span class="estado-nome">Carregando</span><article class="card esqueleto" aria-busy="true"><div class="prazo">.</div><h3>.</h3><div class="meta">.</div></article></div>
     </div>
     <table class="tokens"><thead><tr><th>Propriedade</th><th>Token</th><th>Regra</th></tr></thead><tbody>
-      <tr><td>Fundo, borda, raio</td><td><code>--color-bg-page</code>, <code>--color-border-default</code>, <code>--radius</code></td><td>Hover troca a borda por <code>--color-border-strong</code></td></tr>
-      <tr><td>Prazo vencido e hoje</td><td><code>--color-text-danger</code>, <code>--color-text-warning</code></td><td>Sempre com texto. Em Concluído, nunca alerta</td></tr>
+      <tr><td>Fundo, borda, raio, sombra</td><td><code>--color-bg-surface</code>, <code>--color-border-default</code>, <code>--radius-card</code> 8px, <code>--shadow-card</code></td><td>Hover troca a borda por <code>--color-border-strong</code></td></tr>
+      <tr><td>Prazo vencido e hoje</td><td><code>--color-text-danger</code> 4,76:1, <code>--color-text-warning</code> 5,12:1</td><td>Sempre com texto. Em Concluído, nunca alerta</td></tr>
       <tr><td>Foco</td><td><code>--color-focus</code>, 2px, offset 2px</td><td>A mesma regra de foco de todo o sistema</td></tr>
-      <tr><td>Número do processo</td><td><code>--color-text-muted</code></td><td>Número é texto, não link</td></tr>
+      <tr><td>Número do processo</td><td><code>--color-text-muted</code> 4,69:1, só sobre branco</td><td>Número é texto, não link</td></tr>
     </tbody></table>
   </section>
 
   <section class="comp" id="chip">
     <h2>2. Chip de tipo e de sugestão da IA</h2>
-    <p>Um componente só para tipo de atividade e para sugestão da IA. A sugestão ganha borda forte e dois botões, Confirmar e Desfazer. Sem cor própria, sem ícone de brilho: a IA entra no mesmo padrão.</p>
+    <p>Um componente só para tipo de atividade e para sugestão da IA. A sugestão ganha dois botões, Confirmar e Desfazer. Sem cor própria, sem ícone de brilho: a IA entra no mesmo padrão.</p>
     <div class="estados">
-      <div class="estado"><span>Tipos</span><div class="chips"><span class="chip">Tarefa</span><span class="chip">Evento</span><span class="chip">Prazo</span><span class="chip">Audiência</span></div></div>
-      <div class="estado"><span>Sugestão da IA, padrão</span><div class="chips"><span class="chip ia">Sugestão da IA <button type="button">Confirmar</button> <button type="button">Desfazer</button></span></div></div>
-      <div class="estado"><span>Sugestão da IA, foco no botão</span><div class="chips"><span class="chip ia">Sugestão da IA <button type="button" class="foco" style="outline:2px solid var(--color-focus);outline-offset:2px">Confirmar</button> <button type="button">Desfazer</button></span></div></div>
-      <div class="estado"><span>Depois de confirmar</span><div class="chips"><span class="chip">Prazo</span></div><span style="font-size:12px;color:var(--color-text-success)">Anúncio: "Sugestão confirmada"</span></div>
+      <div class="estado"><span class="estado-nome">Tipos</span><div class="chips"><span class="chip"><span class="chip-rotulo">Tarefa</span></span><span class="chip"><span class="chip-rotulo">Evento</span></span><span class="chip"><span class="chip-rotulo">Prazo</span></span><span class="chip"><span class="chip-rotulo">Audiência</span></span></div></div>
+      <div class="estado"><span class="estado-nome">Sugestão da IA, padrão</span><div class="chips"><span class="chip"><span class="chip-rotulo">Sugestão da IA</span><button type="button" class="chip-acao">Confirmar</button><button type="button" class="chip-acao">Desfazer</button></span></div></div>
+      <div class="estado"><span class="estado-nome">Sugestão da IA, foco no botão</span><div class="chips"><span class="chip"><span class="chip-rotulo">Sugestão da IA</span><button type="button" class="chip-acao foco">Confirmar</button><button type="button" class="chip-acao">Desfazer</button></span></div></div>
+      <div class="estado"><span class="estado-nome">Depois de confirmar</span><div class="chips"><span class="chip"><span class="chip-rotulo">Prazo</span></span></div><span class="anuncio">Anúncio: "Sugestão confirmada"</span></div>
     </div>
     <table class="tokens"><thead><tr><th>Propriedade</th><th>Token</th><th>Regra</th></tr></thead><tbody>
-      <tr><td>Altura</td><td><code>--size-chip</code>, 24px</td><td>Alvo mínimo de toque</td></tr>
-      <tr><td>Fundo e borda</td><td><code>--color-bg-surface</code>, <code>--color-border-default</code></td><td>Sugestão usa <code>--color-border-strong</code></td></tr>
-      <tr><td>Botões</td><td><code>--color-action</code> no texto</td><td>Confirmar mantém o card e tira o chip. Desfazer tira o card</td></tr>
+      <tr><td>Altura e raio</td><td><code>--size-chip</code> 24px, <code>--radius</code> 8px</td><td>Alvo mínimo de toque</td></tr>
+      <tr><td>Fundo e borda</td><td><code>--color-bg-subtle</code>, <code>--color-border-default</code></td><td>Texto em <code>--color-text-default</code>, 14,46:1</td></tr>
+      <tr><td>Botões</td><td>Texto padrão, peso 600, divisor <code>--color-border-default</code></td><td>Confirmar mantém o card e tira o chip. Desfazer tira o card</td></tr>
     </tbody></table>
   </section>
 
@@ -154,33 +389,33 @@
     <h2>3. Seletor</h2>
     <p>Um seletor para os três filtros e para o painel de criar. Rótulo fixo acima, que não some quando há valor. Substitui o seletor nativo que aparecia entre componentes customizados.</p>
     <div class="estados">
-      <div class="estado"><span>Padrão</span><label class="campo">Responsável<select class="sel"><option>Todos</option></select></label></div>
-      <div class="estado"><span>Hover</span><label class="campo">Responsável<select class="sel hover"><option>Todos</option></select></label></div>
-      <div class="estado"><span>Foco</span><label class="campo">Responsável<select class="sel foco"><option>Todos</option></select></label></div>
-      <div class="estado"><span>Erro</span><label class="campo">Tipo<select class="sel erro"><option>Selecione</option></select><span class="erro-msg">Escolha o tipo da atividade.</span></label></div>
-      <div class="estado"><span>Desabilitado</span><label class="campo">Período<select class="sel" disabled><option>Todo o período</option></select></label></div>
+      <div class="estado"><span class="estado-nome">Padrão</span><div class="campo"><label for="s1">Responsável</label><span class="seletor"><select id="s1"><option>Todos</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></span></div></div>
+      <div class="estado"><span class="estado-nome">Hover</span><div class="campo"><label for="s2">Responsável</label><span class="seletor"><select id="s2" class="hover"><option>Todos</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></span></div></div>
+      <div class="estado"><span class="estado-nome">Foco</span><div class="campo"><label for="s3">Responsável</label><span class="seletor"><select id="s3" class="foco"><option>Todos</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></span></div></div>
+      <div class="estado"><span class="estado-nome">Erro</span><div class="campo"><label for="s4">Tipo</label><span class="seletor"><select id="s4" class="erro" aria-describedby="s4-erro" aria-invalid="true"><option>Selecione</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></span><span id="s4-erro" class="erro-msg">Escolha o tipo da atividade.</span></div></div>
+      <div class="estado"><span class="estado-nome">Desabilitado</span><div class="campo"><label for="s5">Período</label><span class="seletor"><select id="s5" disabled><option>Todo o período</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></span></div></div>
     </div>
     <table class="tokens"><thead><tr><th>Propriedade</th><th>Token</th><th>Regra</th></tr></thead><tbody>
-      <tr><td>Rótulo</td><td><code>--color-text-muted</code>, 13px, acima</td><td>Nunca placeholder como único rótulo</td></tr>
-      <tr><td>Borda</td><td><code>--color-border-default</code>; hover <code>--color-border-strong</code>; erro <code>--color-text-danger</code></td><td>Erro leva texto abaixo do campo</td></tr>
-      <tr><td>Seta</td><td><code>currentColor</code></td><td>Desenhada em CSS, sem imagem</td></tr>
+      <tr><td>Rótulo</td><td><code>--font-size-label</code> 12px, acima</td><td>Nunca placeholder como único rótulo</td></tr>
+      <tr><td>Borda e raio</td><td><code>--color-border-strong</code> 4,69:1, <code>--radius</code> 8px; erro <code>--color-text-danger</code></td><td>Erro leva texto abaixo do campo</td></tr>
+      <tr><td>Seta</td><td>SVG de linha em <code>currentColor</code>, <code>--color-text-muted</code></td><td>Sem imagem e sem gradiente</td></tr>
     </tbody></table>
   </section>
 
   <section class="comp" id="botao">
     <h2>4. Botão</h2>
-    <p>Dois níveis. Primário em cor de ação, um por tela. Secundário em borda forte. Caixa baixa em todo lugar, para acabar com a divergência entre site e produto.</p>
+    <p>Dois níveis. Primário em cor de ação e caixa alta, como os botões do Astrea, um por tela. Secundário com borda e caixa normal.</p>
     <div class="estados">
-      <div class="estado"><span>Primário</span><button class="btn primario" type="button">Criar atividade</button></div>
-      <div class="estado"><span>Primário, hover</span><button class="btn primario hover" type="button">Criar atividade</button></div>
-      <div class="estado"><span>Primário, foco</span><button class="btn primario foco" type="button">Criar atividade</button></div>
-      <div class="estado"><span>Secundário</span><button class="btn" type="button">Fechar</button></div>
-      <div class="estado"><span>Secundário, foco</span><button class="btn foco" type="button">Fechar</button></div>
-      <div class="estado"><span>Desabilitado</span><button class="btn primario desab" type="button" disabled>Salvar</button></div>
+      <div class="estado"><span class="estado-nome">Primário</span><button class="botao botao-primario" type="button">Adicionar atividade</button></div>
+      <div class="estado"><span class="estado-nome">Primário, hover</span><button class="botao botao-primario hover" type="button">Adicionar atividade</button></div>
+      <div class="estado"><span class="estado-nome">Primário, foco</span><button class="botao botao-primario foco" type="button">Adicionar atividade</button></div>
+      <div class="estado"><span class="estado-nome">Secundário</span><button class="botao" type="button">Fechar</button></div>
+      <div class="estado"><span class="estado-nome">Secundário, foco</span><button class="botao foco" type="button">Fechar</button></div>
+      <div class="estado"><span class="estado-nome">Desabilitado</span><button class="botao botao-primario" type="button" disabled>Salvar</button></div>
     </div>
     <table class="tokens"><thead><tr><th>Propriedade</th><th>Token</th><th>Regra</th></tr></thead><tbody>
-      <tr><td>Fundo primário</td><td><code>--color-action</code> com texto <code>--color-action-text</code></td><td>5,26:1 no claro, 4,81:1 no escuro</td></tr>
-      <tr><td>Raio</td><td><code>--radius</code></td><td>O mesmo raio de card, chip e campo</td></tr>
+      <tr><td>Fundo primário</td><td><code>--color-action</code> (<code>--primary900</code>) com texto <code>--color-action-text</code></td><td>5,47:1. Hover em <code>--color-action-hover</code>, 7,69:1</td></tr>
+      <tr><td>Raio</td><td><code>--radius</code> 8px</td><td>O mesmo raio de card, chip e campo</td></tr>
     </tbody></table>
   </section>
 
@@ -188,15 +423,15 @@
     <h2>5. Coluna e estado vazio</h2>
     <p>A coluna tem contagem no título, recebe foco e é alvo de arrasto. Vazia, ela diz o que falta e convida a agir. Com filtro ativo, o convite muda.</p>
     <div class="estados">
-      <div class="estado"><span>Vazia</span><div class="coluna-mini"><h4>Fazendo <small>0</small></h4><div class="vazio"><b>Nenhuma atividade em Fazendo.</b><span>Arraste um card para cá.</span></div></div></div>
-      <div class="estado"><span>Vazia com filtro</span><div class="coluna-mini"><h4>Concluído <small>0</small></h4><div class="vazio"><b>Nenhuma atividade com esses filtros.</b><span>Ajuste os filtros para ver mais.</span></div></div></div>
-      <div class="estado"><span>Alvo de arrasto</span><div class="coluna-mini alvo"><h4>Fazendo <small>3</small></h4><div class="vazio"><span>Solte aqui para mover.</span></div></div></div>
-      <div class="estado"><span>Carregando</span><div class="coluna-mini" aria-busy="true"><h4>A fazer <small>&nbsp;</small></h4><article class="card esqueleto"><div class="prazo">.</div><h3>.</h3><div class="meta">.</div></article></div></div>
+      <div class="estado"><span class="estado-nome">Vazia</span><div class="coluna"><h4>Fazendo <span>0</span></h4><div class="vazio"><b>Nenhuma atividade em Fazendo.</b><span>Arraste um card para cá.</span></div></div></div>
+      <div class="estado"><span class="estado-nome">Vazia com filtro</span><div class="coluna"><h4>Concluído <span>0</span></h4><div class="vazio"><b>Nenhuma atividade em Concluído.</b><span>Ajuste os filtros para ver mais.</span></div></div></div>
+      <div class="estado"><span class="estado-nome">Alvo de arrasto</span><div class="coluna alvo"><h4>Fazendo <span>3</span></h4><div class="vazio"><span>Solte aqui para mover.</span></div></div></div>
+      <div class="estado"><span class="estado-nome">Carregando</span><div class="coluna" aria-busy="true"><h4>A fazer</h4><article class="card esqueleto"><div class="prazo">.</div><h3>.</h3><div class="meta">.</div></article></div></div>
     </div>
     <table class="tokens"><thead><tr><th>Propriedade</th><th>Token</th><th>Regra</th></tr></thead><tbody>
-      <tr><td>Fundo da coluna</td><td><code>--color-bg-surface</code></td><td>Card em <code>--color-bg-page</code> por cima</td></tr>
-      <tr><td>Alvo de arrasto</td><td>Contorno tracejado em <code>--color-text-muted</code></td><td>Some no drop</td></tr>
-      <tr><td>Esqueleto</td><td><code>--color-bg-subtle</code></td><td>Animação para com reduced-motion</td></tr>
+      <tr><td>Fundo e raio da coluna</td><td><code>--color-bg-subtle</code> (<code>--gray100</code>), <code>--radius-card</code> 8px</td><td>Card em <code>--color-bg-surface</code> por cima. Sobre esse fundo, só texto padrão</td></tr>
+      <tr><td>Alvo de arrasto</td><td>Borda tracejada em <code>--color-text-muted</code>, fundo <code>--color-bg-hover</code></td><td>Some no drop</td></tr>
+      <tr><td>Esqueleto</td><td><code>--color-bg-hover</code></td><td>Animação para com reduced-motion</td></tr>
     </tbody></table>
   </section>
 </div>

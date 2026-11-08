@@ -37,13 +37,14 @@ Estes itens não entram no protótipo:
 
 ## 4. O que está aberto
 
-Três pontos de `03-tela.md` seguem em aberto.
+Dois pontos de `03-tela.md` seguem em aberto.
 
-- A família tipográfica. As candidatas são IBM Plex Sans, Source Sans 3 e Inter Tight.
 - Onde o Kanban mora no produto. Falta confirmar no trial onde ele fica e como ele é hoje.
 - A decisão difícil. Escolha entre manter a moldura atual ou pôr o prazo fatal como dado dominante.
 
-O `--font-sans` declara IBM Plex Sans primeiro. O protótipo não carrega a fonte pela rede. Ela só aparece quando estiver instalada na máquina. Sem ela, a tela usa a fonte do sistema.
+A fonte segue o produto. O CSS do Astrea logado declara `--primary-font: museo-sans`, e o `--font-sans` do protótipo começa por Museo Sans. O protótipo não carrega a fonte pela rede. Ela só aparece quando estiver instalada na máquina. Sem ela, a tela cai para Open Sans, a fonte do site, e depois para a fonte do sistema.
+
+A moldura copia a do Astrea logado: logo, busca, cinco atalhos, usuário e menu lateral de dez itens. Ela não traz o selo "1 ano grátis", o botão "Contratar" nem a faixa de campanha. A decisão vem do contrato em `03-tela.md`: a moldura do Kanban não tem chamada comercial. O item ativo do menu tem fundo e cor de ação. O Astrea de hoje não marca o item ativo, e a marca é melhoria nossa.
 
 ## 5. Como verificar
 
@@ -56,4 +57,4 @@ python prototipo/verificar.py prototipo/kanban.html
 
 O primeiro comando testa o verificador. O segundo verifica o arquivo do protótipo. Os dois terminam com código 0 quando passam.
 
-O verificador não abre o navegador. Arrastar, teclado, tema e largura exigem prova num navegador headless.
+O verificador não abre o navegador. Arrastar, teclado e largura exigem prova num navegador headless.
