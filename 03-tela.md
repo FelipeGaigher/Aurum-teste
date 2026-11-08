@@ -20,9 +20,10 @@ Legenda:
 > `data-captura="area-de-trabalho"`. A captura sai de
 > `prototipo/area-de-trabalho.html` depois das Tasks 10 e 11 do plano.
 
-> aberto: o frame no Figma. A banca pede alta fidelidade no Figma. O
-> protótipo em HTML é a fonte. Falta decidir se o frame nasce por
-> importação ou por desenho manual.
+> decisão, 08/11, 13h27: o frame no Figma nasce por importação do
+> protótipo. O `generate_figma_design` do MCP capturou
+> `prototipo/area-de-trabalho.html` a 1440 de largura, direto no arquivo
+> da entrega, nó `24-2`. O protótipo em HTML continua a fonte.
 
 ## O contrato: cada decisão nossa, visível na tela
 
@@ -132,7 +133,7 @@ Onde mais aparece: dia vazio da Agenda, coluna vazia do Kanban.
 
 | Pedido | Onde |
 |---|---|
-| A tela em alta fidelidade no Figma | Frame `Q3 / Área de trabalho`, 1440 de largura, na página "Questão 3" |
+| A tela em alta fidelidade no Figma | Frame importado do protótipo, 1440 de largura, nó `24-2` do arquivo da entrega |
 | 3 a 5 componentes com estados | Página "Questão 3", um frame por componente, com as propriedades acima |
 | Uma decisão difícil | Seção abaixo |
 
