@@ -129,6 +129,8 @@
   --size-chip: var(--primitive-size-22);
   --size-logo: var(--primitive-size-24);
   --size-control: var(--primitive-size-36);
+  --size-icon-button: var(--primitive-size-32);
+  --size-option: var(--primitive-size-32);
   --size-shortcut: var(--primitive-size-36);
   --size-search-height: var(--primitive-size-40);
   --size-header: var(--primitive-size-64);
@@ -154,6 +156,7 @@
   --component-sidebar-width: var(--size-sidebar);
   --component-sidebar-collapsed-width: var(--size-sidebar-recolhida);
   --component-sidebar-bg: var(--color-bg-page);
+  --component-sidebar-toggle-size: var(--size-icon-button);
   --component-menu-item-height: var(--size-control);
   --component-menu-item-active-bg: var(--color-bg-subtle);
   --component-menu-item-active-text: var(--color-action);
@@ -174,6 +177,13 @@
   --component-control-bg: var(--color-bg-surface);
   --component-control-border: var(--color-border-strong);
   --component-control-height: var(--size-control);
+  --component-seletor-list-bg: var(--color-bg-page);
+  --component-seletor-list-border: var(--color-border-default);
+  --component-seletor-list-shadow: var(--shadow-card);
+  --component-seletor-option-height: var(--size-option);
+  --component-seletor-option-active-bg: var(--color-bg-subtle);
+  --component-seletor-option-selected-text: var(--color-action);
+  --component-seletor-visible-options: 8;
   --component-button-primary-bg: var(--color-action);
   --component-button-primary-bg-hover: var(--color-action-hover);
   --component-button-primary-text: var(--color-action-text);
@@ -205,7 +215,7 @@ body {
   outline-offset: var(--focus-width);
 }
 
-button, input, select { font: inherit; color: inherit; }
+button, input { font: inherit; color: inherit; }
 
 .visualmente-oculto {
   position: absolute;
@@ -293,8 +303,7 @@ svg.icone {
   width: var(--size-icon-field);
   height: var(--size-icon-field);
 }
-.busca-campo svg,
-.seletor svg {
+.busca-campo svg {
   position: absolute;
   right: var(--space-3);
   top: 50%;
@@ -394,31 +403,34 @@ svg.icone {
 }
 .menu-lateral a[aria-current="page"] svg { color: currentColor; }
 
-/* recolher a sidebar */
+/* recolher a sidebar: botão quadrado no topo direito, na linha do primeiro item */
 .recolher {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  min-height: var(--component-menu-item-height);
-  margin-bottom: var(--space-2);
-  padding: 0 var(--space-3);
+  position: absolute;
+  top: calc(var(--space-5) + (var(--component-menu-item-height) - var(--component-sidebar-toggle-size)) / 2);
+  right: var(--space-2);
+  display: inline-grid;
+  place-items: center;
+  width: var(--component-sidebar-toggle-size);
+  height: var(--component-sidebar-toggle-size);
+  padding: 0;
   border: 0;
   border-radius: var(--radius);
   background: transparent;
   color: var(--color-text-muted);
   cursor: pointer;
 }
-.recolher:hover { background-color: var(--color-bg-hover); }
+.recolher:hover { background-color: var(--color-bg-hover); color: var(--color-text-default); }
 .recolher svg { transition: transform 150ms; }
+#menu-principal > li:first-child a { margin-right: calc(var(--component-sidebar-toggle-size) + var(--space-1)); }
 body[data-menu="recolhido"] { --component-sidebar-width: var(--component-sidebar-collapsed-width); }
 body[data-menu="recolhido"] .menu-lateral { padding-left: var(--space-2); padding-right: var(--space-2); }
 body[data-menu="recolhido"] .menu-lateral a { justify-content: center; padding: 0; }
 body[data-menu="recolhido"] .menu-lateral .rotulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-body[data-menu="recolhido"] .recolher { justify-content: center; padding: 0; }
+body[data-menu="recolhido"] .recolher { position: static; display: grid; margin: 0 auto var(--space-2); }
+body[data-menu="recolhido"] #menu-principal > li:first-child a { margin-right: 0; }
 body[data-menu="recolhido"] .recolher svg { transform: rotate(180deg); }
 body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-@media (prefers-reduced-motion: reduce) { .recolher svg { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .recolher svg, .seletor svg { transition: none; } }
 
 #conteudo {
   min-width: 0;
@@ -651,7 +663,8 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   gap: var(--space-1);
   min-width: 0;
 }
-.campo label {
+.campo label,
+.campo-rotulo {
   font-size: var(--font-size-label);
   font-weight: var(--font-weight-medium);
   line-height: var(--font-leading-tight);
@@ -664,15 +677,56 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   border: var(--border-width) solid var(--component-control-border);
   border-radius: var(--radius);
 }
+/* seletor: botão com lista própria, montado por criarSeletor */
+.seletor-raiz { display: grid; }
 .seletor {
-  position: relative;
-  display: grid;
-}
-.seletor select {
-  appearance: none;
-  padding-right: var(--space-7);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--component-control-height);
+  padding: 0 var(--space-3);
+  background-color: var(--component-control-bg);
+  border: var(--border-width) solid var(--component-control-border);
+  border-radius: var(--radius);
+  text-align: start;
+  white-space: nowrap;
   cursor: pointer;
 }
+.seletor:hover { background-color: var(--color-bg-subtle); }
+.seletor svg { color: var(--color-text-muted); transition: transform 150ms; }
+.seletor[aria-expanded="true"] svg { transform: rotate(180deg); }
+/* todos os rótulos ocupam a mesma célula: a largura é a do maior, como no select */
+.seletor-valor { display: grid; flex: 1; }
+.seletor-valor > span { grid-area: 1 / 1; visibility: hidden; }
+.seletor-valor > [data-atual] { visibility: visible; }
+.seletor-lista {
+  position: fixed;
+  top: var(--seletor-topo);
+  left: var(--seletor-esquerda);
+  z-index: 3;
+  width: var(--seletor-largura);
+  max-height: calc(var(--component-seletor-visible-options) * var(--component-seletor-option-height) + 2 * var(--space-1) + 2 * var(--border-width));
+  margin: var(--space-1) 0;
+  padding: var(--space-1) 0;
+  overflow-y: auto;
+  list-style: none;
+  background-color: var(--component-seletor-list-bg);
+  border: var(--border-width) solid var(--component-seletor-list-border);
+  border-radius: var(--radius);
+  box-shadow: var(--component-seletor-list-shadow);
+}
+.seletor-lista[hidden] { display: none; }
+.seletor-opcao {
+  display: flex;
+  align-items: center;
+  min-height: var(--component-seletor-option-height);
+  padding: 0 var(--space-3);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.seletor-opcao[data-ativa],
+.seletor-opcao[aria-selected="true"] { background-color: var(--component-seletor-option-active-bg); }
+.seletor-opcao[aria-selected="true"] { color: var(--component-seletor-option-selected-text); }
 
 .botao {
   display: inline-flex;
@@ -836,7 +890,7 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 <div class="corpo">
   <nav class="menu-lateral" aria-label="Menu principal">
     <button type="button" class="recolher" id="recolher-menu" aria-expanded="true" aria-controls="menu-principal" title="Recolher menu" aria-label="Recolher menu">
-      <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 7l-5 5 5 5M18 7l-5 5 5 5"/></svg>
     </button>
     <ul id="menu-principal">
       <li><a href="#">
@@ -889,66 +943,30 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
     <div id="ferramentas">
       <div class="filtros" role="group" aria-label="Filtros do quadro" data-conjunto="plano">
         <div class="campo">
-          <label for="filtro-equipe">Equipe</label>
-          <span class="seletor">
-            <select id="filtro-equipe" class="controle" data-filtro="equipe">
-              <option value="todas">Todas</option>
-            </select>
-            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
-          </span>
+          <span class="campo-rotulo" id="filtro-equipe-rotulo">Equipe</span>
+          <div class="seletor-raiz" data-seletor="filtro-equipe"></div>
         </div>
         <div class="campo">
-          <label for="filtro-dono">Dono</label>
-          <span class="seletor">
-            <select id="filtro-dono" class="controle" data-filtro="dono">
-              <option value="todos">Todos</option>
-            </select>
-            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
-          </span>
+          <span class="campo-rotulo" id="filtro-dono-rotulo">Dono</span>
+          <div class="seletor-raiz" data-seletor="filtro-dono"></div>
         </div>
         <div class="campo">
-          <label for="filtro-situacao">Situação</label>
-          <span class="seletor">
-            <select id="filtro-situacao" class="controle" data-filtro="situacao">
-              <option value="todas">Todas</option>
-              <option value="feito">Feito</option>
-              <option value="fazendo">Fazendo</option>
-              <option value="a-fazer">A fazer</option>
-            </select>
-            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
-          </span>
+          <span class="campo-rotulo" id="filtro-situacao-rotulo">Situação</span>
+          <div class="seletor-raiz" data-seletor="filtro-situacao"></div>
         </div>
       </div>
       <div class="filtros" role="group" aria-label="Filtros do quadro" data-conjunto="escritorio" hidden>
         <div class="campo">
-          <label for="filtro-responsavel">Responsável</label>
-          <span class="seletor">
-            <select id="filtro-responsavel" class="controle" data-filtro="responsavel">
-              <option value="todos">Todos</option>
-            </select>
-            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
-          </span>
+          <span class="campo-rotulo" id="filtro-responsavel-rotulo">Responsável</span>
+          <div class="seletor-raiz" data-seletor="filtro-responsavel"></div>
         </div>
         <div class="campo">
-          <label for="filtro-tipo">Tipo</label>
-          <span class="seletor">
-            <select id="filtro-tipo" class="controle" data-filtro="tipo">
-              <option value="todos">Todos</option>
-            </select>
-            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
-          </span>
+          <span class="campo-rotulo" id="filtro-tipo-rotulo">Tipo</span>
+          <div class="seletor-raiz" data-seletor="filtro-tipo"></div>
         </div>
         <div class="campo">
-          <label for="filtro-periodo">Período</label>
-          <span class="seletor">
-            <select id="filtro-periodo" class="controle" data-filtro="periodo">
-              <option value="todos">Todo o período</option>
-              <option value="vencidas">Vencidas</option>
-              <option value="hoje">Hoje</option>
-              <option value="proximos-7">Próximos 7 dias</option>
-            </select>
-            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
-          </span>
+          <span class="campo-rotulo" id="filtro-periodo-rotulo">Período</span>
+          <div class="seletor-raiz" data-seletor="filtro-periodo"></div>
         </div>
       </div>
     </div>
@@ -980,26 +998,16 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
       <input id="criar-titulo" class="controle" type="text" autocomplete="off">
     </div>
     <div class="campo">
-      <label for="criar-tipo">Tipo</label>
-      <span class="seletor">
-        <select id="criar-tipo" class="controle">
-          <option value="">Selecione o tipo</option>
-        </select>
-        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
-      </span>
+      <span class="campo-rotulo" id="criar-tipo-rotulo">Tipo</span>
+      <div class="seletor-raiz" data-seletor="criar-tipo"></div>
     </div>
     <div class="campo">
       <label for="criar-processo">Processo</label>
       <input id="criar-processo" class="controle" type="text" inputmode="numeric" autocomplete="off">
     </div>
     <div class="campo">
-      <label for="criar-responsavel">Responsável</label>
-      <span class="seletor">
-        <select id="criar-responsavel" class="controle">
-          <option value="">Selecione o responsável</option>
-        </select>
-        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
-      </span>
+      <span class="campo-rotulo" id="criar-responsavel-rotulo">Responsável</span>
+      <div class="seletor-raiz" data-seletor="criar-responsavel"></div>
     </div>
     <div class="campo">
       <label for="criar-prazo">Prazo fatal</label>
@@ -1479,14 +1487,156 @@ function marcarDestino(coluna) {
   if (coluna) coluna.dataset.destino = '';
 }
 
-function preencherOpcoes(id, pares) {
-  const select = document.getElementById(id);
-  for (const [valor, rotulo] of pares) {
-    const opcao = el('option', null, rotulo);
-    opcao.value = valor;
-    select.append(opcao);
-  }
+const SVG_NS = 'http://www.w3.org/2000/svg';
+let seletorAberto = null;
+
+function criarIcone(caminho) {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', 'icone');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  const traco = document.createElementNS(SVG_NS, 'path');
+  traco.setAttribute('d', caminho);
+  svg.append(traco);
+  return svg;
 }
+
+// Monta o seletor dentro de [data-seletor="<id>"]. O rótulo já existe no HTML com o id "<id>-rotulo".
+function criarSeletor({ id, opcoes, valor, aoEscolher }) {
+  const raiz = document.querySelector('[data-seletor="' + id + '"]');
+  if (!raiz) throw new Error('seletor sem raiz no HTML: ' + id);
+  const botao = el('button', 'seletor');
+  botao.type = 'button';
+  botao.id = id;
+  botao.setAttribute('aria-haspopup', 'listbox');
+  botao.setAttribute('aria-expanded', 'false');
+  botao.setAttribute('aria-labelledby', id + '-rotulo ' + id);
+  const valorVisivel = el('span', 'seletor-valor');
+  const lista = el('ul', 'seletor-lista');
+  lista.id = id + '-lista';
+  lista.setAttribute('role', 'listbox');
+  lista.setAttribute('aria-labelledby', id + '-rotulo');
+  lista.tabIndex = -1;
+  lista.hidden = true;
+  botao.setAttribute('aria-controls', lista.id);
+  const itens = opcoes.map(([, rotulo], indice) => {
+    const opcao = el('li', 'seletor-opcao', rotulo);
+    opcao.id = id + '-opcao-' + indice;
+    opcao.setAttribute('role', 'option');
+    valorVisivel.append(el('span', null, rotulo));
+    return opcao;
+  });
+  lista.append(...itens);
+  botao.append(valorVisivel, criarIcone('M8 10l4 4 4-4'));
+  raiz.append(botao, lista);
+
+  let selecionado = Math.max(0, opcoes.findIndex(([chave]) => chave === valor));
+  let ativo = selecionado;
+
+  function marcarSelecionado() {
+    itens.forEach((opcao, indice) => opcao.setAttribute('aria-selected', String(indice === selecionado)));
+    [...valorVisivel.children].forEach((rotulo, indice) => rotulo.toggleAttribute('data-atual', indice === selecionado));
+  }
+
+  function marcarAtivo(indice, rolar) {
+    ativo = Math.min(Math.max(indice, 0), itens.length - 1);
+    itens.forEach((opcao, outro) => opcao.toggleAttribute('data-ativa', outro === ativo));
+    lista.setAttribute('aria-activedescendant', itens[ativo].id);
+    if (rolar) itens[ativo].scrollIntoView({ block: 'nearest' });
+  }
+
+  // Abaixo do botão; acima só quando embaixo não cabe e em cima há mais espaço.
+  function posicionar() {
+    const caixa = botao.getBoundingClientRect();
+    lista.style.setProperty('--seletor-esquerda', caixa.left + 'px');
+    lista.style.setProperty('--seletor-largura', caixa.width + 'px');
+    const margem = parseFloat(getComputedStyle(lista).marginTop);
+    const altura = lista.offsetHeight + 2 * margem;
+    const cabeAbaixo = caixa.bottom + altura <= innerHeight || innerHeight - caixa.bottom >= caixa.top;
+    lista.style.setProperty('--seletor-topo', (cabeAbaixo ? caixa.bottom : caixa.top - altura) + 'px');
+  }
+
+  function fechar(devolverFoco) {
+    if (lista.hidden) return;
+    lista.hidden = true;
+    botao.setAttribute('aria-expanded', 'false');
+    lista.removeAttribute('aria-activedescendant');
+    if (seletorAberto && seletorAberto.raiz === raiz) seletorAberto = null;
+    if (devolverFoco) botao.focus();
+  }
+
+  function abrir() {
+    if (seletorAberto) seletorAberto.fechar(false);
+    lista.hidden = false;
+    botao.setAttribute('aria-expanded', 'true');
+    posicionar();
+    marcarAtivo(selecionado, true);
+    lista.focus();
+    seletorAberto = { raiz, fechar, posicionar };
+  }
+
+  function escolher(indice) {
+    const mudou = indice !== selecionado;
+    selecionado = indice;
+    marcarSelecionado();
+    fechar(true);
+    if (mudou) aoEscolher(opcoes[indice][0]);
+  }
+
+  const MOVER = {
+    ArrowDown: () => ativo + 1,
+    ArrowUp: () => ativo - 1,
+    Home: () => 0,
+    End: () => itens.length - 1,
+  };
+
+  botao.addEventListener('click', () => (lista.hidden ? abrir() : fechar(true)));
+  botao.addEventListener('keydown', (evento) => {
+    if (evento.key !== 'ArrowDown' && evento.key !== 'ArrowUp') return;
+    evento.preventDefault();
+    abrir();
+  });
+  lista.addEventListener('keydown', (evento) => {
+    if (MOVER[evento.key]) {
+      evento.preventDefault();
+      marcarAtivo(MOVER[evento.key](), true);
+    } else if (evento.key === 'Enter' || evento.key === ' ') {
+      evento.preventDefault();
+      escolher(ativo);
+    } else if (evento.key === 'Escape') {
+      evento.preventDefault();
+      evento.stopPropagation();
+      fechar(true);
+    } else if (evento.key === 'Tab') {
+      // O foco volta ao botão e o Tab segue a ordem a partir dele.
+      fechar(true);
+    }
+  });
+  lista.addEventListener('mousemove', (evento) => {
+    const opcao = evento.target.closest('[role="option"]');
+    if (opcao && itens.indexOf(opcao) !== ativo) marcarAtivo(itens.indexOf(opcao), false);
+  });
+  lista.addEventListener('click', (evento) => {
+    const opcao = evento.target.closest('[role="option"]');
+    if (opcao) escolher(itens.indexOf(opcao));
+  });
+  lista.addEventListener('focusout', (evento) => {
+    if (!raiz.contains(evento.relatedTarget)) fechar(false);
+  });
+
+  marcarSelecionado();
+  return botao;
+}
+
+document.addEventListener('pointerdown', (evento) => {
+  if (seletorAberto && !seletorAberto.raiz.contains(evento.target)) seletorAberto.fechar(false);
+});
+document.addEventListener('scroll', (evento) => {
+  if (seletorAberto && !seletorAberto.raiz.contains(evento.target)) seletorAberto.posicionar();
+}, true);
+window.addEventListener('resize', () => {
+  if (seletorAberto) seletorAberto.posicionar();
+});
 
 const painelDetalhe = document.getElementById('painel-detalhe');
 let detalheAberto = null;
@@ -1574,21 +1724,30 @@ quadro.addEventListener('keydown', (evento) => {
   moverItem(item.id, destino.id);
 });
 
-const paresResponsavel = RESPONSAVEIS.map((nome) => [nome, nome]);
-const paresTipo = Object.entries(TIPOS);
-preencherOpcoes('filtro-equipe', EQUIPES.map((nome) => [nome, nome]));
-preencherOpcoes('filtro-dono', DONOS.map((nome) => [nome, nome]));
-preencherOpcoes('filtro-responsavel', paresResponsavel);
-preencherOpcoes('filtro-tipo', paresTipo);
-preencherOpcoes('criar-responsavel', paresResponsavel);
-preencherOpcoes('criar-tipo', paresTipo);
+function ligarFiltro(conjunto, filtro, id, opcoes) {
+  criarSeletor({
+    id,
+    opcoes,
+    valor: estado.filtros[conjunto][filtro],
+    aoEscolher: (valor) => {
+      estado.filtros[conjunto][filtro] = valor;
+      render();
+      anunciar('Filtro aplicado. ' + resumoGeral());
+    },
+  });
+}
 
-document.getElementById('ferramentas').addEventListener('change', (evento) => {
-  const conjunto = evento.target.closest('.filtros').dataset.conjunto;
-  estado.filtros[conjunto][evento.target.dataset.filtro] = evento.target.value;
-  render();
-  anunciar('Filtro aplicado. ' + resumoGeral());
-});
+const pares = (nomes) => nomes.map((nome) => [nome, nome]);
+const paresResponsavel = pares(RESPONSAVEIS);
+const paresTipo = Object.entries(TIPOS);
+ligarFiltro('plano', 'equipe', 'filtro-equipe', [['todas', 'Todas'], ...pares(EQUIPES)]);
+ligarFiltro('plano', 'dono', 'filtro-dono', [['todos', 'Todos'], ...pares(DONOS)]);
+ligarFiltro('plano', 'situacao', 'filtro-situacao', [['todas', 'Todas'], ...Object.entries(STATUS)]);
+ligarFiltro('escritorio', 'responsavel', 'filtro-responsavel', [['todos', 'Todos'], ...paresResponsavel]);
+ligarFiltro('escritorio', 'tipo', 'filtro-tipo', [['todos', 'Todos'], ...paresTipo]);
+ligarFiltro('escritorio', 'periodo', 'filtro-periodo', [['todos', 'Todo o período'], ['vencidas', 'Vencidas'], ['hoje', 'Hoje'], ['proximos-7', 'Próximos 7 dias']]);
+criarSeletor({ id: 'criar-tipo', opcoes: [['', 'Selecione o tipo'], ...paresTipo], valor: '', aoEscolher: () => {} });
+criarSeletor({ id: 'criar-responsavel', opcoes: [['', 'Selecione o responsável'], ...paresResponsavel], valor: '', aoEscolher: () => {} });
 
 const painel = document.getElementById('painel-criar');
 const botaoCriar = document.getElementById('criar-atividade');

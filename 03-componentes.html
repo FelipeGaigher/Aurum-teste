@@ -51,6 +51,8 @@
 
   --primitive-size-18: 18px;
   --primitive-size-24: 24px;
+  --primitive-size-32: 32px;
+  --primitive-size-36: 36px;
   --primitive-size-40: 40px;
   --primitive-size-240: 240px;
   --primitive-size-1200: 1200px;
@@ -114,6 +116,8 @@
   --size-icon: var(--primitive-size-18);
   --size-chip: var(--primitive-size-24);
   --size-control: var(--primitive-size-40);
+  --size-field: var(--primitive-size-36);
+  --size-option: var(--primitive-size-32);
   --size-state-min: var(--primitive-size-240);
   --size-page: var(--primitive-size-1200);
 }
@@ -138,6 +142,13 @@
   --component-control-bg: var(--color-bg-surface);
   --component-control-border: var(--color-border-strong);
   --component-control-height: var(--size-control);
+  --component-seletor-height: var(--size-field);
+  --component-seletor-list-bg: var(--color-bg-page);
+  --component-seletor-list-border: var(--color-border-default);
+  --component-seletor-list-shadow: var(--shadow-card);
+  --component-seletor-option-height: var(--size-option);
+  --component-seletor-option-active-bg: var(--color-bg-subtle);
+  --component-seletor-option-selected-text: var(--color-action);
   --component-button-primary-bg: var(--color-action);
   --component-button-primary-bg-hover: var(--color-action-hover);
   --component-button-primary-text: var(--color-action-text);
@@ -254,26 +265,28 @@ code { font-family: var(--font-mono); font-size: var(--font-size-label); }
 }
 .chip-acao:last-child { border-start-end-radius: var(--radius); border-end-end-radius: var(--radius); }
 
-/* seletor */
+/* seletor: botão com lista própria */
 .campo { display: grid; gap: var(--space-1); }
-.campo label { font-size: var(--font-size-label); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); }
-.seletor { position: relative; display: grid; }
-.seletor select {
-  height: var(--component-control-height);
-  padding: 0 var(--space-7) 0 var(--space-3);
-  appearance: none;
+.campo-rotulo { font-size: var(--font-size-label); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); }
+.seletor-raiz { display: grid; gap: var(--space-1); }
+.seletor {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--component-seletor-height);
+  padding: 0 var(--space-3);
   background-color: var(--component-control-bg);
   border: var(--border-width) solid var(--component-control-border);
   border-radius: var(--radius);
   color: var(--color-text-default);
   font: inherit;
+  text-align: start;
+  white-space: nowrap;
   cursor: pointer;
 }
+.seletor-valor { flex: 1; }
 .seletor svg {
-  position: absolute;
-  right: var(--space-3);
-  top: 50%;
-  translate: 0 -50%;
+  flex: none;
   width: var(--size-icon);
   height: var(--size-icon);
   fill: none;
@@ -282,12 +295,31 @@ code { font-family: var(--font-mono); font-size: var(--font-size-label); }
   stroke-linecap: round;
   stroke-linejoin: round;
   color: var(--color-text-muted);
-  pointer-events: none;
 }
-.seletor select.hover { background-color: var(--color-bg-subtle); }
-.seletor select.erro { border-color: var(--color-text-danger); }
+.seletor[aria-expanded="true"] svg { transform: rotate(180deg); }
+.seletor.hover { background-color: var(--color-bg-subtle); }
+.seletor.erro { border-color: var(--color-text-danger); }
 .erro-msg { color: var(--color-text-danger); font-size: var(--font-size-label); }
-.seletor select:disabled { color: var(--color-text-muted); border-color: var(--color-border-default); cursor: default; }
+.seletor:disabled { color: var(--color-text-muted); border-color: var(--color-border-default); cursor: default; }
+/* na página a lista aparece no fluxo; no produto ela flutua abaixo do botão, com a largura dele */
+.seletor-lista {
+  margin: 0;
+  padding: var(--space-1) 0;
+  list-style: none;
+  background-color: var(--component-seletor-list-bg);
+  border: var(--border-width) solid var(--component-seletor-list-border);
+  border-radius: var(--radius);
+  box-shadow: var(--component-seletor-list-shadow);
+}
+.seletor-opcao {
+  display: flex;
+  align-items: center;
+  min-height: var(--component-seletor-option-height);
+  padding: 0 var(--space-3);
+}
+.seletor-opcao[data-ativa],
+.seletor-opcao[aria-selected="true"] { background-color: var(--component-seletor-option-active-bg); }
+.seletor-opcao[aria-selected="true"] { color: var(--component-seletor-option-selected-text); }
 
 /* botão */
 .botao {
@@ -387,18 +419,23 @@ code { font-family: var(--font-mono); font-size: var(--font-size-label); }
 
   <section class="comp" id="seletor">
     <h2>3. Seletor</h2>
-    <p>Um seletor para os três filtros e para o painel de criar. Rótulo fixo acima, que não some quando há valor. Substitui o seletor nativo que aparecia entre componentes customizados.</p>
+    <p>Um seletor para os filtros e para o painel de criar. É um botão que mostra o valor e abre uma lista própria, no lugar do seletor nativo, que destoava dos componentes customizados. Rótulo fixo acima, que não some quando há valor. No protótipo, uma única função monta todos os seletores.</p>
     <div class="estados">
-      <div class="estado"><span class="estado-nome">Padrão</span><div class="campo"><label for="s1">Responsável</label><span class="seletor"><select id="s1"><option>Todos</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></span></div></div>
-      <div class="estado"><span class="estado-nome">Hover</span><div class="campo"><label for="s2">Responsável</label><span class="seletor"><select id="s2" class="hover"><option>Todos</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></span></div></div>
-      <div class="estado"><span class="estado-nome">Foco</span><div class="campo"><label for="s3">Responsável</label><span class="seletor"><select id="s3" class="foco"><option>Todos</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></span></div></div>
-      <div class="estado"><span class="estado-nome">Erro</span><div class="campo"><label for="s4">Tipo</label><span class="seletor"><select id="s4" class="erro" aria-describedby="s4-erro" aria-invalid="true"><option>Selecione</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></span><span id="s4-erro" class="erro-msg">Escolha o tipo da atividade.</span></div></div>
-      <div class="estado"><span class="estado-nome">Desabilitado</span><div class="campo"><label for="s5">Período</label><span class="seletor"><select id="s5" disabled><option>Todo o período</option></select><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></span></div></div>
+      <div class="estado"><span class="estado-nome">Padrão</span><div class="campo"><span class="campo-rotulo" id="s1-rotulo">Responsável</span><div class="seletor-raiz"><button type="button" class="seletor" id="s1" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="s1-rotulo s1"><span class="seletor-valor">Todos</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></button></div></div></div>
+      <div class="estado"><span class="estado-nome">Hover</span><div class="campo"><span class="campo-rotulo" id="s2-rotulo">Responsável</span><div class="seletor-raiz"><button type="button" class="seletor hover" id="s2" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="s2-rotulo s2"><span class="seletor-valor">Todos</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></button></div></div></div>
+      <div class="estado"><span class="estado-nome">Foco</span><div class="campo"><span class="campo-rotulo" id="s3-rotulo">Responsável</span><div class="seletor-raiz"><button type="button" class="seletor foco" id="s3" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="s3-rotulo s3"><span class="seletor-valor">Todos</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></button></div></div></div>
+      <div class="estado"><span class="estado-nome">Aberto, com a lista</span><div class="campo"><span class="campo-rotulo" id="s4-rotulo">Responsável</span><div class="seletor-raiz"><button type="button" class="seletor" id="s4" aria-haspopup="listbox" aria-expanded="true" aria-labelledby="s4-rotulo s4" aria-controls="s4-lista"><span class="seletor-valor">Todos</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></button><ul class="seletor-lista" id="s4-lista" role="listbox" tabindex="-1" aria-labelledby="s4-rotulo" aria-activedescendant="s4-o2"><li class="seletor-opcao" role="option" id="s4-o0" aria-selected="true">Todos</li><li class="seletor-opcao" role="option" id="s4-o1" aria-selected="false">Beatriz Lemos</li><li class="seletor-opcao" role="option" id="s4-o2" aria-selected="false" data-ativa>Marina Couto</li><li class="seletor-opcao" role="option" id="s4-o3" aria-selected="false">Otávio Prado</li><li class="seletor-opcao" role="option" id="s4-o4" aria-selected="false">Rafael Antunes</li></ul></div></div></div>
+      <div class="estado"><span class="estado-nome">Erro</span><div class="campo"><span class="campo-rotulo" id="s5-rotulo">Tipo</span><div class="seletor-raiz"><button type="button" class="seletor erro" id="s5" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="s5-rotulo s5" aria-invalid="true" aria-describedby="s5-erro"><span class="seletor-valor">Selecione o tipo</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></button></div><span id="s5-erro" class="erro-msg">Escolha o tipo da atividade.</span></div></div>
+      <div class="estado"><span class="estado-nome">Desabilitado</span><div class="campo"><span class="campo-rotulo" id="s6-rotulo">Período</span><div class="seletor-raiz"><button type="button" class="seletor" id="s6" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="s6-rotulo s6" disabled><span class="seletor-valor">Todo o período</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg></button></div></div></div>
     </div>
     <table class="tokens"><thead><tr><th>Propriedade</th><th>Token</th><th>Regra</th></tr></thead><tbody>
       <tr><td>Rótulo</td><td><code>--font-size-label</code> 12px, acima</td><td>Nunca placeholder como único rótulo</td></tr>
       <tr><td>Borda e raio</td><td><code>--color-border-strong</code> 4,69:1, <code>--radius</code> 8px; erro <code>--color-text-danger</code></td><td>Erro leva texto abaixo do campo</td></tr>
-      <tr><td>Seta</td><td>SVG de linha em <code>currentColor</code>, <code>--color-text-muted</code></td><td>Sem imagem e sem gradiente</td></tr>
+      <tr><td>Altura</td><td><code>--size-field</code> 36px, a mesma dos campos do Kanban</td><td>Largura do botão é a do maior rótulo</td></tr>
+      <tr><td>Seta</td><td>SVG de linha em <code>currentColor</code>, <code>--color-text-muted</code></td><td>Gira 180° com a lista aberta. Sem imagem e sem gradiente</td></tr>
+      <tr><td>Lista</td><td>Fundo <code>--color-bg-page</code>, borda <code>--color-border-default</code>, <code>--shadow-card</code>, <code>--radius</code> 8px</td><td>Abaixo do botão, com a largura dele. Até 8 opções visíveis, o resto rola</td></tr>
+      <tr><td>Opção</td><td><code>--size-option</code> 32px. Selecionada: fundo <code>--color-bg-subtle</code> e texto <code>--color-action</code>. Ativa pelo teclado: o mesmo fundo</td><td><code>aria-selected</code> na selecionada, <code>aria-activedescendant</code> na lista</td></tr>
+      <tr><td>Teclado</td><td>Enter, Espaço e setas abrem. Setas, Home e End movem. Enter e Espaço escolhem</td><td>Esc fecha e devolve o foco ao botão. Tab e clique fora fecham. Uma lista aberta por vez</td></tr>
     </tbody></table>
   </section>
 
