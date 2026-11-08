@@ -116,7 +116,7 @@ O enunciado diz que a Aurum prototipa no Figma. A tela da Q3 precisa existir lá
 
 | Decisão | Default |
 |---|---|
-| Incluir as 5 imagens com dado real na limpeza do histórico, publicar e ligar o Pages | Sem push até a resposta. Script e tarjas prontos às 13h50 |
+| Incluir as 5 imagens com dado real na limpeza do histórico, publicar e ligar o Pages | Autorizado por Felipe às 14h05. Histórico limpo, `main` publicado e Pages no ar às 14h11 |
 | Confirmar a Área de trabalho como tela da Q3 | Seguiu com ela; entregue |
 | Levar a tela ao Figma, com a cota do MCP esgotada | Resolvido às 13h27: `generate_figma_design` passou pela cota, e a Área de trabalho está no arquivo, nó `24-2` |
 | Localizar assinatura, aprovações e pagamentos no produto | Manter na fase 3 da Q2 |
