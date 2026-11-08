@@ -37,7 +37,9 @@
 
   --primitive-font-12: 12px;
   --primitive-font-14: 14px;
+  --primitive-font-13: 13px;
   --primitive-font-16: 16px;
+  --primitive-font-18: 18px;
   --primitive-font-20: 20px;
   --primitive-font-24: 24px;
   --primitive-font-28: 28px;
@@ -53,12 +55,17 @@
   --primitive-size-22: 22px;
   --primitive-size-24: 24px;
   --primitive-size-28: 28px;
+  --primitive-size-32: 32px;
+  --primitive-size-36: 36px;
   --primitive-size-40: 40px;
   --primitive-size-44: 44px;
   --primitive-size-48: 48px;
+  --primitive-size-64: 64px;
   --primitive-size-88: 88px;
+  --primitive-size-260: 260px;
   --primitive-size-300: 300px;
   --primitive-size-440: 440px;
+  --primitive-size-480: 480px;
   --primitive-size-560: 560px;
 }
 /* fim dos primitivos */
@@ -103,12 +110,12 @@
 
   --font-sans: "Museo Sans", "museo-sans", "Open Sans", "Segoe UI", system-ui, sans-serif;
   --font-size-label: var(--primitive-font-12);
-  --font-size-button: var(--primitive-font-14);
-  --font-size-body: var(--primitive-font-14);
-  --font-size-emphasis: var(--primitive-font-16);
-  --font-size-dialog: var(--primitive-font-20);
-  --font-size-title: var(--primitive-font-24);
-  --font-size-logo: var(--primitive-font-28);
+  --font-size-button: var(--primitive-font-13);
+  --font-size-body: var(--primitive-font-13);
+  --font-size-emphasis: var(--primitive-font-14);
+  --font-size-dialog: var(--primitive-font-18);
+  --font-size-title: var(--primitive-font-20);
+  --font-size-logo: var(--primitive-font-24);
   --font-weight-regular: var(--primitive-weight-400);
   --font-weight-medium: var(--primitive-weight-500);
   --font-weight-semibold: var(--primitive-weight-600);
@@ -118,15 +125,15 @@
 
   --size-icon: var(--primitive-size-18);
   --size-icon-field: var(--primitive-size-20);
-  --size-icon-nav: var(--primitive-size-22);
-  --size-chip: var(--primitive-size-24);
-  --size-logo: var(--primitive-size-28);
-  --size-control: var(--primitive-size-40);
-  --size-shortcut: var(--primitive-size-44);
-  --size-search-height: var(--primitive-size-48);
-  --size-header: var(--primitive-size-88);
-  --size-sidebar: var(--primitive-size-300);
-  --size-search: var(--primitive-size-560);
+  --size-icon-nav: var(--primitive-size-20);
+  --size-chip: var(--primitive-size-22);
+  --size-logo: var(--primitive-size-24);
+  --size-control: var(--primitive-size-36);
+  --size-shortcut: var(--primitive-size-36);
+  --size-search-height: var(--primitive-size-40);
+  --size-header: var(--primitive-size-64);
+  --size-sidebar: var(--primitive-size-260);
+  --size-search: var(--primitive-size-480);
   --size-dialog: var(--primitive-size-440);
 }
 /* fim dos semanticos */
@@ -144,7 +151,7 @@
   --component-shortcut-active-bg: var(--color-bg-subtle);
   --component-sidebar-width: var(--size-sidebar);
   --component-sidebar-bg: var(--color-bg-page);
-  --component-menu-item-height: var(--size-search-height);
+  --component-menu-item-height: var(--size-control);
   --component-menu-item-active-bg: var(--color-bg-subtle);
   --component-menu-item-active-text: var(--color-action);
   --component-card-bg: var(--color-bg-surface);
@@ -385,7 +392,7 @@ svg.icone {
 
 #conteudo {
   min-width: 0;
-  padding: var(--space-7) var(--space-6) var(--space-6);
+  padding: var(--space-5) var(--space-5) var(--space-6);
 }
 
 .titulo-pagina {
@@ -394,13 +401,38 @@ svg.icone {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-3);
 }
 .titulo-pagina h1 {
   margin: 0;
   font-size: var(--font-size-title);
   font-weight: var(--font-weight-medium);
   line-height: var(--font-leading-tight);
+}
+
+/* visões do módulo de atividades */
+.visoes {
+  display: inline-flex;
+  gap: var(--space-1);
+  padding: var(--space-1);
+  margin-bottom: var(--space-4);
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius);
+}
+.visoes a {
+  display: inline-flex;
+  align-items: center;
+  height: var(--component-chip-height);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius);
+  font-size: var(--font-size-button);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.visoes a[aria-current="page"] {
+  background: var(--color-bg-page);
+  color: var(--color-text-default);
 }
 
 /* quadro */
@@ -445,7 +477,7 @@ svg.icone {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-4);
+  padding: var(--space-3);
   background-color: var(--component-card-bg);
   border: var(--border-width) solid var(--component-card-border);
   border-radius: var(--component-card-radius);
@@ -794,6 +826,11 @@ svg.icone {
       <h1>Área de trabalho</h1>
       <button type="button" id="criar-atividade" class="botao botao-primario" aria-haspopup="dialog">Adicionar atividade</button>
     </div>
+    <nav class="visoes" aria-label="Visão das atividades">
+      <a href="#">Lista</a>
+      <a href="#" aria-current="page">Kanban</a>
+      <a href="#">Agenda</a>
+    </nav>
     <div id="ferramentas">
       <div class="filtros" role="group" aria-label="Filtros do quadro">
         <div class="campo">
