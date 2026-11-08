@@ -1467,7 +1467,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: `DS.tabela`, `DS.barraFiltros`, `DS.abas`, `DS.menuAcoes` e `DADOS.PROCESSOS`.
 - Produces: `?ficha=1` em `processos.html` e o link "Resultados de buscas" para `buscas.html`.
 
-- [ ] **Step 1: Implementar**
+- [x] **Step 1: Implementar**
 
 - Duas ações com rótulo: "Adicionar processo" e "Exportar", com Imprimir e Planilha no menu (PA-72).
 - Atualizar fica ao lado da contagem da lista.
@@ -1479,7 +1479,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 Esperado: lista e ficha na mesma página.
 
-- [ ] **Step 2: Executar e confirmar que passa**
+- [x] **Step 2: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/processos.html
@@ -1488,7 +1488,7 @@ node scripts/verificar-app.js --rf RF-07,RF-12,RF-15 --paginas processos.html
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 3: Entregar**
+- [x] **Step 3: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
@@ -1514,7 +1514,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: a lista da Task 16, `DS.campo`, `DS.stepper` e `.barra-acoes`.
 - Produces: `?adicionar=processo`, `?adicionar=caso` e `?adicionar=busca` em `processos.html`.
 
-- [ ] **Step 1: Implementar**
+- [x] **Step 1: Implementar**
 
 - Processo com os 17 campos na ordem do Astrea, em seções (PA-74).
 - Caso e busca automática usam o mesmo molde de formulário (PA-75).
@@ -1523,7 +1523,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 Esperado: os três formulários abrem por parâmetro.
 
-- [ ] **Step 2: Executar e confirmar que passa**
+- [x] **Step 2: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/processos.html
@@ -1532,7 +1532,7 @@ node scripts/verificar-app.js --rf RF-07,RF-12,RF-15 --paginas processos.html
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 3: Entregar**
+- [x] **Step 3: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 

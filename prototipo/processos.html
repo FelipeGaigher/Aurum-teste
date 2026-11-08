@@ -6,12 +6,805 @@
 <title>Processos e casos, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
+<script src="dados.js"></script>
+<style>
+  /* M18: duas ações com rótulo, e o link de Resultados de buscas com texto ao lado (PA-05, PA-72). */
+  .pagina-topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .pagina-acoes { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+  .link-texto { border-radius: var(--radius); color: var(--color-action); font-weight: var(--font-weight-medium); }
+  .link-texto:hover { text-decoration-thickness: calc(2 * var(--border-width)); }
+
+  .lista-filtros { margin-bottom: var(--space-4); }
+  .tabela a { border-radius: var(--radius); color: var(--color-action); font-weight: var(--font-weight-medium); }
+  .tabela .numero-processo { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pagina-aviso:empty { display: none; }
+  .pagina-aviso { margin-bottom: var(--space-4); }
+
+  /* Ficha: cabeçalho de leitura em uma linha que quebra, e as ações à direita. */
+  .ficha-topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-5);
+    margin-bottom: var(--space-4);
+  }
+  .ficha-leitura { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); margin: 0; min-width: 0; }
+  .ficha-leitura div { display: grid; gap: var(--space-1); min-width: 0; }
+  .ficha-leitura dt, .dados dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
+  .ficha-leitura dd, .dados dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; overflow-wrap: anywhere; }
+  .ficha-acoes { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+  .ficha-grade { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--space-5) var(--space-6); align-items: start; }
+  .ficha-coluna { display: grid; gap: var(--space-5); min-width: 0; }
+  .bloco { min-width: 0; }
+  .bloco-cabeca {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: var(--border-width) solid var(--color-border-strong);
+  }
+  .bloco-cabeca h2, .bloco-cabeca h3 { margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+  .dados { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-2) var(--space-4); margin: 0; }
+  .contagem { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+  .andamentos { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+  .andamentos li { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-3); }
+  .andamentos time { color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+  .painel-campos { display: grid; gap: var(--space-4); width: 100%; }
+  /* Na coluna estreita do Resumo, a linha de atividade empilha como no celular. */
+  .ficha-grade .linha-atividade {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "prazo acoes" "principal principal" "pessoa pessoa";
+  }
+  .ficha-grade .linha-prazo { grid-area: prazo; }
+  .ficha-grade .linha-principal { grid-area: principal; }
+  .ficha-grade .linha-processo { display: none; }
+  .ficha-grade .linha-responsavel { grid-area: pessoa; }
+  .ficha-grade .linha-acoes { grid-area: acoes; }
+  /* Molde único de formulário (PA-75): seções em ordem, barra de ações fixa no fim. */
+  .formulario { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); max-width: calc(2 * var(--component-field-width-g)); }
+  .formulario .bloco { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+  .formulario .bloco-cabeca { margin-bottom: 0; }
+  .form-linha { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-3) var(--space-4); justify-self: stretch; min-width: 0; }
+  .form-grupo, .form-envolvidos, .form-passo { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: var(--space-3); min-width: 0; }
+  .form-nota { margin: 0; color: var(--color-text-muted); }
+  .grupo-chips { display: grid; gap: var(--space-1); }
+  .grupo-chips-itens { display: flex; flex-wrap: wrap; gap: var(--space-2); min-height: var(--component-control-height); align-items: center; }
+
+  @media (max-width: 1024px) {
+    .ficha-grade { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 700px) {
+    .dados { grid-template-columns: minmax(0, 1fr); gap: var(--space-1); }
+    .dados dd { margin-bottom: var(--space-2); }
+  }
+</style>
 </head>
 <body data-pagina="processos.html" data-titulo="Processos e casos">
 <div class="corpo">
-  <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
-  </main>
+  <main id="conteudo"></main>
 </div>
+
+<script>
+(function () {
+  window.Moldura.montar();
+  const EU = 'Marina Couto';
+  const PAGINA = 'processos.html';
+  const MODULO = 'Processos e casos';
+  const parametros = new URLSearchParams(location.search);
+  const conteudo = document.getElementById('conteudo');
+
+  // --- dados fictícios ------------------------------------------------------------
+  // Cada processo de DADOS.PROCESSOS ganha ação, grau e movimentação inventados.
+  const ACOES = ['Ação de cobrança', 'Reclamação trabalhista', 'Ação de indenização', 'Execução de título extrajudicial',
+    'Ação revisional de contrato', 'Embargos à execução', 'Ação de despejo', 'Mandado de segurança',
+    'Inventário', 'Ação de alimentos'];
+  const GRAUS = { 1: '1º grau', 2: '2º grau', superior: 'Superior', supremo: 'Supremo' };
+  const GRAU_DE = ['1', '1', '2', '1', 'superior', '1', '2', '1', '1', '1'];
+  const MOVIMENTO_DE = [1, 0, 3, 12, 5, 2, 40, 8, 20, 60];
+  const VINCULO_DE = ['sim', 'sim', 'sim', 'falha', 'sim', 'nao', 'sim', 'sim', 'nao', 'sim'];
+  const JUIZOS = ['1ª Vara Cível', '2ª Vara do Trabalho', '3ª Vara Cível', 'Vara de Execuções', '1ª Câmara de Direito Civil'];
+
+  const REGISTROS = [
+    ...window.DADOS.PROCESSOS.map((p, i) => ({
+      id: i + 1, tipo: 'processo', titulo: `${ACOES[i]}, ${p.cliente}`, acao: ACOES[i], numero: p.numero,
+      cliente: p.cliente, responsavel: p.responsavel, grau: GRAU_DE[i], movimentoEmDias: MOVIMENTO_DE[i],
+      vinculo: VINCULO_DE[i], importante: i === 0 || i === 4, juizo: JUIZOS[i % JUIZOS.length],
+      valor: (i + 2) * 7350, atividades: p.atividades,
+    })),
+    { id: 11, tipo: 'caso', titulo: 'Consultoria societária, Estaleiro Três Marés Ltda', cliente: 'Estaleiro Três Marés Ltda',
+      responsavel: 'Otávio Prado', movimentoEmDias: 6, importante: false, atividades: [] },
+    { id: 12, tipo: 'caso', titulo: 'Planejamento sucessório, Iolanda Prestes Vidal', cliente: 'Iolanda Prestes Vidal',
+      responsavel: 'Beatriz Lemos', movimentoEmDias: 15, importante: true, atividades: [] },
+  ];
+  // PA-77 aguarda dado: os rótulos seguem o Astrea, "Processo" e "Caso".
+  const TIPOS = { processo: 'Processo', caso: 'Caso' };
+
+  const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
+  const diaDe = (dias) => {
+    const d = new Date();
+    d.setDate(d.getDate() - dias);
+    return d;
+  };
+  const dataCurta = (d) => d.toLocaleDateString('pt-BR');
+  const movimento = (dias) => (dias === 0 ? 'Hoje' : dias === 1 ? 'Ontem' : `Há ${dias} dias`);
+  const reais = (valor) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+  function elemento(tag, classe, texto) {
+    const el = document.createElement(tag);
+    if (classe) el.className = classe;
+    if (texto !== undefined) el.textContent = texto;
+    return el;
+  }
+
+  function link(texto, href, classe) {
+    const a = elemento('a', classe, texto);
+    a.href = href;
+    return a;
+  }
+
+  function avisar(tipo, mensagem) {
+    const vaga = document.getElementById('pagina-aviso');
+    vaga.replaceChildren(DS.faixaAviso({ tipo, mensagem, fechar: true }));
+  }
+
+  // PA-11 e PA-38: o número é texto, e copiar é um botão de ícone com dica.
+  function copiarNumero(numero) {
+    const botao = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
+    const envolto = DS.tooltip({ alvo: botao, rotulo: 'Copiar número' });
+    const anuncio = elemento('span', 'visualmente-oculto');
+    anuncio.setAttribute('role', 'status');
+    botao.addEventListener('click', () => {
+      const area = navigator.clipboard;
+      const dizer = (texto) => { anuncio.textContent = texto; envolto.querySelector('.dica').textContent = texto; };
+      if (!area) { dizer('Não foi possível copiar'); return; }
+      area.writeText(numero).then(() => dizer('Número copiado'), () => dizer('Não foi possível copiar'));
+    });
+    envolto.append(anuncio);
+    return envolto;
+  }
+
+  function cabecalhoDeSegundoNivel(titulo) {
+    const lugar = document.querySelector('.titulo-cabecalho');
+    const h1 = lugar.querySelector('h1');
+    lugar.insertBefore(DS.trilha({ itens: [{ rotulo: MODULO, pagina: PAGINA }] }), h1);
+    h1.textContent = titulo;
+    document.title = `${titulo}, Astrea: protótipo`;
+  }
+
+  // --- lista ----------------------------------------------------------------------
+
+  const FILTROS = {
+    tipo: { rotulo: 'Tipo', opcoes: [['todos', 'Processos e casos'], ['processo', 'Processos'], ['caso', 'Casos']],
+      aceita: (v, r) => v === 'todos' || r.tipo === v },
+    responsavel: { rotulo: 'Responsável', opcoes: [['todos', 'Todas as pessoas'], ...window.DADOS.RESPONSAVEIS.map((n) => [n, n])],
+      aceita: (v, r) => v === 'todos' || r.responsavel === v },
+    grau: { rotulo: 'Grau do processo', opcoes: [['todos', 'Todos os graus'], ...Object.entries(GRAUS)],
+      aceita: (v, r) => v === 'todos' || r.grau === v },
+    movimento: { rotulo: 'Última movimentação', opcoes: [['todas', 'Qualquer data'], ['7', 'Últimos 7 dias'], ['30', 'Últimos 30 dias']],
+      aceita: (v, r) => v === 'todas' || r.movimentoEmDias <= Number(v) },
+  };
+  const CHIPS = {
+    importante: { rotulo: 'Importantes', aceita: (r) => r.importante },
+    vinculado: { rotulo: 'Vinculados ao tribunal', aceita: (r) => r.vinculo === 'sim' },
+    falha: { rotulo: 'Com falha de conexão', aceita: (r) => r.vinculo === 'falha' },
+  };
+  const ORDENS = [['movimento', 'Última movimentação'], ['titulo', 'Título']];
+  const PADRAO = Object.fromEntries(Object.entries(FILTROS).map(([chave, f]) => [chave, f.opcoes[0][0]]));
+
+  function montarLista() {
+    const filtro = { ...PADRAO };
+    const chips = new Set();
+    let ordem = ORDENS[0][0];
+    let barra;
+
+    const ativos = () => Object.keys(FILTROS).filter((c) => filtro[c] !== PADRAO[c]).length + chips.size;
+    const visiveis = () => REGISTROS
+      .filter((r) => Object.entries(FILTROS).every(([c, f]) => f.aceita(filtro[c], r)))
+      .filter((r) => [...chips].every((c) => CHIPS[c].aceita(r)))
+      .sort((a, b) => (ordem === 'titulo' ? a.titulo.localeCompare(b.titulo, 'pt-BR') : a.movimentoEmDias - b.movimentoEmDias));
+
+    function exportarPlanilha() {
+      const linhas = [['Tipo', 'Título', 'Número', 'Cliente', 'Responsável', 'Última movimentação'],
+        ...visiveis().map((r) => [TIPOS[r.tipo], r.titulo, r.numero || '', r.cliente, r.responsavel, dataCurta(diaDe(r.movimentoEmDias))])];
+      const csv = linhas.map((l) => l.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(';')).join('\r\n');
+      const a = link('', URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv' })));
+      a.download = 'processos-e-casos.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      avisar('sucesso', `Planilha gerada com ${plural(visiveis().length, 'registro', 'registros')}.`);
+    }
+
+    const adicionar = DS.botao({ variante: 'primario', iconeEsquerda: 'mais', rotulo: 'Adicionar processo' });
+    adicionar.addEventListener('click', () => { location.href = `${PAGINA}?adicionar=processo`; });
+    const exportar = DS.menuAcoes({ rotulo: 'Exportar', itens: [
+      { rotulo: 'Imprimir', aoClicar: () => window.print() },
+      { rotulo: 'Planilha', aoClicar: exportarPlanilha },
+    ] });
+    const topo = elemento('div', 'pagina-topo');
+    const acoes = elemento('div', 'pagina-acoes');
+    acoes.append(link('Resultados de buscas', 'buscas.html', 'link-texto'), exportar, adicionar);
+    topo.append(acoes);
+
+    const lugarDaBarra = elemento('div', 'lista-filtros');
+    const aviso = elemento('div', 'pagina-aviso');
+    aviso.id = 'pagina-aviso';
+    const lugarDaTabela = elemento('div');
+    conteudo.replaceChildren(topo, lugarDaBarra, aviso, lugarDaTabela);
+
+    function celulas(r) {
+      const responsavel = DS.avatar({ nome: r.responsavel, mostrarNome: true });
+      return {
+        titulo: link(r.titulo, `${PAGINA}?ficha=${r.id}`),
+        tipo: DS.tag({ rotulo: TIPOS[r.tipo] }),
+        numero: r.numero ? elemento('span', 'numero-processo', r.numero) : '',
+        cliente: r.cliente,
+        responsavel,
+        movimento: movimento(r.movimentoEmDias),
+      };
+    }
+
+    function desenhar(carregando = false) {
+      const lista = visiveis();
+      const total = ativos();
+      const resultado = total ? `${lista.length} de ${plural(REGISTROS.length, 'registro', 'registros')}` : plural(lista.length, 'registro', 'registros');
+      barra.atualizar({ resultado, ativos: total, carregando });
+      lugarDaTabela.replaceChildren(DS.tabela({
+        rotulo: 'Processos e casos', carregando,
+        colunas: [['titulo', 'Título'], ['tipo', 'Tipo'], ['numero', 'Número'], ['cliente', 'Cliente'],
+          ['responsavel', 'Responsável'], ['movimento', 'Últ. mov.']],
+        linhas: lista.map(celulas),
+        vazio: { titulo: 'Nenhum processo ou caso com estes filtros.', texto: 'Os filtros escondem o que houver aqui.',
+          acao: { rotulo: 'Limpar filtros', variante: 'secundario', aoClicar: limpar } },
+      }));
+    }
+
+    function limpar() {
+      Object.assign(filtro, PADRAO);
+      chips.clear();
+      montarBarra();
+      desenhar();
+      lugarDaBarra.querySelector('button').focus();
+    }
+
+    // M18: Atualizar fica ao lado da contagem, no fim da barra de filtros.
+    function atualizar() {
+      desenhar(true);
+      setTimeout(() => desenhar(false), 600);
+    }
+
+    function montarBarra() {
+      const seletores = Object.entries(FILTROS).map(([chave, f]) => {
+        const el = DS.seletor({ rotulo: f.rotulo, opcoes: f.opcoes, valor: filtro[chave], largura: 'p',
+          aoEscolher: (valor) => { filtro[chave] = valor; desenhar(); } });
+        el.dataset.filtro = chave;
+        return el;
+      });
+      // PA-73: as caixas do filtro avançado viram chips, num grupo com rótulo fixo.
+      const marcadores = elemento('div', 'grupo-chips');
+      marcadores.setAttribute('role', 'group');
+      const rotuloChips = elemento('span', 'campo-rotulo', 'Destaque e vínculo');
+      rotuloChips.id = 'rotulo-chips';
+      marcadores.setAttribute('aria-labelledby', rotuloChips.id);
+      const itensChips = elemento('div', 'grupo-chips-itens');
+      itensChips.append(...Object.entries(CHIPS).map(([chave, c]) => DS.chipFiltro({ rotulo: c.rotulo, ativo: chips.has(chave),
+        aoAlternar: (ligado) => { if (ligado) chips.add(chave); else chips.delete(chave); desenhar(); } })));
+      marcadores.append(rotuloChips, itensChips);
+      const ordenar = DS.seletor({ rotulo: 'Ordenar por', opcoes: ORDENS, valor: ordem, largura: 'p',
+        aoEscolher: (valor) => { ordem = valor; desenhar(); } });
+      barra = DS.barraFiltros({ rotulo: 'Filtros de processos e casos', itens: [...seletores, marcadores, ordenar], aoLimpar: limpar });
+      const botaoAtualizar = DS.botao({ variante: 'texto', rotulo: 'Atualizar' });
+      botaoAtualizar.addEventListener('click', atualizar);
+      barra.el.querySelector('.barra-filtros-resultado').after(botaoAtualizar);
+      lugarDaBarra.replaceChildren(barra.el);
+    }
+
+    montarBarra();
+    desenhar();
+  }
+
+  // --- ficha ----------------------------------------------------------------------
+
+  let blocos = 0;
+  function bloco(titulo, nivel, ...corpo) {
+    const sec = elemento('section', 'bloco');
+    const cabeca = elemento('div', 'bloco-cabeca');
+    const h = elemento(`h${nivel}`, null, titulo);
+    h.id = `bloco-${++blocos}`;
+    sec.setAttribute('aria-labelledby', h.id);
+    cabeca.append(h);
+    sec.append(cabeca, ...corpo);
+    return { sec, cabeca };
+  }
+
+  function listaDeDados(pares) {
+    const dl = elemento('dl', 'dados');
+    pares.forEach(([rotulo, valor]) => {
+      const dd = elemento('dd');
+      dd.append(...[].concat(valor));
+      dl.append(elemento('dt', null, rotulo), dd);
+    });
+    return dl;
+  }
+
+  function montarFicha(r) {
+    cabecalhoDeSegundoNivel(r.titulo);
+    const atividades = window.DADOS.ATIVIDADES.filter((a) => r.atividades.includes(a.id)).map((a) => ({ ...a }));
+    let encerrado = false;
+    const situacao = elemento('dd');
+
+    function desenharSituacao() {
+      const grau = r.grau ? GRAUS[r.grau] : 'Caso';
+      situacao.replaceChildren(encerrado
+        ? DS.selo({ rotulo: 'Encerrado', descricao: 'Fora da lista de ativos; dá para reabrir' })
+        : DS.selo({ rotulo: 'Ativo', descricao: `Em andamento, ${grau}` }), grau);
+    }
+
+    const leitura = elemento('dl', 'ficha-leitura');
+    const par = (rotulo, ...valor) => {
+      const div = elemento('div');
+      const dd = elemento('dd');
+      dd.append(...valor);
+      div.append(elemento('dt', null, rotulo), dd);
+      leitura.append(div);
+      return div;
+    };
+    if (r.numero) par(TIPOS[r.tipo], elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero));
+    else par('Tipo', TIPOS[r.tipo]);
+    par('Cliente', r.cliente);
+    const divSituacao = elemento('div');
+    divSituacao.append(elemento('dt', null, 'Situação'), situacao);
+    leitura.append(divSituacao);
+    par('Responsável', DS.avatar({ nome: r.responsavel, mostrarNome: true }));
+    par('Criado por', EU);
+    desenharSituacao();
+
+    // PA-76: Encerrar e Excluir ficam no grupo destrutivo, separado das ações comuns.
+    const confirmar = (titulo, texto, rotulo, aoConfirmar) => DS.dialogo({ titulo, texto, acoes: [
+      { rotulo: 'Cancelar', variante: 'texto' },
+      { rotulo, variante: 'destrutivo', aoClicar: aoConfirmar },
+    ] }).abrir();
+    const foraDoPrototipo = () => avisar('info', 'Esta ação fica fora do protótipo.');
+    const mais = DS.menuAcoes({ rotulo: 'Mais ações', itens: [
+      { rotulo: 'Editar', aoClicar: () => { location.href = `${PAGINA}?adicionar=${r.tipo}`; } },
+      { rotulo: 'Imprimir relatório', aoClicar: () => window.print() },
+      { rotulo: 'Apensar outro processo a este', aoClicar: foraDoPrototipo },
+      { rotulo: 'Apensar este processo a outro', aoClicar: foraDoPrototipo },
+      { rotulo: 'Alterar instância atual', aoClicar: foraDoPrototipo },
+      { rotulo: 'Desvincular do tribunal', aoClicar: foraDoPrototipo },
+      { rotulo: 'Encerrar', destrutivo: true, aoClicar: () => confirmar(`Encerrar este ${TIPOS[r.tipo].toLowerCase()}?`,
+        'Ele sai da lista de ativos. Dá para reabrir depois.', 'Encerrar', () => {
+          encerrado = true;
+          desenharSituacao();
+          avisar('sucesso', `${TIPOS[r.tipo]} encerrado.`);
+        }) },
+      { rotulo: 'Excluir', destrutivo: true, aoClicar: () => confirmar(`Excluir este ${TIPOS[r.tipo].toLowerCase()}?`,
+        'Atividades, históricos e documentos ligados a ele também saem. Não dá para desfazer.', 'Excluir',
+        () => { location.href = PAGINA; }) },
+    ] });
+    mais.querySelector('.menu-suspenso').classList.add('is-direita');
+    const acoes = elemento('div', 'ficha-acoes');
+    acoes.append(mais);
+    const topo = elemento('div', 'ficha-topo');
+    topo.append(leitura, acoes);
+
+    const aviso = elemento('div', 'pagina-aviso');
+    aviso.id = 'pagina-aviso';
+
+    // Painel único de atividade: abre do Resumo e da aba Atividades (PA-27).
+    const listasDeAtividade = [];
+    function desenharAtividades() {
+      listasDeAtividade.forEach((desenhar) => desenhar());
+    }
+    const painel = DS.painelLateral({ titulo: 'Adicionar atividade', corpo: [elemento('p', null, ' ')] });
+    function abrirPainel(origem) {
+      let tipo = 'tarefa';
+      let prazo = '';
+      const descricao = DS.campo({ rotulo: 'Descrição', obrigatorio: true, largura: 'total' });
+      const campos = elemento('div', 'painel-campos');
+      campos.append(
+        DS.radio({ rotulo: 'Tipo de atividade', opcoes: [['tarefa', 'Tarefa'], ['evento', 'Evento']], valor: tipo,
+          aoEscolher: (v) => { tipo = v; } }),
+        descricao,
+        DS.data({ rotulo: 'Data', aoMudar: (iso) => { prazo = iso; } }),
+      );
+      const barraDoPainel = DS.barraAcoes({ rotulo: 'Ações da atividade', acoes: [
+        { rotulo: 'Cancelar', variante: 'texto', aoClicar: () => painel.fechar() },
+        { rotulo: 'Adicionar atividade', variante: 'primario', aoClicar: () => {
+          const titulo = descricao.dataset.valor.trim();
+          if (!titulo) {
+            barraDoPainel.definirSituacao('erro', 'Preencha a descrição.');
+            descricao.querySelector('input').focus();
+            return;
+          }
+          const dias = prazo ? Math.round((new Date(`${prazo}T00:00`) - new Date().setHours(0, 0, 0, 0)) / 864e5) : 0;
+          atividades.push({ id: `nova-${atividades.length}`, titulo, tipo, responsavel: EU, prazoEmDias: dias, status: 'a-fazer' });
+          painel.fechar();
+          desenharAtividades();
+          avisar('sucesso', `"${titulo}" adicionada.`);
+        } },
+      ] });
+      painel.trocar({ titulo: 'Adicionar atividade', corpo: [campos], rodape: [barraDoPainel.el] });
+      painel.abrir(origem);
+    }
+    function botaoDoPainel() {
+      const b = DS.botao({ variante: 'secundario', tamanho: 'pequeno', iconeEsquerda: 'mais', rotulo: 'Adicionar atividade' });
+      b.dataset.abrePainel = 'atividade';
+      b.addEventListener('click', () => abrirPainel(b));
+      return b;
+    }
+
+    const linha = (a) => {
+      const prazo = DS.descreverPrazo(a.prazoEmDias, a.status === 'concluido');
+      return DS.linhaAtividade({ titulo: a.titulo, tipo: a.tipo, estadoPrazo: prazo.estadoPrazo, prazo: prazo.rotulo,
+        responsavel: a.responsavel, mostrarProcesso: false });
+    };
+    function listaDeAtividades(lugar, filtro, vazio) {
+      listasDeAtividade.push(() => {
+        const daqui = atividades.filter(filtro).sort((x, y) => x.prazoEmDias - y.prazoEmDias);
+        if (!daqui.length) { lugar.replaceChildren(DS.estadoVazio({ titulo: vazio })); return; }
+        const ul = elemento('ul', 'lista-atividades');
+        ul.append(...daqui.map(linha));
+        lugar.replaceChildren(ul);
+      });
+    }
+
+    // Resumo
+    const abertas = (a) => a.status !== 'concluido';
+    const proximas = elemento('div');
+    listaDeAtividades(proximas, abertas, 'Nenhuma atividade em aberto.');
+    const blocoProximas = bloco('Próximas atividades', 2, proximas);
+    blocoProximas.cabeca.append(botaoDoPainel());
+    const dados = r.tipo === 'processo'
+      ? [['Ação', r.acao], ['Número', [elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero)]],
+        ['Juízo', r.juizo], ['Valor da causa', reais(r.valor)], ['Distribuído em', dataCurta(diaDe(400 + r.id * 30))],
+        ['Criado em', dataCurta(diaDe(90 + r.id))]]
+      : [['Cliente', r.cliente], ['Criado em', dataCurta(diaDe(90 + r.id))]];
+    const historicos = elemento('ol', 'andamentos');
+    const ANDAMENTOS = r.tipo === 'processo'
+      ? ['Publicado despacho de mero expediente', 'Conclusos para despacho', 'Juntada de petição intermediária']
+      : ['Reunião registrada com o cliente', 'Documentos recebidos por e-mail'];
+    ANDAMENTOS.forEach((texto, i) => {
+      const li = elemento('li');
+      const d = diaDe(r.movimentoEmDias + i * 9);
+      const quando = elemento('time', null, dataCurta(d));
+      quando.dateTime = d.toISOString().slice(0, 10);
+      li.append(quando, elemento('span', null, texto));
+      historicos.append(li);
+    });
+    const vazioCom = (titulo, rotulo) => DS.estadoVazio({ titulo, acao: { rotulo, variante: 'secundario', aoClicar: foraDoPrototipo } });
+    const esquerda = elemento('div', 'ficha-coluna');
+    esquerda.append(bloco(r.tipo === 'processo' ? 'Dados do processo' : 'Dados do caso', 2, listaDeDados(dados)).sec,
+      bloco('Últimos históricos', 2, historicos).sec);
+    const direita = elemento('div', 'ficha-coluna');
+    direita.append(blocoProximas.sec,
+      bloco('Documentos', 2, vazioCom('Nenhum documento.', 'Adicionar documento')).sec,
+      bloco('Atendimentos', 2, vazioCom('Nenhum atendimento.', 'Adicionar atendimento')).sec,
+      bloco('Honorários', 2, listaDeDados([['Faturado', reais(0)], ['A faturar', reais(0)], ['Total lançado', reais(0)]])).sec);
+    const resumo = elemento('div', 'ficha-grade');
+    resumo.append(esquerda, direita);
+
+    // Atividades
+    const contagem = elemento('p', 'contagem');
+    listasDeAtividade.push(() => {
+      const n = atividades.filter(abertas).length;
+      contagem.textContent = `${plural(n, 'aberta', 'abertas')} | ${plural(atividades.length - n, 'concluída', 'concluídas')}`;
+    });
+    const todas = elemento('div');
+    listaDeAtividades(todas, () => true, `Não há atividades neste ${TIPOS[r.tipo].toLowerCase()}.`);
+    const blocoAtividades = bloco('Atividades', 2, contagem, todas);
+    blocoAtividades.cabeca.append(botaoDoPainel());
+
+    // Histórico
+    const instancia = r.tipo === 'processo'
+      ? listaDeDados([['Instância', GRAUS[r.grau]], ['Número', elemento('span', 'numero-processo', r.numero)],
+        ['Juízo', r.juizo], ['Situação', DS.selo({ rotulo: 'Ativo', descricao: 'Instância em andamento' })]])
+      : elemento('p', null, 'Caso sem instância no tribunal.');
+    const andamentos = historicos.cloneNode(true);
+    const historico = elemento('div', 'ficha-coluna');
+    historico.append(bloco(r.tipo === 'processo' ? 'Instância atual' : 'Instância', 2, instancia).sec,
+      bloco('Andamentos', 2, andamentos).sec);
+
+    desenharAtividades();
+    const abas = DS.abas({ rotulo: `Ficha do ${TIPOS[r.tipo].toLowerCase()}`, itens: [
+      { chave: 'resumo', rotulo: 'Resumo', conteudo: resumo },
+      { chave: 'atividades', rotulo: 'Atividades', conteudo: blocoAtividades.sec },
+      { chave: 'historico', rotulo: 'Histórico', conteudo: historico },
+    ] });
+    conteudo.replaceChildren(topo, aviso, abas);
+  }
+
+  // --- adicionar -------------------------------------------------------------------
+  // PA-75: processo, caso e busca automática usam o mesmo molde: seções com título
+  // e a barra de ações fixa no fim. "Cancelar" volta para a lista sem confirmar.
+
+  const voltarParaLista = () => { location.href = PAGINA; };
+  const valorDe = (raiz) => (raiz.dataset.valor || '').trim();
+  const QUALIFICACOES = [['', 'Selecione'], ['autor', 'Autor'], ['reu', 'Réu'], ['terceiro', 'Terceiro interessado'], ['testemunha', 'Testemunha']];
+
+  function linhaDeCampos(...campos) {
+    const div = elemento('div', 'form-linha');
+    div.append(...campos);
+    return div;
+  }
+
+  function molde({ secoes, acoes, rotulo }) {
+    const form = elemento('form', 'formulario');
+    form.noValidate = true;
+    form.addEventListener('submit', (e) => e.preventDefault());
+    secoes.forEach(({ titulo, campos }) => {
+      const { sec } = bloco(titulo, 2, ...campos);
+      sec.classList.add('form-secao');
+      form.append(sec);
+    });
+    const barra = DS.barraAcoes({ rotulo, acoes });
+    form.append(barra.el);
+    return { form, barra };
+  }
+
+  // Salvar confere os obrigatórios. O que falta aparece na barra, e o foco vai ao primeiro.
+  function salvar(barra, obrigatorios, mensagem) {
+    const faltam = obrigatorios.filter(([, raiz]) => !valorDe(raiz));
+    if (faltam.length) {
+      barra.definirSituacao('erro', `Preencha ${faltam.map(([nome]) => nome).join(' e ')}.`);
+      faltam[0][1].querySelector('input, button').focus();
+      return;
+    }
+    barra.definirSituacao('salvando');
+    setTimeout(() => barra.definirSituacao('salvo', mensagem), 600);
+  }
+
+  function clientes() {
+    const busca = DS.busca({ rotulo: 'Clientes', obrigatorio: true, placeholder: 'Buscar contato', largura: 'g' });
+    const linha = linhaDeCampos(busca, DS.seletor({ rotulo: 'Qualificação', opcoes: QUALIFICACOES, valor: '', largura: 'p' }),
+      link('Adicionar cliente', 'contatos.html?adicionar=1', 'link-texto'));
+    return { busca, linha };
+  }
+
+  function envolvidos() {
+    const lista = elemento('div', 'form-envolvidos');
+    function par(removivel) {
+      const linha = linhaDeCampos(DS.busca({ rotulo: 'Outros envolvidos', placeholder: 'Buscar contato', largura: 'g' }),
+        DS.seletor({ rotulo: 'Qualificação', opcoes: QUALIFICACOES, valor: '', largura: 'p' }));
+      if (removivel) {
+        const remover = DS.botao({ variante: 'icone', iconeEsquerda: 'lixeira', rotulo: 'Remover envolvido' });
+        remover.addEventListener('click', () => {
+          linha.remove();
+          adicionar.focus();
+        });
+        linha.append(DS.tooltip({ alvo: remover, rotulo: 'Remover envolvido' }));
+      }
+      return linha;
+    }
+    const adicionar = DS.botao({ variante: 'texto', iconeEsquerda: 'mais', rotulo: 'Adicionar envolvido' });
+    adicionar.addEventListener('click', () => {
+      const nova = par(true);
+      lista.append(nova);
+      nova.querySelector('input').focus();
+    });
+    lista.append(par(false));
+    const div = elemento('div', 'form-grupo');
+    div.append(lista, adicionar);
+    return div;
+  }
+
+  // Os campos comuns aos dois formulários: Pasta, Clientes, Outros envolvidos, Título e Etiqueta.
+  function camposDeIdentificacao() {
+    const cliente = clientes();
+    const titulo = DS.campo({ rotulo: 'Título', obrigatorio: true, largura: 'total' });
+    return {
+      cliente: cliente.busca, titulo,
+      secoes: [
+        { titulo: 'Cliente e envolvidos', campos: [
+          DS.busca({ rotulo: 'Pasta', placeholder: 'Buscar pasta', largura: 'g' }),
+          cliente.linha,
+          envolvidos(),
+        ] },
+        { titulo: 'Identificação', campos: [
+          titulo,
+          DS.seletorMultiplo({ rotulo: 'Etiqueta', placeholder: 'Sem etiqueta', largura: 'g',
+            opcoes: [['urgente', 'Urgente'], ['recurso', 'Recurso'], ['acordo', 'Acordo em negociação']] }),
+        ] },
+      ],
+    };
+  }
+
+  function camposDeFechamento() {
+    return [
+      DS.areaTexto({ rotulo: 'Observações', largura: 'total' }),
+      linhaDeCampos(DS.seletor({ rotulo: 'Responsável', obrigatorio: true, largura: 'm',
+        opcoes: window.DADOS.RESPONSAVEIS.map((n) => [n, n]), valor: EU })),
+      DS.radio({ rotulo: 'Acesso', opcoes: [['publico', 'Público'], ['privado', 'Privado'], ['envolvidos', 'Envolvidos']], valor: 'publico' }),
+    ];
+  }
+
+  function juizo() {
+    const grupo = elemento('div', 'form-grupo');
+    grupo.setAttribute('role', 'group');
+    const rotulo = elemento('span', 'campo-rotulo', 'Juízo');
+    rotulo.id = 'rotulo-juizo';
+    grupo.setAttribute('aria-labelledby', rotulo.id);
+    grupo.append(rotulo, linhaDeCampos(DS.campo({ rotulo: 'Nº', largura: 'p' }), DS.campo({ rotulo: 'Vara', largura: 'm' }),
+      DS.campo({ rotulo: 'Foro', largura: 'm' })));
+    return grupo;
+  }
+
+  // PA-74: os 17 campos do Astrea, na mesma ordem, em cinco seções.
+  function formularioDeProcesso() {
+    const ident = camposDeIdentificacao();
+    const montado = molde({ rotulo: 'Ações do processo', acoes: [
+      { rotulo: 'Cancelar', variante: 'texto', aoClicar: voltarParaLista },
+      { rotulo: 'Salvar processo', variante: 'primario',
+        aoClicar: () => salvar(montado.barra, [['Clientes', ident.cliente], ['Título', ident.titulo]], 'Processo salvo.') },
+    ], secoes: [
+      ...ident.secoes,
+      { titulo: 'Dados do processo', campos: [
+        linhaDeCampos(
+          DS.seletor({ rotulo: 'Instância', largura: 'p', valor: '1',
+            opcoes: [['1', '1º grau'], ['2', '2º grau'], ['superior', 'Superior'], ['supremo', 'Supremo'], ['outra', 'Outra']] }),
+          DS.campo({ rotulo: 'Número', placeholder: '0000000-00.0000.0.00.0000', largura: 'm' }),
+        ),
+        juizo(),
+        DS.campo({ rotulo: 'Ação', largura: 'g' }),
+        DS.campo({ rotulo: 'Link no tribunal', tipo: 'url', placeholder: 'Endereço da página do processo', largura: 'g' }),
+        DS.areaTexto({ rotulo: 'Objeto', largura: 'total' }),
+      ] },
+      { titulo: 'Valores e datas', campos: [
+        linhaDeCampos(
+          DS.campo({ rotulo: 'Valor da causa', placeholder: 'R$ 0,00', largura: 'p' }),
+          DS.data({ rotulo: 'Distribuído em', largura: 'p' }),
+          DS.campo({ rotulo: 'Valor da condenação', placeholder: 'R$ 0,00', largura: 'p' }),
+        ),
+      ] },
+      { titulo: 'Observações e acesso', campos: camposDeFechamento() },
+    ] });
+    return montado;
+  }
+
+  function formularioDeCaso() {
+    const ident = camposDeIdentificacao();
+    const montado = molde({ rotulo: 'Ações do caso', acoes: [
+      { rotulo: 'Cancelar', variante: 'texto', aoClicar: voltarParaLista },
+      { rotulo: 'Salvar caso', variante: 'primario',
+        aoClicar: () => salvar(montado.barra, [['Clientes', ident.cliente], ['Título', ident.titulo]], 'Caso salvo.') },
+    ], secoes: [
+      ...ident.secoes,
+      { titulo: 'Descrição', campos: [DS.areaTexto({ rotulo: 'Descrição', largura: 'total', linhas: 4 })] },
+      { titulo: 'Observações e acesso', campos: camposDeFechamento() },
+    ] });
+    return montado;
+  }
+
+  // Busca automática: três formas de busca e um stepper de três passos, no mesmo molde.
+  const FORMAS_DE_BUSCA = [['tribunal', 'Seleção de tribunal ou órgão'], ['cnj', 'Pelo número CNJ'], ['oab', 'Em lote pela OAB']];
+  const PASSOS_DA_BUSCA = ['Seleção do tribunal ou órgão público', 'Tipo de pesquisa', 'Dados do processo'];
+  const TRIBUNAIS = [['', 'Selecione'], ['tjsc', 'TJSC, Tribunal de Justiça de Santa Catarina'], ['tjsp', 'TJSP, Tribunal de Justiça de São Paulo'],
+    ['trf4', 'TRF4, Tribunal Regional Federal da 4ª Região'], ['trt12', 'TRT12, Tribunal Regional do Trabalho da 12ª Região'],
+    ['stj', 'STJ, Superior Tribunal de Justiça']];
+  const PESQUISAS = [['numero', 'Número do processo'], ['parte', 'Nome da parte']];
+  const UFS = [['', 'Selecione'], ['sc', 'SC'], ['pr', 'PR'], ['rs', 'RS'], ['sp', 'SP']];
+  const CREDITOS = 35;
+
+  function formularioDeBusca() {
+    const estado = { forma: 'tribunal', passo: 0, tribunal: '', pesquisa: 'numero' };
+    const raiz = elemento('div', 'form-busca');
+
+    // Cada passo devolve os campos e os obrigatórios. Na busca por CNJ ou OAB o passo informa e segue.
+    function camposDoPasso() {
+      const nota = (texto) => ({ campos: [elemento('p', 'form-nota', texto)], obrigatorios: [] });
+      if (estado.passo === 0) {
+        if (estado.forma === 'cnj') return nota('O número CNJ já indica o tribunal.');
+        if (estado.forma === 'oab') return nota('A busca em lote percorre todos os tribunais com a OAB informada.');
+        const tribunal = DS.seletor({ rotulo: 'Tribunal ou órgão', obrigatorio: true, largura: 'g', opcoes: TRIBUNAIS,
+          valor: estado.tribunal, aoEscolher: (v) => { estado.tribunal = v; } });
+        return { campos: [tribunal], obrigatorios: [['o tribunal', tribunal]] };
+      }
+      if (estado.passo === 1) {
+        if (estado.forma === 'cnj') return nota('A pesquisa usa o número CNJ completo.');
+        if (estado.forma === 'oab') return nota('A pesquisa traz os processos com o número da OAB.');
+        return { campos: [DS.radio({ rotulo: 'Pesquisar por', opcoes: PESQUISAS, valor: estado.pesquisa,
+          aoEscolher: (v) => { estado.pesquisa = v; } })], obrigatorios: [] };
+      }
+      if (estado.forma === 'oab') {
+        const oab = DS.campo({ rotulo: 'Número da OAB', obrigatorio: true, largura: 'p' });
+        const uf = DS.seletor({ rotulo: 'UF', obrigatorio: true, opcoes: UFS, valor: '', largura: 'p' });
+        return { campos: [linhaDeCampos(oab, uf)], obrigatorios: [['o número da OAB', oab], ['a UF', uf]] };
+      }
+      const porParte = estado.forma === 'tribunal' && estado.pesquisa === 'parte';
+      const campo = DS.campo(porParte
+        ? { rotulo: 'Nome da parte', obrigatorio: true, largura: 'g' }
+        : { rotulo: estado.forma === 'cnj' ? 'Número CNJ' : 'Número do processo', obrigatorio: true,
+          placeholder: '0000000-00.0000.0.00.0000', largura: 'm' });
+      return { campos: [campo], obrigatorios: [[porParte ? 'o nome da parte' : 'o número', campo]] };
+    }
+
+    function ir(passo) {
+      estado.passo = passo;
+      desenhar();
+      const primeiro = raiz.querySelector('.form-passo input, .form-passo button, .form-passo [tabindex="0"]');
+      (primeiro || raiz.querySelector('.stepper')).focus();
+    }
+
+    function desenhar() {
+      const { campos, obrigatorios } = camposDoPasso();
+      const ultimo = estado.passo === PASSOS_DA_BUSCA.length - 1;
+      const passo = elemento('div', 'form-passo');
+      passo.append(...campos);
+      const acoes = [{ rotulo: 'Cancelar', variante: 'texto', aoClicar: voltarParaLista }];
+      if (estado.passo > 0) acoes.push({ rotulo: 'Voltar', variante: 'secundario', aoClicar: () => ir(estado.passo - 1) });
+      acoes.push({ rotulo: ultimo ? 'Buscar processo' : 'Continuar', variante: 'primario', aoClicar: () => {
+        const faltam = obrigatorios.filter(([, el]) => !valorDe(el));
+        if (faltam.length) {
+          montado.barra.definirSituacao('erro', `Preencha ${faltam.map(([nome]) => nome).join(' e ')}.`);
+          faltam[0][1].querySelector('input, button').focus();
+          return;
+        }
+        if (!ultimo) { ir(estado.passo + 1); return; }
+        montado.barra.definirSituacao('salvando', 'Agendando a busca…');
+        setTimeout(() => montado.barra.definirSituacao('salvo', `Busca agendada. O resultado aparece em Resultados de buscas. Restam ${CREDITOS - 1} créditos.`), 600);
+      } });
+      const forma = DS.radio({ rotulo: 'Buscar por', opcoes: FORMAS_DE_BUSCA, valor: estado.forma, largura: 'total',
+        aoEscolher: (v) => {
+          estado.forma = v;
+          estado.passo = 0;
+          desenhar();
+          raiz.querySelector('.radio[aria-checked="true"]').focus();
+        } });
+      const stepper = DS.stepper({ rotulo: 'Etapas da busca', passos: PASSOS_DA_BUSCA, atual: estado.passo, aoIr: ir });
+      stepper.tabIndex = -1;
+      const montado = molde({ rotulo: 'Ações da busca', acoes, secoes: [
+        { titulo: 'Forma de busca', campos: [
+          DS.faixaAviso({ tipo: 'info', mensagem: `Você possui ${CREDITOS} créditos automáticos.` }),
+          forma,
+        ] },
+        { titulo: 'Passos da busca', campos: [stepper, passo] },
+      ] });
+      raiz.replaceChildren(montado.form);
+    }
+
+    desenhar();
+    return { form: raiz };
+  }
+
+  const ADICIONAR = {
+    processo: { rotulo: 'Processo', titulo: 'Adicionar processo', montar: formularioDeProcesso },
+    caso: { rotulo: 'Caso', titulo: 'Adicionar caso', montar: formularioDeCaso },
+    busca: { rotulo: 'Busca automática', titulo: 'Busca de processo automática', montar: formularioDeBusca },
+  };
+
+  // As três entradas ficam numa página só, em abas: o parâmetro escolhe a aba (PA-75).
+  function montarAdicionar(tipo) {
+    cabecalhoDeSegundoNivel(ADICIONAR[tipo].titulo);
+    const h1 = document.querySelector('.titulo-cabecalho h1');
+    const abas = DS.abas({ rotulo: 'O que adicionar', valor: tipo,
+      itens: Object.entries(ADICIONAR).map(([chave, f]) => ({ chave, rotulo: f.rotulo, conteudo: f.montar().form })),
+      aoMudar: (chave) => {
+        h1.textContent = ADICIONAR[chave].titulo;
+        document.title = `${ADICIONAR[chave].titulo}, Astrea: protótipo`;
+        history.replaceState(null, '', `?adicionar=${chave}`);
+      } });
+    conteudo.replaceChildren(abas);
+  }
+
+  const ficha = parametros.get('ficha');
+  const adicionar = parametros.get('adicionar');
+  if (adicionar !== null) montarAdicionar(ADICIONAR[adicionar] ? adicionar : 'processo');
+  else if (ficha !== null) montarFicha(REGISTROS.find((r) => String(r.id) === ficha) || REGISTROS[0]);
+  else montarLista();
+
+})();
+</script>
 </body>
 </html>

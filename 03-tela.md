@@ -23,7 +23,8 @@ Legenda:
 > decisão, 08/11, 13h27: o frame no Figma nasce por importação do
 > protótipo. O `generate_figma_design` do MCP capturou
 > `prototipo/area-de-trabalho.html` a 1440 de largura, direto no arquivo
-> da entrega, nó `24-2`. O protótipo em HTML continua a fonte.
+> da entrega, nó `26-2`. O protótipo em HTML continua a fonte. O nó `24-2`
+> é a primeira captura, anterior ao ajuste da barra de filtros, e sai do arquivo.
 
 ## O contrato: cada decisão nossa, visível na tela
 
@@ -133,7 +134,7 @@ Onde mais aparece: dia vazio da Agenda, coluna vazia do Kanban.
 
 | Pedido | Onde |
 |---|---|
-| A tela em alta fidelidade no Figma | Frame importado do protótipo, 1440 de largura, nó `24-2` do arquivo da entrega |
+| A tela em alta fidelidade no Figma | Frame importado do protótipo, 1440 de largura, nó `26-2` do arquivo da entrega |
 | 3 a 5 componentes com estados | Página "Questão 3", um frame por componente, com as propriedades acima |
 | Uma decisão difícil | Seção abaixo |
 
