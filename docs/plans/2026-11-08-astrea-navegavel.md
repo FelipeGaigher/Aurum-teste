@@ -1142,7 +1142,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: `window.DS`, `window.Moldura` e `window.DADOS`.
 - Produces: `[data-area-principal]`, `[data-secao="atrasadas"]`, `[data-secao="hoje"]`, `[data-secao="proximos"]` e `[data-tipo]`.
 
-- [ ] **Step 1: Confirmar o estado vermelho**
+- [x] **Step 1: Confirmar o estado vermelho**
 
 ```bash
 node scripts/verificar-app.js --rf RF-08
@@ -1150,7 +1150,7 @@ node scripts/verificar-app.js --rf RF-08
 
 Esperado: `RF-08 FALHOU`.
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 - Abra em todas as listas (PA-31).
 - Seção "Atrasadas" acima de "Hoje", depois próximos (PA-32).
@@ -1162,7 +1162,7 @@ Esperado: `RF-08 FALHOU`.
 
 Esperado: a tela substitui a casca, com dados de `DADOS.ATIVIDADES`.
 
-- [ ] **Step 3: Executar e confirmar que passa**
+- [x] **Step 3: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/area-de-trabalho.html
@@ -1171,7 +1171,7 @@ node scripts/verificar-app.js --rf RF-07,RF-12,RF-15 --paginas area-de-trabalho.
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 4: Entregar**
+- [x] **Step 4: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
