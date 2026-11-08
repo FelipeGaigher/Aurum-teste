@@ -140,7 +140,7 @@
   /* Kanban: as mesmas seções, lado a lado como colunas (pedido de Felipe, 08/11). */
   [data-area-principal][data-visao="kanban"] { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); align-items: stretch; }
   [data-visao="kanban"] .secao[data-secao="atrasadas"], [data-visao="kanban"] .secao[data-secao="concluidas"] { grid-column: auto; }
-  [data-visao="kanban"] .secao { min-height: 60vh; }
+  [data-visao="kanban"] .secao { min-height: calc(var(--altura-da-tela) * 0.6); }
   [data-visao="kanban"] .cards-atividade { grid-template-columns: minmax(0, 1fr); }
   @media (max-width: 1100px) { [data-area-principal][data-visao="kanban"] { grid-template-columns: minmax(0, 1fr); } [data-visao="kanban"] .secao { min-height: 0; } }
   .cards-atividade > li { display: flex; min-width: 0; }
