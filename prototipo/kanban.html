@@ -268,12 +268,20 @@ svg.icone {
   border-bottom: var(--border-width) solid var(--color-border-default);
 }
 
+/* a marca e o botão de recolher ocupam a célula da sidebar no cabeçalho */
+.marca {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 0 var(--space-2) 0 var(--space-5);
+}
 .logo {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  justify-self: start;
-  margin-left: var(--space-5);
+  min-width: 0;
   color: var(--component-logo-text);
   font-size: var(--font-size-logo);
   font-weight: var(--font-weight-regular);
@@ -403,11 +411,9 @@ svg.icone {
 }
 .menu-lateral a[aria-current="page"] svg { color: currentColor; }
 
-/* recolher a sidebar: botão quadrado no topo direito, na linha do primeiro item */
+/* recolher a sidebar: botão quadrado ao lado da marca, no cabeçalho */
 .recolher {
-  position: absolute;
-  top: calc(var(--space-5) + (var(--component-menu-item-height) - var(--component-sidebar-toggle-size)) / 2);
-  right: var(--space-2);
+  flex: none;
   display: inline-grid;
   place-items: center;
   width: var(--component-sidebar-toggle-size);
@@ -421,16 +427,21 @@ svg.icone {
 }
 .recolher:hover { background-color: var(--color-bg-hover); color: var(--color-text-default); }
 .recolher svg { transition: transform 150ms; }
-#menu-principal > li:first-child a { margin-right: calc(var(--component-sidebar-toggle-size) + var(--space-1)); }
 body[data-menu="recolhido"] { --component-sidebar-width: var(--component-sidebar-collapsed-width); }
+/* recolhido: só a marca aparece; o botão de expandir cobre a marca no hover e no foco de teclado */
+body[data-menu="recolhido"] .marca { padding: 0; justify-content: center; }
+body[data-menu="recolhido"] .recolher { position: absolute; inset: 0; margin: auto; opacity: 0; background-color: var(--color-bg-page); }
+body[data-menu="recolhido"] .marca:hover .recolher,
+body[data-menu="recolhido"] .recolher:focus-visible { opacity: 1; }
+body[data-menu="recolhido"] .marca:hover .logo,
+body[data-menu="recolhido"] .marca:has(.recolher:focus-visible) .logo { opacity: 0; }
+.recolher, .logo { transition: opacity 150ms; }
 body[data-menu="recolhido"] .menu-lateral { padding-left: var(--space-2); padding-right: var(--space-2); }
 body[data-menu="recolhido"] .menu-lateral a { justify-content: center; padding: 0; }
 body[data-menu="recolhido"] .menu-lateral .rotulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-body[data-menu="recolhido"] .recolher { position: static; display: grid; margin: 0 auto var(--space-2); }
-body[data-menu="recolhido"] #menu-principal > li:first-child a { margin-right: 0; }
 body[data-menu="recolhido"] .recolher svg { transform: rotate(180deg); }
 body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-@media (prefers-reduced-motion: reduce) { .recolher svg, .seletor svg { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .recolher, .logo, .recolher svg, .seletor svg { transition: none; } }
 
 #conteudo {
   min-width: 0;
@@ -846,14 +857,19 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
 <header class="cabecalho">
-  <a class="logo" href="#conteudo" aria-label="Astrea, Área de trabalho">
-    <svg viewBox="0 0 28 28" aria-hidden="true">
-      <rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/>
-      <rect class="logo-recorte" x="14" y="0" width="14" height="14"/>
-      <rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/>
-    </svg>
-    <span aria-hidden="true">astrea</span>
-  </a>
+  <div class="marca">
+    <a class="logo" href="#conteudo" aria-label="Astrea, Área de trabalho">
+      <svg viewBox="0 0 28 28" aria-hidden="true">
+        <rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/>
+        <rect class="logo-recorte" x="14" y="0" width="14" height="14"/>
+        <rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/>
+      </svg>
+      <span aria-hidden="true">astrea</span>
+    </a>
+    <button type="button" class="recolher" id="recolher-menu" aria-expanded="true" aria-controls="menu-principal" title="Recolher menu" aria-label="Recolher menu">
+      <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 7l-5 5 5 5M18 7l-5 5 5 5"/></svg>
+    </button>
+  </div>
 
   <form class="busca" role="search">
     <label for="busca-global" class="visualmente-oculto">Pesquisar</label>
@@ -889,9 +905,6 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 
 <div class="corpo">
   <nav class="menu-lateral" aria-label="Menu principal">
-    <button type="button" class="recolher" id="recolher-menu" aria-expanded="true" aria-controls="menu-principal" title="Recolher menu" aria-label="Recolher menu">
-      <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 7l-5 5 5 5M18 7l-5 5 5 5"/></svg>
-    </button>
     <ul id="menu-principal">
       <li><a href="#">
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/></svg>
