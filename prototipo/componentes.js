@@ -1086,7 +1086,7 @@
       el.disabled = Boolean(desabilitado);
       if (icones) {
         const bola = criar('span', 'radio-icone-bola');
-        bola.append(svg(icones[chave], 'icone'));
+        bola.append(icone(icones[chave]));
         el.append(bola, criar('span', 'visualmente-oculto', rotulo));
         el.title = rotulo;
       } else {
