@@ -751,6 +751,7 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 #quadro {
   position: relative;
   flex: 1;
+  height: var(--quadro-altura, auto);
   display: flex;
   gap: var(--space-4);
   align-items: stretch;
@@ -771,6 +772,8 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
   flex-direction: column;
   gap: var(--space-3);
   min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
   scroll-snap-align: start;
   padding: var(--space-4) var(--space-3) var(--space-3);
   background-color: var(--component-column-bg);
@@ -817,14 +820,6 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .card:hover { border-color: var(--color-border-strong); }
 .card p { margin: 0; }
 
-.card-prazo {
-  font-size: var(--font-size-emphasis);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--font-leading-tight);
-  font-variant-numeric: tabular-nums;
-}
-.card-prazo[data-alerta="vencido"] { color: var(--color-text-danger); }
-.card-prazo[data-alerta="hoje"] { color: var(--color-text-warning); }
 
 .card-sprint {
   display: flex;
@@ -920,13 +915,6 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
   font-variant-numeric: tabular-nums;
 }
 
-.card-nota,
-.card-processo {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-label);
-  overflow-wrap: anywhere;
-}
-.card-processo { font-variant-numeric: tabular-nums; }
 
 .card-responsavel {
   display: flex;
@@ -1547,31 +1535,10 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
           <div class="seletor-raiz" data-seletor="filtro-fase"></div>
         </div>
       </div>
-      <div class="filtros" role="group" aria-label="Filtros do quadro" data-conjunto="escritorio" hidden>
-        <div class="campo">
-          <span class="campo-rotulo" id="filtro-responsavel-rotulo">Responsável</span>
-          <div class="seletor-raiz" data-seletor="filtro-responsavel"></div>
-        </div>
-        <div class="campo">
-          <span class="campo-rotulo" id="filtro-tipo-rotulo">Tipo</span>
-          <div class="seletor-raiz" data-seletor="filtro-tipo"></div>
-        </div>
-        <div class="campo">
-          <span class="campo-rotulo" id="filtro-periodo-rotulo">Período</span>
-          <div class="seletor-raiz" data-seletor="filtro-periodo"></div>
-        </div>
-      </div>
     </div>
     <p id="sprint-resumo" class="sprint-resumo" hidden></p>
     <div id="quadro"></div>
     <footer id="rodape-demo">
-      <div class="demo">
-        <span class="demo-rotulo" id="demo-conjunto">Conjunto de dados</span>
-        <div class="radio-grupo" role="radiogroup" aria-labelledby="demo-conjunto">
-          <button type="button" class="radio" role="radio" aria-checked="true" tabindex="0" data-grupo="conjunto" data-valor="plano"><span class="radio-bola" aria-hidden="true"></span><span class="radio-texto">Plano do redesign</span></button>
-          <button type="button" class="radio" role="radio" aria-checked="false" tabindex="-1" data-grupo="conjunto" data-valor="escritorio"><span class="radio-bola" aria-hidden="true"></span><span class="radio-texto">Atividades do escritório</span></button>
-        </div>
-      </div>
       <div class="demo">
         <span class="demo-rotulo" id="demo-modo">Estado da demonstração</span>
         <div class="radio-grupo" role="radiogroup" aria-labelledby="demo-modo">
@@ -1749,12 +1716,6 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
     ligarMenu(document.getElementById('abrir-adicionar'), document.getElementById('menu-adicionar'));
     ligarMenu(document.getElementById('abrir-usuario'), document.getElementById('menu-usuario'));
   })();
-const COLUNAS_ESCRITORIO = [
-  { id: 'a-fazer', nome: 'A fazer' },
-  { id: 'fazendo', nome: 'Fazendo' },
-  { id: 'concluido', nome: 'Concluído' },
-];
-
 // Fluxo do plano do redesign, como o board da Fotus no Jira. Sete colunas, rolagem lateral.
 const COLUNAS_PLANO = [
   { id: 'backlog', nome: 'Backlog' },
@@ -1766,29 +1727,9 @@ const COLUNAS_PLANO = [
   { id: 'producao', nome: 'Em produção' },
 ];
 
-const ATIVIDADES = [
-  { id: 'a1', titulo: 'Protocolar contestação', tipo: 'prazo', processo: '5004213-75.2025.8.24.0023', responsavel: 'Rafael Antunes', prazoEmDias: -2, status: 'a-fazer' },
-  { id: 'a2', titulo: 'Audiência de conciliação', tipo: 'audiencia', processo: '0301877-92.2024.8.24.0008', responsavel: 'Marina Couto', prazoEmDias: 0, status: 'a-fazer' },
-  { id: 'a3', titulo: 'Reunião com a cliente sobre o acordo', tipo: 'evento', processo: '5012940-75.2025.8.24.0038', responsavel: 'Beatriz Lemos', prazoEmDias: 1, status: 'a-fazer' },
-  { id: 'a4', titulo: 'Opor embargos de declaração', tipo: 'prazo', processo: '0007315-64.2023.8.24.0023', responsavel: 'Otávio Prado', prazoEmDias: 2, status: 'a-fazer' },
-  { id: 'a5', titulo: 'Manifestar sobre o laudo pericial', tipo: 'prazo', processo: '5020066-92.2024.8.24.0045', responsavel: 'Rafael Antunes', prazoEmDias: 5, status: 'a-fazer', sugestaoIa: 'Criada pela IA a partir de uma publicação' },
-  { id: 'a6', titulo: 'Juntar procuração atualizada', tipo: 'tarefa', processo: '5001789-08.2025.8.24.0008', responsavel: 'Beatriz Lemos', prazoEmDias: -1, status: 'fazendo' },
-  { id: 'a7', titulo: 'Interpor recurso de apelação', tipo: 'prazo', processo: '0312054-93.2022.8.24.0038', responsavel: 'Marina Couto', prazoEmDias: 3, status: 'fazendo' },
-  { id: 'a8', titulo: 'Calcular custas finais', tipo: 'tarefa', processo: '5009427-81.2024.8.24.0023', responsavel: 'Otávio Prado', prazoEmDias: 4, status: 'fazendo' },
-  { id: 'a9', titulo: 'Preparar rol de testemunhas', tipo: 'tarefa', processo: '5016603-51.2025.8.24.0064', responsavel: 'Marina Couto', prazoEmDias: 8, status: 'concluido' },
-  { id: 'a10', titulo: 'Apresentar contrarrazões', tipo: 'prazo', processo: '0004981-88.2023.8.24.0045', responsavel: 'Rafael Antunes', prazoEmDias: 10, status: 'concluido' },
-];
-
 const TIPOS = { tarefa: 'Tarefa', evento: 'Evento', prazo: 'Prazo', audiencia: 'Audiência' };
 
-const RESPONSAVEIS = [...new Set(ATIVIDADES.map((atividade) => atividade.responsavel))]
-  .sort((a, b) => a.localeCompare(b, 'pt-BR'));
-
-const PERIODOS = {
-  vencidas: (dias) => dias < 0,
-  hoje: (dias) => dias === 0,
-  'proximos-7': (dias) => dias >= 0 && dias <= 7,
-};
+const RESPONSAVEIS = ['Beatriz Lemos', 'Marina Couto', 'Otávio Prado', 'Rafael Antunes'];
 
 const FASES = [
   { id: 'f1', nome: 'Fase 1. Tokens semânticos', periodo: 'Meses 1 a 3, sprints 1 a 6', sprints: [1, 6] },
@@ -2017,19 +1958,6 @@ const CONJUNTOS = {
     criarCard: criarCardHistoria,
     abreDetalhe: true,
   },
-  escritorio: {
-    nome: 'Atividades do escritório',
-    colunas: COLUNAS_ESCRITORIO,
-    campo: 'status',
-    item: 'atividade',
-    filtrosIniciais: { responsavel: 'todos', tipo: 'todos', periodo: 'todos' },
-    passa: (atividade, { responsavel, tipo, periodo }) => (responsavel === 'todos' || atividade.responsavel === responsavel)
-      && (tipo === 'todos' || atividade.tipo === tipo)
-      && (periodo === 'todos' || PERIODOS[periodo](atividade.prazoEmDias)),
-    ordenar: (a, b) => a.prazoEmDias - b.prazoEmDias,
-    criarCard: criarCardAtividade,
-    abreDetalhe: false,
-  },
 };
 
 const TIPO_ARRASTE = 'application/x-atividade';
@@ -2039,11 +1967,9 @@ const estado = {
   modo: 'dados',
   itens: {
     plano: HISTORIAS.map(montarHistoria),
-    escritorio: ATIVIDADES.map((atividade) => ({ ...atividade })),
   },
   filtros: {
     plano: { ...CONJUNTOS.plano.filtrosIniciais },
-    escritorio: { ...CONJUNTOS.escritorio.filtrosIniciais },
   },
 };
 
@@ -2078,19 +2004,6 @@ function dataDoPrazo(dias) {
   return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 }
 
-function descreverPrazo(atividade) {
-  const dias = atividade.prazoEmDias;
-  if (atividade.status === 'concluido') {
-    return { texto: (dias < 0 ? 'Venceu em ' : 'Vence em ') + dataDoPrazo(dias), alerta: null };
-  }
-  if (dias < 0) {
-    const n = -dias;
-    return { texto: 'Vencido há ' + n + (n === 1 ? ' dia' : ' dias'), alerta: 'vencido' };
-  }
-  if (dias === 0) return { texto: 'Vence hoje', alerta: 'hoje' };
-  return { texto: 'Vence em ' + dataDoPrazo(dias), alerta: null };
-}
-
 function textoSprint(sprint) {
   return (/\D/.test(sprint) ? 'Sprints ' : 'Sprint ') + sprint;
 }
@@ -2098,19 +2011,6 @@ function textoSprint(sprint) {
 function chipTexto(texto) {
   const chip = el('span', 'chip');
   chip.append(el('span', 'chip-rotulo', texto));
-  return chip;
-}
-
-function chipSugestao(atividade) {
-  const chip = chipTexto('Sugestão da IA');
-  const acoes = [['Confirmar', confirmarSugestao], ['Desfazer', desfazerSugestao]];
-  for (const [rotulo, acao] of acoes) {
-    const botao = el('button', 'chip-acao', rotulo);
-    botao.type = 'button';
-    botao.setAttribute('aria-label', rotulo + ' a sugestão da IA: ' + atividade.titulo);
-    botao.addEventListener('click', () => acao(atividade.id));
-    chip.append(botao);
-  }
   return chip;
 }
 
@@ -2133,26 +2033,6 @@ function linhaResponsavel(prefixo, nome) {
   inicial.setAttribute('aria-hidden', 'true');
   linha.append(inicial, el('span', 'visualmente-oculto', prefixo), nome);
   return linha;
-}
-
-function criarCardAtividade(atividade) {
-  const [card, titulo] = criarCardBase(atividade, 'dica-mover');
-
-  const prazo = descreverPrazo(atividade);
-  const linhaPrazo = el('p', 'card-prazo', prazo.texto);
-  if (prazo.alerta) linhaPrazo.dataset.alerta = prazo.alerta;
-
-  const chips = el('div', 'card-chips');
-  chips.append(chipTexto(TIPOS[atividade.tipo]));
-  if (atividade.sugestaoIa) chips.append(chipSugestao(atividade));
-
-  const processo = el('p', 'card-processo');
-  processo.append(el('span', 'visualmente-oculto', 'Processo '), atividade.processo);
-
-  card.append(linhaPrazo, titulo, chips);
-  if (atividade.sugestaoIa) card.append(el('p', 'card-nota', atividade.sugestaoIa));
-  card.append(processo, linhaResponsavel('Responsável: ', atividade.responsavel));
-  return card;
 }
 
 function listaSubtarefas(historia) {
@@ -2256,9 +2136,9 @@ const quadro = document.getElementById('quadro');
 
 const sprintResumo = document.getElementById('sprint-resumo');
 
-// A linha acima do quadro diz qual sprint está na tela. Some em "Todas as sprints" e no conjunto do escritório.
+// A linha acima do quadro diz qual sprint está na tela. Some em "Todas as sprints".
 function atualizarResumoDaSprint() {
-  const sprint = estado.conjunto === 'plano' ? estado.filtros.plano.sprint : 'todas';
+  const sprint = estado.filtros.plano.sprint;
   sprintResumo.hidden = sprint === 'todas';
   if (sprintResumo.hidden) return;
   const numero = Number(sprint);
@@ -2267,11 +2147,22 @@ function atualizarResumoDaSprint() {
   sprintResumo.textContent = 'Sprint ' + numero + ' de ' + SPRINTS.length + (numero === SPRINT_ATUAL ? ', atual. ' : '. ') + fase.nome + ', ' + fase.periodo.charAt(0).toLowerCase() + fase.periodo.slice(1) + '. ' + visiveis + (visiveis === 1 ? ' história' : ' histórias') + ' no quadro.';
 }
 
+// O quadro ocupa a altura da tela, como a grade da Agenda; as colunas rolam por dentro.
+function ajustarAlturaDoQuadro() {
+  const rodape = document.getElementById('rodape-demo');
+  const conteudo = document.getElementById('conteudo');
+  const topo = quadro.getBoundingClientRect().top + window.scrollY;
+  const abaixo = rodape.offsetHeight + parseFloat(getComputedStyle(rodape).marginTop) + parseFloat(getComputedStyle(conteudo).paddingBottom);
+  quadro.style.setProperty('--quadro-altura', Math.max(320, window.innerHeight - topo - abaixo) + 'px');
+}
+window.addEventListener('resize', ajustarAlturaDoQuadro);
+
 function render() {
   const colunas = conjuntoAtual().colunas;
   quadro.dataset.colunas = String(colunas.length);
   quadro.replaceChildren(...colunas.map(criarColuna));
   atualizarResumoDaSprint();
+  ajustarAlturaDoQuadro();
 }
 
 function nomeDaColuna(colunaId) {
@@ -2312,7 +2203,6 @@ function confirmarSugestao(id) {
 
 function desfazerSugestao(id) {
   const atividade = acharItem(id);
-  estado.itens.escritorio = estado.itens.escritorio.filter((item) => item.id !== id);
   render();
   document.querySelector('.coluna[data-coluna="' + atividade.status + '"]').focus();
   anunciar('Sugestão desfeita. ' + atividade.titulo + ' saiu do quadro. '
@@ -2794,9 +2684,6 @@ ligarFiltro('plano', 'sprint', 'filtro-sprint', [['todas', 'Todas as sprints'], 
 ligarFiltro('plano', 'equipe', 'filtro-equipe', [['todas', 'Todas'], ...pares(EQUIPES)]);
 ligarFiltro('plano', 'dono', 'filtro-dono', [['todos', 'Todos'], ...pares(DONOS)]);
 ligarFiltro('plano', 'fase', 'filtro-fase', [['todas', 'Todas'], ...FASES.map((fase) => [fase.id, fase.nome])]);
-ligarFiltro('escritorio', 'responsavel', 'filtro-responsavel', [['todos', 'Todos'], ...paresResponsavel]);
-ligarFiltro('escritorio', 'tipo', 'filtro-tipo', [['todos', 'Todos'], ...paresTipo]);
-ligarFiltro('escritorio', 'periodo', 'filtro-periodo', [['todos', 'Todo o período'], ['vencidas', 'Vencidas'], ['hoje', 'Hoje'], ['proximos-7', 'Próximos 7 dias']]);
 criarSeletor({ id: 'criar-tipo', opcoes: [['', 'Selecione o tipo'], ...paresTipo], valor: '', aoEscolher: () => {} });
 criarSeletor({ id: 'criar-responsavel', opcoes: [['', 'Selecione o responsável'], ...paresResponsavel], valor: '', aoEscolher: () => {} });
 
@@ -2821,17 +2708,9 @@ fecharAoClicarFora(painelDetalhe);
 
 document.querySelector('.busca').addEventListener('submit', (evento) => evento.preventDefault());
 
-function trocarConjunto(chave) {
-  estado.conjunto = chave;
-  for (const grupo of document.querySelectorAll('.filtros')) grupo.hidden = grupo.dataset.conjunto !== chave;
-  render();
-  anunciar(conjuntoAtual().nome + '. ' + resumoGeral());
-}
-
 // Rádios do rodapé: o clique escolhe, e as setas trocam a opção do grupo. Um ponto de Tab por grupo.
 const TECLAS_DE_RADIO = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
 const AO_ESCOLHER = {
-  conjunto: (valor) => trocarConjunto(valor),
   modo: (valor) => { estado.modo = valor; render(); },
 };
 const rodapeDemo = document.getElementById('rodape-demo');
