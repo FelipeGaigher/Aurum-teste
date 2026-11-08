@@ -12,8 +12,8 @@
   --primitive-danger-500: #e70202; /* --danger */
   --primitive-warning-1000: #8a6900; /* derivado do --warning900, que nao passa no AA */
   --primitive-success-900: #02883c; /* --success da secao 14 do inventario. 4,58:1 sobre --primitive-gray-0 */
-  --primitive-danger-100: #f8d7d7; /* fundo do chip vencido, claro. 12,03:1 com --primitive-gray-900 */
-  --primitive-warning-100: #fde9a9; /* fundo do chip vence hoje, claro. 13,34:1 com --primitive-gray-900 */
+  --primitive-danger-100: #FFECEE; /* fundo do chip vencido, claro. 14,17:1 com --primitive-gray-900 */
+  --primitive-warning-100: #FEF6D5; /* fundo do chip vence hoje, claro. 14,84:1 com --primitive-gray-900 */
 
   /* Tema escuro: o Astrea nao tem um, entao estes valores sao proposta. Medidos no AA com contraste.py. */
   --primitive-dark-950: #0b1a2a; /* texto sobre a acao clara, 6,8:1 */
@@ -225,6 +225,8 @@
   --component-search-width: var(--size-search);
   --component-search-height: var(--size-search-height);
   --component-shortcut-size: var(--size-shortcut);
+  --component-lock-size: var(--font-size-label);
+  --component-dropdown-min-width: var(--size-sidebar);
   --component-shortcut-active-bg: var(--color-bg-subtle);
   --component-sidebar-width: var(--size-sidebar);
   --component-sidebar-collapsed-width: var(--size-sidebar-recolhida);
@@ -268,3 +270,442 @@
   --component-dialog-backdrop: var(--color-scrim);
 }
 /* fim dos componentes */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-padding-top: calc(var(--component-header-height) + var(--space-4));
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-default);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-body);
+  line-height: var(--font-leading-base);
+}
+
+:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-width);
+}
+
+button, input { font: inherit; color: inherit; }
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+svg.icone {
+  width: var(--size-icon);
+  height: var(--size-icon);
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pular {
+  position: absolute;
+  left: var(--space-4);
+  top: calc(-1 * var(--component-header-height));
+  z-index: 2;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-default);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius);
+}
+.pular:focus { top: var(--space-2); }
+
+/* navbar */
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: var(--component-sidebar-width) minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--space-6);
+  height: var(--component-header-height);
+  padding-right: var(--space-5);
+  background-color: var(--component-header-bg);
+  border-bottom: var(--border-width) solid var(--color-border-default);
+}
+
+/* a marca e o botão de recolher ocupam a célula da sidebar no cabeçalho */
+.marca {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 0 var(--space-2) 0 var(--space-5);
+}
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  color: var(--component-logo-text);
+  font-size: var(--font-size-logo);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--font-leading-tight);
+  text-decoration: none;
+}
+.logo svg { width: var(--size-logo); height: var(--size-logo); flex: none; }
+.logo-marca { fill: var(--component-logo-mark); }
+.logo-recorte { fill: var(--component-logo-cut); }
+
+/* A busca fica à direita, junto das ações (M15), e encolhe com a largura da tela. */
+.busca {
+  flex: none;
+  width: min(var(--component-search-width), 24vw);
+}
+.busca-campo { position: relative; }
+.busca input {
+  width: 100%;
+  height: var(--component-search-height);
+  padding: 0 var(--space-7) 0 var(--space-4);
+  background-color: var(--color-bg-surface);
+  border: var(--border-width) solid var(--component-control-border);
+  border-radius: var(--radius);
+}
+.busca input::placeholder { color: var(--color-text-muted); opacity: 1; }
+.busca-campo svg.icone {
+  width: var(--size-icon-field);
+  height: var(--size-icon-field);
+}
+.busca-campo svg {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  translate: 0 -50%;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.atalhos {
+  display: flex;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.atalho {
+  display: inline-grid;
+  place-items: center;
+  width: var(--component-shortcut-size);
+  height: var(--component-shortcut-size);
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  cursor: pointer;
+}
+.atalho svg.icone { width: var(--size-icon-nav); height: var(--size-icon-nav); }
+.atalho:hover { background-color: var(--color-bg-hover); color: var(--color-text-default); }
+.atalho-ia {
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--font-leading-tight);
+}
+
+.usuario {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: var(--size-control);
+  padding: 0 var(--space-2);
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.usuario:hover { background-color: var(--color-bg-hover); }
+
+/* corpo: sidebar e conteúdo */
+.corpo {
+  display: grid;
+  grid-template-columns: var(--component-sidebar-width) minmax(0, 1fr);
+  min-height: calc(100vh - var(--component-header-height));
+}
+
+.menu-lateral {
+  position: sticky;
+  top: var(--component-header-height);
+  align-self: start;
+  height: calc(100vh - var(--component-header-height));
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: var(--space-5) var(--space-2);
+  background-color: var(--component-sidebar-bg);
+  border-right: var(--border-width) solid var(--color-border-default);
+}
+/* O atributo hidden vence qualquer display de classe. Sem isto, um bloco em grid some do hidden. */
+[hidden] { display: none !important; }
+
+.menu-lateral ul { margin: 0; padding: 0; list-style: none; }
+/* rótulo de grupo do menu, como "Especialista UX/UI" acima do Kanban */
+.menu-grupo {
+  margin: var(--space-2) var(--space-4) var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-tracking-caps);
+  line-height: var(--font-leading-tight);
+  text-transform: uppercase;
+}
+body[data-menu="recolhido"] .menu-grupo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.menu-lateral hr {
+  margin: var(--space-3) 0;
+  border: 0;
+  border-top: var(--border-width) solid var(--color-border-default);
+}
+.menu-lateral a {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--component-menu-item-height);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius);
+  color: var(--color-text-default);
+  font-size: var(--font-size-emphasis);
+  line-height: var(--font-leading-tight);
+  text-decoration: none;
+}
+.menu-lateral a svg { color: var(--color-text-muted); }
+.menu-lateral a:hover { background-color: var(--color-bg-hover); }
+.menu-lateral a[aria-current="page"] {
+  background-color: var(--component-menu-item-active-bg);
+  color: var(--component-menu-item-active-text);
+  font-weight: var(--font-weight-semibold);
+}
+.menu-lateral a[aria-current="page"] svg { color: currentColor; }
+
+/* recolher a sidebar: botão quadrado ao lado da marca, no cabeçalho */
+.recolher {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: var(--component-sidebar-toggle-size);
+  height: var(--component-sidebar-toggle-size);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+.recolher:hover { background-color: var(--color-bg-hover); color: var(--color-text-default); }
+.recolher svg { transition: transform 150ms; }
+body[data-menu="recolhido"] { --component-sidebar-width: var(--component-sidebar-collapsed-width); }
+/* recolhido: só a marca aparece; o botão de expandir cobre a marca no hover e no foco de teclado */
+body[data-menu="recolhido"] .marca { padding: 0; justify-content: center; }
+body[data-menu="recolhido"] .recolher { position: absolute; inset: 0; margin: auto; opacity: 0; background-color: var(--color-bg-page); }
+body[data-menu="recolhido"] .marca:hover .recolher,
+body[data-menu="recolhido"] .recolher:focus-visible { opacity: 1; }
+body[data-menu="recolhido"] .marca:hover .logo,
+body[data-menu="recolhido"] .marca:has(.recolher:focus-visible) .logo { opacity: 0; }
+.recolher, .logo { transition: opacity 150ms; }
+body[data-menu="recolhido"] .menu-lateral { padding-left: var(--space-2); padding-right: var(--space-2); }
+body[data-menu="recolhido"] .menu-lateral a { justify-content: center; padding: 0; }
+body[data-menu="recolhido"] .menu-lateral .rotulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+body[data-menu="recolhido"] .recolher svg { transform: rotate(180deg); }
+body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+@media (prefers-reduced-motion: reduce) { .recolher, .logo, .recolher svg, .seletor svg { transition: none; } }
+
+/* O conteúdo é uma coluna da altura da tela: o quadro cresce até o rodapé, e as colunas esticam com ele. */
+#conteudo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: calc(100vh - var(--component-header-height));
+  padding: var(--space-5) var(--space-5) var(--space-6);
+}
+
+.titulo-pagina {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+.titulo-pagina h1 {
+  margin: 0;
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+}
+
+/* título e trilha no cabeçalho (M14). A trilha só aparece do segundo nível em diante. */
+.titulo-cabecalho {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+.titulo-cabecalho h1 {
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.trilha {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  line-height: var(--font-leading-tight);
+}
+.trilha a { color: inherit; }
+.trilha a:hover { color: var(--color-text-default); }
+
+.atalhos li, .usuario-area { position: relative; }
+
+/* tooltip dos atalhos (PA-04), no hover e no foco de teclado */
+.dica {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1;
+  margin-top: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-text-default);
+  border-radius: var(--radius);
+  color: var(--color-bg-page);
+  font-size: var(--font-size-label);
+  line-height: var(--font-leading-tight);
+  white-space: nowrap;
+  visibility: hidden;
+  pointer-events: none;
+}
+.atalho:hover ~ .dica,
+.atalho:focus-visible ~ .dica { visibility: visible; }
+
+/* recurso bloqueado no plano: o selo avisa antes do clique (PA-07) */
+.atalho[aria-disabled="true"] { position: relative; cursor: not-allowed; }
+.atalho svg.selo-bloqueio {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--component-lock-size);
+  height: var(--component-lock-size);
+  background-color: var(--color-bg-page);
+  border-radius: var(--radius-round);
+  color: var(--color-text-default);
+}
+
+/* menus do cabeçalho: Adicionar e usuário */
+.menu-suspenso {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1;
+  width: max-content;
+  min-width: var(--component-dropdown-min-width);
+  margin-top: var(--space-1);
+  padding: var(--space-1);
+  background-color: var(--component-seletor-list-bg);
+  border: var(--border-width) solid var(--component-seletor-list-border);
+  border-radius: var(--radius);
+  box-shadow: var(--component-seletor-list-shadow);
+}
+.menu-suspenso a,
+.menu-suspenso button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--component-seletor-option-height);
+  padding: 0 var(--space-3);
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--color-text-default);
+  text-align: left;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.menu-suspenso a:hover,
+.menu-suspenso button:hover { background-color: var(--color-bg-hover); }
+.menu-suspenso [aria-current="page"] {
+  background-color: var(--component-seletor-option-active-bg);
+  color: var(--component-seletor-option-selected-text);
+  font-weight: var(--font-weight-semibold);
+}
+.menu-suspenso button[aria-disabled="true"] { color: var(--color-text-muted); cursor: not-allowed; }
+.menu-suspenso button[aria-disabled="true"]:hover { background: none; }
+.menu-suspenso-grupo { margin-top: var(--space-1); padding-top: var(--space-1); border-top: var(--border-width) solid var(--color-border-default); }
+.menu-suspenso-rotulo {
+  padding: var(--space-1) var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  line-height: var(--font-leading-tight);
+}
+
+/* rodapé do menu: o trial em uma linha (M17, PA-08) */
+.rodape-menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding: var(--space-3) var(--space-2) 0;
+  border-top: var(--border-width) solid var(--color-border-default);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  line-height: var(--font-leading-tight);
+  white-space: nowrap;
+}
+.menu-lateral .rodape-menu a {
+  display: inline;
+  min-height: 0;
+  padding: 0;
+  border-radius: 0;
+  color: var(--color-action);
+  font-size: inherit;
+  font-weight: var(--font-weight-semibold);
+  line-height: inherit;
+}
+.menu-lateral .rodape-menu a:hover { background: none; text-decoration: underline; }
+body[data-menu="recolhido"] .rodape-menu { display: none; }
+
+@media (max-width: 1024px) {
+  .cabecalho { column-gap: var(--space-4); }
+  .busca { width: 18vw; }
+}
+
+/* Celular: menu só com ícones e cabeçalho enxuto. O usuário fica sem o nome, para o menu dele continuar ao alcance. */
+@media (max-width: 700px) {
+  .cabecalho {
+    grid-template-columns: var(--component-sidebar-collapsed-width) minmax(0, 1fr) auto;
+    column-gap: var(--space-3);
+    padding-right: var(--space-3);
+  }
+  .recolher { display: none; }
+  .usuario-nome { display: none; }
+  .acoes { gap: var(--space-2); }
+  #conteudo { padding: var(--space-4) var(--space-3) var(--space-5); }
+}

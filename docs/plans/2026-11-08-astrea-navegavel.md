@@ -693,7 +693,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Produces: as chaves `astrea-tema` e `astrea-menu` no `localStorage`.
 - Produces: `window.DADOS = { ATIVIDADES, CONTATOS, PROCESSOS, RESPONSAVEIS }`.
 
-- [ ] **Step 1: Confirmar o estado vermelho**
+- [x] **Step 1: Confirmar o estado vermelho**
 
 ```bash
 node scripts/verificar-app.js --rf RF-01 --exceto kanban.html
@@ -701,7 +701,7 @@ node scripts/verificar-app.js --rf RF-01 --exceto kanban.html
 
 Esperado: `RF-01 FALHOU`.
 
-- [ ] **Step 2: Copiar a base e os dados do Kanban por trecho**
+- [x] **Step 2: Copiar a base e os dados do Kanban por trecho**
 
 ```bash
 sed -n '260,544p' prototipo/kanban.html >> prototipo/astrea.css
@@ -713,7 +713,7 @@ Esperado: `astrea.css` ganha reset, `.cabecalho` e `.menu-lateral`. `dados.js` g
 
 Em `dados.js`, derive `RESPONSAVEIS`, `PROCESSOS` e `CONTATOS` dos valores do array. Clientes de `CONTATOS` são nomes fictícios novos.
 
-- [ ] **Step 3: Implementar a moldura**
+- [x] **Step 3: Implementar a moldura**
 
 | Área | Conteúdo |
 |---|---|
@@ -752,7 +752,7 @@ Regras:
 - Em `administracao.html`, o item Administração do menu do usuário leva o `aria-current`.
 - O menu Adicionar usa uma lista única de itens, com os de upgrade em grupo próprio no fim (PA-24, PA-26).
 
-- [ ] **Step 4: Criar as cascas**
+- [x] **Step 4: Criar as cascas**
 
 Cada página nova segue este molde. Títulos e nomes vêm do catálogo do menu.
 
@@ -778,7 +778,7 @@ Cada página nova segue este molde. Títulos e nomes vêm do catálogo do menu.
 
 Esperado: 15 páginas novas, cada uma com um item de menu ou destino no menu do usuário.
 
-- [ ] **Step 5: Executar e confirmar que passa**
+- [x] **Step 5: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py --todos
@@ -787,7 +787,7 @@ node scripts/verificar-app.js --rf RF-01,RF-03,RF-04,RF-05,RF-07,RF-15 --exceto 
 
 Esperado: `verificar: 0 erro(s)` e os seis RF com `ok`. RF-05 prova que o `localStorage` persiste entre arquivos em `file://`.
 
-- [ ] **Step 6: Entregar**
+- [x] **Step 6: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
