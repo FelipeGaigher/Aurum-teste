@@ -271,7 +271,7 @@
     const aviso = elemento('div', 'pagina-aviso');
     aviso.id = 'pagina-aviso';
     const lugarDaTabela = elemento('div');
-    conteudo.replaceChildren(topo, lugarDaBarra, aviso, lugarDaTabela);
+    conteudo.replaceChildren(lugarDaBarra, aviso, lugarDaTabela);
 
     function celulas(r) {
       const responsavel = DS.avatar({ nome: r.responsavel, mostrarNome: true });
@@ -338,6 +338,8 @@
       botaoAtualizar.addEventListener('click', atualizar);
       barra.el.querySelector('.barra-filtros-resultado').after(botaoAtualizar);
       lugarDaBarra.replaceChildren(barra.el);
+      // Ações da página na linha dos filtros, à direita (pedido de Felipe, 08/11).
+      barra.el.querySelector('.barra-filtros-fim').append(acoes);
     }
 
     montarBarra();
