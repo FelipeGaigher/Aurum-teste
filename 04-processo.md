@@ -115,3 +115,12 @@ com data. O que foi entregue fica no commit, não aqui.
 - Felipe pediu o protótipo responsivo. No tablet, as colunas ganham
   largura fixa e o quadro rola na horizontal com encaixe. No celular, o
   menu fica só com ícones, o cabeçalho enxuga e cabe uma coluna por tela.
+- Felipe pediu o board como o da Fotus no Jira, com sete colunas e
+  rolagem lateral. As colunas: Backlog, Pesquisa, Desenvolvimento,
+  Validação, Impedimento e ajustes, Pronto para deploy e Em produção. E
+  uma lista de sprints: o quadro abre na sprint atual, a 2 de 24, e o
+  filtro lista todas. Fora da sprint, a história não aparece, como no Jira.
+- Felipe pediu tema escuro de volta. O Astrea não tem um, então a paleta
+  é proposta. Superfície mais clara que a página, ação em azul claro com
+  texto escuro, vencido e hoje em tons claros. Cada par medido no AA com o
+  `contraste.py` da skill. Segue o sistema e a chave do cabeçalho vence.

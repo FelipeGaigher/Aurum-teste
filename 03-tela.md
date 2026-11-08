@@ -79,7 +79,7 @@ Trello estranha.
 ## Direção visual
 
 > decisão, 07/11, de Felipe: o protótipo segue o visual atual do Astrea.
-> Logo, navbar e sidebar iguais ao produto, raio 8, tema claro só, fonte
+> Logo, navbar e sidebar iguais ao produto, raio 8, fonte
 > `museo-sans` com reserva Open Sans. Os primitivos espelham as variáveis
 > reais do CSS do Astrea. O fundo de ação usa `#1D6BB7`, porque o
 > `#228BE6` reprova no AA com texto branco. A direção visual própria que
@@ -99,9 +99,15 @@ Trello estranha.
 > decisão, 07/11, de Felipe: o Kanban abre com o plano do redesign. Quatro
 > fases e oito histórias, cada uma com suas subtarefas, como no Jira. As
 > dezoito entregas viraram subtarefas; o discovery com os designers é uma
-> delas. As colunas são A fazer, Fazendo e Concluído, as mesmas do
-> escritório: coluna de Kanban é situação, não fase. A fase é tag no card
-> e filtro. Correção de Felipe em 07/11. As
+> delas. Coluna de Kanban é situação, não fase. O plano usa o fluxo do
+> board da Fotus no Jira. Sete colunas com rolagem lateral, de Backlog a
+> Em produção. O board abre na sprint atual, a 2 de 24, e o filtro de
+> sprint lista todas. A fase é tag no card e filtro. Correções de Felipe
+> em 07/11.
+>
+> decisão, 07/11, de Felipe: tema escuro de volta. Segue o sistema e tem
+> chave no cabeçalho. O Astrea não tem tema escuro, então a paleta é
+> proposta, medida no AA. As
 > atividades de escritório ficam como segundo conjunto, por chave no
 > rodapé. A banca pede uma tela do produto, e esse conjunto prova isso.
 

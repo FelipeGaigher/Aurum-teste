@@ -19,7 +19,23 @@
   --primitive-danger-500: #e70202; /* --danger */
   --primitive-warning-1000: #8a6900; /* derivado do --warning900, que nao passa no AA */
 
+  /* Tema escuro: o Astrea nao tem um, entao estes valores sao proposta. Medidos no AA com contraste.py. */
+  --primitive-dark-950: #0b1a2a; /* texto sobre a acao clara, 6,8:1 */
+  --primitive-dark-900: #111418; /* pagina */
+  --primitive-dark-800: #181c22; /* fundo de coluna e de area */
+  --primitive-dark-700: #232a33; /* superficie: card, dialogo, menu, cabecalho */
+  --primitive-dark-600: #2f3843; /* hover */
+  --primitive-dark-500: #323b47; /* borda */
+  --primitive-dark-400: #6b7785; /* borda forte, 3,2:1 sobre a superficie */
+  --primitive-dark-300: #a3abb8; /* texto secundario, 6,2:1 sobre a superficie */
+  --primitive-dark-100: #e6e9ee; /* texto */
+  --primitive-blue-400: #5aa7ec; /* acao no escuro, 5,6:1 como texto sobre a superficie */
+  --primitive-blue-300: #7dbbf2; /* hover da acao no escuro */
+  --primitive-danger-300: #ff6b6b; /* vencido no escuro, 5,2:1 */
+  --primitive-warning-300: #f2c14e; /* vence hoje no escuro, 8,9:1 */
+
   --primitive-shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --primitive-shadow-2: 0 1px 2px rgba(0, 0, 0, 0.4);
 
   --primitive-space-4: 4px;
   --primitive-space-8: 8px;
@@ -142,6 +158,48 @@
   --size-dialog-wide: var(--primitive-size-560);
   --size-dialog-detail: var(--primitive-size-960);
   --size-column: var(--primitive-size-300);
+}
+/* Tema escuro. Segue o sistema; a chave do cabeçalho salva a escolha, e a escolha vence o sistema.
+   Os dois blocos são iguais de propósito: um atende o sistema, o outro a chave. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    color-scheme: dark;
+    --color-bg-page: var(--primitive-dark-900);
+    --color-bg-surface: var(--primitive-dark-700);
+    --color-bg-subtle: var(--primitive-dark-800);
+    --color-bg-hover: var(--primitive-dark-600);
+    --color-text-default: var(--primitive-dark-100);
+    --color-text-muted: var(--primitive-dark-300);
+    --color-text-danger: var(--primitive-danger-300);
+    --color-text-warning: var(--primitive-warning-300);
+    --color-border-default: var(--primitive-dark-500);
+    --color-border-strong: var(--primitive-dark-400);
+    --color-action: var(--primitive-blue-400);
+    --color-action-hover: var(--primitive-blue-300);
+    --color-action-text: var(--primitive-dark-950);
+    --color-focus: var(--primitive-blue-400);
+    --color-scrim: color-mix(in srgb, var(--primitive-dark-950) 70%, transparent);
+    --shadow-card: var(--primitive-shadow-2);
+  }
+}
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+  --color-bg-page: var(--primitive-dark-900);
+  --color-bg-surface: var(--primitive-dark-700);
+  --color-bg-subtle: var(--primitive-dark-800);
+  --color-bg-hover: var(--primitive-dark-600);
+  --color-text-default: var(--primitive-dark-100);
+  --color-text-muted: var(--primitive-dark-300);
+  --color-text-danger: var(--primitive-danger-300);
+  --color-text-warning: var(--primitive-warning-300);
+  --color-border-default: var(--primitive-dark-500);
+  --color-border-strong: var(--primitive-dark-400);
+  --color-action: var(--primitive-blue-400);
+  --color-action-hover: var(--primitive-blue-300);
+  --color-action-text: var(--primitive-dark-950);
+  --color-focus: var(--primitive-blue-400);
+  --color-scrim: color-mix(in srgb, var(--primitive-dark-950) 70%, transparent);
+  --shadow-card: var(--primitive-shadow-2);
 }
 /* fim dos semanticos */
 
@@ -468,21 +526,31 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 }
 
 /* quadro */
+/* O quadro rola na horizontal, com encaixe por coluna. Poucas colunas crescem até preencher; sete colunas rolam.
+   Posicionado para conter os textos ocultos absolutos dos cards. */
 #quadro {
-  /* posicionado para conter os textos ocultos absolutos dos cards quando o quadro rola na horizontal */
   position: relative;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
   gap: var(--space-4);
   align-items: start;
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--space-3);
 }
-#quadro[data-colunas="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.sprint-resumo {
+  margin: calc(-1 * var(--space-3)) 0 var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+}
 
 .coluna {
   display: flex;
+  flex: 1 0 var(--component-column-width);
   flex-direction: column;
   gap: var(--space-3);
   min-width: 0;
+  scroll-snap-align: start;
   padding: var(--space-4) var(--space-3) var(--space-3);
   background-color: var(--component-column-bg);
   border: var(--border-width) solid transparent;
@@ -885,10 +953,12 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 }
 .tag-rotulo { color: var(--color-text-muted); font-size: var(--font-size-label); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: var(--font-tracking-caps); }
 .tag-valor { font-weight: var(--font-weight-semibold); }
-.tag[data-status="fazendo"] { border-color: var(--color-action); }
-.tag[data-status="fazendo"] .tag-valor { color: var(--color-action); }
-.tag[data-status="concluido"] { background-color: var(--color-action); border-color: var(--color-action); }
-.tag[data-status="concluido"] .tag-rotulo, .tag[data-status="concluido"] .tag-valor { color: var(--color-action-text); }
+.tag[data-status="pesquisa"], .tag[data-status="desenvolvimento"], .tag[data-status="validacao"], .tag[data-status="pronto-deploy"] { border-color: var(--color-action); }
+.tag[data-status="pesquisa"] .tag-valor, .tag[data-status="desenvolvimento"] .tag-valor, .tag[data-status="validacao"] .tag-valor, .tag[data-status="pronto-deploy"] .tag-valor { color: var(--color-action); }
+.tag[data-status="impedimento"] { border-color: var(--color-text-danger); }
+.tag[data-status="impedimento"] .tag-valor { color: var(--color-text-danger); }
+.tag[data-status="producao"] { background-color: var(--color-action); border-color: var(--color-action); }
+.tag[data-status="producao"] .tag-rotulo, .tag[data-status="producao"] .tag-valor { color: var(--color-action-text); }
 
 /* duas colunas: a história à esquerda, as subtarefas à direita */
 .detalhe-colunas {
@@ -958,20 +1028,10 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 @media (max-width: 800px) { .detalhe-colunas { grid-template-columns: minmax(0, 1fr); } }
 @media (prefers-reduced-motion: reduce) { .subtarefa-resumo::after { transition: none; } }
 
-/* responsivo. Tablet: as colunas ganham largura fixa e o quadro rola na horizontal, com encaixe por coluna. */
+/* responsivo. Tablet: as colunas param de crescer e o quadro rola. */
 @media (max-width: 1024px) {
-  #quadro {
-    display: flex;
-    gap: var(--space-3);
-    overflow-x: auto;
-    padding-bottom: var(--space-2);
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: var(--space-3);
-  }
-  .coluna {
-    flex: 0 0 var(--component-column-width);
-    scroll-snap-align: start;
-  }
+  #quadro { gap: var(--space-3); scroll-snap-type: x mandatory; }
+  .coluna { flex-grow: 0; }
 }
 
 /* Celular: menu só com ícones, cabeçalho enxuto, uma coluna por tela com a próxima aparecendo na borda. */
@@ -1053,6 +1113,9 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   <div class="acoes">
     <ul class="atalhos">
       <li><button type="button" class="atalho atalho-ativo atalho-ia" aria-label="Assistente de IA" title="Assistente de IA">IA</button></li>
+      <li><button type="button" class="atalho" id="alternar-tema" aria-pressed="false" aria-label="Usar tema escuro" title="Usar tema escuro">
+        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+      </button></li>
       <li><button type="button" class="atalho" aria-label="Criar novo" title="Criar novo">
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
       </button></li>
@@ -1127,6 +1190,10 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
     <div id="ferramentas">
       <div class="filtros" role="group" aria-label="Filtros do quadro" data-conjunto="plano">
         <div class="campo">
+          <span class="campo-rotulo" id="filtro-sprint-rotulo">Sprint</span>
+          <div class="seletor-raiz" data-seletor="filtro-sprint"></div>
+        </div>
+        <div class="campo">
           <span class="campo-rotulo" id="filtro-equipe-rotulo">Equipe</span>
           <div class="seletor-raiz" data-seletor="filtro-equipe"></div>
         </div>
@@ -1154,6 +1221,7 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
         </div>
       </div>
     </div>
+    <p id="sprint-resumo" class="sprint-resumo" hidden></p>
     <div id="quadro"></div>
     <footer id="rodape-demo">
       <fieldset class="demo">
@@ -1225,6 +1293,29 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 </dialog>
 <script>
   (function () {
+    // Tema: sem escolha salva, segue o sistema. A chave salva "claro" ou "escuro" e vence o sistema.
+    const CHAVE = 'astrea-tema';
+    const botao = document.getElementById('alternar-tema');
+    const sistema = window.matchMedia('(prefers-color-scheme: dark)');
+    let salvo = null;
+    try { salvo = localStorage.getItem(CHAVE); } catch (e) { salvo = null; }
+    if (salvo !== 'claro' && salvo !== 'escuro') salvo = null;
+    const aplicar = () => {
+      if (salvo) document.documentElement.dataset.tema = salvo; else delete document.documentElement.dataset.tema;
+      const escuro = salvo ? salvo === 'escuro' : sistema.matches;
+      botao.setAttribute('aria-pressed', String(escuro));
+      const texto = escuro ? 'Usar tema claro' : 'Usar tema escuro';
+      botao.title = texto; botao.setAttribute('aria-label', texto);
+    };
+    aplicar();
+    sistema.addEventListener('change', aplicar);
+    botao.addEventListener('click', () => {
+      salvo = botao.getAttribute('aria-pressed') === 'true' ? 'claro' : 'escuro';
+      try { localStorage.setItem(CHAVE, salvo); } catch (e) { /* sem armazenamento */ }
+      aplicar();
+    });
+  })();
+  (function () {
     const CHAVE = 'astrea-menu';
     const botao = document.getElementById('recolher-menu');
     const aplicar = (recolhido) => {
@@ -1255,6 +1346,17 @@ const COLUNAS_ESCRITORIO = [
   { id: 'concluido', nome: 'Concluído' },
 ];
 
+// Fluxo do plano do redesign, como o board da Fotus no Jira. Sete colunas, rolagem lateral.
+const COLUNAS_PLANO = [
+  { id: 'backlog', nome: 'Backlog' },
+  { id: 'pesquisa', nome: 'Pesquisa' },
+  { id: 'desenvolvimento', nome: 'Desenvolvimento' },
+  { id: 'validacao', nome: 'Validação' },
+  { id: 'impedimento', nome: 'Impedimento e ajustes' },
+  { id: 'pronto-deploy', nome: 'Pronto para deploy' },
+  { id: 'producao', nome: 'Em produção' },
+];
+
 const ATIVIDADES = [
   { id: 'a1', titulo: 'Protocolar contestação', tipo: 'prazo', processo: '5004213-75.2025.8.24.0023', responsavel: 'Rafael Antunes', prazoEmDias: -2, status: 'a-fazer' },
   { id: 'a2', titulo: 'Audiência de conciliação', tipo: 'audiencia', processo: '0301877-92.2024.8.24.0008', responsavel: 'Marina Couto', prazoEmDias: 0, status: 'a-fazer' },
@@ -1280,13 +1382,35 @@ const PERIODOS = {
 };
 
 const FASES = [
-  { id: 'f1', nome: 'Fase 1. Inventário e discovery', periodo: 'Mês 1, sprints 1 e 2' },
-  { id: 'f2', nome: 'Fase 2. Tokens semânticos', periodo: 'Meses 2 e 3, sprints 3 a 6' },
-  { id: 'f3', nome: 'Fase 3. Componentes e piloto', periodo: 'Meses 3 a 6, sprints 7 a 12' },
-  { id: 'f4', nome: 'Fase 4. Outros módulos e IA', periodo: 'Meses 6 a 12, sprints 13 a 24' },
+  { id: 'f1', nome: 'Fase 1. Inventário e discovery', periodo: 'Mês 1, sprints 1 e 2', sprints: [1, 2] },
+  { id: 'f2', nome: 'Fase 2. Tokens semânticos', periodo: 'Meses 2 e 3, sprints 3 a 6', sprints: [3, 6] },
+  { id: 'f3', nome: 'Fase 3. Componentes e piloto', periodo: 'Meses 3 a 6, sprints 7 a 12', sprints: [7, 12] },
+  { id: 'f4', nome: 'Fase 4. Outros módulos e IA', periodo: 'Meses 6 a 12, sprints 13 a 24', sprints: [13, 24] },
 ];
+// A lista de sprints nasce das fases: 24 sprints quinzenais em 12 meses. A demonstração está na sprint 2.
+const SPRINT_ATUAL = 2;
+const SPRINTS = FASES.flatMap((fase) => {
+  const lista = [];
+  for (let numero = fase.sprints[0]; numero <= fase.sprints[1]; numero += 1) lista.push({ numero, fase: fase.id });
+  return lista;
+});
+// "1 e 2", "3 a 5", "12, 18 e 24" viram listas de números. Texto fora do contrato é erro.
+function sprintsDe(texto) {
+  const numeros = [];
+  for (const parte of texto.split(/,| e /)) {
+    const faixa = parte.trim().match(/^(\d+)(?: a (\d+))?$/);
+    if (!faixa) throw new Error('sprint fora do contrato: ' + texto);
+    const ate = Number(faixa[2] || faixa[1]);
+    for (let n = Number(faixa[1]); n <= ate; n += 1) numeros.push(n);
+  }
+  return numeros;
+}
 const EQUIPES = ['Direção do DS', 'Engenharia', 'Designer do squad Atividades', 'Designer do squad Processos', 'Designer do squad Financeiro', 'Designer do squad Clientes', 'Suporte', 'Marketing'];
-const STATUS = { 'feito': 'Feito', 'fazendo': 'Fazendo', 'a-fazer': 'A fazer', 'concluido': 'Concluído' };
+// Situação das subtarefas e das atividades do escritório, mais o nome de cada coluna do plano.
+const STATUS = {
+  'feito': 'Feito', 'fazendo': 'Fazendo', 'a-fazer': 'A fazer', 'concluido': 'Concluído',
+  ...Object.fromEntries(COLUNAS_PLANO.map((coluna) => [coluna.id, coluna.nome])),
+};
 
 function nomeDaFase(id) {
   const fase = FASES.find((f) => f.id === id);
@@ -1307,7 +1431,7 @@ const CARDS = [
     entregavel: 'Mapa de perfil por designer e a frente natural de cada um no DS.',
     deveres: ['Direção do DS: uma conversa de 1 hora com cada designer, para conhecer a pessoa, não só o trabalho.', 'Cada designer: traz o roadmap dos próximos três meses e uma tela que o frustra.'],
     pronto: 'Os quatro mapas estão escritos e cada designer concorda com a própria frente.' },
-  { id: 'c03', fase: 'f1', sprint: '2', titulo: 'Linha de base das métricas', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia', 'Suporte'], status: 'a-fazer',
+  { id: 'c03', fase: 'f1', sprint: '2', titulo: 'Linha de base das métricas', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia', 'Suporte'], status: 'fazendo',
     objetivo: 'Medir antes de mudar. Sem linha de base, a métrica só mostra o número de hoje.',
     entregavel: 'Número de hoje para adoção, eficiência e experiência: cores por token, tempo do design ao dev, chamados por módulo.',
     deveres: ['Engenharia: lint de cores e contagem de componentes no CI.', 'Suporte: chamados dos últimos seis meses por módulo.', 'Direção do DS: tempo de handoff com os squads.'],
@@ -1393,36 +1517,37 @@ const CARDS = [
 ];
 
 // Histórias, como no Jira: cada card do quadro é uma história, e as entregas acima são as subtarefas dela.
+// A coluna de cada história é a situação dela no fluxo, não a das subtarefas. Na sprint 2, duas estão em andamento.
 const HISTORIAS = [
-  { id: 'h1', fase: 'f1', sprint: '1 e 2', titulo: 'Conhecer o produto antes de propor', dono: 'Direção do DS', subtarefas: ['c01', 'c03'],
+  { id: 'h1', fase: 'f1', sprint: '1 e 2', status: 'desenvolvimento', titulo: 'Conhecer o produto antes de propor', dono: 'Direção do DS', subtarefas: ['c01', 'c03'],
     objetivo: 'Saber o que existe e quanto custa hoje. Sem inventário e sem linha de base, o redesign começa no escuro.',
     entregavel: 'Inventário de cores, componentes e palavras por tela, e o número de hoje de cada métrica.',
     pronto: 'Todo item do recorte de atividades está listado e cada métrica tem um valor datado.' },
-  { id: 'h2', fase: 'f1', sprint: '1 e 2', titulo: 'Conhecer o time e abrir a fonte única', dono: 'Direção do DS', subtarefas: ['c02', 'c04'],
+  { id: 'h2', fase: 'f1', sprint: '1 e 2', status: 'pesquisa', titulo: 'Conhecer o time e abrir a fonte única', dono: 'Direção do DS', subtarefas: ['c02', 'c04'],
     objetivo: 'Dividir o trabalho a partir de como cada designer trabalha, e ter onde guardar a regra antes do primeiro token.',
     entregavel: 'Mapa de perfil dos quatro designers e o repositório do DS com README e kit de skills.',
     pronto: 'Cada designer concorda com a própria frente e um deles instala o kit com um comando.' },
-  { id: 'h3', fase: 'f2', sprint: '3 a 5', titulo: 'Tokens como fonte única, no código e no Figma', dono: 'Direção do DS', subtarefas: ['c05', 'c07'],
+  { id: 'h3', fase: 'f2', sprint: '3 a 5', status: 'backlog', titulo: 'Tokens como fonte única, no código e no Figma', dono: 'Direção do DS', subtarefas: ['c05', 'c07'],
     objetivo: 'Um azul de ação, uma escala de cinza, um foco. Com nome de papel, gerado de um arquivo só.',
     entregavel: 'JSON de tokens publicado como pacote, e a biblioteca Astrea DS com as variáveis geradas dele.',
     pronto: 'Mudar um valor no JSON muda o CSS e a variável do Figma sem edição manual.' },
-  { id: 'h4', fase: 'f2', sprint: '4 a 6', titulo: 'Legado e front novo com a mesma pele', dono: 'Engenharia', subtarefas: ['c06', 'c08'],
+  { id: 'h4', fase: 'f2', sprint: '4 a 6', status: 'backlog', titulo: 'Legado e front novo com a mesma pele', dono: 'Engenharia', subtarefas: ['c06', 'c08'],
     objetivo: 'Aproximar tela antiga e tela nova antes de reescrever qualquer componente.',
     entregavel: 'Tema do front novo e variáveis do legado lendo o mesmo pacote de tokens, atrás de flag.',
     pronto: 'Legado e novo medem a mesma cor de ação e o mesmo foco com a flag ligada.' },
-  { id: 'h5', fase: 'f3', sprint: '7 a 9', titulo: 'Moldura, componentes e uma palavra para a atividade', dono: 'Designer do squad Processos', subtarefas: ['c09', 'c10', 'c12'],
+  { id: 'h5', fase: 'f3', sprint: '7 a 9', status: 'backlog', titulo: 'Moldura, componentes e uma palavra para a atividade', dono: 'Designer do squad Processos', subtarefas: ['c09', 'c10', 'c12'],
     objetivo: 'A âncora que o usuário reconhece, as peças da gestão de atividades e o vocabulário único.',
     entregavel: 'Cabeçalho e menu no pacote e na biblioteca, cinco componentes com estados e o glossário aplicado.',
     pronto: 'Toda tela mostra a mesma moldura, os cinco componentes passam no revisor e nenhuma tela usa duas palavras.' },
-  { id: 'h6', fase: 'f3', sprint: '9 a 12', titulo: 'Primeira tela nova em produção', dono: 'Designer do squad Atividades', subtarefas: ['c11', 'c13'],
+  { id: 'h6', fase: 'f3', sprint: '9 a 12', status: 'backlog', titulo: 'Primeira tela nova em produção', dono: 'Designer do squad Atividades', subtarefas: ['c11', 'c13'],
     objetivo: 'Provar o DS numa tela real sem parar o produto, e deixar cada componente ligado ao código.',
     entregavel: 'Kanban atrás de flag para um grupo beta, Code Connect e Storybook publicados.',
     pronto: 'Vinte escritórios usam o Kanban por quatro semanas sem aumento de chamados.' },
-  { id: 'h7', fase: 'f4', sprint: '13 a 20', titulo: 'Outros módulos no padrão novo', dono: 'Designer do squad Processos', subtarefas: ['c14', 'c15', 'c17'],
+  { id: 'h7', fase: 'f4', sprint: '13 a 20', status: 'backlog', titulo: 'Outros módulos no padrão novo', dono: 'Designer do squad Processos', subtarefas: ['c14', 'c15', 'c17'],
     objetivo: 'Pegar carona na migração do front: cada módulo reescrito nasce no DS.',
     entregavel: 'Processos, Contatos e Agenda compacta com os componentes do DS, atrás de flag.',
     pronto: 'Cada módulo passa no revisor e fica quatro semanas em beta.' },
-  { id: 'h8', fase: 'f4', sprint: '12 a 24', titulo: 'IA no mesmo padrão e prova do resultado', dono: 'Direção do DS', subtarefas: ['c16', 'c18'],
+  { id: 'h8', fase: 'f4', sprint: '12 a 24', status: 'backlog', titulo: 'IA no mesmo padrão e prova do resultado', dono: 'Direção do DS', subtarefas: ['c16', 'c18'],
     objetivo: 'A IA entra pelos mesmos componentes, e os números dizem se o DS devolve mais tempo do que toma.',
     entregavel: 'Padrões de sugestão, confirmação e erro de IA, e três relatórios trimestrais contra a linha de base.',
     pronto: 'A primeira funcionalidade com IA passa no revisor e o terceiro relatório está publicado.' },
@@ -1436,17 +1561,10 @@ function subtarefasDe(historia) {
   });
 }
 
-// A história nasce na coluna que as subtarefas pedem. Arrastar a história depois troca a coluna direto.
-function statusDaHistoria(historia) {
-  const lista = subtarefasDe(historia).map((s) => s.status);
-  if (lista.every((s) => s === 'feito')) return 'concluido';
-  if (lista.some((s) => s !== 'a-fazer')) return 'fazendo';
-  return 'a-fazer';
-}
-
 function montarHistoria(historia, ordem) {
+  if (!COLUNAS_PLANO.some((coluna) => coluna.id === historia.status)) throw new Error('coluna desconhecida na história ' + historia.id + ': ' + historia.status);
   const equipes = [...new Set(subtarefasDe(historia).flatMap((s) => s.equipes))];
-  return { ...historia, ordem, equipes, status: statusDaHistoria(historia) };
+  return { ...historia, ordem, equipes, sprints: sprintsDe(historia.sprint) };
 }
 
 const DONOS = [...new Set(HISTORIAS.map((historia) => historia.dono))]
@@ -1455,12 +1573,13 @@ const DONOS = [...new Set(HISTORIAS.map((historia) => historia.dono))]
 const CONJUNTOS = {
   plano: {
     nome: 'Plano do redesign',
-    // Coluna de Kanban é situação, não fase. A fase é tag no card e filtro. Correção de Felipe em 07/11.
-    colunas: COLUNAS_ESCRITORIO,
+    // Coluna de Kanban é situação no fluxo, não fase. A fase é tag no card e filtro. O board abre na sprint atual.
+    colunas: COLUNAS_PLANO,
     campo: 'status',
     item: 'história',
-    filtrosIniciais: { equipe: 'todas', dono: 'todos', fase: 'todas' },
-    passa: (historia, { equipe, dono, fase }) => (equipe === 'todas' || historia.equipes.includes(equipe))
+    filtrosIniciais: { sprint: String(SPRINT_ATUAL), equipe: 'todas', dono: 'todos', fase: 'todas' },
+    passa: (historia, { sprint, equipe, dono, fase }) => (sprint === 'todas' || historia.sprints.includes(Number(sprint)))
+      && (equipe === 'todas' || historia.equipes.includes(equipe))
       && (dono === 'todos' || historia.dono === dono)
       && (fase === 'todas' || historia.fase === fase),
     ordenar: (a, b) => a.ordem - b.ordem,
@@ -1704,10 +1823,24 @@ function criarColuna(coluna) {
 
 const quadro = document.getElementById('quadro');
 
+const sprintResumo = document.getElementById('sprint-resumo');
+
+// A linha acima do quadro diz qual sprint está na tela. Some em "Todas as sprints" e no conjunto do escritório.
+function atualizarResumoDaSprint() {
+  const sprint = estado.conjunto === 'plano' ? estado.filtros.plano.sprint : 'todas';
+  sprintResumo.hidden = sprint === 'todas';
+  if (sprintResumo.hidden) return;
+  const numero = Number(sprint);
+  const fase = FASES.find((f) => f.id === SPRINTS.find((s) => s.numero === numero).fase);
+  const visiveis = itensAtuais().filter((item) => conjuntoAtual().passa(item, estado.filtros.plano)).length;
+  sprintResumo.textContent = 'Sprint ' + numero + ' de ' + SPRINTS.length + (numero === SPRINT_ATUAL ? ', atual. ' : '. ') + fase.nome + ', ' + fase.periodo.charAt(0).toLowerCase() + fase.periodo.slice(1) + '. ' + visiveis + (visiveis === 1 ? ' história' : ' histórias') + ' no quadro.';
+}
+
 function render() {
   const colunas = conjuntoAtual().colunas;
   quadro.dataset.colunas = String(colunas.length);
   quadro.replaceChildren(...colunas.map(criarColuna));
+  atualizarResumoDaSprint();
 }
 
 function nomeDaColuna(colunaId) {
@@ -2040,6 +2173,7 @@ function ligarFiltro(conjunto, filtro, id, opcoes) {
 const pares = (nomes) => nomes.map((nome) => [nome, nome]);
 const paresResponsavel = pares(RESPONSAVEIS);
 const paresTipo = Object.entries(TIPOS);
+ligarFiltro('plano', 'sprint', 'filtro-sprint', [['todas', 'Todas as sprints'], ...SPRINTS.map((s) => [String(s.numero), 'Sprint ' + s.numero + (s.numero === SPRINT_ATUAL ? ', atual' : '') + '. ' + nomeCurtoDaFase(s.fase)])]);
 ligarFiltro('plano', 'equipe', 'filtro-equipe', [['todas', 'Todas'], ...pares(EQUIPES)]);
 ligarFiltro('plano', 'dono', 'filtro-dono', [['todos', 'Todos'], ...pares(DONOS)]);
 ligarFiltro('plano', 'fase', 'filtro-fase', [['todas', 'Todas'], ...FASES.map((fase) => [fase.id, fase.nome])]);
