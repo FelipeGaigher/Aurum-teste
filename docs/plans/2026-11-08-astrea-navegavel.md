@@ -1844,8 +1844,8 @@ decisão subiu ao sovereign.
   Kanban mostra as fases da Q2. Base do RF-02 em `ab21425`.
 - Base do RF-02 passou de `ab21425` para `2f24358`: Felipe pediu, às 16h20, a saída do conjunto
   Atividades do escritório do Kanban. O quadro ganhou a altura da tela.
-- Base do RF-02 passou de `2f24358` para `6260dc0`: Felipe decidiu, às 19h15, o plano em 6 meses,
-  e o Kanban passou a 12 sprints com as histórias remapeadas.
+- Base do RF-02 passou de `2f24358` para `6260dc0`. Felipe decidiu o plano em 6 meses às 19h15.
+  O Kanban passou a 12 sprints, com as histórias remapeadas.
 - Decisão de Felipe pendente: limpeza das imagens com dado real no histórico,
   push e GitHub Pages. Script pronto fora do repositório.
 - Dois achados menores ficaram sem correção. Criar atividade pelo menu Adicionar
