@@ -136,7 +136,7 @@ A pasta reúne um Leia-me com todos os links e cinco PDFs. Os PDFs são as
 três questões, o processo e os ajustes na plataforma. O Figma e o protótipo entram como
 link. Os PDFs saem de `slides/` e das páginas HTML, sem a chave de tema.
 
-### Rodada de melhorias na revisão ao vivo, pedido de 08/11 entre 15h e 16h30
+### Rodada de melhorias na revisão ao vivo, pedido de 08/11 entre 15h35 e 16h05
 
 Felipe pediu estas melhorias enquanto revisava o protótipo.
 
@@ -147,7 +147,7 @@ Felipe pediu estas melhorias enquanto revisava o protótipo.
 - Resumo do caso nos processos, gerado pela IA do Astrea, com atores, local e data. Aparece no painel e na ficha. Em andamento.
 - Modo cards em Atendimentos, igual ao de Contatos. Em andamento.
 
-### Segunda rodada de melhorias, pedido de 08/11 entre 16h30 e 18h
+### Segunda rodada de melhorias, pedido de 08/11 entre 16h05 e 16h20
 
 Felipe seguiu a revisão ao vivo e pediu estes itens.
 
@@ -162,7 +162,7 @@ Felipe seguiu a revisão ao vivo e pediu estes itens.
 - Decisão de Felipe: saem o fundo vermelho das seções e a linha de números. Isso reverte o PA-39, estatísticas em linha de leitura. As seções já dizem o mesmo.
 - Correção: o menu de ações dentro de tabela que rola saía do quadro. O DS posiciona o menu em relação à tela.
 
-### Terceira rodada de melhorias, pedido de 08/11 entre 18h e 19h30
+### Terceira rodada de melhorias, pedido de 08/11 entre 16h20 e 17h
 
 Felipe seguiu a revisão ao vivo e pediu estes itens.
 
@@ -172,10 +172,10 @@ Felipe seguiu a revisão ao vivo e pediu estes itens.
 - Caminho de volta único: trilha com seta embaixo do título em toda página de segundo nível. Saem o chevron da ficha de processo e o link "Voltar para contatos".
 - Notificações: sino com contagem na navbar, ao lado do perfil. O painel abre à direita, no desenho da Náutica. Ele traz filtros por módulo e os grupos Para fazer e Avisos. Há também a marca Agora, Ver mais, Marcar avisos como lidos e Ver todos em Alertas. O badge sai do item Alertas do menu.
 - Limite das notificações: o Kanban tem cabeçalho próprio e ainda não mostra o sino.
-- Publicação: `main` subiu até `1e09261` às 18h40, com 55 commits. A rodada das notificações (`888faa8`) ficou local até o próximo "sobe".
+- Publicação: `main` subiu até `1e09261` às 16h45, com 55 commits. A rodada das notificações (`888faa8`) ficou local até o próximo "sobe".
 - Em andamento: varredura do Astrea em produção, só de leitura, e comparativo Astrea × protótipo por fluxo. Eles sustentam as respostas das questões.
 
-### Quarta rodada, 08/11 entre 19h30 e 21h
+### Quarta rodada, 08/11 entre 17h e 17h40
 
 A varredura e o comparativo fecharam. As correções saíram das regressões que o comparativo apontou.
 
@@ -190,4 +190,5 @@ A varredura e o comparativo fecharam. As correções saíram das regressões que
 - Busca do cabeçalho: leva a Resultados de buscas e filtra pelo termo.
 - DS: `botaoCopiar` exportado. No painel estreito, rótulo e valor empilham.
 - Menu lateral: Alertas saiu do menu. As notificações do cabeçalho assumem, e a página fica sob Área de trabalho.
+- Publicações da `main`: `0a23ba7` às 17h, `546595c` às 17h20 e `4c60f28` às 17h40.
 - Seguem abertos: prévia de documento, documentos na ficha do processo e painel em tela até 1100px.

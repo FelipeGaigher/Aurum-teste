@@ -94,6 +94,7 @@
 .ds-divisor-demo > .divisor { position: static; height: auto; }
 .divisor.is-hover::before, .divisor.is-foco::before { width: calc(var(--border-width) * 3); background-color: var(--color-action); }
 .divisor.is-foco { outline-offset: calc(-1 * var(--focus-width)); }
+.linha-atividade.is-selecionado { background-color: var(--color-bg-hover); box-shadow: inset calc(var(--focus-width) + var(--border-width)) 0 0 var(--color-action); }
 </style>
 </head>
 <body data-pagina="design-system.html" data-titulo="Design system">
@@ -1062,6 +1063,7 @@
           linha.querySelector('.linha-acoes .tooltip').classList.add('is-aberta');
           return linha;
         })())],
+        ['selecionado', lista(comClasse(linhaDemo(PROXIMA), 'is-selecionado'))],
         ['carregando', skeleton({ forma: 'linha', linhas: 4, rotulo: 'Carregando atividades' })],
       ],
       ausentes: {

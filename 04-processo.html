@@ -200,17 +200,17 @@
       <tr><td class="hora">08/11 13:00 a 13:40</td><td data-r="O quê">Área de trabalho, Agenda e os demais módulos, em até sete agentes em paralelo.</td></tr>
       <tr><td class="hora">08/11 13:27</td><td data-r="O quê">Tela da Questão 3 no Figma.</td></tr>
       <tr><td class="hora">08/11 13:46</td><td data-r="O quê">Fechamento com a suíte inteira verde.</td></tr>
-      <tr><td class="hora">08/11 15:00 a 16:30</td><td data-r="O quê">Rodada de melhorias pedidas por Felipe na revisão ao vivo do protótipo.</td></tr>
-      <tr><td class="hora">08/11 16:30 a 18:00</td><td data-r="O quê">Segunda rodada de melhorias pedidas por Felipe na revisão ao vivo.</td></tr>
-      <tr><td class="hora">08/11 18:00 a 19:30</td><td data-r="O quê">Terceira rodada de melhorias pedidas por Felipe: Kanban, Área de trabalho, trilha de volta e notificações. Publicação de <code>main</code> às 18h40.</td></tr>
-      <tr><td class="hora">08/11 19:30 a 21:00</td><td data-r="O quê">Quarta rodada: varredura do Astrea, comparativo por fluxo e correção das regressões que ele apontou.</td></tr>
+      <tr><td class="hora">08/11 15:35 a 16:05</td><td data-r="O quê">Rodada de melhorias pedidas por Felipe na revisão ao vivo do protótipo.</td></tr>
+      <tr><td class="hora">08/11 16:05 a 16:20</td><td data-r="O quê">Segunda rodada de melhorias pedidas por Felipe na revisão ao vivo.</td></tr>
+      <tr><td class="hora">08/11 16:20 a 17:00</td><td data-r="O quê">Terceira rodada de melhorias pedidas por Felipe: Kanban, Área de trabalho, trilha de volta e notificações. Publicação de <code>main</code> às 16h45.</td></tr>
+      <tr><td class="hora">08/11 17:00 a 17:40</td><td data-r="O quê">Quarta rodada: varredura do Astrea, comparativo por fluxo e correção das regressões que ele apontou.</td></tr>
     </tbody>
   </table>
 </section>
 
 <section>
   <h2>Rodada de melhorias na revisão ao vivo</h2>
-  <p>Entre 15h e 16h30 de 08/11, Felipe revisou o protótipo e pediu seis melhorias. A IA aplicou cada uma e executou os portões.</p>
+  <p>Entre 15h35 e 16h05 de 08/11, Felipe revisou o protótipo e pediu seis melhorias. A IA aplicou cada uma e executou os portões.</p>
   <ul>
     <li><strong>Lista e detalhe ao lado.</strong> Felipe decidiu o padrão para Contatos, Área de trabalho (Lista e Cards), Processos, Atendimentos, Alertas, Documentos e Resultados de buscas. O Kanban ficou de fora. As referências foram Cotação e Náutica. As peças do DS são <code>painelDetalhe</code> e <code>divisorRedimensionavel</code>.</li>
     <li><strong>Agenda.</strong> A visão por semana ganhou grade de horas e busca por título, processo ou responsável. A grade rola por dentro e não estoura a tela.</li>
@@ -223,7 +223,7 @@
 
 <section>
   <h2>Segunda rodada de melhorias na revisão ao vivo</h2>
-  <p>Entre 16h30 e 18h de 08/11, Felipe seguiu a revisão e pediu nove itens. A IA aplicou cada um e executou os portões.</p>
+  <p>Entre 16h05 e 16h20 de 08/11, Felipe seguiu a revisão e pediu nove itens. A IA aplicou cada um e executou os portões.</p>
   <ul>
     <li><strong>Modo cards.</strong> Atendimentos e Documentos ganharam o modo cards de Contatos. Documentos ganhou barra com busca e tipo.</li>
     <li><strong>Card de registro único.</strong> O DS ganhou <code>cardRegistro</code>, com três níveis de hierarquia e botão de copiar o número. Contatos, Atendimentos e Documentos o usam.</li>
@@ -240,20 +240,20 @@
 
 <section>
   <h2>Terceira rodada de melhorias na revisão ao vivo</h2>
-  <p>Entre 18h e 19h30 de 08/11, Felipe seguiu a revisão e pediu seis itens. A IA aplicou cada um e executou os portões.</p>
+  <p>Entre 16h20 e 17h de 08/11, Felipe seguiu a revisão e pediu seis itens. A IA aplicou cada um e executou os portões.</p>
   <ul>
     <li><strong>Kanban da gestão.</strong> Sai o conjunto "Atividades do escritório". O quadro ocupa a altura da tela, com rolagem nas colunas. A base do RF-02 passou de <code>ab21425</code> para <code>2f24358</code>.</li>
     <li><strong>Área de trabalho.</strong> As seções têm faixa que abre e fecha e tag de status. Item e subitens ficam no mesmo contêiner, com faixa branca e corpo no tom da página. A linha selecionada fica em azul-claro. A linha de números do topo saiu a pedido de Felipe, o que reverte o PA-39. A atividade atrasada ganha "Abrir processo". As ações do painel viram botões redondos de ícone.</li>
     <li><strong>Caminho de volta único.</strong> Toda página de segundo nível mostra a trilha com seta embaixo do título. Saem o chevron da ficha de processo e o link "Voltar para contatos".</li>
     <li><strong>Notificações.</strong> O sino com contagem fica na navbar, ao lado do perfil. O painel abre à direita, no desenho da Náutica. Ele traz filtros por módulo, os grupos Para fazer e Avisos, a marca Agora, Ver mais, Marcar avisos como lidos e Ver todos em Alertas. O badge sai do item Alertas do menu. Limite: o Kanban tem cabeçalho próprio e ainda não mostra o sino.</li>
-    <li><strong>Publicação.</strong> A <code>main</code> subiu até <code>1e09261</code> às 18h40, com 55 commits. A rodada das notificações (<code>888faa8</code>) ficou local até o próximo "sobe".</li>
+    <li><strong>Publicação.</strong> A <code>main</code> subiu até <code>1e09261</code> às 16h45, com 55 commits. A rodada das notificações (<code>888faa8</code>) ficou local até o próximo "sobe".</li>
     <li><strong>Em andamento.</strong> A varredura do Astrea em produção, só de leitura, e o comparativo Astrea × protótipo por fluxo. Eles sustentam as respostas das questões.</li>
   </ul>
 </section>
 
 <section>
   <h2>Quarta rodada: varredura, comparativo e correções</h2>
-  <p>Entre 19h30 e 21h de 08/11, a varredura e o comparativo fecharam. As correções saíram das regressões que o comparativo apontou.</p>
+  <p>Entre 17h e 17h40 de 08/11, a varredura e o comparativo fecharam. As correções saíram das regressões que o comparativo apontou.</p>
   <ul>
     <li><strong>Varredura do Astrea.</strong> A IA percorreu o Astrea em produção só com leitura. O registro mora em <code>docs/2026-11-08-varredura-astrea.md</code>.</li>
     <li><strong>Comparativo por fluxo.</strong> Cada fluxo conta os cliques nos dois lados e cita arquivo e linha. O arquivo é <code>docs/2026-11-08-comparativo-astrea-prototipo.md</code>.</li>
@@ -264,6 +264,7 @@
     <li><strong>Criar e buscar.</strong> O painel de nova atividade traz o processo de origem. A busca do cabeçalho leva a Resultados de buscas e filtra pelo termo.</li>
     <li><strong>Design system.</strong> O DS exporta <code>botaoCopiar</code>. No painel estreito, rótulo e valor empilham por <code>@container</code>.</li>
     <li><strong>Menu lateral.</strong> Alertas saiu do menu. As notificações do cabeçalho assumem, e a página fica sob Área de trabalho.</li>
+    <li><strong>Publicações.</strong> A <code>main</code> recebeu <code>0a23ba7</code> às 17h, <code>546595c</code> às 17h20 e <code>4c60f28</code> às 17h40.</li>
     <li><strong>Seguem abertos.</strong> A prévia de documento, os documentos na ficha do processo e o painel em tela até 1100px.</li>
   </ul>
 </section>
