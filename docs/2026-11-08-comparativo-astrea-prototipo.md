@@ -116,6 +116,7 @@ Onde o protótipo ainda não melhorou, com a correção proposta:
 1. Documentos: o protótipo não abre arquivo nem mostra prévia. "Baixar" só avisa (`documentos.html:390-391`). Proposta: prévia no painel ao lado.
 2. Tela até 1100 px: o painel ao lado some, e a Área de trabalho fica sem detalhe (`astrea.css:1818`). Proposta: o painel abre por cima, como em Alertas.
 3. Agenda: não há filtro de etiqueta, que o Astrea tem.
+4. Administração: `administracao.html#plano` não abre a aba Meu plano. Proposta: ler `location.hash` ao carregar.
 
 Ficaram sem verificação no Astrea a lista de Documentos com itens e os formulários de processo e de atendimento. O destino dos links de Estatísticas também.
 
@@ -135,6 +136,7 @@ A lista anterior tinha 12 itens. Dez fecharam, e os números abaixo seguem essa 
 Os itens 8 e 10 seguem abertos e voltaram como 1 a 3 da lista acima.
 
 - Depois: a ficha do processo lista os documentos ligados ao número (`processos.html`). Processos, Atendimentos, Documentos e Agenda usam `DS.botaoCopiar`, sem cópia local.
+- 20h: os cards da Área de trabalho perderam os botões de ação. O painel de detalhe concentra Concluir, Adiar e Abrir processo.
 
 ## Ligação com as questões
 
