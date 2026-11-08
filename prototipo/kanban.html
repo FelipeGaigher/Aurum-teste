@@ -986,6 +986,8 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   background-color: var(--color-bg-surface);
 }
 .subtarefa + .subtarefa { margin-top: var(--space-2); }
+/* o hover realça o card inteiro da subtarefa, com o raio do card, e não só o cabeçalho */
+.subtarefa:hover { background-color: var(--color-bg-subtle); border-color: var(--color-border-strong); }
 /* Grade de três colunas: marcador, título e seta na primeira linha; a sprint embaixo do título. */
 .subtarefa-resumo {
   display: grid;
@@ -1012,7 +1014,7 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   transition: rotate 150ms;
 }
 .subtarefa[open] > .subtarefa-resumo::after { rotate: 225deg; translate: 0 2px; }
-.subtarefa-resumo:hover { background-color: var(--color-bg-subtle); }
+.subtarefa-resumo { border-radius: var(--radius-card); }
 .subtarefa-resumo b { font-weight: var(--font-weight-semibold); }
 .subtarefa-marcador {
   flex: none;
