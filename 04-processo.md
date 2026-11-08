@@ -220,3 +220,13 @@ com data. O que foi entregue fica no commit, não aqui.
 - Felipe pediu a página do protótipo dividida por fluxo, e não por tela.
   Os estados entram pela URL do protótipo: `?criar=prazo`, `?ficha=`,
   `?adicionar`. Dez capturas em paralelo, cada uma com porta própria.
+- Às 16h40 o ajuste fino do protótipo fechou. As doze telas do Figma
+  foram capturadas de novo. São os dez estados da página Protótipo, a
+  Área de trabalho da Questão 3 e o design system. A captura entra como
+  nó novo. Cada quadro antigo foi apagado, e o novo assumiu a posição e
+  o nome dele. As seções cresceram para caber a ficha do
+  processo e o cadastro, que ficaram mais altos.
+- Felipe reprovou os prints anotados do deck da Questão 1: "parece um
+  paint". O deck foi refeito no molde da Questão 2. Um problema por
+  slide, texto à esquerda e evidência desenhada à direita. Dois números
+  do brief saíram por não existirem nas fontes.
