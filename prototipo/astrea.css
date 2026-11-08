@@ -4,6 +4,8 @@
   --primitive-blue-logo: #008fd5; /* logo; nao e variavel do produto */
   --primitive-blue-900: #1d6bb7; /* --primary900 */
   --primitive-blue-1000: #17558f; /* derivado do --primary900, um degrau abaixo, para hover */
+  --primitive-blue-100: #e8f1fb; /* hover azul-claro */
+  --primitive-blue-200: #bcd6f1; /* divisoria azul-clara */
   --primitive-gray-0: #ffffff; /* branco da pagina */
   --primitive-gray-50: #f8f9fa; /* fundo da página: um passo abaixo do branco dos painéis */
   --primitive-gray-100: #f1f3f4; /* --gray100 */
@@ -112,7 +114,7 @@
   --color-bg-page: var(--primitive-gray-50);
   --color-bg-surface: var(--primitive-gray-0);
   --color-bg-subtle: var(--primitive-gray-100);
-  --color-bg-hover: var(--primitive-gray-300);
+  --color-bg-hover: var(--primitive-blue-100);
   --color-text-default: var(--primitive-gray-900);
   --color-text-muted: var(--primitive-gray-600);
   --color-text-danger: var(--primitive-danger-500);
@@ -141,6 +143,7 @@
   --color-logo: var(--primitive-blue-logo);
   --color-border-default: var(--primitive-gray-300);
   --color-border-strong: var(--primitive-gray-500);
+  --color-border-accent: var(--primitive-blue-200);
   --color-action: var(--primitive-blue-900);
   --color-action-hover: var(--primitive-blue-1000);
   --color-action-text: var(--primitive-gray-0);
@@ -221,6 +224,7 @@
     --color-bg-warning: var(--primitive-warning-dark-100);
     --color-border-default: var(--primitive-dark-500);
     --color-border-strong: var(--primitive-dark-400);
+    --color-border-accent: var(--primitive-dark-400);
     --color-action: var(--primitive-blue-400);
     --color-action-hover: var(--primitive-blue-300);
     --color-action-text: var(--primitive-dark-950);
@@ -244,6 +248,7 @@
   --color-bg-warning: var(--primitive-warning-dark-100);
   --color-border-default: var(--primitive-dark-500);
   --color-border-strong: var(--primitive-dark-400);
+  --color-border-accent: var(--primitive-dark-400);
   --color-action: var(--primitive-blue-400);
   --color-action-hover: var(--primitive-blue-300);
   --color-action-text: var(--primitive-dark-950);
@@ -1175,7 +1180,7 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
   flex: none;
   width: var(--component-switch-width);
   height: var(--component-switch-height);
-  background-color: var(--color-bg-hover);
+  background-color: var(--color-border-default);
   border-radius: var(--radius-pill);
   transition: background-color 150ms;
 }
@@ -1614,6 +1619,70 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .painel-lateral-corpo { display: grid; align-content: start; justify-items: start; gap: var(--space-4); min-width: 0; padding: var(--space-5); overflow-y: auto; }
 .painel-lateral-rodape { padding: var(--space-3) var(--space-5); border-top: var(--border-width) solid var(--color-border-default); }
 .painel-lateral-rodape > .barra-acoes { position: static; padding: 0; background: none; border: 0; }
+
+/* painel de detalhe: o cartão do item escolhido no fluxo, ao lado da lista. Empurra a lista, nunca a cobre. */
+.lista-e-detalhe { display: flex; align-items: flex-start; min-width: 0; }
+.lista-e-detalhe > :first-child { flex: 1 1 0; min-width: 0; }
+.lista-e-detalhe > [hidden], .painel-detalhe [hidden] { display: none; }
+.painel-detalhe {
+  position: sticky;
+  top: calc(var(--component-header-height) + var(--space-4));
+  flex: 0 0 var(--largura-redimensionavel);
+  min-width: 0;
+}
+.painel-detalhe[data-oculto] { flex: none; margin-left: var(--space-2); }
+.painel-detalhe-card {
+  display: grid;
+  max-height: calc(100vh - var(--component-header-height) - var(--space-6));
+  overflow-y: auto;
+  background-color: var(--color-bg-surface);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.painel-detalhe-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); padding: var(--space-4) var(--space-5) var(--space-3); }
+.painel-detalhe-identidade { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.painel-detalhe-identidade .avatar-inicial { width: var(--component-person-size); height: var(--component-person-size); }
+.painel-detalhe-textos { display: grid; justify-items: start; gap: var(--space-1); min-width: 0; }
+.painel-detalhe-titulo { margin: 0; font-size: var(--font-size-dialog); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); overflow-wrap: anywhere; }
+.painel-detalhe-chips { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.painel-detalhe-nav { display: flex; flex: none; gap: var(--space-1); }
+.painel-detalhe-conteudo > * { margin: 0; padding: var(--space-3) var(--space-5); border-top: var(--border-width) solid var(--color-border-default); }
+.painel-detalhe-destaque-rotulo { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
+.painel-detalhe-destaque-valor { margin: var(--space-1) 0 0; font-size: var(--font-size-title); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.painel-detalhe-linha { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); padding: var(--space-2) 0; }
+.painel-detalhe-linha + .painel-detalhe-linha { border-top: var(--border-width) solid var(--color-border-default); }
+.painel-detalhe-linha dt { display: inline-flex; flex: none; align-items: center; gap: var(--space-2); color: var(--color-text-muted); font-size: var(--font-size-label); }
+.painel-detalhe-linha dd { min-width: 0; margin: 0; text-align: end; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.painel-detalhe-rodape { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); padding: var(--space-3) var(--space-5); border-top: var(--border-width) solid var(--color-border-default); }
+.painel-detalhe-reabrir { border-radius: var(--radius-round); box-shadow: var(--shadow-card); }
+
+/* divisor: alvo largo, linha fina. Hover, arrasto e foco engrossam a linha na cor de ação. */
+.divisor {
+  position: sticky;
+  top: calc(var(--component-header-height) + var(--space-4));
+  display: flex;
+  flex: 0 0 var(--space-4);
+  justify-content: center;
+  height: calc(100vh - var(--component-header-height) - var(--space-6));
+  border-radius: var(--radius);
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+.divisor::before { content: ''; width: calc(var(--border-width) * 2); background-color: var(--color-border-default); transition: background-color 150ms, width 150ms; }
+.divisor:hover::before, .divisor.is-arrastando::before, .divisor:focus-visible::before { width: calc(var(--border-width) * 3); background-color: var(--color-action); }
+.divisor:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
+@media (prefers-reduced-motion: reduce) { .divisor::before { transition: none; } }
+/* Abaixo de 1100 px o cartão não cabe ao lado: a lista ocupa a largura e o item abre a ficha. */
+@media (max-width: 1100px) { .lista-e-detalhe > .divisor, .lista-e-detalhe > .painel-detalhe { display: none; } }
+
+/* Item escolhido: linha com faixa de ação à esquerda; card com borda de ação. */
+.tabela tbody tr[data-selecionavel] { cursor: pointer; }
+.tabela tbody tr[data-selecionavel]:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
+.tabela tbody tr[aria-selected="true"] td { background-color: var(--color-bg-subtle); }
+.tabela tbody tr[aria-selected="true"] td:first-child { box-shadow: inset calc(var(--focus-width) + var(--border-width)) 0 0 var(--color-action); }
+.card-contato.is-selecionado, .card-atividade.is-selecionado { border-color: var(--color-action); box-shadow: inset 0 0 0 var(--border-width) var(--color-action); }
 
 /* criar atividade: os campos do tipo escolhido, e a confirmação de saída no lugar do rodapé (PA-59) */
 /* Campos do painel preenchem a largura (fill); Data e Até dividem uma linha (pedido de Felipe, 08/11). */

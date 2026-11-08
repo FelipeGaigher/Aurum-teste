@@ -59,6 +59,15 @@
   }
   .contatos-cards .card-contato { width: auto; height: 100%; }
 
+  /* Painel do contato: atividades do processo ligado, uma por linha, o prazo primeiro. */
+  .detalhe-atividades-titulo { margin: 0 0 var(--space-2); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
+  .detalhe-atividades-lista { margin: 0; padding: 0; list-style: none; }
+  .detalhe-atividade { display: grid; justify-items: start; gap: var(--space-1); padding: var(--space-2) 0; }
+  .detalhe-atividade + .detalhe-atividade { border-top: var(--border-width) solid var(--color-border-default); }
+  .detalhe-atividade-linha { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+  .detalhe-atividade-titulo { overflow-wrap: anywhere; }
+  .painel-detalhe-secao:has(> .detalhe-aviso:empty) { display: none; }
+
   /* Ficha e adicionar: Voltar acima do título, e o título com as tags na mesma linha. */
   .registro-topo { display: grid; justify-items: start; gap: var(--space-2); margin-bottom: var(--space-4); }
   .registro-voltar {
@@ -99,7 +108,7 @@
   .ficha-filtro { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
 
   /* PA-67 e M10: linhas de campos com larguras por token, alinhadas à margem do título. */
-  .cadastro { display: grid; gap: var(--space-4); margin-bottom: var(--space-5); }
+  .cadastro { display: grid; gap: var(--space-4); margin-bottom: var(--space-5); padding: var(--space-4) var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
   .form-secao { display: grid; gap: var(--space-4); }
   /* Formulário em grade regular: três colunas iguais, campos preenchem a célula, mesmo respiro entre linhas (pedido de Felipe, 08/11). */
   /* Ritmo do DS: o mesmo gap do painel de criar atividade (--space-4) entre as linhas, sem margem extra. */
@@ -189,7 +198,7 @@
     resultado.id = 'contatos-resultado';
 
     function desenharTabela(itens) {
-      return DS.tabela({
+      const quadro = DS.tabela({
         rotulo: 'Contatos',
         colunas: [['nome', 'Nome'], ['tipo', 'Tipo'], ['telefone', 'Telefone'], ['email', 'E-mail'], ['etiquetas', 'Etiquetas']],
         linhas: itens.map((c) => {
@@ -200,6 +209,13 @@
           return { nome, tipo: DS.tag({ rotulo: c.tipo }), telefone: c.telefone, email: c.email, etiquetas };
         }),
       });
+      // O nome segue link para a ficha; o resto da linha escolhe o contato do painel.
+      quadro.querySelectorAll('tbody tr').forEach((tr, i) => {
+        tr.dataset.id = itens[i].id;
+        tr.dataset.selecionavel = '';
+        tr.tabIndex = 0;
+      });
+      return quadro;
     }
 
     function desenharCards(itens) {
@@ -207,9 +223,10 @@
       ul.setAttribute('aria-label', 'Contatos');
       ul.append(...itens.map((c) => {
         const li = criar('li');
+        li.dataset.id = c.id;
         li.append(DS.cardContato({
           nome: c.nome, tipo: c.tipo, email: c.email, telefone: c.telefone, processo: c.processo,
-          aoAbrir: () => { location.href = urlDaFicha(c); },
+          aoAbrir: () => detalhe.escolher(c.id),
         }));
         return li;
       }));
@@ -226,10 +243,20 @@
           titulo: 'Nenhum contato com estes filtros',
           texto: 'Os filtros avançados leem dados que estes contatos ainda não têm. Limpe os filtros para ver todos.',
         }));
-        return;
+      } else {
+        resultado.replaceChildren(estado.visao === 'cards' ? desenharCards(itens) : desenharTabela(itens));
       }
-      resultado.replaceChildren(estado.visao === 'cards' ? desenharCards(itens) : desenharTabela(itens));
+      detalhe.sincronizar(itens);
     }
+
+    const detalhe = detalheDosContatos(resultado, filtrados);
+    resultado.addEventListener('click', (e) => {
+      const tr = e.target.closest('tr[data-id]');
+      if (tr && !e.target.closest('a, button')) detalhe.escolher(tr.dataset.id);
+    });
+    resultado.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.matches('tr[data-id]')) { e.preventDefault(); detalhe.escolher(e.target.dataset.id); }
+    });
 
     // --- formato: radiogroup com foco itinerante (padrão Segmentado) -----------
 
@@ -353,9 +380,137 @@
     main.append(barra.el);
 
     if (CONTATOS.length > MINIMO_DO_ALFABETO) main.append(alfabeto(estado, desenhar));
-    main.append(resultado);
+    main.append(detalhe.casca);
+    detalhe.divisor.ajustar();
     marcarVisao();
     desenhar();
+  }
+
+  // --- detalhe ao lado da lista (padrão do Cotação da Fotus e da náutica) ------
+
+  const CHAVE_DETALHE = 'astrea-contatos-detalhe-id';
+  const CHAVE_LARGURA = 'astrea-contatos-detalhe-largura';
+  const CHAVE_OCULTO = 'astrea-contatos-detalhe-oculto';
+  const LISTA_MINIMA = 480;
+  const PERFIS = { clientes: 'Cliente', contatos: 'Contato' };
+  const TIPOS = { tarefa: 'Tarefa', prazo: 'Prazo', audiencia: 'Audiência', evento: 'Evento' };
+  const ESTREITA = window.matchMedia('(max-width: 1100px)');
+
+  function ler(chave) {
+    try { return localStorage.getItem(chave); } catch (e) { return null; }
+  }
+
+  function gravar(chave, valor) {
+    try { localStorage.setItem(chave, valor); } catch (e) { /* sem armazenamento */ }
+  }
+
+  function atividadesDoProcesso(c) {
+    const lista = window.DADOS.ATIVIDADES.filter((a) => c.processo && a.processo === c.processo);
+    const secao = criar('section', 'detalhe-atividades');
+    const titulo = criar('h3', 'detalhe-atividades-titulo', `Atividades do processo (${lista.length})`);
+    if (!lista.length) {
+      secao.append(titulo, DS.estadoVazio({ titulo: 'Nenhuma atividade neste processo.', texto: 'Prazos, tarefas e audiências do processo ligado aparecem aqui.' }));
+      return secao;
+    }
+    const ul = criar('ul', 'detalhe-atividades-lista');
+    ul.append(...lista.map((a) => {
+      const li = criar('li', 'detalhe-atividade');
+      const linha = criar('div', 'detalhe-atividade-linha');
+      linha.append(criar('span', 'detalhe-atividade-titulo', a.titulo), DS.tag({ rotulo: TIPOS[a.tipo] }));
+      li.append(DS.chipPrazo(DS.descreverPrazo(a.prazoEmDias, a.status === 'concluido')), linha);
+      return li;
+    }));
+    secao.append(titulo, ul);
+    return secao;
+  }
+
+  function dadosDoDetalhe(c, itens, aviso) {
+    const docs = (window.DADOS.DOCUMENTOS_DE_CONTATO || {})[c.id] || [];
+    const processo = window.DADOS.PROCESSOS.find((p) => p.numero === c.processo);
+    const linhas = [
+      { icone: 'info', rotulo: 'Telefone', valor: c.telefone },
+      { icone: 'info', rotulo: 'E-mail', valor: c.email },
+      { icone: 'busca', rotulo: 'Origem', valor: '' },
+      { icone: 'marca', rotulo: 'Etiquetas', valor: c.etiquetas.join(', ') },
+      { icone: 'info', rotulo: 'Responsável', valor: processo ? processo.responsavel : '' },
+    ];
+    if (docs.length) linhas.push({ icone: 'arquivar', rotulo: 'Documentos', valor: `${docs.length} ${docs.length === 1 ? 'documento' : 'documentos'}` });
+
+    const editar = DS.botao({ variante: 'secundario', iconeEsquerda: 'editar', rotulo: 'Editar' });
+    editar.addEventListener('click', () => aviso.replaceChildren(DS.faixaAviso({
+      tipo: 'info', fechar: true,
+      mensagem: 'Editar pelo painel fica para uma próxima versão. Abra a ficha para ver e alterar o cadastro.',
+    })));
+    const abrir = criar('a', 'botao botao-primario', 'Abrir ficha');
+    abrir.href = urlDaFicha(c);
+    aviso.replaceChildren();
+    return {
+      titulo: c.nome, avatar: c.nome, chips: [c.tipo, PERFIS[c.perfil]],
+      destaque: { rotulo: 'Processo ligado', valor: c.processo || 'Nenhum processo ligado' },
+      linhas, corpo: [atividadesDoProcesso(c), aviso], acoes: [editar, abrir], navegavel: itens.length > 1,
+    };
+  }
+
+  function marcarEscolhido(lista, id) {
+    lista.querySelectorAll('[data-id]').forEach((el) => {
+      const sim = el.dataset.id === id;
+      if (el.tagName === 'TR') { el.setAttribute('aria-selected', String(sim)); return; }
+      const card = el.querySelector('.card-contato');
+      if (card) card.classList.toggle('is-selecionado', sim);
+      const nome = el.querySelector('.card-contato-abrir');
+      if (nome) nome.setAttribute('aria-pressed', String(sim));
+    });
+  }
+
+  // Sem escolha gravada, o primeiro da lista. Se o filtro tira o escolhido, volta ao primeiro.
+  function detalheDosContatos(lista, obterItens) {
+    let escolhido = ler(CHAVE_DETALHE);
+    let itens = [];
+    const aviso = criar('div', 'detalhe-aviso');
+    const atual = () => itens.find((c) => c.id === escolhido) || itens[0];
+    function andar(passo) {
+      const i = itens.indexOf(atual());
+      escolher(itens[(i + passo + itens.length) % itens.length].id);
+    }
+    const painel = DS.painelDetalhe({
+      rotulo: 'Contato escolhido',
+      rotulos: { anterior: 'Contato anterior da lista', proximo: 'Próximo contato da lista',
+        esconder: 'Esconder o painel do contato', mostrar: 'Mostrar o painel do contato' },
+      aoAnterior: () => andar(-1),
+      aoProximo: () => andar(1),
+      aoFechar: () => { gravar(CHAVE_OCULTO, '1'); divisor.el.hidden = true; },
+      aoReabrir: () => { gravar(CHAVE_OCULTO, ''); divisor.el.hidden = false; },
+    });
+    painel.el.id = 'contato-detalhe';
+    const divisor = DS.divisorRedimensionavel({
+      alvo: painel.el, rotulo: 'Largura do painel do contato', minimo: 300, maximo: 560, padrao: 380,
+      chave: CHAVE_LARGURA, reserva: LISTA_MINIMA,
+    });
+    const casca = criar('div', 'lista-e-detalhe');
+    casca.append(lista, divisor.el, painel.el);
+    if (ler(CHAVE_OCULTO) === '1') { painel.esconder(); divisor.el.hidden = true; }
+
+    function sincronizar(novos) {
+      itens = novos;
+      const c = atual();
+      painel.el.hidden = !c;
+      divisor.el.hidden = !c || painel.oculto();
+      marcarEscolhido(lista, c ? c.id : '');
+      if (c) painel.mostrar(dadosDoDetalhe(c, itens, aviso));
+    }
+
+    // As setas e o fechar do painel são fixos: trocar o item não tira o foco deles.
+    function escolher(id) {
+      const c = itens.find((x) => x.id === id);
+      if (!c) return;
+      if (ESTREITA.matches) { location.href = urlDaFicha(c); return; }
+      escolhido = id;
+      gravar(CHAVE_DETALHE, id);
+      if (painel.oculto()) { painel.reabrir(); divisor.el.hidden = false; gravar(CHAVE_OCULTO, ''); }
+      sincronizar(obterItens());
+    }
+
+    return { casca, divisor, escolher, sincronizar };
   }
 
   function alfabeto(estado, desenhar) {

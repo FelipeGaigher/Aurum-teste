@@ -77,9 +77,10 @@
     gap: var(--space-2);
     margin-bottom: var(--space-3);
     padding-bottom: var(--space-2);
-    border-bottom: var(--border-width) solid var(--color-border-strong);
+    border-bottom: var(--border-width) solid var(--color-border-accent);
   }
   .bloco-cabeca h2, .bloco-cabeca h3 { margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+  .bloco { min-width: 0; padding: var(--space-4) var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
   .dados { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-2) var(--space-4); margin: 0; }
   .contagem { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
   /* Linha do tempo: data, ícone de origem sobre o trilho, descrição. */
