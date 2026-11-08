@@ -114,10 +114,8 @@ O Astrea já tem o padrão de copiar ao clicar. O protótipo iguala esse padrão
 Onde o protótipo ainda não melhorou, com a correção proposta:
 
 1. Documentos: o protótipo não abre arquivo nem mostra prévia. "Baixar" só avisa (`documentos.html:390-391`). Proposta: prévia no painel ao lado.
-2. Ficha do processo: o bloco Documentos mostra sempre o estado vazio (`processos.html:928-932`). Proposta: listar os documentos de `dados.js` ligados ao número.
-3. Tela até 1100 px: o painel ao lado some, e a Área de trabalho fica sem detalhe (`astrea.css:1818`). Proposta: o painel abre por cima, como em Alertas.
-4. Agenda: não há filtro de etiqueta, que o Astrea tem.
-5. Dívida de código: Processos, Atendimentos, Documentos e Agenda mantêm cópia local do botão de copiar. O DS já exporta `botaoCopiar` (`componentes.js:2773`). Proposta: trocar as cópias pela peça do DS.
+2. Tela até 1100 px: o painel ao lado some, e a Área de trabalho fica sem detalhe (`astrea.css:1818`). Proposta: o painel abre por cima, como em Alertas.
+3. Agenda: não há filtro de etiqueta, que o Astrea tem.
 
 Ficaram sem verificação no Astrea a lista de Documentos com itens e os formulários de processo e de atendimento. O destino dos links de Estatísticas também.
 
@@ -135,6 +133,8 @@ A lista anterior tinha 12 itens. Dez fecharam, e os números abaixo seguem essa 
 - DS: `botaoCopiar` saiu exportado. No painel estreito, rótulo e valor empilham por `@container` (`astrea.css:1793`).
 
 Os itens 8 e 10 seguem abertos e voltaram como 1 a 3 da lista acima.
+
+- Depois: a ficha do processo lista os documentos ligados ao número (`processos.html`), e Processos, Atendimentos, Documentos e Agenda usam `DS.botaoCopiar` no lugar das cópias locais.
 
 ## Ligação com as questões
 
