@@ -6,81 +6,144 @@
 <title>Q1: diagnóstico e direção de design do Astrea</title>
 <style>
   :root {
-    --paper: #ffffff; --surface: #eef1f6; --ink: #1b2a4a; --text: #1b2a4a; --muted: #5b6478; --inverse: #ffffff;
-    --line: #c9cfda; --line-strong: #1b2a4a; --stamp: #b3261e; --page: #f3f4f7; --radius: 4px; --veil: rgba(255, 255, 255, 0.72);
+    --paper: #ffffff;
+    --surface: #eef1f6;
+    --ink: #1b2a4a;
+    --text: #1b2a4a;
+    --muted: #5b6478;
+    --inverse: #ffffff;
+    --line: #c9cfda;
+    --line-strong: #1b2a4a;
+    --stamp: #b3261e;
+    --link: #0a74d1;
+    --page: #f3f4f7;
+    --radius: 4px;
     --serif: "Fraunces", "Source Serif 4", Georgia, "Times New Roman", serif;
     --sans: "Geist", "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   }
+
   * { box-sizing: border-box; }
   html, body { margin: 0; }
-  body { background: var(--page); color: var(--text); font-family: var(--sans); padding: 24px 16px 64px; }
-  .capa { max-width: 1600px; margin: 0 auto 24px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  body {
+    background: var(--page);
+    color: var(--text);
+    font-family: var(--sans);
+    padding: 24px 16px 64px;
+  }
 
-  .slide { container-type: inline-size; position: relative; width: min(100%, 1600px); aspect-ratio: 16 / 9; margin: 0 auto 32px; background: var(--paper); color: var(--text); overflow: hidden; border: 1px solid var(--line); }
-  .item { position: absolute; top: 2.6cqw; left: 3.6cqw; right: 3.6cqw; margin: 0; font-size: 0.833cqw; font-weight: 500; line-height: 1.3; color: var(--text); }
-  .pergunta { position: absolute; top: 3.85cqw; left: 3.6cqw; right: 3.6cqw; margin: 0; font-size: 0.9375cqw; line-height: 1.3; color: var(--muted); }
+  .capa {
+    max-width: 1600px; margin: 0 auto 24px; color: var(--muted); font-size: 14px; line-height: 1.5;
+  }
+  .capa strong { color: var(--text); font-weight: 500; }
+
+  /* Cada slide é um frame de 1920 × 1080. As medidas em cqw escalam a partir dele:
+     1cqw = 19,2px no tamanho original. */
+  .slide {
+    container-type: inline-size;
+    width: min(100%, 1600px);
+    aspect-ratio: 16 / 9;
+    margin: 0 auto 32px;
+    background: var(--paper);
+    color: var(--text);
+    display: flex; flex-direction: column;
+    padding: 2.6cqw 3.6cqw 2.917cqw;
+    gap: 2.083cqw;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .item { font-size: 0.833cqw; font-weight: 500; line-height: 1.3; color: var(--text); margin: 0 0 0.26cqw; }
+  .pergunta { font-size: 0.9375cqw; line-height: 1.3; color: var(--muted); margin: 0 0 0.833cqw; max-width: 78cqw; }
   .pergunta::before { content: "“"; } .pergunta::after { content: "”"; }
-  .rodape { position: absolute; left: 3.6cqw; right: 3.6cqw; bottom: 1.3cqw; margin: 0; display: flex; justify-content: space-between; font-size: 0.729cqw; color: var(--muted); }
-  h2 { position: absolute; top: 5.7cqw; left: 3.6cqw; right: 3.6cqw; margin: 0; font-family: var(--serif); font-weight: 400; font-size: 3.5cqw; line-height: 1.08; letter-spacing: -0.008em; }
-  .area { position: absolute; top: 12.3cqw; left: 3.6cqw; right: 3.6cqw; bottom: 3.4cqw; display: grid; gap: 4cqw; }
-  .coluna { display: flex; flex-direction: column; min-width: 0; min-height: 0; justify-content: space-between; gap: 1cqw; }
-  h3 { display: flex; align-items: center; gap: 0.8cqw; margin: 0; font-size: 1.75cqw; font-weight: 500; line-height: 1.2; }
-  .n { flex: none; display: inline-grid; place-items: center; width: 2.1cqw; height: 2.1cqw; border-radius: 50%; background: var(--stamp); color: var(--inverse); font-size: 1.15cqw; font-weight: 600; font-variant-numeric: tabular-nums; }
-  .por-que { margin: 0; font-family: var(--serif); font-size: 1.55cqw; line-height: 1.25; }
-  .tag { font-size: 1cqw; font-weight: 400; color: var(--stamp); border: 1px solid currentColor; border-radius: var(--radius); padding: 0.1cqw 0.5cqw; }
+  h2 { font-family: var(--serif); font-weight: 400; font-size: 2.917cqw; line-height: 1.1; margin: 0; max-width: 84cqw; letter-spacing: -0.005em; }
+  .corpo { flex: 1; display: flex; gap: 4.167cqw; align-items: flex-start; min-height: 0; }
+  .col { display: flex; flex-direction: column; gap: 1.25cqw; min-width: 0; }
+  .col.fill { flex: 1; }
+  .rodape { display: flex; justify-content: space-between; font-size: 0.729cqw; color: var(--muted); }
+
+  p { margin: 0; line-height: 1.45; }
+  .tese { font-size: 1.302cqw; }
+  .texto { font-size: 1.042cqw; }
+  .nota { font-size: 0.833cqw; color: var(--muted); }
+  h3 { font-size: 0.885cqw; font-weight: 500; color: var(--muted); margin: 0; line-height: 1.3; }
+  .id { white-space: nowrap; }
+  code { font-family: var(--sans); font-variant-numeric: tabular-nums; }
 
   svg { display: block; width: 100%; height: auto; }
   svg text { font-family: var(--sans); fill: var(--text); }
-  .veu { fill: var(--veil); }
-  .anel { fill: none; stroke: var(--stamp); stroke-width: 5; }
-  .pino circle { fill: var(--stamp); }
-  .pino text { fill: #ffffff; font-weight: 600; font-size: 30px; text-anchor: middle; }
-  .moldado { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 
-  /* 1 */
-  .s1 h2 { top: 5.9cqw; font-size: 5.2cqw; }
-  .s1 .tela { position: absolute; left: 0; bottom: 0; width: 77.4cqw; border-top: 1px solid var(--line); border-right: 1px solid var(--line); }
-  .s1 ol { position: absolute; left: 79.8cqw; right: 3.6cqw; top: 19.4cqw; margin: 0; padding: 0; list-style: none; display: grid; gap: 1.9cqw; }
-  .s1 li { display: grid; grid-template-columns: 2.1cqw 1fr; gap: 0.8cqw; font-size: 1.42cqw; line-height: 1.22; font-weight: 500; }
+  /* Abertura */
+  .abertura h2 { font-size: 3.646cqw; line-height: 1.08; max-width: 70cqw; }
+  .abertura .corpo { flex-direction: column; gap: 1.667cqw; }
+  .abertura .tese { max-width: 62cqw; color: var(--muted); }
+  ol.problemas { list-style: none; margin: 0; padding: 0; width: 100%; counter-reset: problema; }
+  ol.problemas li {
+    display: grid; grid-template-columns: 3.125cqw 34cqw 1fr 15.625cqw; gap: 2.083cqw; align-items: baseline;
+    padding: 1.146cqw 0; border-top: 1px solid var(--line);
+  }
+  ol.problemas li:last-child { border-bottom: 1px solid var(--line); }
+  ol.problemas li::before { counter-increment: problema; content: counter(problema); font-family: var(--serif); font-size: 2.292cqw; line-height: 1; }
+  ol.problemas b { font-weight: 500; font-size: 1.354cqw; line-height: 1.3; }
+  ol.problemas span { font-size: 1.042cqw; line-height: 1.4; }
+  ol.problemas i { font-style: normal; font-size: 0.885cqw; color: var(--muted); line-height: 1.35; }
 
-  /* 2 */
-  .s2 .area { grid-template-columns: 50fr 38.8fr; }
-  .agenda { display: grid; grid-template-columns: 1fr 8.4cqw; gap: 1.2cqw; align-items: center; }
-  .numero { margin: 0 0 1.8cqw; font-size: 1.05cqw; line-height: 1.25; color: var(--muted); }
-  .numero:last-child { margin-bottom: 0; }
-  .numero b { display: block; font-family: var(--serif); font-weight: 400; font-size: 3.1cqw; line-height: 1.05; color: var(--stamp); margin-bottom: 0.3cqw; }
-  .fantasma { fill: url(#hachura); stroke: var(--line); stroke-width: 2; }
-  .dobra { stroke: var(--stamp); stroke-width: 6; }
-  .dobra-txt { fill: var(--stamp); font-size: 54px; font-weight: 500; text-anchor: middle; }
-  .no { fill: var(--paper); stroke: var(--line-strong); stroke-width: 2; }
-  .no-oculto { fill: var(--paper); stroke: var(--stamp); stroke-width: 2; stroke-dasharray: 7 6; }
-  .nucleo { fill: var(--ink); }
-  .fio { stroke: var(--line-strong); stroke-width: 2; fill: none; }
-  .fio-oculto { stroke: var(--stamp); stroke-width: 2; stroke-dasharray: 7 6; fill: none; }
-  .ctr { text-anchor: middle; font-size: 27px; }
-  svg .inv { fill: var(--inverse); font-weight: 500; }
-  svg .verm { fill: var(--stamp); }
-  svg .sutil { fill: var(--muted); }
-  svg .dif { fill: var(--stamp); font-size: 74px; text-anchor: middle; font-family: var(--serif); }
+  /* Slides de problema: texto à esquerda, evidência desenhada à direita */
+  .corpo.problema { align-items: stretch; }
+  .col.lado { width: 36.458cqw; flex: none; gap: 1.563cqw; }
+  .col.evidencia { flex: 1; justify-content: flex-start; gap: 1.042cqw; }
+  .bloco-txt { display: flex; flex-direction: column; gap: 0.365cqw; }
+  .fecho { margin-top: auto; font-family: var(--serif); font-size: 1.667cqw; line-height: 1.25; }
 
-  /* 3 */
-  .s3 .area { grid-template-columns: 42fr 50fr; }
-  .camadas { position: relative; }
-  .camadas .dialogo { position: absolute; right: -1.2cqw; bottom: -2.6cqw; width: 23cqw; box-shadow: 0 0.6cqw 1.6cqw rgba(16, 24, 40, 0.35); border-radius: var(--radius); overflow: hidden; }
-  .rotulo { fill: var(--stamp); font-size: 25px; font-weight: 600; }
-  .s3 .coluna.dir { gap: 1.8cqw; }
-  .bloco { display: grid; gap: 0.9cqw; }
-  .amostras { display: grid; grid-template-columns: 3fr 3fr 14cqw; gap: 1.6cqw; align-items: stretch; }
-  .tintas { display: grid; grid-template-columns: repeat(3, 1fr); }
-  .tinta { height: 11.6cqw; }
-  .hex { margin: 0.45cqw 0 0; font-size: 0.82cqw; line-height: 1.25; color: var(--muted); }
-  .hex code { display: block; font-size: 0.88cqw; color: var(--text); }
-  .botoes { display: grid; gap: 0.5cqw; align-content: start; justify-items: start; }
+  .desenho text { font-family: var(--sans); }
+  .desenho .caixa { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.5; }
+  .desenho .caixa.suave { fill: var(--surface); stroke: var(--line); }
+  .desenho .caixa.tinta { fill: var(--ink); stroke: none; }
+  .desenho .caixa.oculta { fill: var(--paper); stroke: var(--muted); stroke-dasharray: 6 5; }
+  .desenho .marca { fill: var(--paper); stroke: var(--stamp); stroke-width: 3; }
+  .desenho .t { fill: var(--text); font-size: 17px; font-weight: 500; }
+  .desenho .t.g { font-size: 22px; }
+  .desenho .s { fill: var(--muted); font-size: 14px; }
+  .desenho .inv { fill: var(--inverse); }
+  .desenho .verm { fill: var(--stamp); }
+  .desenho .sutil { fill: var(--muted); }
+  .desenho .linha { stroke: var(--line-strong); stroke-width: 1.5; fill: none; }
+  .desenho .linha.fina { stroke: var(--muted); stroke-width: 1; }
+  .desenho .barra { fill: var(--line); }
+  .desenho .campo { fill: var(--paper); stroke: var(--line); stroke-width: 1.2; }
 
-  /* 4 */
-  .s4 .area { grid-template-columns: 39fr 53fr; }
-  .s4 .forte { font-family: var(--serif); font-size: 3cqw; line-height: 1.08; margin: 0; }
-  .s4 .lei { margin: 0.3cqw 0 0; font-size: 1cqw; color: var(--muted); line-height: 1.3; }
+  /* P1: grade do mês */
+  .desenho .cel { fill: var(--paper); stroke: var(--line); stroke-width: 1; }
+  .desenho .cel.fora { fill: var(--surface); stroke-dasharray: 4 4; }
+  .desenho .dia { font-size: 14px; fill: var(--text); }
+  .desenho .dia.sutil { fill: var(--muted); }
+  .desenho .evento { fill: var(--line); }
+  .desenho .semana { font-size: 13px; fill: var(--muted); text-anchor: middle; }
+  .desenho .dobra { stroke: var(--stamp); stroke-width: 3; }
+  .cifras { display: grid; grid-template-columns: 1fr 1fr; gap: 2.083cqw; border-top: 1px solid var(--line); padding-top: 1.042cqw; }
+  .cifra b { display: block; font-family: var(--serif); font-weight: 400; font-size: 3.125cqw; line-height: 1.05; margin-bottom: 0.26cqw; }
+  .cifra span { display: block; font-size: 0.9375cqw; line-height: 1.4; color: var(--muted); }
+
+  /* P4: amostras de cor */
+  .paleta { display: grid; grid-template-columns: 1fr 1fr; gap: 2.083cqw; }
+  .amostras { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .amostra { height: 8.333cqw; }
+  .hex { margin-top: 0.417cqw; font-size: 0.833cqw; line-height: 1.3; color: var(--muted); }
+  .hex code { display: block; font-size: 0.9375cqw; color: var(--text); }
+  .mesma-tela { border-top: 2px solid var(--stamp); padding-top: 0.417cqw; color: var(--stamp); }
+
+  /* P5: wireframe da tela */
+  .wire .caixa, .wire .marca, .wire .campo { stroke-width: 3; }
+  .wire .marca { fill: var(--surface); stroke-width: 6; }
+  .wire .t { font-size: 32px; }
+  .wire .s { font-size: 28px; }
+  .wire .verm { font-size: 32px; font-weight: 500; }
+  .wire .linha { stroke-width: 3; }
+
+  /* Princípios */
+  .corpo.principios-corpo { display: grid; grid-template-columns: 39fr 53fr; gap: 4cqw; align-items: stretch; }
+  .coluna { display: flex; flex-direction: column; min-width: 0; min-height: 0; justify-content: space-between; gap: 1cqw; }
+  .forte { font-family: var(--serif); font-size: 3cqw; line-height: 1.08; margin: 0; }
+  .lei { margin: 0.3cqw 0 0; font-size: 1cqw; color: var(--muted); line-height: 1.3; }
+  .por-que { margin: 0; font-family: var(--serif); font-size: 1.55cqw; line-height: 1.25; }
   .principios { margin: 0; padding: 0; list-style: none; display: grid; grid-template-rows: repeat(5, 1fr); }
   .principios li { display: grid; grid-template-columns: 11.4cqw 1fr; gap: 2cqw; align-items: center; border-top: 1px solid var(--line); }
   .principios li:last-child { border-bottom: 1px solid var(--line); }
@@ -94,6 +157,7 @@
   .alerta { fill: none; stroke: var(--stamp); stroke-width: 2; }
   .guia { stroke: var(--stamp); stroke-width: 2; }
   .tracejado { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
+  svg .verm { fill: var(--stamp); }
   .tit-demo { font-size: 26px; font-weight: 500; }
   .linha-demo { font-size: 27px; }
   .chip-forte { fill: var(--stamp); }
@@ -103,171 +167,438 @@
   .demo-sutil { fill: var(--muted); }
   .fundo-demo { fill: var(--surface); }
 
-  /* 5 */
-  .s5 .area { display: block; }
-  .s5 table { width: 100%; border-collapse: collapse; }
-  .s5 th { font-weight: 500; font-size: 1.1cqw; color: var(--muted); padding: 0 0 0.6cqw; text-align: center; }
-  .s5 th.esq, .s5 td.esq { text-align: left; }
-  .s5 td { border-top: 1px solid var(--line); padding: 1.4cqw 0; font-size: 1.55cqw; line-height: 1.2; text-align: center; }
-  .s5 .hip { display: flex; align-items: center; gap: 0.9cqw; font-weight: 500; }
-  .s5 .teste { padding-left: 2.4cqw; font-size: 1.36cqw; }
-  .s5 th.teste { font-size: 1.1cqw; }
-  .s5 tr.grupo td { border-top: 0; padding: 1.3cqw 0 0.55cqw; font-family: var(--serif); font-size: 1.75cqw; text-align: left; }
-  .s5 tr.grupo.corte td { padding-top: 2.4cqw; color: var(--stamp); }
-  .ponto { display: inline-block; width: 1.65cqw; height: 1.65cqw; border-radius: 50%; background: var(--ink); vertical-align: middle; }
+  /* O que validar */
+  .validar .corpo { flex-direction: column; gap: 0; align-items: stretch; }
+  .validar table { width: 100%; border-collapse: collapse; }
+  .validar th { font-weight: 500; font-size: 0.9375cqw; color: var(--muted); padding: 0 0 0.6cqw; text-align: center; }
+  .validar th.esq, .validar td.esq { text-align: left; }
+  .validar td { border-top: 1px solid var(--line); padding: 1.15cqw 0; font-size: 1.354cqw; line-height: 1.2; text-align: center; }
+  .validar .hip { display: flex; align-items: baseline; gap: 0.9cqw; font-weight: 500; }
+  .validar .hip i { font-style: normal; font-family: var(--serif); font-weight: 400; font-size: 1.563cqw; min-width: 1.4cqw; }
+  .validar .teste { padding-left: 2.4cqw; font-size: 1.198cqw; }
+  .validar th.teste { font-size: 0.9375cqw; }
+  .validar tr.grupo td { border-top: 0; padding: 1.1cqw 0 0.5cqw; font-family: var(--serif); font-size: 1.563cqw; text-align: left; }
+  .validar tr.grupo.corte td { padding-top: 1.8cqw; color: var(--stamp); }
+  .ponto { display: inline-block; width: 1.45cqw; height: 1.45cqw; border-radius: 50%; background: var(--ink); vertical-align: middle; }
   .ponto.meio { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); border: 0.12cqw solid var(--ink); }
-  .legenda { position: absolute; left: 0; right: 0; bottom: 0; display: flex; gap: 3.2cqw; align-items: center; margin: 0; font-size: 1.1cqw; color: var(--muted); }
+  .legenda { margin-top: auto; display: flex; gap: 3.2cqw; align-items: center; font-size: 0.9375cqw; color: var(--muted); }
   .legenda span { display: inline-flex; align-items: center; gap: 0.6cqw; }
-  .legenda .ponto { width: 1.1cqw; height: 1.1cqw; }
-  .legenda strong { margin-left: auto; font-family: var(--serif); font-weight: 400; font-size: 1.5cqw; color: var(--text); padding-right: 5cqw; }
+  .legenda .ponto { width: 1cqw; height: 1cqw; }
+  .legenda strong { margin-left: auto; font-family: var(--serif); font-weight: 400; font-size: 1.354cqw; color: var(--text); }
+
+  @media (max-width: 720px) {
+    .slide { aspect-ratio: auto; }
+    .corpo, .corpo.principios-corpo { display: flex; flex-direction: column; }
+    .col.lado { width: 100%; }
+    ol.problemas li { grid-template-columns: 2.5em 1fr; }
+  }
 </style>
 </head>
 <body>
 
-
-<p class="capa">Questão 1. Cinco frames de 1920 por 1080. O texto completo do diagnóstico está em <code>01-diagnostico.md</code>.</p>
+<p class="capa"><strong>Questão 1, documento-fonte dos slides.</strong> Oito frames de 1920 por 1080. Um problema por slide: texto à esquerda, evidência desenhada à direita. O texto completo do diagnóstico está em <code>01-diagnostico.md</code>.</p>
 
 <!-- ============ 1 ============ -->
-<section class="slide s1" id="q1s1">
-  <p class="item">Questão 1, item 1 de 3. Os cinco problemas</p>
-  <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
-  <h2>O Astrea sabe o que é um prazo.<br>A interface ainda não mostra isso.</h2>
-  <svg class="tela" viewBox="0 58 1880 908" role="img" aria-label="Área de trabalho do Astrea com cinco trechos marcados: faixa de campanha, título com a palavra tarefa, botão de criar, estatísticas em azul de link e Lembretes no fim da coluna direita">
-    <defs><mask id="m1"><rect width="1901" height="966" fill="#fff"/><rect x="0" y="58" width="1895" height="63" fill="#000"/><rect x="575" y="360" width="408" height="42" rx="6" fill="#000"/><rect x="615" y="655" width="325" height="60" rx="8" fill="#000"/><rect x="1266" y="596" width="256" height="198" rx="6" fill="#000"/><rect x="1264" y="878" width="300" height="88" rx="6" fill="#000"/></mask></defs>
-    <image href="evidencias/08-area-de-trabalho-vazia.png" width="1901" height="966"/>
-    <rect class="veu" width="1901" height="966" mask="url(#m1)"/>
-    <rect class="anel" x="575" y="360" width="408" height="42" rx="6"/>
-    <rect class="anel" x="615" y="655" width="325" height="60" rx="8"/>
-    <rect class="anel" x="1266" y="596" width="256" height="198" rx="6"/>
-    <rect class="anel" x="1264" y="878" width="300" height="86" rx="6"/>
-    <g class="pino" transform="translate(1610 921)"><circle r="30"/><text y="11">1</text></g>
-    <g class="pino" transform="translate(1030 381)"><circle r="30"/><text y="11">2</text></g>
-    <g class="pino" transform="translate(987 685)"><circle r="30"/><text y="11">3</text></g>
-    <g class="pino" transform="translate(1568 695)"><circle r="30"/><text y="11">4</text></g>
-    <g class="pino" transform="translate(1750 89)"><circle r="30"/><text y="11">5</text></g>
-  </svg>
-  <ol>
-    <li><span class="n">1</span>O prazo não domina a tela</li>
-    <li><span class="n">2</span>Mesma atividade, nomes e lugares diferentes</li>
-    <li><span class="n">3</span>Criar interrompe quem cria</li>
-    <li><span class="n">4</span>Três azuis, três cinzas, três jeitos de criar</li>
-    <li><span class="n">5</span>A moldura compete com o trabalho</li>
-  </ol>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>1 de 5</span></footer>
+<section class="slide abertura" id="q1s1">
+  <header>
+    <p class="item">Questão 1, item 1 de 3. Os cinco problemas</p>
+    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
+    <h2>O Astrea sabe o que é um prazo. A interface ainda não mostra isso</h2>
+  </header>
+  <div class="corpo">
+    <p class="tese">Os cinco ficam na gestão de atividades. Cada um traz o sintoma visto, a causa provável e o porquê de importar para quem usa.</p>
+    <ol class="problemas">
+      <li><b>O prazo não domina as telas que existem para ele</b><span>A Agenda mostra duas semanas do mês por tela. A tarefa atrasada fica fora da lista inicial.</span><i>Hierarquia e densidade</i></li>
+      <li><b>Sem hierarquia de nomes, a mesma atividade em quatro lugares</b><span>Tarefa num módulo, atividade no outro, e a mesma atividade em quatro visões.</span><i>Arquitetura de informação. Hipótese</i></li>
+      <li><b>Criar uma atividade interrompe quem cria</b><span>Quatro campos obrigatórios, um popover sobre o modal e um diálogo para a data passada.</span><i>Usabilidade de fluxo</i></li>
+      <li><b>Três azuis, três cinzas, três jeitos de criar</b><span>Cada time puxou a biblioteca que tinha à mão. Não existe fonte única.</span><i>Consistência</i></li>
+      <li><b>A moldura compete com o trabalho</b><span>Campanha, botão de contratar e IA em lilás ocupam a moldura de toda tela.</span><i>Hierarquia e ruído</i></li>
+    </ol>
+  </div>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>1 de 8</span></footer>
 </section>
 
 <!-- ============ 2 ============ -->
-<section class="slide s2" id="q1s2">
-  <p class="item">Questão 1, item 1 de 3. Problemas 1 e 2</p>
-  <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
-  <h2>O prazo se esconde. A atividade se espalha.</h2>
-  <div class="area">
-    <div class="coluna">
-      <h3><span class="n">1</span>O prazo não domina a tela que existe para ele</h3>
-      <div class="agenda">
-        <svg class="moldado" viewBox="335 392 1495 1163" role="img" aria-label="Agenda do Astrea na visão por mês. Em uma tela de 1920 por 960 cabem duas semanas e o início da terceira. As outras ficam abaixo da dobra">
-          <defs><pattern id="hachura" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="22" height="22" fill="none"/><line x1="0" y1="0" x2="0" y2="22" stroke="#b3261e" stroke-opacity="0.22" stroke-width="5"/></pattern></defs>
-          <image href="evidencias/19-agenda-por-mes.png" width="1897" height="961"/>
-          <rect class="fantasma" x="336" y="961" width="1494" height="176"/>
-          <rect class="fantasma" x="336" y="1137" width="1494" height="209"/>
-          <rect class="fantasma" x="336" y="1346" width="1494" height="209"/>
-          <line class="dobra" x1="335" y1="961" x2="1830" y2="961"/>
-          <text class="dobra-txt" x="1082" y="1262">Abaixo da dobra</text>
-        </svg>
-        <div>
-          <p class="numero"><b>2 de 5</b>semanas do mês cabem na tela</p>
-          <p class="numero"><b>33%</b>dos votos pedem destaque de prazo: 136 de 407</p>
-        </div>
+<section class="slide" id="q1s2">
+  <header>
+    <p class="item">Questão 1, item 1 de 3. Problema 1 de 5. Hierarquia e densidade</p>
+    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
+    <h2>O prazo não domina as telas que existem para ele</h2>
+  </header>
+  <div class="corpo problema">
+    <div class="col lado">
+      <p class="tese">A Agenda mostra duas semanas do mês numa tela de 1920 por 960. A Área de trabalho abre em uma lista e esconde a tarefa atrasada de outra lista. Prazo vencido não tem seção própria.</p>
+      <div class="bloco-txt">
+        <h3>Por que importa</h3>
+        <p class="texto">O escritório depende do Astrea para não perder prazo. É a primeira restrição do briefing. O dado existe: Alertas já mostra “Tarefa atrasada”. A tela de abertura não mostra.</p>
       </div>
-      <p class="por-que">Prazo perdido é o risco mais caro que a interface carrega.</p>
+      <div class="bloco-txt">
+        <h3>Heurística de Nielsen</h3>
+        <p class="texto">Visibilidade do estado do sistema. Telas 11, 14, 17 a 20. <span class="id">PA-31</span>, <span class="id">PA-32</span> e <span class="id">PA-47</span>.</p>
+      </div>
+      <p class="fecho">Prazo perdido é o risco mais caro que a interface carrega.</p>
     </div>
-    <div class="coluna">
-      <h3><span class="n">2</span>Dois nomes, quatro lugares <span class="tag">hipótese</span></h3>
-      <svg viewBox="0 0 1000 760" role="img" aria-label="A Área de trabalho chama de tarefa, a Agenda chama de atividade. A mesma atividade aparece na Área de trabalho, na Agenda, em Tarefas sem data e em Alertas. O Kanban prometido no onboarding está oculto">
-        <text class="ctr sutil" x="245" y="30">Área de trabalho</text>
-        <svg x="66" y="48" width="358" height="66" viewBox="615 655 325 60"><image href="evidencias/08-area-de-trabalho-vazia.png" width="1901" height="966"/></svg>
-        <text class="dif" x="500" y="108">≠</text>
-        <text class="ctr sutil" x="755" y="30">Agenda</text>
-        <svg x="608" y="48" width="293" height="66" viewBox="965 775 266 60"><image href="evidencias/11-agenda-vazia.png" width="1890" height="966"/></svg>
-
-        <path class="fio" d="M500 430 L170 243"/><path class="fio" d="M500 430 L830 243"/><path class="fio" d="M500 430 L170 593"/><path class="fio" d="M500 430 L830 593"/><path class="fio-oculto" d="M500 430 L500 690"/>
-        <rect class="nucleo" x="345" y="390" width="310" height="80" rx="4"/>
-        <text class="ctr inv" x="500" y="441" style="font-size:31px">Mesma atividade</text>
-        <rect class="no" x="40" y="210" width="260" height="66" rx="4"/><text class="ctr" x="170" y="253">Área de trabalho</text>
-        <rect class="no" x="700" y="210" width="260" height="66" rx="4"/><text class="ctr" x="830" y="253">Agenda</text>
-        <rect class="no" x="40" y="560" width="260" height="66" rx="4"/><text class="ctr" x="170" y="603">Tarefas sem data</text>
-        <rect class="no" x="700" y="560" width="260" height="66" rx="4"/><text class="ctr" x="830" y="603">Alertas</text>
-        <rect class="no-oculto" x="320" y="690" width="360" height="66" rx="4"/><text class="ctr verm" x="500" y="733">Kanban prometido, oculto</text>
+    <div class="col evidencia">
+      <h3>Agenda, visão por mês. Desenho da tela 20</h3>
+      <svg class="desenho" viewBox="0 0 920 520" role="img" aria-label="Grade do mês da Agenda. A tela mostra a barra de visões, os dias da semana e duas semanas. As outras semanas ficam abaixo da dobra">
+        <rect class="caixa suave" x="0" y="0" width="760" height="42"/>
+        <text class="t" x="16" y="27">Agenda</text>
+        <rect class="caixa" x="396" y="9" width="80" height="24" rx="4"/><text class="s" x="436" y="26" text-anchor="middle">Por dia</text>
+        <rect class="caixa" x="482" y="9" width="84" height="24" rx="4"/><text class="s" x="524" y="26" text-anchor="middle">Em lista</text>
+        <rect class="caixa" x="572" y="9" width="100" height="24" rx="4"/><text class="s" x="622" y="26" text-anchor="middle">Por semana</text>
+        <rect class="caixa tinta" x="678" y="9" width="74" height="24" rx="4"/><text class="s inv" x="715" y="26" text-anchor="middle">Por mês</text>
+        <text class="semana" x="54.3" y="62">D</text><text class="semana" x="162.9" y="62">S</text><text class="semana" x="271.4" y="62">T</text><text class="semana" x="380" y="62">Q</text><text class="semana" x="488.6" y="62">Q</text><text class="semana" x="597.1" y="62">S</text><text class="semana" x="705.7" y="62">S</text>
+        <rect class="cel" x="0.0" y="72" width="108.6" height="89"/>
+        <text class="dia" x="10.0" y="94">1</text>
+        <rect class="cel" x="108.6" y="72" width="108.6" height="89"/>
+        <text class="dia" x="118.6" y="94">2</text>
+        <rect class="cel" x="217.1" y="72" width="108.6" height="89"/>
+        <text class="dia" x="227.1" y="94">3</text>
+        <rect class="cel" x="325.7" y="72" width="108.6" height="89"/>
+        <text class="dia" x="335.7" y="94">4</text>
+        <rect class="cel" x="434.3" y="72" width="108.6" height="89"/>
+        <text class="dia" x="444.3" y="94">5</text>
+        <rect class="cel" x="542.9" y="72" width="108.6" height="89"/>
+        <text class="dia" x="552.9" y="94">6</text>
+        <rect class="cel" x="651.4" y="72" width="108.6" height="89"/>
+        <text class="dia" x="661.4" y="94">7</text>
+        <rect class="cel" x="0.0" y="161" width="108.6" height="89"/>
+        <text class="dia" x="10.0" y="183">8</text>
+        <rect class="cel" x="108.6" y="161" width="108.6" height="89"/>
+        <text class="dia" x="118.6" y="183">9</text>
+        <rect class="cel" x="217.1" y="161" width="108.6" height="89"/>
+        <text class="dia" x="227.1" y="183">10</text>
+        <rect class="cel" x="325.7" y="161" width="108.6" height="89"/>
+        <text class="dia" x="335.7" y="183">11</text>
+        <rect class="cel" x="434.3" y="161" width="108.6" height="89"/>
+        <text class="dia" x="444.3" y="183">12</text>
+        <rect class="cel" x="542.9" y="161" width="108.6" height="89"/>
+        <text class="dia" x="552.9" y="183">13</text>
+        <rect class="cel" x="651.4" y="161" width="108.6" height="89"/>
+        <text class="dia" x="661.4" y="183">14</text>
+        <rect class="cel fora" x="0.0" y="250" width="108.6" height="89"/>
+        <text class="dia sutil" x="10.0" y="272">15</text>
+        <rect class="cel fora" x="108.6" y="250" width="108.6" height="89"/>
+        <text class="dia sutil" x="118.6" y="272">16</text>
+        <rect class="cel fora" x="217.1" y="250" width="108.6" height="89"/>
+        <text class="dia sutil" x="227.1" y="272">17</text>
+        <rect class="cel fora" x="325.7" y="250" width="108.6" height="89"/>
+        <text class="dia sutil" x="335.7" y="272">18</text>
+        <rect class="cel fora" x="434.3" y="250" width="108.6" height="89"/>
+        <text class="dia sutil" x="444.3" y="272">19</text>
+        <rect class="cel fora" x="542.9" y="250" width="108.6" height="89"/>
+        <text class="dia sutil" x="552.9" y="272">20</text>
+        <rect class="cel fora" x="651.4" y="250" width="108.6" height="89"/>
+        <text class="dia sutil" x="661.4" y="272">21</text>
+        <rect class="cel fora" x="0.0" y="339" width="108.6" height="89"/>
+        <text class="dia sutil" x="10.0" y="361">22</text>
+        <rect class="cel fora" x="108.6" y="339" width="108.6" height="89"/>
+        <text class="dia sutil" x="118.6" y="361">23</text>
+        <rect class="cel fora" x="217.1" y="339" width="108.6" height="89"/>
+        <text class="dia sutil" x="227.1" y="361">24</text>
+        <rect class="cel fora" x="325.7" y="339" width="108.6" height="89"/>
+        <text class="dia sutil" x="335.7" y="361">25</text>
+        <rect class="cel fora" x="434.3" y="339" width="108.6" height="89"/>
+        <text class="dia sutil" x="444.3" y="361">26</text>
+        <rect class="cel fora" x="542.9" y="339" width="108.6" height="89"/>
+        <text class="dia sutil" x="552.9" y="361">27</text>
+        <rect class="cel fora" x="651.4" y="339" width="108.6" height="89"/>
+        <text class="dia sutil" x="661.4" y="361">28</text>
+        <rect class="cel fora" x="0.0" y="428" width="108.6" height="89"/>
+        <text class="dia sutil" x="10.0" y="450">29</text>
+        <rect class="cel fora" x="108.6" y="428" width="108.6" height="89"/>
+        <text class="dia sutil" x="118.6" y="450">30</text>
+        <rect class="cel fora" x="217.1" y="428" width="108.6" height="89"/>
+        <text class="dia sutil" x="227.1" y="450">1</text>
+        <rect class="cel fora" x="325.7" y="428" width="108.6" height="89"/>
+        <text class="dia sutil" x="335.7" y="450">2</text>
+        <rect class="cel fora" x="434.3" y="428" width="108.6" height="89"/>
+        <text class="dia sutil" x="444.3" y="450">3</text>
+        <rect class="cel fora" x="542.9" y="428" width="108.6" height="89"/>
+        <text class="dia sutil" x="552.9" y="450">4</text>
+        <rect class="cel fora" x="651.4" y="428" width="108.6" height="89"/>
+        <text class="dia sutil" x="661.4" y="450">5</text>
+        <rect class="evento" x="118.6" y="112" width="70.9" height="14" rx="2"/>
+        <rect class="evento" x="444.3" y="112" width="53.1" height="14" rx="2"/>
+        <rect class="evento" x="227.1" y="201" width="62.0" height="14" rx="2"/>
+        <rect class="evento" x="552.9" y="201" width="70.9" height="14" rx="2"/>
+        <rect class="evento" x="10.0" y="201" width="44.3" height="14" rx="2"/>
+        <rect x="0" y="0" width="760" height="250" fill="none" stroke="var(--line-strong)" stroke-width="2"/>
+        <line class="dobra" x1="0" y1="250" x2="912" y2="250"/>
+        <text class="t verm" x="784" y="242">Dobra da tela</text>
+        <path class="linha fina" d="M776 6 H786 V200 H776"/>
+        <text class="s" x="796" y="110">Cabe na tela:</text>
+        <text class="s" x="796" y="128">duas semanas</text>
+        <path class="linha fina" d="M776 260 H786 V512 H776"/>
+        <text class="s" x="796" y="378">Abaixo da dobra:</text>
+        <text class="s" x="796" y="396">o resto do mês</text>
       </svg>
-      <p class="por-que">Quem busca precisa saber onde a atividade está e como ela se chama.</p>
+      <div class="cifras">
+        <p class="cifra"><b>2 semanas</b><span>por tela de 1920 por 960, na visão por mês. Telas 19 e 20.</span></p>
+        <p class="cifra"><b>33%</b><span>dos votos pedem destaque de prazo, audiência, data limite e atividades do dia: 136 de 407.</span></p>
+      </div>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>2 de 5</span></footer>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>2 de 8</span></footer>
 </section>
 
 <!-- ============ 3 ============ -->
-<section class="slide s3" id="q1s3">
-  <p class="item">Questão 1, item 1 de 3. Problemas 3, 4 e 5</p>
-  <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
-  <h2>Criar interrompe, a paleta varia, a moldura compete.</h2>
-  <div class="area">
-    <div class="coluna">
-      <h3><span class="n">3</span>Criar interrompe quem cria</h3>
-      <div class="camadas">
-        <svg class="moldado" viewBox="470 120 930 620" role="img" aria-label="Modal Adicionar tarefa com o popover Envolver mais pessoas aberto por cima dele. O campo Lista de tarefas é obrigatório e está marcado">
-          <image href="evidencias/14-modal-envolver-pessoas.png" width="1895" height="967"/>
-          <rect x="780" y="503" width="520" height="40" fill="#ffffff"/>
-          <rect class="anel" x="490" y="412" width="290" height="217" rx="4"/>
-          <rect class="anel" x="962" y="356" width="386" height="78" rx="6"/>
-          <text class="rotulo" x="970" y="348">Obrigatório, com um só valor</text>
-        </svg>
-        <svg class="dialogo" viewBox="555 401 800 232" role="img" aria-label="Diálogo Data no passado, aberto sobre o modal, pergunta apenas se deseja continuar"><image href="evidencias/15-dialogo-data-no-passado.png" width="1907" height="975"/></svg>
+<section class="slide" id="q1s3">
+  <header>
+    <p class="item">Questão 1, item 1 de 3. Problema 2 de 5. Arquitetura de informação, hipótese</p>
+    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
+    <h2>Sem hierarquia de nomes, a mesma atividade em quatro lugares</h2>
+  </header>
+  <div class="corpo problema">
+    <div class="col lado">
+      <p class="tese">A Área de trabalho e o modal dizem “tarefa”. A Agenda e o botão de criar dizem “atividade”. A mesma atividade aparece em quatro lugares.</p>
+      <div class="bloco-txt">
+        <h3>Por que importa</h3>
+        <p class="texto">Nos pedidos, tarefa, prazo, audiência e evento são tipos diferentes. O produto não organiza esses tipos. Falta um termo geral com os tipos abaixo dele, e “atividade” pode ser esse termo.</p>
       </div>
-      <p class="por-que" style="max-width: 21cqw;">É a ação mais repetida do dia, e cada camada custa.</p>
+      <div class="bloco-txt">
+        <h3>Heurística de Nielsen</h3>
+        <p class="texto">Correspondência com o mundo real. Consistência e padrões. Hipótese a validar: ninguém mediu ainda o custo em chamado. Telas 10, 11, 13 e 14. <span class="id">PA-23</span>.</p>
+      </div>
+      <p class="fecho">Quem busca precisa saber onde a atividade está e como ela se chama.</p>
     </div>
-    <div class="coluna dir">
-      <div class="bloco">
-        <h3><span class="n">4</span>Três azuis, três cinzas, três jeitos de criar</h3>
-        <div class="amostras">
-          <div class="tintas">
-            <div><div class="tinta" style="background:#008fd5"></div><p class="hex"><code>#008fd5</code>marca</p></div>
-            <div><div class="tinta" style="background:#228be6"></div><p class="hex"><code>#228be6</code>componente</p></div>
-            <div><div class="tinta" style="background:#0255c4"></div><p class="hex"><code>#0255c4</code>campanha</p></div>
-          </div>
-          <div class="tintas">
-            <div><div class="tinta" style="background:#202124"></div><p class="hex"><code>#202124</code>Material</p></div>
-            <div><div class="tinta" style="background:#6c757d"></div><p class="hex"><code>#6c757d</code>Bootstrap</p></div>
-            <div><div class="tinta" style="background:#dee2e6"></div><p class="hex"><code>#dee2e6</code>Mantine</p></div>
-          </div>
-          <div class="botoes">
-            <svg style="width:14cqw" viewBox="615 655 325 60" role="img" aria-label="Botão Adicionar primeira tarefa, em caixa alta"><image href="evidencias/08-area-de-trabalho-vazia.png" width="1901" height="966"/></svg>
-            <svg style="width:11.5cqw" viewBox="965 775 266 60" role="img" aria-label="Botão Adicionar atividade, com seta de menu"><image href="evidencias/11-agenda-vazia.png" width="1890" height="966"/></svg>
-            <svg style="width:2.7cqw" viewBox="1805 220 62 60" role="img" aria-label="Botão com sinal de mais, na Agenda"><image href="evidencias/19-agenda-por-mes.png" width="1897" height="961"/></svg>
-          </div>
-        </div>
-        <p class="por-que">Quando tudo é azul, nada parece clicável.</p>
-      </div>
-      <div class="bloco">
-        <h3><span class="n">5</span>A moldura compete com o trabalho</h3>
-        <svg class="moldado" viewBox="1215 58 665 142" role="img" aria-label="Cabeçalho do Astrea com faixa de campanha, ícone de IA em lilás, selo 1 ano grátis e botão verde Contratar, todos marcados">
-          <image href="evidencias/08-area-de-trabalho-vazia.png" width="1901" height="966"/>
-          <rect class="anel" x="1222" y="62" width="426" height="56" rx="6"/>
-          <rect class="anel" x="1232" y="134" width="53" height="53" rx="6"/>
-          <rect class="anel" x="1650" y="132" width="222" height="56" rx="6"/>
-        </svg>
-        <p class="por-que">Campanha e IA ocupam a moldura de quem controla prazo o dia inteiro.</p>
-      </div>
+    <div class="col evidencia">
+      <svg class="desenho" viewBox="0 0 920 620" role="img" aria-label="Dois nomes para o mesmo objeto: tarefa na Área de trabalho e atividade na Agenda. A mesma atividade aparece na Área de trabalho, na Agenda, em Tarefas sem data e em Alertas. Na ficha do processo, tarefa e evento são tipos, e prazo e audiência só existem como etiqueta">
+        <text class="s" x="40" y="14">Área de trabalho e modal</text>
+        <rect class="caixa" x="40" y="24" width="300" height="60" rx="4"/>
+        <text class="t g" x="190" y="61" text-anchor="middle">Tarefa</text>
+        <text x="460" y="70" text-anchor="middle" font-family="var(--serif)" font-size="56" class="verm">≠</text>
+        <text class="s" x="580" y="14">Agenda e botão de criar</text>
+        <rect class="caixa" x="580" y="24" width="300" height="60" rx="4"/>
+        <text class="t g" x="730" y="61" text-anchor="middle">Atividade</text>
+
+        <path class="linha" d="M330 286 L300 206 M590 286 L620 206 M330 318 L300 398 M590 318 L620 398"/>
+        <rect class="caixa" x="40" y="150" width="260" height="56" rx="4"/><text class="t" x="170" y="184" text-anchor="middle">Área de trabalho</text>
+        <rect class="caixa" x="620" y="150" width="260" height="56" rx="4"/><text class="t" x="750" y="184" text-anchor="middle">Agenda</text>
+        <rect class="caixa tinta" x="330" y="270" width="260" height="64" rx="4"/><text class="t g inv" x="460" y="309" text-anchor="middle">Mesma atividade</text>
+        <rect class="caixa" x="40" y="398" width="260" height="56" rx="4"/><text class="t" x="170" y="432" text-anchor="middle">Tarefas sem data</text>
+        <rect class="caixa" x="620" y="398" width="260" height="56" rx="4"/><text class="t" x="750" y="432" text-anchor="middle">Alertas</text>
+
+        <line class="linha fina" x1="0" y1="500" x2="920" y2="500"/>
+        <text class="s" x="0" y="528">Na ficha do processo, o campo “Tipo de atividade”</text>
+        <rect class="caixa" x="0" y="544" width="150" height="44" rx="4"/><text class="t" x="75" y="572" text-anchor="middle">Tarefa</text>
+        <rect class="caixa" x="164" y="544" width="150" height="44" rx="4"/><text class="t" x="239" y="572" text-anchor="middle">Evento</text>
+        <text class="s" x="0" y="612">São tipos</text>
+        <rect class="caixa oculta" x="420" y="544" width="150" height="44" rx="4"/><text class="t sutil" x="495" y="572" text-anchor="middle">Prazo</text>
+        <rect class="caixa oculta" x="584" y="544" width="150" height="44" rx="4"/><text class="t sutil" x="659" y="572" text-anchor="middle">Audiência</text>
+        <text class="s" x="420" y="612">Só existem como etiqueta</text>
+      </svg>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>3 de 5</span></footer>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>3 de 8</span></footer>
 </section>
 
 <!-- ============ 4 ============ -->
-<section class="slide s4" id="q1s4">
-  <p class="item">Questão 1, item 2 de 3. Princípios de design</p>
-  <p class="pergunta">Quais princípios de design devem guiar o redesign?</p>
-  <h2>Seis princípios decidem o redesign.</h2>
-  <div class="area">
+<section class="slide" id="q1s4">
+  <header>
+    <p class="item">Questão 1, item 1 de 3. Problema 3 de 5. Usabilidade de fluxo</p>
+    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
+    <h2>Criar uma atividade interrompe quem cria</h2>
+  </header>
+  <div class="corpo problema">
+    <div class="col lado">
+      <p class="tese">Quatro campos obrigatórios para uma tarefa simples. “Lista de tarefas” é obrigatório e tem um só valor possível. “Envolver mais pessoas” abre um popover dentro do modal. Data no passado abre outro diálogo, que só pergunta se deseja continuar.</p>
+      <div class="bloco-txt">
+        <h3>Por que importa</h3>
+        <p class="texto">Criar atividade é a ação mais repetida do dia. Atrito pequeno, repetido todo dia, vira o motivo de a equipe anotar prazo fora do sistema.</p>
+      </div>
+      <div class="bloco-txt">
+        <h3>Heurística de Nielsen</h3>
+        <p class="texto">Controle e liberdade. Prevenção de erros. Telas 14, 15 e 16. <span class="id">PA-54</span>, <span class="id">PA-57</span> e <span class="id">PA-58</span>.</p>
+      </div>
+      <p class="fecho">Cada campo faz sentido sozinho. Juntos, viram atrito.</p>
+    </div>
+    <div class="col evidencia">
+      <svg class="desenho" viewBox="0 0 920 630" role="img" aria-label="Três camadas sobre a Agenda: o modal Adicionar tarefa com seis campos, quatro obrigatórios; o popover Envolver mais pessoas sobre o modal; e o diálogo Data no passado sobre o modal">
+        <rect class="caixa suave" x="0" y="0" width="560" height="420" rx="4"/>
+        <text class="s" x="18" y="30">Agenda</text>
+
+        <rect class="caixa" x="44" y="48" width="500" height="460" rx="4"/>
+        <text class="t" x="66" y="82">Adicionar tarefa</text>
+        <text class="s" x="66" y="118">Descrição da tarefa *</text><rect class="campo" x="66" y="126" width="456" height="26" rx="3"/>
+        <text class="s" x="66" y="176">Data</text><rect class="campo" x="66" y="184" width="456" height="26" rx="3"/>
+        <text class="s" x="66" y="234">Lista de tarefas *</text><rect class="campo" x="66" y="242" width="456" height="26" rx="3"/>
+        <text class="s" x="66" y="292">Processo, caso ou atendimento</text><rect class="campo" x="66" y="300" width="456" height="26" rx="3"/>
+        <text class="s" x="66" y="350">Responsável *</text><rect class="campo" x="66" y="358" width="456" height="26" rx="3"/>
+        <text class="s" x="66" y="408">Prioridade *</text><rect class="campo" x="66" y="416" width="456" height="26" rx="3"/>
+        <text class="s" x="66" y="486">Cancelar</text><text class="t" x="146" y="486">Salvar</text>
+
+        <rect class="caixa" x="310" y="330" width="290" height="150" rx="4"/>
+        <text class="t" x="328" y="360">Envolver mais pessoas</text>
+        <rect class="campo" x="328" y="374" width="254" height="28" rx="3"/><text class="s" x="338" y="393">Encontre alguém</text>
+        <rect class="campo" x="328" y="416" width="14" height="14" rx="2"/><text class="s" x="352" y="428">Pessoas</text>
+        <rect class="caixa tinta" x="482" y="438" width="100" height="30" rx="4"/><text class="s inv" x="532" y="458" text-anchor="middle">Confirmar</text>
+
+        <rect class="marca" x="150" y="490" width="450" height="130" rx="4"/>
+        <text class="t" x="172" y="522">Data no passado</text>
+        <text class="s" x="172" y="548">A data selecionada já passou.</text>
+        <text class="s" x="172" y="568">Você deseja continuar mesmo assim?</text>
+        <text class="s" x="440" y="604">Cancelar</text><text class="t" x="510" y="604">Continuar</text>
+
+        <path class="linha fina" d="M544 72 H636"/>
+        <text class="t" x="648" y="70">1. Modal</text>
+        <text class="s" x="648" y="90">Seis campos, quatro obrigatórios.</text>
+        <text class="s" x="648" y="108">Lista de tarefas tem um só valor.</text>
+        <path class="linha fina" d="M600 352 H636"/>
+        <text class="t" x="648" y="350">2. Popover sobre o modal</text>
+        <text class="s" x="648" y="370">Para incluir uma pessoa,</text>
+        <text class="s" x="648" y="388">uma segunda camada.</text>
+        <path class="linha fina" d="M600 512 H636"/>
+        <text class="t" x="648" y="510">3. Diálogo sobre o modal</text>
+        <text class="s" x="648" y="530">Pergunta se deseja continuar.</text>
+        <text class="s" x="648" y="548">Não diz o motivo nem oferece</text>
+        <text class="s" x="648" y="566">salvar como concluída.</text>
+      </svg>
+    </div>
+  </div>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>4 de 8</span></footer>
+</section>
+
+<!-- ============ 5 ============ -->
+<section class="slide" id="q1s5">
+  <header>
+    <p class="item">Questão 1, item 1 de 3. Problema 4 de 5. Consistência</p>
+    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
+    <h2>Três azuis, três cinzas, três jeitos de criar</h2>
+  </header>
+  <div class="corpo problema">
+    <div class="col lado">
+      <p class="tese">Na mesma tela, o azul da marca, o do componente e o da campanha. Os cinzas vêm de três bibliotecas. O widget usa o seletor nativo, e o modal usa um customizado. O menu lateral não marca o módulo atual.</p>
+      <div class="bloco-txt">
+        <h3>Por que importa</h3>
+        <p class="texto">Cada divergência é um reaprendizado pequeno para quem usa e um custo de manutenção para o time. A causa provável é a falta de fonte única. É a terceira restrição do briefing.</p>
+      </div>
+      <div class="bloco-txt">
+        <h3>Heurística de Nielsen</h3>
+        <p class="texto">Consistência e padrões. Telas 11, 13, 14, 17 a 20. <span class="id">PA-01</span>.</p>
+      </div>
+      <p class="fecho">Quando tudo é azul, nada parece clicável.</p>
+    </div>
+    <div class="col evidencia" style="gap: 1.667cqw;">
+      <div class="paleta">
+        <div class="bloco-txt">
+          <h3 class="mesma-tela">Três azuis na mesma tela. Tela 11</h3>
+          <div class="amostras">
+            <div><div class="amostra" style="background:#008fd5"></div><p class="hex"><code>#008fd5</code>marca</p></div>
+            <div><div class="amostra" style="background:#228be6"></div><p class="hex"><code>#228be6</code>componente</p></div>
+            <div><div class="amostra" style="background:#0255c4"></div><p class="hex"><code>#0255c4</code>campanha</p></div>
+          </div>
+        </div>
+        <div class="bloco-txt">
+          <h3 style="border-top: 2px solid var(--line); padding-top: 0.417cqw;">Três cinzas, três bibliotecas</h3>
+          <div class="amostras">
+            <div><div class="amostra" style="background:#202124"></div><p class="hex"><code>#202124</code>texto, Material</p></div>
+            <div><div class="amostra" style="background:#6c757d"></div><p class="hex"><code>#6c757d</code>texto, Bootstrap</p></div>
+            <div><div class="amostra" style="background:#dee2e6"></div><p class="hex"><code>#dee2e6</code>divisor, Mantine</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="bloco-txt">
+        <h3 style="border-top: 2px solid var(--line); padding-top: 0.417cqw;">Três jeitos de criar. Telas 11, 13 e 17</h3>
+        <svg class="desenho" viewBox="0 0 920 120" role="img" aria-label="Três botões de criar: retângulo em caixa alta com Adicionar primeira tarefa, retângulo com Adicionar atividade e seta de menu, e um círculo com sinal de mais">
+          <rect class="caixa tinta" x="0" y="14" width="350" height="54" rx="4"/>
+          <path d="M22 41 H38 M30 33 V49" stroke="var(--inverse)" stroke-width="2.5"/>
+          <text class="t inv" x="50" y="47" font-size="16" letter-spacing="1">ADICIONAR PRIMEIRA TAREFA</text>
+          <text class="s" x="0" y="100">Área de trabalho, em caixa alta</text>
+          <rect class="caixa tinta" x="410" y="14" width="250" height="54" rx="4"/>
+          <text class="t inv" x="430" y="47">Adicionar atividade</text>
+          <path d="M624 36 L632 46 L640 36" stroke="var(--inverse)" stroke-width="2.5" fill="none"/>
+          <text class="s" x="410" y="100">Agenda, com seta de menu</text>
+          <circle class="caixa tinta" cx="747" cy="41" r="27"/>
+          <path d="M735 41 H759 M747 29 V53" stroke="var(--inverse)" stroke-width="3"/>
+          <text class="s" x="720" y="100">Agenda, um “+” redondo</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>5 de 8</span></footer>
+</section>
+
+<!-- ============ 6 ============ -->
+<section class="slide" id="q1s6">
+  <header>
+    <p class="item">Questão 1, item 1 de 3. Problema 5 de 5. Hierarquia e ruído</p>
+    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
+    <h2>A moldura compete com o trabalho</h2>
+  </header>
+  <div class="corpo problema">
+    <div class="col lado">
+      <p class="tese">Uma faixa de campanha com contador ocupa o topo do produto logado, em toda tela. O cabeçalho soma o selo “1 ano grátis” e o botão verde “Contratar”. “Conheça as IAs” tem cor própria e fundo lilás no menu.</p>
+      <div class="bloco-txt">
+        <h3>Por que importa</h3>
+        <p class="texto">Quem vive no produto lê esse ruído o dia inteiro. A moldura não tem dono de produto: marketing e IA entram nela sem passar por um padrão. E o briefing pede que a IA nasça no mesmo padrão do resto.</p>
+      </div>
+      <div class="bloco-txt">
+        <h3>Heurística de Nielsen</h3>
+        <p class="texto">Estética e design minimalista. Telas 11 e 13. <span class="id">PA-08</span>, <span class="id">PA-09</span> e <span class="id">PA-10</span>.</p>
+      </div>
+      <p class="fecho">Campanha e IA ocupam a moldura de quem controla prazo o dia inteiro.</p>
+    </div>
+    <div class="col evidencia">
+      <h3>Área de trabalho, desenho da tela 11 na proporção do print</h3>
+      <svg class="desenho wire" viewBox="0 0 1900 908" role="img" aria-label="Desenho da Área de trabalho. No topo, a faixa de campanha. No cabeçalho, busca, cinco ícones, selo 1 ano grátis e botão Contratar. No menu, Conheça as IAs em destaque. No centro, a área de trabalho com o estado vazio. À direita, três widgets">
+        <rect x="1" y="1" width="1898" height="906" fill="var(--paper)" stroke="var(--line)" stroke-width="3"/>
+        <rect class="marca" x="3" y="3" width="1894" height="60"/>
+        <text class="verm" x="32" y="44">Faixa de campanha, com contador, em toda tela</text>
+
+        <line class="linha fina" x1="0" y1="143" x2="1900" y2="143" style="stroke-width:2"/>
+        <rect class="barra" x="24" y="83" width="175" height="40" rx="4"/>
+        <rect class="campo" x="338" y="79" width="555" height="48" rx="4"/>
+        <text class="s" x="356" y="112">Busca</text>
+        <circle class="barra" cx="1258" cy="103" r="16"/><circle class="barra" cx="1305" cy="103" r="16"/><circle class="barra" cx="1353" cy="103" r="16"/><circle class="barra" cx="1400" cy="103" r="16"/><circle class="barra" cx="1448" cy="103" r="16"/>
+        <rect class="barra" x="1478" y="94" width="56" height="18" rx="3"/>
+        <rect class="caixa tinta" x="1548" y="82" width="174" height="42" rx="4"/>
+        <text class="s inv" x="1635" y="112" text-anchor="middle">1 ano grátis</text>
+        <rect class="caixa tinta" x="1730" y="82" width="148" height="42" rx="4"/>
+        <text class="s inv" x="1804" y="112" text-anchor="middle">Contratar</text>
+
+        <line class="linha fina" x1="308" y1="143" x2="308" y2="908" style="stroke-width:2"/>
+        <rect class="barra" x="30" y="240" width="170" height="16" rx="3"/>
+        <rect class="barra" x="30" y="289" width="110" height="16" rx="3"/>
+        <rect class="barra" x="30" y="338" width="120" height="16" rx="3"/>
+        <rect class="barra" x="30" y="387" width="150" height="16" rx="3"/>
+        <rect class="barra" x="30" y="436" width="180" height="16" rx="3"/>
+        <rect class="barra" x="30" y="485" width="130" height="16" rx="3"/>
+        <rect class="barra" x="30" y="534" width="120" height="16" rx="3"/>
+        <rect class="barra" x="30" y="583" width="130" height="16" rx="3"/>
+        <rect class="barra" x="30" y="632" width="120" height="16" rx="3"/>
+        <rect class="barra" x="30" y="681" width="90" height="16" rx="3"/>
+        <line class="linha fina" x1="10" y1="732" x2="298" y2="732" style="stroke-width:2"/>
+        <rect class="caixa tinta" x="10" y="756" width="288" height="52" rx="4"/>
+        <text class="s inv" x="32" y="791">Conheça as IAs</text>
+        <rect class="barra" x="30" y="822" width="100" height="16" rx="3"/>
+
+        <text class="t" x="340" y="270">Área de trabalho</text>
+        <rect class="caixa suave" x="518" y="430" width="520" height="200" rx="4"/>
+        <text class="s" x="778" y="538" text-anchor="middle">Estado vazio, quatro passos</text>
+        <rect class="barra" x="621" y="661" width="313" height="48" rx="4"/>
+
+        <rect class="caixa suave" x="1247" y="233" width="618" height="238" rx="4"/>
+        <text class="t" x="1278" y="285">Processos e casos</text>
+        <rect class="caixa suave" x="1247" y="504" width="618" height="316" rx="4"/>
+        <text class="t" x="1278" y="556">Estatísticas</text>
+        <rect class="caixa suave" x="1247" y="852" width="618" height="56" rx="4"/>
+        <text class="t" x="1278" y="896">Lembretes</text>
+      </svg>
+      <p class="nota">Em tinta escura, o que a moldura vende: selo “1 ano grátis”, botão “Contratar” e “Conheça as IAs”. Em cinza, o que serve ao trabalho. O menu ocupa 240px fixos e não recolhe, <span class="id">PA-12</span>.</p>
+    </div>
+  </div>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>6 de 8</span></footer>
+</section>
+
+<!-- ============ 7 ============ -->
+<section class="slide" id="q1s7">
+  <header>
+    <p class="item">Questão 1, item 2 de 3. Princípios de design</p>
+    <p class="pergunta">Quais princípios de design devem guiar o redesign?</p>
+    <h2>Seis princípios decidem o redesign</h2>
+  </header>
+  <div class="corpo principios-corpo">
     <div class="coluna">
       <div>
         <p class="forte">O prazo primeiro</p>
@@ -314,31 +645,33 @@
       </li>
     </ul>
   </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>4 de 5</span></footer>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>7 de 8</span></footer>
 </section>
 
-<!-- ============ 5 ============ -->
-<section class="slide s5" id="q1s5">
-  <p class="item">Questão 1, item 3 de 3. O que validar</p>
-  <p class="pergunta">O que validar antes de seguir, e como?</p>
-  <h2>Caro de corrigir se confirma antes. O resto segue por token.</h2>
-  <div class="area">
+<!-- ============ 8 ============ -->
+<section class="slide validar" id="q1s8">
+  <header>
+    <p class="item">Questão 1, item 3 de 3. O que validar</p>
+    <p class="pergunta">O que validar antes de seguir, e como?</p>
+    <h2>Caro de corrigir se confirma antes. O resto segue por token</h2>
+  </header>
+  <div class="corpo">
     <table>
       <colgroup><col style="width:36%"><col style="width:7.5%"><col style="width:7.5%"><col style="width:7.5%"><col style="width:7.5%"><col></colgroup>
       <thead><tr><th class="esq" scope="col">Hipótese</th><th scope="col">Pedido</th><th scope="col">Chamado</th><th scope="col">Analytics</th><th scope="col">Entrevista</th><th class="esq teste" scope="col">Primeiro teste</th></tr></thead>
       <tbody>
         <tr class="grupo"><td colspan="6">Confirmar antes de seguir</td></tr>
-        <tr><td class="esq"><div class="hip"><span class="n">1</span>A Área de trabalho esconde o que atrasou</div></td><td><span class="ponto meio" role="img" aria-label="A planilha responde em parte"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Contas com tarefa atrasada fora da lista inicial</td></tr>
-        <tr><td class="esq"><div class="hip"><span class="n">2</span>"Atividade" serve como termo geral</div></td><td><span class="ponto meio" role="img" aria-label="A planilha responde em parte"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Teste de cinco segundos na Agenda</td></tr>
-        <tr><td class="esq"><div class="hip"><span class="n">3</span>O modal de criar tem abandono</div></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td class="esq teste">Funil do modal: aberto, preenchido, salvo</td></tr>
-        <tr><td class="esq"><div class="hip"><span class="n">5</span>O ruído da moldura custa atenção</div></td><td></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Conversão de "Contratar" contra CSAT</td></tr>
+        <tr><td class="esq"><div class="hip"><i>1</i>A Área de trabalho esconde o que atrasou</div></td><td><span class="ponto meio" role="img" aria-label="A planilha responde em parte"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Contas com tarefa atrasada fora da lista inicial</td></tr>
+        <tr><td class="esq"><div class="hip"><i>2</i>“Atividade” serve como termo geral</div></td><td><span class="ponto meio" role="img" aria-label="A planilha responde em parte"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Teste de cinco segundos na Agenda</td></tr>
+        <tr><td class="esq"><div class="hip"><i>3</i>O modal de criar tem abandono</div></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td class="esq teste">Funil do modal: aberto, preenchido, salvo</td></tr>
+        <tr><td class="esq"><div class="hip"><i>5</i>O ruído da moldura custa atenção</div></td><td></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Conversão de “Contratar” contra CSAT</td></tr>
         <tr class="grupo corte"><td colspan="6">Segue para a Questão 2: o inventário já prova</td></tr>
-        <tr><td class="esq"><div class="hip"><span class="n">4</span>A inconsistência custa reaprendizado</div></td><td></td><td></td><td></td><td></td><td class="esq teste">Bugs visuais abertos e tempo de handoff</td></tr>
+        <tr><td class="esq"><div class="hip"><i>4</i>A inconsistência custa reaprendizado</div></td><td></td><td></td><td></td><td></td><td class="esq teste">Bugs visuais abertos e tempo de handoff</td></tr>
       </tbody>
     </table>
     <p class="legenda"><span><i class="ponto"></i>Fonte a cruzar</span><span><i class="ponto meio"></i>A planilha responde em parte</span><strong>Duas fontes de tipos diferentes na mesma direção confirmam.</strong></p>
   </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>5 de 5</span></footer>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>8 de 8</span></footer>
 </section>
 
 </body>
