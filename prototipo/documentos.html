@@ -9,15 +9,47 @@
 <script src="componentes.js"></script>
 <script src="dados.js"></script>
 <style>
-  /* O atalho para os modelos fica ao lado da ação de criar (PA-86). */
-  .modulo-topo {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
+  /* Barra de filtros no padrão de Contatos; o atalho para os modelos fica ao lado da ação de criar (PA-86). */
+  #conteudo > .barra-filtros { margin-bottom: var(--space-4); }
+
+  /* Formato da lista: o mesmo controle segmentado de contatos.html (PA-64). */
+  .formato {
+    display: inline-flex;
+    gap: var(--border-width);
+    padding: var(--border-width);
+    background-color: var(--color-bg-subtle);
+    border: var(--border-width) solid var(--color-border-default);
+    border-radius: var(--radius);
   }
+  .formato-opcao {
+    min-height: calc(var(--component-control-height) - var(--space-1));
+    padding: 0 var(--space-3);
+    background: none;
+    border: var(--border-width) solid transparent;
+    border-radius: var(--radius);
+    color: var(--color-text-default);
+    font: inherit;
+    font-size: var(--font-size-button);
+    cursor: pointer;
+  }
+  .formato-opcao:hover { background-color: var(--color-bg-hover); }
+  .formato-opcao[aria-checked="true"] {
+    background-color: var(--color-bg-surface);
+    border-color: var(--color-border-strong);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .documentos-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--component-column-width)), 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .documentos-cards .card-contato { width: auto; height: 100%; }
+  /* O tipo no canto do card, o nome do arquivo ocupa o resto da linha. */
+  .documentos-cards .card-contato-topo { align-self: stretch; align-items: flex-start; justify-content: space-between; }
   .resumo { display: grid; gap: var(--space-2); margin: 0; }
   .resumo div { display: grid; gap: var(--space-1); }
   .resumo dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
@@ -30,7 +62,7 @@
 <body data-pagina="documentos.html" data-titulo="Documentos">
 <div class="corpo">
   <main id="conteudo">
-    <div class="modulo-topo" id="topo"></div>
+    <div id="topo"></div>
     <div class="documentos-aviso" id="documentos-aviso"></div>
     <div id="lista"></div>
   </main>
@@ -203,7 +235,83 @@
     ],
   });
   origem = menuAdicionar.querySelector('button');
-  document.getElementById('topo').append(atalhoModelos, menuAdicionar);
+
+  // --- barra de filtros e formato (o mesmo arranjo de contatos.html) ----------
+
+  const CHAVE_VISAO = 'astrea-documentos-visao';
+  const VISOES = [['tabela', 'Tabela'], ['cards', 'Cards']];
+  const TIPOS = [['', 'Todos'], ['PDF', 'PDF'], ['DOCX', 'DOCX'], ['Imagem', 'Imagem']];
+  const lerVisao = () => {
+    let salva = null;
+    try { salva = localStorage.getItem(CHAVE_VISAO); } catch (e) { salva = null; }
+    return VISOES.some(([chave]) => chave === salva) ? salva : 'tabela';
+  };
+  const gravarVisao = (visao) => { try { localStorage.setItem(CHAVE_VISAO, visao); } catch (e) { /* sem armazenamento */ } };
+  const estado = { busca: '', tipo: '', visao: lerVisao() };
+  // Busca sem acento e sem diferença de maiúscula: "procuracao" acha "Procuração".
+  const normalizar = (texto) => (texto || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+  function filtrados() {
+    const termo = normalizar(estado.busca.trim());
+    return documentos.filter((d) => (!estado.tipo || d.tipo === estado.tipo)
+      && (!termo || [d.nome, d.processo, d.contato].some((v) => normalizar(v).includes(termo))));
+  }
+
+  const busca = DS.busca({
+    rotulo: 'Buscar documento', largura: 'm', placeholder: 'Nome, processo ou contato',
+    aoMudar: (valor) => { estado.busca = valor; desenhar(); },
+  });
+  const tipo = DS.seletor({
+    rotulo: 'Tipo', largura: 'p', opcoes: TIPOS, valor: '',
+    aoEscolher: (valor) => { estado.tipo = valor; desenhar(); },
+  });
+
+  const formato = document.createElement('div');
+  formato.className = 'formato';
+  formato.setAttribute('role', 'radiogroup');
+  formato.setAttribute('aria-label', 'Formato da lista');
+  const opcoesDeFormato = VISOES.map(([chave, rotulo]) => {
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'formato-opcao';
+    el.textContent = rotulo;
+    el.setAttribute('role', 'radio');
+    el.dataset.visao = chave;
+    el.setAttribute('aria-controls', 'documentos-resultado');
+    el.addEventListener('click', () => escolherVisao(chave));
+    return el;
+  });
+  formato.append(...opcoesDeFormato);
+  formato.addEventListener('keydown', (e) => {
+    const passo = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+    if (!passo) return;
+    e.preventDefault();
+    const atual = VISOES.findIndex(([chave]) => chave === estado.visao);
+    escolherVisao(VISOES[(atual + passo + VISOES.length) % VISOES.length][0], true);
+  });
+
+  function marcarVisao() {
+    opcoesDeFormato.forEach((el) => {
+      const marcada = el.dataset.visao === estado.visao;
+      el.setAttribute('aria-checked', String(marcada));
+      el.tabIndex = marcada ? 0 : -1;
+    });
+  }
+
+  function escolherVisao(visao, focar) {
+    estado.visao = visao;
+    gravarVisao(visao);
+    marcarVisao();
+    desenhar();
+    if (focar) opcoesDeFormato.find((el) => el.dataset.visao === visao).focus();
+  }
+
+  const barra = DS.barraFiltros({ rotulo: 'Filtros de documentos', itens: [busca, tipo] });
+  const fimDaBarra = barra.el.querySelector('.barra-filtros-fim');
+  fimDaBarra.prepend(formato);
+  fimDaBarra.append(atalhoModelos, menuAdicionar);
+  document.getElementById('topo').replaceWith(barra.el);
+  marcarVisao();
 
   // --- detalhe ao lado da lista (o mesmo arranjo de contatos.html) ----------
 
@@ -302,6 +410,7 @@
   }
 
   const vagaDaLista = document.createElement('div');
+  vagaDaLista.id = 'documentos-resultado';
   const detalhe = detalheAoLado({
     pagina: 'documentos', lista: vagaDaLista, rotulo: 'Documento escolhido', dadosDe: dadosDoDocumento,
     rotulos: { anterior: 'Documento anterior da lista', proximo: 'Próximo documento da lista',
@@ -309,30 +418,92 @@
   });
   document.getElementById('lista').append(detalhe.casca);
 
-  function desenhar() {
-    if (!documentos.length) {
-      vagaDaLista.replaceChildren(DS.estadoVazio({
-        titulo: 'Crie, padronize e gerencie seus documentos',
-        texto: 'Use Adicionar documento e escolha Documento padrão para gerar um contrato ou uma procuração a partir dos modelos.',
-      }));
-      detalhe.sincronizar([]);
-      return;
-    }
+  function desenharTabela(itens) {
     const quadro = DS.tabela({
       rotulo: 'Documentos',
       colunas: [['nome', 'Nome'], ['tipo', 'Tipo'], ['ligado', 'Processo ou contato'], ['enviadoPor', 'Enviado por'], ['data', 'Data']],
-      linhas: documentos.map((d) => ({
+      linhas: itens.map((d) => ({
         nome: d.nome, tipo: d.tipo ? DS.tag({ rotulo: d.tipo }) : '', ligado: d.processo || d.contato,
         enviadoPor: d.enviadoPor, data: dataBr(d.enviadoEm),
       })),
     });
     quadro.querySelectorAll('tbody tr').forEach((tr, i) => {
-      tr.dataset.id = documentos[i].id;
+      tr.dataset.id = itens[i].id;
       tr.dataset.selecionavel = '';
       tr.tabIndex = 0;
     });
-    vagaDaLista.replaceChildren(quadro);
-    detalhe.sincronizar(documentos);
+    return quadro;
+  }
+
+  // O card de contatos.html, com as classes do DS. O card inteiro é o alvo: foco, clique e Enter escolhem.
+  function cardDoDocumento(d) {
+    const card = document.createElement('article');
+    card.className = 'card-contato';
+    card.dataset.id = d.id;
+    card.tabIndex = 0;
+    const titulo = document.createElement('h3');
+    titulo.className = 'card-contato-nome';
+    titulo.id = `documento-${d.id}-nome`;
+    titulo.textContent = d.nome;
+    card.setAttribute('aria-labelledby', titulo.id);
+    const topo = document.createElement('div');
+    topo.className = 'card-contato-topo';
+    topo.append(titulo);
+    if (d.tipo) topo.append(DS.tag({ rotulo: d.tipo }));
+    const dados = document.createElement('dl');
+    dados.className = 'card-contato-dados';
+    const campos = [
+      [d.processo ? 'Processo' : 'Contato', d.processo || d.contato],
+      ['Enviado por', d.enviadoPor ? DS.avatar({ nome: d.enviadoPor, mostrarNome: true }) : ''],
+      ['Data', dataBr(d.enviadoEm)],
+      ['Tamanho', tamanho(d.tamanhoKb)],
+    ].filter(([, valor]) => valor);
+    campos.forEach(([rotulo, valor]) => {
+      const dt = document.createElement('dt');
+      const dd = document.createElement('dd');
+      dt.textContent = rotulo;
+      dd.append(valor);
+      dados.append(dt, dd);
+    });
+    card.append(topo, dados);
+    return card;
+  }
+
+  function desenharCards(itens) {
+    const ul = document.createElement('ul');
+    ul.className = 'documentos-cards';
+    ul.setAttribute('aria-label', 'Documentos');
+    ul.append(...itens.map((d) => {
+      const li = document.createElement('li');
+      li.append(cardDoDocumento(d));
+      return li;
+    }));
+    return ul;
+  }
+
+  function vazio() {
+    if (!documentos.length) {
+      return DS.estadoVazio({
+        titulo: 'Crie, padronize e gerencie seus documentos',
+        texto: 'Use Adicionar documento e escolha Documento padrão para gerar um contrato ou uma procuração a partir dos modelos.',
+      });
+    }
+    const termo = estado.busca.trim();
+    const doTipo = estado.tipo ? ` do tipo ${estado.tipo}` : '';
+    return DS.estadoVazio({
+      titulo: termo ? `Nenhum documento${doTipo} para "${termo}"` : `Nenhum documento${doTipo}`,
+      texto: 'Procure por outro nome, processo ou contato, ou escolha Todos em Tipo.',
+    });
+  }
+
+  function desenhar() {
+    const itens = filtrados();
+    const total = itens.length;
+    barra.atualizar({ resultado: `${total} ${total === 1 ? 'documento' : 'documentos'}` });
+    vagaDaLista.dataset.visao = estado.visao;
+    if (!total) vagaDaLista.replaceChildren(vazio());
+    else vagaDaLista.replaceChildren(estado.visao === 'cards' ? desenharCards(itens) : desenharTabela(itens));
+    detalhe.sincronizar(itens);
   }
 
   desenhar();
