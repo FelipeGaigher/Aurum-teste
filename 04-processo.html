@@ -193,8 +193,13 @@
       <tr><td class="hora">07/11 21:42 a 23:30</td><td data-r="O quê">Iterações do Kanban com Felipe: sidebar, slides em PNG, histórias com subtarefas, colunas por situação, sprints e tema escuro. Plano verificado contra as questões.</td></tr>
       <tr><td class="hora">08/11 07:05</td><td data-r="O quê">Documento único de entrega. Decks no Figma pelo Chrome.</td></tr>
       <tr><td class="hora">08/11 11:54 a 12:02</td><td data-r="O quê">Catálogo de 97 pontos e varredura dos módulos. Questões 1 e 2 revistas com as evidências.</td></tr>
-      <tr><td class="hora">08/11 12:13</td><td data-r="O quê">Spec e plano do Astrea navegável, com 23 tasks.</td></tr>
-      <tr><td class="hora">08/11 12:22 a 12:55</td><td data-r="O quê">Tasks 1 a 6: portões, tokens, moldura e o início do design system, com commit por task.</td></tr>
+      <tr><td class="hora">08/11 12:03</td><td data-r="O quê">Spec aprovada. Plano com 23 tasks.</td></tr>
+      <tr><td class="hora">08/11 12:12</td><td data-r="O quê">Onda 1: portões e tokens.</td></tr>
+      <tr><td class="hora">08/11 12:30</td><td data-r="O quê">Moldura e 15 páginas-casca.</td></tr>
+      <tr><td class="hora">08/11 12:40 a 13:20</td><td data-r="O quê">Design system em quatro tasks. Kanban com a moldura. Task 9b, a pedido de Felipe: o quadro mostra as fases da Questão 2.</td></tr>
+      <tr><td class="hora">08/11 13:00 a 13:40</td><td data-r="O quê">Área de trabalho, Agenda e os demais módulos, em até sete agentes em paralelo.</td></tr>
+      <tr><td class="hora">08/11 13:27</td><td data-r="O quê">Tela da Questão 3 no Figma.</td></tr>
+      <tr><td class="hora">08/11 13:46</td><td data-r="O quê">Fechamento com a suíte inteira verde.</td></tr>
     </tbody>
   </table>
 </section>
@@ -206,13 +211,20 @@
     <li>A planilha de pedidos cobre só a Área de trabalho. Ela vem de quem escolheu pedir, e parte dos pedidos é antiga.</li>
     <!-- lint-ignore: deriva-terminologica — rótulo literal do destino no catálogo -->
     <li>Os pontos com destino Validar dependem de analytics, Suporte, Marketing ou Comercial. A lista está no fim de <a href="01-pontos-de-atencao.md">01-pontos-de-atencao.md</a>.</li>
-    <li>No commit 63088be, o plano do Astrea navegável tem as Tasks 1 a 6 concluídas. As Tasks 7 a 23 estão abertas no plano.</li>
+    <li>As 23 tasks do plano estão marcadas, mais a Task 9b. A suíte final está verde: <code>python prototipo/test_verificar.py</code> com 34 testes; <code>verificar.py --todos --base-kanban --sincronia --dados-reais</code> com 0 erro; <code>node scripts/verificar-app.js</code> com RF-01 a RF-15 ok.</li>
+    <li>Um revisor em opus julgou cada onda. Tasks 1 a 3 foram reprovadas na primeira rodada: a busca de dado real não normalizava espaço em branco, o portão de navegador só media o estado inicial e dois fundos de alerta usavam cor inventada. Passaram depois da correção. A Task 4 foi reprovada pelo alinhamento do título e corrigida. O hover da chave (Task 6) e o chip concluído (Task 7) foram corrigidos dentro da Task 13. A Task 9b foi reprovada porque a spec ainda citava a base antiga, e a spec foi corrigida. As demais passaram de primeira.</li>
+    <li>Dois achados menores ficaram sem correção. Criar atividade pelo menu Adicionar, fora da Agenda, fecha o painel sem aviso. O filtro Delegadas filtra só por responsável.</li>
+    <li>Os dados do protótipo são fictícios. O verificador não abre <code>?adicionar=</code> em Atendimentos e Documentos.</li>
+    <li><code>prototipo/painel-redesign.html</code> é um resto do dia 07. Ele fica fora do <code>--todos</code> e sem link.</li>
+    <li>O lizard (CCN) não executou nesta máquina.</li>
+    <li>O push ao GitHub e a publicação no Pages dependem da limpeza de imagens sensíveis no histórico. Essa decisão é de Felipe.</li>
     <li>O portão de navegador mede teclado, foco e contraste. Ele não substitui o teste com leitor de tela.</li>
     <li>O detector anti "cara de IA" usa padrões de texto. Ele não julga a composição da tela.</li>
     <li>A fonte Museo Sans do Astrea não carrega pela rede no protótipo. Sem ela instalada, a tela usa a fonte do sistema.</li>
     <li>No Figma, os decks das Questões 1 e 3 são imagens, sem camadas.</li>
+    <li>A tela da Questão 3 foi ao Figma por <code>generate_figma_design</code>, que não conta na cota do plano Starter. O <code>scripts/capturar-figma.js</code> serve o protótipo em localhost, injeta o capture.js do Figma em Chrome sem janela e envia a árvore DOM. A Área de trabalho é o nó 26-2 do arquivo. Uma primeira captura, o nó 24-2, saiu antes de um ajuste e será apagada. A captura da página do design system foi enviada e ainda estava em conversão ao fechar este documento.</li>
     <li>Felipe tem um componente de participantes no Figma. A IA não o leu, porque a cota do MCP acabou.</li>
-    <li>Dois terminais trabalharam no mesmo repositório ao mesmo tempo, e uma captura teve de ser refeita. A regra que ficou: capturar só com a árvore limpa.</li>
+    <li>Dois terminais trabalharam em paralelo na mesma pasta. Um refez o deck da Questão 1 com prints anotados e enriqueceu o artifact das respostas. Os dois combinaram por mensagem quais arquivos cada um tocava. Uma captura teve de ser refeita. A regra que ficou: capturar só com a árvore limpa.</li>
   </ul>
 </section>
 
