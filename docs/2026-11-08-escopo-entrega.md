@@ -56,11 +56,35 @@ Este arquivo guarda o que Felipe pediu. O detalhe do app mora na spec e no plano
 - Toda observação de Felipe sobre o Astrea entra em `01-pontos-de-atencao.md` na hora.
 - O catálogo tem 97 pontos, de PA-01 a PA-97.
 
+### Documentação, pedido de 08/11 às 12h55
+
+- As três questões, bem documentadas.
+- O Kanban do protótipo mostra o cenário do redesign em produção. As fases do quadro seguem a Q2: tokens, moldura, configuração e administração, fluxos principais.
+- Um documento com os ajustes na plataforma como um todo. Ele cobre fluxos alterados e recursos sem efeito visual, mas com peso no dia a dia. Exemplos: leitura em tabela ou cards, sidebar que colapsa, busca na navbar, economia de espaço. Arquivo: `05-ajustes-plataforma.html`.
+- Toda a documentação do processo de desenvolvimento. Arquivo: `04-processo.html`, com `04-processo.md` como diário.
+
 ### Fechamento
 
 - Parágrafo de uso de IA no fim da entrega.
 - Link único em `index.html`, publicado no GitHub Pages.
 - Arquivo do Figma aberto a quem tiver o link.
+
+## Alinhamento com o enunciado
+
+Fonte: documento da Aurum, relido em 08/11 às 12h55.
+
+| O enunciado pede | Onde fica | Situação |
+|---|---|---|
+| Q1: 5 problemas com evidência, princípios, o que validar, até 5 páginas | `01-slides-q1.html`, `01-diagnostico.md` | Pronto |
+| Q2: arquitetura, governança, fases, time, riscos e métricas, até 6 páginas | Deck de 6 slides, `02-plano-ds.md` | Pronto |
+| Q3: tela em alta fidelidade no Figma | Área de trabalho do protótipo, depois o Figma | Em construção |
+| Q3: 3 a 5 componentes com estados | `design-system.html` e `03-slides-q3.html` | Em construção |
+| Q3: uma decisão difícil | `03-tela.md` | Em reescrita |
+| Parágrafo de uso de IA | `04-uso-de-ia.md`, fim de `index.html` | Pronto, revisar no fim |
+| Um único link com visualização | `index.html` no GitHub Pages | Depende do push |
+| Parte B, 30 minutos de apresentação | Deck da Q2 e protótipo navegável | Material pronto no fim |
+
+O enunciado diz que a Aurum prototipa no Figma. A tela da Q3 precisa existir lá, não só no protótipo.
 
 ## Ordem de corte, se o tempo apertar
 
