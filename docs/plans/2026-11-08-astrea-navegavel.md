@@ -94,7 +94,7 @@ Regras de execução deste plano:
 - Produces: `buscar_dados_reais(lista: Path, pasta: Path) -> list[str]` — RF-13.
 - Produces: `arquivos_do_todos(pasta: Path) -> list[Path]`.
 
-- [ ] **Step 1: Escrever o teste que falha**
+- [x] **Step 1: Escrever o teste que falha**
 
 Acrescente este conteúdo em `prototipo/test_verificar.py`, antes do bloco `if __name__`.
 
@@ -245,7 +245,7 @@ class DadosReais(unittest.TestCase):
         self.assertEqual(self._executar('\n# nota\n', 'nota qualquer\n'), [])
 ```
 
-- [ ] **Step 2: Executar e confirmar a falha**
+- [x] **Step 2: Executar e confirmar a falha**
 
 ```bash
 python prototipo/test_verificar.py
@@ -253,7 +253,7 @@ python prototipo/test_verificar.py
 
 Esperado: `FAILED`, com `AttributeError` em `comparar_kanban` e nas funções novas.
 
-- [ ] **Step 3: Implementar**
+- [x] **Step 3: Implementar**
 
 Acrescente `__pycache__/` e `node_modules/` ao `.gitignore`.
 
@@ -463,7 +463,7 @@ def main(argv=None):
 
 Atualize a docstring do módulo com as opções novas. Esperado: `checar` aceita as quatro extensões.
 
-- [ ] **Step 4: Executar e confirmar que passa**
+- [x] **Step 4: Executar e confirmar que passa**
 
 ```bash
 python prototipo/test_verificar.py
@@ -472,7 +472,7 @@ python prototipo/verificar.py prototipo/kanban.html --base-kanban
 
 Esperado: `Ran 30 tests`, `OK`, e `verificar: 0 erro(s)` no segundo comando.
 
-- [ ] **Step 5: Entregar**
+- [x] **Step 5: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
@@ -498,7 +498,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Produces: `node scripts/verificar-app.js [--rf RF-01,RF-03] [--paginas a.html,b.html] [--exceto a.html] [--grupos acoes,dados] [--lista] [--fumaca]` — sai com 0 sem falha e 1 com falha.
 - Produces: o contrato de seletores da tabela abaixo. As tasks de tela seguem esse contrato.
 
-- [ ] **Step 1: Instalar o Playwright**
+- [x] **Step 1: Instalar o Playwright**
 
 ```bash
 npm i -D playwright
@@ -506,7 +506,7 @@ npm i -D playwright
 
 Esperado: `package.json` e `package-lock.json` novos. O navegador é o Chrome da máquina, então nenhum browser é baixado.
 
-- [ ] **Step 2: Escrever o script**
+- [x] **Step 2: Escrever o script**
 
 Copie o arranque de `scripts/capturar-kanban.js`. Carregue o Playwright só depois de tratar `--lista`.
 
@@ -571,7 +571,7 @@ const ESTADOS = ['default', 'hover', 'active', 'foco', 'disabled', 'erro', 'carr
 
 O grupo `fundamentos` exige só o `[data-ds]`. Esperado: `node scripts/verificar-app.js --lista` imprime os 12 RF de navegador.
 
-- [ ] **Step 3: Confirmar o estado vermelho**
+- [x] **Step 3: Confirmar o estado vermelho**
 
 ```bash
 node scripts/verificar-app.js --rf RF-01
@@ -579,7 +579,7 @@ node scripts/verificar-app.js --rf RF-01
 
 Esperado: `RF-01 FALHOU`, porque as páginas ainda não existem.
 
-- [ ] **Step 4: Executar e confirmar que passa**
+- [x] **Step 4: Executar e confirmar que passa**
 
 ```bash
 node scripts/verificar-app.js --fumaca
@@ -587,7 +587,7 @@ node scripts/verificar-app.js --fumaca
 
 Esperado: código 0, sem janela visível.
 
-- [ ] **Step 5: Entregar**
+- [x] **Step 5: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
@@ -616,7 +616,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Produces: `prototipo/astrea.css` com os blocos `/* primitivos */`, `/* semanticos */` e `/* componentes */`.
 - Produces: os tokens novos `--color-text-success`, `--color-bg-danger`, `--color-bg-warning` e `--density-row`.
 
-- [ ] **Step 1: Copiar os tokens sem abrir o Kanban**
+- [x] **Step 1: Copiar os tokens sem abrir o Kanban**
 
 ```bash
 sed -n '8,258p' prototipo/kanban.html > prototipo/astrea.css
@@ -624,7 +624,7 @@ sed -n '8,258p' prototipo/kanban.html > prototipo/astrea.css
 
 Esperado: o arquivo começa em `/* primitivos */` e termina em `/* fim dos componentes */`.
 
-- [ ] **Step 2: Acrescentar os tokens novos**
+- [x] **Step 2: Acrescentar os tokens novos**
 
 Preserve todo nome existente. O Kanban consome esses nomes na Task 9.
 
@@ -637,7 +637,7 @@ Preserve todo nome existente. O Kanban consome esses nomes na Task 9.
 
 Meça cada par com `contraste.py` e registre a razão em comentário no primitivo. Esperado: todo par com 4.5 ou mais.
 
-- [ ] **Step 3: Executar e confirmar que passa**
+- [x] **Step 3: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/astrea.css
@@ -645,7 +645,7 @@ python prototipo/verificar.py prototipo/astrea.css
 
 Esperado: `verificar: 0 erro(s)`.
 
-- [ ] **Step 4: Entregar**
+- [x] **Step 4: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 

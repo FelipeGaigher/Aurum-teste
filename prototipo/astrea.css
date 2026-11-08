@@ -1,0 +1,270 @@
+/* primitivos */
+:root {
+  /* Espelham as variaveis do CSS do Astrea logado. O nome original vai no comentario. */
+  --primitive-blue-logo: #008fd5; /* logo; nao e variavel do produto */
+  --primitive-blue-900: #1d6bb7; /* --primary900 */
+  --primitive-blue-1000: #17558f; /* derivado do --primary900, um degrau abaixo, para hover */
+  --primitive-gray-0: #ffffff; /* branco da pagina */
+  --primitive-gray-100: #f1f3f4; /* --gray100 */
+  --primitive-gray-300: #dee2e6; /* --gray300 */
+  --primitive-gray-500: #6c757d; /* --gray500 */
+  --primitive-gray-900: #202124; /* --gray900 */
+  --primitive-danger-500: #e70202; /* --danger */
+  --primitive-warning-1000: #8a6900; /* derivado do --warning900, que nao passa no AA */
+  --primitive-success-900: #02883c; /* --success da secao 14 do inventario. 4,58:1 sobre --primitive-gray-0 */
+  --primitive-danger-100: #f8d7d7; /* fundo do chip vencido, claro. 12,03:1 com --primitive-gray-900 */
+  --primitive-warning-100: #fde9a9; /* fundo do chip vence hoje, claro. 13,34:1 com --primitive-gray-900 */
+
+  /* Tema escuro: o Astrea nao tem um, entao estes valores sao proposta. Medidos no AA com contraste.py. */
+  --primitive-dark-950: #0b1a2a; /* texto sobre a acao clara, 6,8:1 */
+  --primitive-dark-900: #111418; /* pagina */
+  --primitive-dark-800: #181c22; /* fundo de coluna e de area */
+  --primitive-dark-700: #232a33; /* superficie: card, dialogo, menu, cabecalho */
+  --primitive-dark-600: #2f3843; /* hover */
+  --primitive-dark-500: #323b47; /* borda */
+  --primitive-dark-400: #6b7785; /* borda forte, 3,2:1 sobre a superficie */
+  --primitive-dark-300: #a3abb8; /* texto secundario, 6,2:1 sobre a superficie */
+  --primitive-dark-100: #e6e9ee; /* texto */
+  --primitive-blue-400: #5aa7ec; /* acao no escuro, 5,6:1 como texto sobre a superficie */
+  --primitive-blue-300: #7dbbf2; /* hover da acao no escuro */
+  --primitive-danger-300: #ff6b6b; /* vencido no escuro, 5,2:1 */
+  --primitive-warning-300: #f2c14e; /* vence hoje no escuro, 8,9:1 */
+  --primitive-success-300: #5fd38a; /* sucesso no escuro, 7,70:1 sobre --primitive-dark-700 */
+  --primitive-danger-dark-100: #3d1f24; /* fundo do chip vencido, escuro. 12,15:1 com --primitive-dark-100 */
+  --primitive-warning-dark-100: #3d3010; /* fundo do chip vence hoje, escuro. 10,59:1 com --primitive-dark-100 */
+
+  --primitive-shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --primitive-shadow-2: 0 1px 2px rgba(0, 0, 0, 0.4);
+
+  --primitive-space-4: 4px;
+  --primitive-space-8: 8px;
+  --primitive-space-12: 12px;
+  --primitive-space-16: 16px;
+  --primitive-space-24: 24px;
+  --primitive-space-32: 32px;
+  --primitive-space-40: 40px;
+
+  --primitive-radius-8: 8px;
+  --primitive-radius-12: 12px;
+  --primitive-radius-round: 50%;
+  --primitive-border-1: 1px;
+  --primitive-border-2: 2px;
+
+  --primitive-font-12: 12px;
+  --primitive-font-14: 14px;
+  --primitive-font-13: 13px;
+  --primitive-font-16: 16px;
+  --primitive-font-18: 18px;
+  --primitive-font-20: 20px;
+  --primitive-font-24: 24px;
+  --primitive-font-28: 28px;
+  --primitive-weight-400: 400;
+  --primitive-weight-500: 500;
+  --primitive-weight-600: 600;
+  --primitive-leading-125: 1.25;
+  --primitive-leading-145: 1.45;
+  --primitive-tracking-04: 0.04em;
+
+  --primitive-size-18: 18px;
+  --primitive-size-20: 20px;
+  --primitive-size-22: 22px;
+  --primitive-size-24: 24px;
+  --primitive-size-28: 28px;
+  --primitive-size-32: 32px;
+  --primitive-size-36: 36px;
+  --primitive-size-40: 40px;
+  --primitive-size-44: 44px;
+  --primitive-size-48: 48px;
+  --primitive-size-64: 64px;
+  --primitive-size-88: 88px;
+  --primitive-size-200: 200px; /* sidebar que abraca o item mais longo, "Processos e casos", com 8px de folga */
+  --primitive-size-300: 300px;
+  --primitive-size-440: 440px;
+  --primitive-size-480: 480px;
+  --primitive-size-560: 560px;
+  --primitive-size-960: 960px;
+}
+/* fim dos primitivos */
+
+/* semanticos */
+:root {
+  color-scheme: light;
+
+  --color-bg-page: var(--primitive-gray-0);
+  --color-bg-surface: var(--primitive-gray-0);
+  --color-bg-subtle: var(--primitive-gray-100);
+  --color-bg-hover: var(--primitive-gray-300);
+  --color-text-default: var(--primitive-gray-900);
+  --color-text-muted: var(--primitive-gray-500);
+  --color-text-danger: var(--primitive-danger-500);
+  --color-text-warning: var(--primitive-warning-1000);
+  --color-text-success: var(--primitive-success-900);
+  --color-bg-danger: var(--primitive-danger-100);
+  --color-bg-warning: var(--primitive-warning-100);
+  --color-logo: var(--primitive-blue-logo);
+  --color-border-default: var(--primitive-gray-300);
+  --color-border-strong: var(--primitive-gray-500);
+  --color-action: var(--primitive-blue-900);
+  --color-action-hover: var(--primitive-blue-1000);
+  --color-action-text: var(--primitive-gray-0);
+  --color-focus: var(--primitive-blue-900);
+  --color-scrim: color-mix(in srgb, var(--primitive-gray-900) 45%, transparent);
+
+  --shadow-card: var(--primitive-shadow-1);
+
+  --space-1: var(--primitive-space-4);
+  --space-2: var(--primitive-space-8);
+  --space-3: var(--primitive-space-12);
+  --space-4: var(--primitive-space-16);
+  --space-5: var(--primitive-space-24);
+  --space-6: var(--primitive-space-32);
+  --space-7: var(--primitive-space-40);
+
+  /* Densidade de linha. Controle de 36px, como no 03-tela.md; compacta usa 32px, o alvo de opcao. */
+  --density-row: var(--primitive-size-36);
+  --density-row-compact: var(--primitive-size-32);
+
+  --radius: var(--primitive-radius-8);
+  --radius-card: var(--primitive-radius-8);
+  --radius-dialog: var(--primitive-radius-12);
+  --radius-round: var(--primitive-radius-round);
+  --border-width: var(--primitive-border-1);
+  --focus-width: var(--primitive-border-2);
+
+  --font-sans: "Museo Sans", "museo-sans", "Open Sans", "Segoe UI", system-ui, sans-serif;
+  --font-size-label: var(--primitive-font-12);
+  --font-size-button: var(--primitive-font-13);
+  --font-size-body: var(--primitive-font-13);
+  --font-size-emphasis: var(--primitive-font-14);
+  --font-size-dialog: var(--primitive-font-18);
+  --font-size-title: var(--primitive-font-20);
+  --font-size-logo: var(--primitive-font-24);
+  --font-weight-regular: var(--primitive-weight-400);
+  --font-weight-medium: var(--primitive-weight-500);
+  --font-weight-semibold: var(--primitive-weight-600);
+  --font-leading-tight: var(--primitive-leading-125);
+  --font-leading-base: var(--primitive-leading-145);
+  --font-tracking-caps: var(--primitive-tracking-04);
+
+  --size-icon: var(--primitive-size-18);
+  --size-icon-field: var(--primitive-size-20);
+  --size-icon-nav: var(--primitive-size-20);
+  --size-chip: var(--primitive-size-22);
+  --size-logo: var(--primitive-size-24);
+  --size-control: var(--primitive-size-36);
+  --size-icon-button: var(--primitive-size-32);
+  --size-option: var(--primitive-size-32);
+  --size-shortcut: var(--primitive-size-36);
+  --size-search-height: var(--primitive-size-40);
+  --size-header: var(--primitive-size-64);
+  --size-sidebar: var(--primitive-size-200);
+  --size-sidebar-recolhida: var(--primitive-size-64);
+  --size-search: var(--primitive-size-480);
+  --size-dialog: var(--primitive-size-440);
+  --size-dialog-wide: var(--primitive-size-560);
+  --size-dialog-detail: var(--primitive-size-960);
+  --size-column: var(--primitive-size-300);
+}
+/* Tema escuro. Segue o sistema; a chave do cabeçalho salva a escolha, e a escolha vence o sistema.
+   Os dois blocos são iguais de propósito: um atende o sistema, o outro a chave. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    color-scheme: dark;
+    --color-bg-page: var(--primitive-dark-900);
+    --color-bg-surface: var(--primitive-dark-700);
+    --color-bg-subtle: var(--primitive-dark-800);
+    --color-bg-hover: var(--primitive-dark-600);
+    --color-text-default: var(--primitive-dark-100);
+    --color-text-muted: var(--primitive-dark-300);
+    --color-text-danger: var(--primitive-danger-300);
+    --color-text-warning: var(--primitive-warning-300);
+    --color-text-success: var(--primitive-success-300);
+    --color-bg-danger: var(--primitive-danger-dark-100);
+    --color-bg-warning: var(--primitive-warning-dark-100);
+    --color-border-default: var(--primitive-dark-500);
+    --color-border-strong: var(--primitive-dark-400);
+    --color-action: var(--primitive-blue-400);
+    --color-action-hover: var(--primitive-blue-300);
+    --color-action-text: var(--primitive-dark-950);
+    --color-focus: var(--primitive-blue-400);
+    --color-scrim: color-mix(in srgb, var(--primitive-dark-950) 70%, transparent);
+    --shadow-card: var(--primitive-shadow-2);
+  }
+}
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+  --color-bg-page: var(--primitive-dark-900);
+  --color-bg-surface: var(--primitive-dark-700);
+  --color-bg-subtle: var(--primitive-dark-800);
+  --color-bg-hover: var(--primitive-dark-600);
+  --color-text-default: var(--primitive-dark-100);
+  --color-text-muted: var(--primitive-dark-300);
+  --color-text-danger: var(--primitive-danger-300);
+  --color-text-warning: var(--primitive-warning-300);
+  --color-text-success: var(--primitive-success-300);
+  --color-bg-danger: var(--primitive-danger-dark-100);
+  --color-bg-warning: var(--primitive-warning-dark-100);
+  --color-border-default: var(--primitive-dark-500);
+  --color-border-strong: var(--primitive-dark-400);
+  --color-action: var(--primitive-blue-400);
+  --color-action-hover: var(--primitive-blue-300);
+  --color-action-text: var(--primitive-dark-950);
+  --color-focus: var(--primitive-blue-400);
+  --color-scrim: color-mix(in srgb, var(--primitive-dark-950) 70%, transparent);
+  --shadow-card: var(--primitive-shadow-2);
+}
+/* fim dos semanticos */
+
+/* componentes */
+:root {
+  --component-header-height: var(--size-header);
+  --component-header-bg: var(--color-bg-page);
+  --component-logo-mark: var(--color-logo);
+  --component-logo-cut: var(--color-bg-page);
+  --component-logo-text: var(--color-text-default);
+  --component-search-width: var(--size-search);
+  --component-search-height: var(--size-search-height);
+  --component-shortcut-size: var(--size-shortcut);
+  --component-shortcut-active-bg: var(--color-bg-subtle);
+  --component-sidebar-width: var(--size-sidebar);
+  --component-sidebar-collapsed-width: var(--size-sidebar-recolhida);
+  --component-sidebar-bg: var(--color-bg-page);
+  --component-sidebar-toggle-size: var(--size-icon-button);
+  --component-menu-item-height: var(--size-control);
+  --component-menu-item-active-bg: var(--color-bg-subtle);
+  --component-menu-item-active-text: var(--color-action);
+  --component-card-bg: var(--color-bg-surface);
+  --component-card-border: var(--color-border-default);
+  --component-card-radius: var(--radius-card);
+  --component-card-shadow: var(--shadow-card);
+  --component-column-bg: var(--color-bg-subtle);
+  --component-column-radius: var(--radius-card);
+  --component-chip-bg: var(--color-bg-subtle);
+  --component-chip-border: var(--color-border-default);
+  --component-chip-height: var(--size-chip);
+  --component-avatar-bg: var(--color-bg-hover);
+  --component-avatar-size: var(--size-chip);
+  --component-skeleton-bg: var(--color-bg-hover);
+  --component-column-drop-bg: var(--color-bg-hover);
+  --component-column-drop-border: var(--color-text-muted);
+  --component-control-bg: var(--color-bg-surface);
+  --component-control-border: var(--color-border-strong);
+  --component-control-height: var(--size-control);
+  --component-seletor-list-bg: var(--color-bg-page);
+  --component-seletor-list-border: var(--color-border-default);
+  --component-seletor-list-shadow: var(--shadow-card);
+  --component-seletor-option-height: var(--size-option);
+  --component-seletor-option-active-bg: var(--color-bg-subtle);
+  --component-seletor-option-selected-text: var(--color-action);
+  --component-seletor-visible-options: 8;
+  --component-button-primary-bg: var(--color-action);
+  --component-button-primary-bg-hover: var(--color-action-hover);
+  --component-button-primary-text: var(--color-action-text);
+  --component-dialog-bg: var(--color-bg-surface);
+  --component-dialog-width: var(--size-dialog);
+  --component-dialog-detail-width: var(--size-dialog-detail);
+  --component-column-width: var(--size-column);
+  --component-dialog-radius: var(--radius-dialog);
+  --component-dialog-backdrop: var(--color-scrim);
+}
+/* fim dos componentes */
