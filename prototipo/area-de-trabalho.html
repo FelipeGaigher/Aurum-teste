@@ -36,7 +36,7 @@
     width: 100%;
     min-height: var(--component-control-height);
     padding: var(--space-2) var(--space-3);
-    background-color: var(--color-bg-surface);
+    background-color: var(--color-bg-subtle);
     border: var(--border-width) solid var(--color-border-default);
     border-radius: var(--radius);
     color: var(--color-text-default);
@@ -56,7 +56,11 @@
     text-transform: uppercase;
   }
   .secao-nota { font-size: var(--font-size-label); }
-  .secao-corpo { padding-top: var(--space-3); }
+  .secao-corpo { margin-top: var(--space-3); }
+  /* Três tons: página, faixa da seção e, na Lista, as linhas num contêiner branco. */
+  [data-visao="lista"] .secao-corpo { background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); overflow: hidden; }
+  [data-visao="lista"] .lista-atividades > .linha-atividade:last-child { border-bottom: 0; }
+  [data-visao="kanban"] .secao-faixa { background-color: var(--color-bg-surface); }
   .secao .estado-vazio { padding: var(--space-4) var(--space-3); }
 
   /* Filtros e alternância na mesma linha: a barra do DS tem largura total, aqui ela divide a linha. */
