@@ -99,8 +99,13 @@ body { font-size: var(--font-size-emphasis); }
 .perfil-cargo { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-body); line-height: var(--font-leading-tight); }
 .perfil-marcas { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-3); }
 .perfil-marcas > * + * { padding-left: var(--space-3); border-left: var(--border-width) solid var(--color-border-default); }
-.marca-aurum { display: inline-flex; align-items: center; height: var(--primitive-size-20); }
+.marca-aurum { display: inline-flex; align-items: center; height: calc(var(--primitive-size-20) * 1.7); }
 .marca-aurum img { display: block; height: 100%; width: auto; }
+.marca-astrea { display: inline-flex; align-items: center; height: var(--primitive-size-18); }
+.marca-astrea img { display: block; height: 100%; width: auto; }
+/* A marca da Aurum é preta: no tema escuro ela inverte para branco. */
+:root[data-tema="escuro"] .marca-aurum img { filter: invert(1); }
+@media (prefers-color-scheme: dark) { :root:not([data-tema="claro"]) .marca-aurum img { filter: invert(1); } }
 .marca-aurum span { font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
 .perfil-marcas .logo { gap: var(--space-1); font-size: var(--font-size-emphasis); }
 .perfil-marcas .logo svg { width: var(--primitive-size-18); height: var(--primitive-size-18); }
@@ -274,8 +279,8 @@ li::marker { color: var(--color-text-muted); }
     <p class="perfil-nome">Felipe Gaigher</p>
     <p class="perfil-cargo">Candidato a UX/UI Specialist</p>
     <div class="perfil-marcas">
-      <span class="marca-aurum"><img src="assets/aurum.svg" alt="Aurum" onerror="this.nextElementSibling.hidden = false; this.remove()"><span hidden>Aurum</span></span>
-      <span class="logo" role="img" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span>
+      <span class="marca-aurum"><img src="assets/aurum.png" alt="Aurum" onerror="this.nextElementSibling.hidden = false; this.remove()"><span hidden>Aurum</span></span>
+      <span class="marca-astrea"><img src="assets/astrea.png" alt="Astrea"></span>
     </div>
   </div>
   <ul>
