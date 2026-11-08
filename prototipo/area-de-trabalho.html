@@ -130,6 +130,13 @@
   @media (max-width: 900px) {
     [data-area-principal]:is([data-visao="cards"], [data-visao="kanban"]) { grid-template-columns: minmax(0, 1fr); }
   }
+
+  /* Detalhe ao lado da lista (pedido de Felipe, 08/11): a linha e o card escolhem a atividade. */
+  .linha-atividade[data-selecionavel], .card-atividade[data-selecionavel] { cursor: pointer; }
+  .linha-atividade[data-selecionavel]:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
+  .linha-atividade.is-selecionado { background-color: var(--color-bg-subtle); box-shadow: inset calc(var(--focus-width) + var(--border-width)) 0 0 var(--color-action); }
+  .painel-detalhe-rodape a.botao { text-decoration: none; }
+  .detalhe-processo { display: inline-flex; align-items: center; gap: var(--space-1); }
 </style>
 </head>
 <body data-pagina="area-de-trabalho.html" data-titulo="Área de trabalho">
@@ -350,6 +357,159 @@
     marcar();
   }
 
+  // --- detalhe ao lado da lista (padrão do Cotação e da náutica; Contatos é o primeiro) ---
+
+  const CHAVE_DETALHE = 'astrea-area-detalhe-id';
+  const CHAVE_LARGURA = 'astrea-area-detalhe-largura';
+  const LISTA_MINIMA = 480;
+  const NOME_DO_TIPO = { tarefa: 'Tarefa', prazo: 'Prazo', audiencia: 'Audiência', evento: 'Evento' };
+  const NOME_DA_LISTA = { tarefa: 'Lista de tarefas', prazo: 'Lista de tarefas', audiencia: 'Agenda', evento: 'Agenda' };
+
+  function lerDetalhe() {
+    try { return localStorage.getItem(CHAVE_DETALHE); } catch (e) { return null; }
+  }
+
+  function gravarDetalhe(id) {
+    try { localStorage.setItem(CHAVE_DETALHE, id); } catch (e) { /* sem armazenamento */ }
+  }
+
+  // A ordem do ‹ › é a da tela: seções visíveis, cada uma pelo prazo.
+  function itensVisiveis(lista, visiveis) {
+    return SECOES.filter((s) => visiveis.includes(s.chave))
+      .flatMap((s) => lista.filter(s.pertence).sort((x, y) => x.prazoEmDias - y.prazoEmDias));
+  }
+
+  // O mesmo botão de copiar da linha: o verificador lê data-acao="copiar-numero".
+  function copiarNumero(numero) {
+    const el = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
+    el.dataset.acao = 'copiar-numero';
+    const envolto = DS.tooltip({ alvo: el, rotulo: 'Copiar número' });
+    const dica = envolto.querySelector('.dica');
+    el.addEventListener('click', () => {
+      const area = navigator.clipboard;
+      const avisar = (texto) => { if (dica) dica.textContent = texto; };
+      if (!area) { avisar('Não foi possível copiar'); return; }
+      area.writeText(numero).then(() => avisar('Número copiado'), () => avisar('Não foi possível copiar'));
+    });
+    return envolto;
+  }
+
+  function valorDoProcesso(numero) {
+    if (!numero) return '';
+    const el = document.createElement('span');
+    el.className = 'detalhe-processo';
+    const texto = document.createElement('span');
+    texto.className = 'numero-processo';
+    texto.textContent = numero;
+    el.append(texto, copiarNumero(numero));
+    return el;
+  }
+
+  function urlDoProcesso(numero) {
+    const i = (window.DADOS.PROCESSOS || []).findIndex((p) => p.numero === numero);
+    return `processos.html?ficha=${i + 1 || 1}`;
+  }
+
+  function dadosDoDetalhe(a, itens) {
+    const prazo = DS.descreverPrazo(a.prazoEmDias, concluida(a));
+    const linhas = [
+      { icone: 'arquivar', rotulo: 'Processo', valor: valorDoProcesso(a.processo) },
+      { icone: 'pessoa', rotulo: 'Responsável', valor: a.responsavel ? DS.avatar({ nome: a.responsavel, mostrarNome: true }) : '' },
+      { icone: 'calendario', rotulo: 'Lista', valor: NOME_DA_LISTA[a.tipo] },
+      { icone: 'marca', rotulo: 'Situação', valor: concluida(a) ? 'Concluída' : 'Aberta' },
+    ];
+    if (a.prioridade) linhas.push({ icone: 'alerta', rotulo: 'Prioridade', valor: a.prioridade });
+    const acoes = acoesDe(a).map((acao) => ({ rotulo: acao.rotulo, iconeEsquerda: acao.icone, aoClicar: acao.aoClicar }));
+    const abrir = document.createElement('a');
+    abrir.className = 'botao botao-primario';
+    abrir.href = urlDoProcesso(a.processo);
+    abrir.textContent = 'Abrir processo';
+    return {
+      titulo: a.titulo,
+      chips: [DS.chipPrazo(prazo), DS.tag({ rotulo: NOME_DO_TIPO[a.tipo] })],
+      destaque: { rotulo: 'Prazo', valor: prazo.rotulo },
+      linhas, corpo: [], acoes: [...acoes, abrir], navegavel: itens.length > 1,
+    };
+  }
+
+  // Sem escolha gravada, o painel fica escondido e aparece no primeiro clique.
+  // Se o filtro ou a conclusão tira a escolhida, o painel passa à que ocupou o lugar dela.
+  function criarDetalhe() {
+    let escolhido = lerDetalhe();
+    let itens = [];
+    let posicao = 0;
+    const atual = () => itens.find((a) => a.id === escolhido);
+    function andar(passo) {
+      const i = Math.max(0, itens.indexOf(atual()));
+      escolher(itens[(i + passo + itens.length) % itens.length].id);
+    }
+    const painel = DS.painelDetalhe({
+      rotulo: 'Atividade escolhida',
+      rotulos: { anterior: 'Atividade anterior da lista', proximo: 'Próxima atividade da lista',
+        esconder: 'Esconder o painel da atividade', mostrar: 'Mostrar o painel da atividade' },
+      aoAnterior: () => andar(-1),
+      aoProximo: () => andar(1),
+      aoFechar: () => { divisor.el.hidden = true; },
+      aoReabrir: () => { divisor.el.hidden = false; },
+    });
+    painel.el.id = 'area-detalhe';
+    const divisor = DS.divisorRedimensionavel({
+      alvo: painel.el, rotulo: 'Largura do painel da atividade', minimo: 300, maximo: 560, padrao: 380,
+      chave: CHAVE_LARGURA, reserva: LISTA_MINIMA,
+    });
+    const principal = document.querySelector('[data-area-principal]');
+    const casca = document.createElement('div');
+    casca.className = 'lista-e-detalhe';
+    principal.before(casca);
+    casca.append(principal, divisor.el, painel.el);
+
+    function marcar(id) {
+      principal.querySelectorAll('[data-selecionavel]').forEach((el) => {
+        const sim = el.dataset.id === id;
+        el.classList.toggle('is-selecionado', sim);
+        el.setAttribute('aria-current', String(sim));
+      });
+    }
+
+    function sincronizar(novos) {
+      itens = novos;
+      let a = atual();
+      if (!a && escolhido && itens.length) {
+        a = itens[Math.min(posicao, itens.length - 1)];
+        escolhido = a.id;
+        gravarDetalhe(escolhido);
+      }
+      if (a) posicao = itens.indexOf(a);
+      painel.el.hidden = !a;
+      divisor.el.hidden = !a || painel.oculto();
+      marcar(a ? a.id : '');
+      if (a) painel.mostrar(dadosDoDetalhe(a, itens));
+    }
+
+    function escolher(id) {
+      if (!itens.some((a) => a.id === id)) return;
+      escolhido = id;
+      gravarDetalhe(id);
+      if (painel.oculto()) painel.reabrir();
+      sincronizar(itens);
+    }
+
+    return { escolher, sincronizar };
+  }
+
+  // Clique e Enter escolhem; o copiar e os botões de ação da linha seguem sozinhos.
+  function selecionavel(el, a) {
+    el.dataset.selecionavel = '';
+    el.addEventListener('click', (e) => { if (!e.target.closest('button, a')) detalhe.escolher(a.id); });
+    el.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || e.target !== el) return;
+      e.preventDefault();
+      detalhe.escolher(a.id);
+    });
+  }
+
+  const detalhe = criarDetalhe();
+
   // --- desenho -----------------------------------------------------------------
 
   function linha(a) {
@@ -359,6 +519,8 @@
       processo: a.processo, responsavel: a.responsavel, acoes: acoesDe(a),
     });
     el.dataset.id = a.id;
+    el.tabIndex = 0;
+    selecionavel(el, a);
     return el;
   }
 
@@ -377,6 +539,7 @@
       return botao;
     }));
     el.append(acoes);
+    if (visao === 'cards') selecionavel(el, a);
     const li = document.createElement('li');
     li.append(el);
     return li;
@@ -445,6 +608,7 @@
     const contagem = {};
     SECOES.forEach((secao) => { contagem[secao.chave] = desenharSecao(secao, lista, visiveis.includes(secao.chave)); });
     desenharLeitura(contagem, lista, visiveis);
+    detalhe.sincronizar(visao === 'kanban' ? [] : itensVisiveis(lista, visiveis));
   }
 
 
