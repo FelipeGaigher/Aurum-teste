@@ -1,6 +1,6 @@
 <!-- gerado de docs/specs/2026-11-08-astrea-navegavel.html
-     sha256 da fonte: 0009fa72bcc627e0
-     em: 2026-11-08T14:17
+     sha256 da fonte: a9a4d0c751e84bbd
+     em: 2026-11-08T16:22
      NAO ESCREVA NESTE ARQUIVO. Altere o HTML e regenere. -->
 
 # Astrea navegável com design system — Implementation Plan
@@ -1842,6 +1842,8 @@ decisão subiu ao sovereign.
 
 - Task 9b, fora do plano original: pedido de Felipe às 12h55. O quadro do
   Kanban mostra as fases da Q2. Base do RF-02 em `ab21425`.
+- Base do RF-02 passou de `ab21425` para `2f24358`: Felipe pediu, às 16h20, a saída do conjunto
+  Atividades do escritório do Kanban. O quadro ganhou a altura da tela.
 - Decisão de Felipe pendente: limpeza das imagens com dado real no histórico,
   push e GitHub Pages. Script pronto fora do repositório.
 - Dois achados menores ficaram sem correção. Criar atividade pelo menu Adicionar
