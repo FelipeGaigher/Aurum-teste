@@ -379,6 +379,10 @@ svg text { font-family: var(--font-sans); fill: var(--color-text-default); }
 .painel.prob { gap: var(--space-4); }
 .painel.prob > svg { width: auto; max-width: 100%; height: 13cqw; }
 .painel.prob .nota { margin-top: auto; }
+/* fonte de cada sintoma e faixa de fontes da capa */
+.tag-fonte { margin-left: var(--space-1); vertical-align: middle; color: var(--color-text-muted); }
+.fontes { width: 100%; padding-top: var(--space-3); border-top: var(--border-width) solid var(--color-border-default); font-size: var(--font-size-label); color: var(--color-text-muted); }
+.fontes b { font-weight: var(--font-weight-semibold); color: var(--color-text-default); }
 .passo .tag { white-space: normal; text-align: start; }
 .principio-detalhe { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: var(--space-5); align-items: center; }
 .principio-detalhe .nota { margin-top: var(--space-2); }
@@ -557,7 +561,7 @@ svg text { font-family: var(--font-sans); fill: var(--color-text-default); }
     <div class="paineis" aria-live="polite">
       <div class="painel prob" role="tabpanel" id="q1s2-p0" aria-labelledby="q1s2-t0" tabindex="0">
         <p class="so-impressao secao-titulo">Problema 1. Hierarquia e densidade</p>
-      <p class="texto">A Área de trabalho marca atraso só pela cor da data. Não existe seção de atrasadas. A Agenda mostra duas semanas do mês por tela. Em 08/11, ela abriu em “Ontem” e não mostrou as duas tarefas datadas.</p>
+      <p class="texto">A Área de trabalho marca atraso só pela cor da data. Não existe seção de atrasadas. A Agenda mostra duas semanas do mês por tela. Em 08/11, ela abriu em “Ontem” e não mostrou as duas tarefas datadas. <span class="tag tag-fonte">Varredura 08/11</span> <span class="tag tag-fonte">Tela</span></p>
       <div class="ev">
         <svg class="desenho" viewBox="0 0 460 262" role="img" aria-label="Grade do mês da Agenda. Duas semanas cabem na tela. As outras três ficam abaixo da dobra">
           <text class="t" x="0" y="18">Agenda, por mês. Telas 19 e 20</text>
@@ -587,7 +591,7 @@ svg text { font-family: var(--font-sans); fill: var(--color-text-default); }
       </div>
       <div class="painel prob" role="tabpanel" id="q1s2-p1" aria-labelledby="q1s2-t1" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Problema 2. Arquitetura de informação, hipótese</p>
-      <p class="texto">A Área de trabalho e o modal dizem “tarefa”. A Agenda e o botão de criar dizem “atividade”. Nos pedidos, tarefa, prazo, audiência e evento são tipos diferentes.</p>
+      <p class="texto">A Área de trabalho e o modal dizem “tarefa”. A Agenda e o botão de criar dizem “atividade”. Nos pedidos, tarefa, prazo, audiência e evento são tipos diferentes. <span class="tag tag-fonte">Tela</span> <span class="tag tag-fonte">Planilha</span></p>
       <svg class="desenho" viewBox="0 0 820 262" role="img" aria-label="Dois nomes para o mesmo objeto, tarefa e atividade. A mesma atividade aparece na Área de trabalho, na Agenda, em Tarefas sem data e em Alertas">
         <text class="s" x="0" y="16">Área de trabalho e modal</text>
         <rect class="caixa" x="0" y="26" width="300" height="56" rx="4"/>
@@ -631,7 +635,7 @@ svg text { font-family: var(--font-sans); fill: var(--color-text-default); }
     <div class="paineis" aria-live="polite">
       <div class="painel prob" role="tabpanel" id="q1s3-p0" aria-labelledby="q1s3-t0" tabindex="0">
         <p class="so-impressao secao-titulo">Problema 3. Usabilidade de fluxo</p>
-      <p class="texto">Quatro campos obrigatórios para uma tarefa simples. “Lista de tarefas” é obrigatório e tem um só valor. Incluir pessoa abre um popover, e data passada abre outro diálogo.</p>
+      <p class="texto">Quatro campos obrigatórios para uma tarefa simples. “Lista de tarefas” é obrigatório e tem um só valor. Incluir pessoa abre um popover, e data passada abre outro diálogo. <span class="tag tag-fonte">Tela</span></p>
       <svg class="desenho" viewBox="0 0 560 222" role="img" aria-label="Três camadas: o modal Adicionar tarefa com seis campos, quatro obrigatórios; o popover Envolver mais pessoas; e o diálogo Data no passado">
         <rect class="caixa" x="0" y="0" width="360" height="222" rx="4"/>
         <text class="t" x="16" y="28">Adicionar tarefa</text>
@@ -656,7 +660,7 @@ svg text { font-family: var(--font-sans); fill: var(--color-text-default); }
       </div>
       <div class="painel prob" role="tabpanel" id="q1s3-p1" aria-labelledby="q1s3-t1" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Problema 4. Consistência</p>
-      <p class="texto">Os cinzas vêm do Material, do Bootstrap e do Mantine. Em 08/11, criar apareceu em quatro formas, e voltar em três. O menu lateral não marca o módulo atual.</p>
+      <p class="texto">Os cinzas vêm do Material, do Bootstrap e do Mantine. Em 08/11, criar apareceu em quatro formas, e voltar em três. O menu lateral não marca o módulo atual. <span class="tag tag-fonte">CSS</span> <span class="tag tag-fonte">Varredura 08/11</span> <span class="tag tag-fonte">Tela</span></p>
       <div class="bloco-txt">
         <h3 class="mesma-tela">Três azuis na mesma tela. Tela 11</h3>
         <div class="amostras">
@@ -680,7 +684,7 @@ svg text { font-family: var(--font-sans); fill: var(--color-text-default); }
       </div>
       <div class="painel prob" role="tabpanel" id="q1s3-p2" aria-labelledby="q1s3-t2" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Problema 5. Hierarquia e ruído</p>
-      <p class="texto">O cabeçalho soma cinco ícones, o selo “1 ano grátis” e o botão “Contratar”. “Conheça as IAs” tem fundo lilás. As capturas de 07/11 mostram uma faixa de campanha com contador.</p>
+      <p class="texto">O cabeçalho soma cinco ícones, o selo “1 ano grátis” e o botão “Contratar”. “Conheça as IAs” tem fundo lilás. As capturas de 07/11 mostram uma faixa de campanha com contador. <span class="tag tag-fonte">Tela</span> <span class="tag tag-fonte">Varredura 08/11</span></p>
       <svg class="desenho" viewBox="0 0 560 222" role="img" aria-label="Desenho da Área de trabalho. No topo, a faixa de campanha vista em 07/11. No cabeçalho, busca, cinco ícones, selo 1 ano grátis e botão Contratar. No menu, Conheça as IAs em destaque">
         <rect x="1" y="1" width="558" height="220" class="moldura-desenho"/>
         <rect class="marca" x="2" y="2" width="556" height="28" style="stroke-dasharray: 6 5; stroke-width: 2"/>
@@ -797,6 +801,7 @@ svg text { font-family: var(--font-sans); fill: var(--color-text-default); }
     </table></div>
     <p class="nota">Desk research já feita: a varredura de 08/11 leu 12 módulos e a moldura em produção. O comparativo contou cliques de 48 tarefas. Clique mede esforço; sucesso só entrevista e analytics confirmam.</p>
     <p class="legenda"><span><i class="ponto"></i>Fonte a cruzar</span><span><i class="ponto meio"></i>A planilha responde em parte</span><strong>Duas fontes de tipos diferentes na mesma direção confirmam.</strong></p>
+    <p class="fontes"><b>Fontes:</b> planilha de pedidos (407 votos) · 97 pontos de atenção nas telas · CSS do produto (646 variáveis, 609 do Nectar) · varredura de 08/11</p>
   </div>
   <footer class="rodape"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span><span>Atividade prática Astrea · Questão 1 · Felipe Gaigher · 08/11/2026</span><span>5 de 5</span></footer>
 </section>

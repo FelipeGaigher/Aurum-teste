@@ -25,6 +25,28 @@ Legenda:
 > `docs/2026-11-08-varredura-astrea.md` e
 > `docs/2026-11-08-comparativo-astrea-prototipo.md`.
 
+## Fontes e método
+
+Cada sintoma termina com a fonte entre colchetes. São quatro fontes:
+
+- **[Planilha]** Pedidos do portal de sugestões, entregues pela banca. São
+  80 sugestões e 407 votos sobre a Área de trabalho. Os títulos foram
+  agrupados por tema, com a soma dos votos. Arquivo: `01-pedidos-clientes.md`.
+- **[Tela]** 97 pontos de atenção, PA-NN, anotados na navegação da conta de
+  teste. Cada ponto traz tela, captura comentada e severidade. Arquivos:
+  `01-pontos-de-atencao.md` e `01-telas-observadas.md`.
+- **[CSS]** Variáveis e estilos computados do produto logado, lidos pelo
+  Claude in Chrome em 07/11. São 646 variáveis, 609 com o prefixo do Nectar.
+  A leitura mostrou a fonte, os raios e a paleta. Arquivos:
+  `01-inventario-css-astrea.md` e `01-inventario-ui.md`.
+- **[Varredura 08/11]** Leitura dos módulos em produção, sem gravar dado.
+  Fontes: texto da página, árvore de acessibilidade e captura. Os cliques
+  partem da tela citada. Arquivos: `docs/2026-11-08-varredura-astrea.md` e
+  `01-varredura-modulos.md`.
+
+Nenhum método pede acesso ao código. A Aurum pode repetir os quatro a cada
+versão do produto.
+
 ---
 
 ## Slide 1 — Os cinco problemas
@@ -58,21 +80,21 @@ A varredura de 08/11 complementa.
 Sintoma:
 
 - 136 de 407 votos (33%) pedem destaque de prazo, audiência, data limite e
-  atividades do dia. ASTP-I-639 tem 43 votos.
+  atividades do dia. ASTP-I-639 tem 43 votos. [Planilha]
 - A Área de trabalho abre em uma lista e esconde tarefa atrasada de outra
-  lista. PA-31.
+  lista. PA-31. [Tela]
 - Prazo vencido não tem seção própria. Falta "Atrasadas" ao lado de "Hoje".
-  PA-32.
+  PA-32. [Tela]
 - A linha da Área de trabalho marca atraso só pela cor da data. Não existe
-  seção de atrasadas. Varredura de 08/11.
+  seção de atrasadas. Varredura de 08/11. [Varredura 08/11]
 - A grade mensal da Agenda mostra duas semanas por tela de 1920 por 960.
-  Quem planeja o mês não vê o mês. Telas 19 e 20.
+  Quem planeja o mês não vê o mês. Telas 19 e 20. [Tela]
 - A tarefa criada não apareceu em nenhuma das quatro visões. Tela 17 a 20.
-  A causa continua em aberto: filtro ou data retroativa. PA-50.
+  A causa continua em aberto: filtro ou data retroativa. PA-50. [Tela]
 - Na varredura de 08/11, a Agenda abriu em "Ontem". As duas tarefas datadas
-  da conta não apareceram com os filtros padrão.
+  da conta não apareceram com os filtros padrão. [Varredura 08/11]
 - No modal, a prioridade é um seletor com "Baixa" por padrão. A data não
-  distingue prazo fatal de data comum. Tela 14.
+  distingue prazo fatal de data comum. Tela 14. [Tela]
 
 Ressalva: Alertas já mostra "Tarefa atrasada". O dado existe no produto. O
 problema é a tela de abertura não o mostrar.
@@ -93,18 +115,18 @@ Hipótese a validar. O slide 5 diz como.
 Sintoma:
 
 - Nos pedidos, tarefa, prazo, audiência e evento aparecem como tipos
-  diferentes. ASTP-I-639, ASTS-I-702.
+  diferentes. ASTP-I-639, ASTS-I-702. [Planilha]
 - O produto não organiza esses tipos. A ficha do processo pede "Tipo de
-  atividade" com Tarefa ou Evento. Prazo e Audiência existem só como etiqueta.
+  atividade" com Tarefa ou Evento. Prazo e Audiência existem só como etiqueta. [Varredura 08/11]
 - "Tarefa" na Área de trabalho e no modal, "Atividade" na Agenda e no botão.
-  Telas 11, 13 e 14.
+  Telas 11, 13 e 14. [Tela]
 - A mesma atividade aparece em quatro lugares: Área de trabalho, Agenda,
-  lista lateral "Tarefas sem data" e Alertas. Tela 18 e varredura, seção 5.
+  lista lateral "Tarefas sem data" e Alertas. Tela 18 e varredura, seção 5. [Tela] [Varredura 08/11]
 - O número do processo já copia com 1 clique na lista de processos e na
-  ficha. O problema é a linha da atividade, que não mostra o número.
+  ficha. O problema é a linha da atividade, que não mostra o número. [Varredura 08/11]
 - O onboarding promete "quadros Kanban". O item de menu "Gestão kanban"
   existe no código, oculto por flag de plano. A rota redireciona para a
-  Área de trabalho. Telas 06 e 11, e `01-inventario-css-astrea.md`.
+  Área de trabalho. Telas 06 e 11, e `01-inventario-css-astrea.md`. [CSS]
 
 Causa provável: módulos construídos por times diferentes em épocas
 diferentes, cada um com o próprio vocabulário e a própria visão. Falta um
@@ -122,10 +144,10 @@ como ela se chama. Ninguém mediu ainda o custo em chamado de suporte.
 Sintoma:
 
 - Quatro campos obrigatórios para uma tarefa simples. "Lista de tarefas" é
-  obrigatório com um só valor possível. Tela 14.
-- "Envolver mais pessoas" abre um popover dentro do modal. Tela 16.
+  obrigatório com um só valor possível. Tela 14. [Tela]
+- "Envolver mais pessoas" abre um popover dentro do modal. Tela 16. [Tela]
 - Data no passado só pergunta "deseja continuar?", sem motivo nem opção
-  de salvar como concluída. Tela 15.
+  de salvar como concluída. Tela 15. [Tela]
 
 Causa provável: o formulário acumulou campos e atalhos ao longo dos anos
 sem um dono do fluxo inteiro. Cada campo faz sentido sozinho. Juntos,
@@ -140,19 +162,19 @@ sistema.
 Sintoma, medido no inventário:
 
 - Azul da marca `#008fd5`, azul do componente `#228be6`, azul da campanha
-  `#0255c4`, na mesma tela. Tela 11.
+  `#0255c4`, na mesma tela. Tela 11. [CSS]
 - Cinza de texto `#202124` do Material, `#6c757d` do Bootstrap, divisor
-  `#dee2e6` do Mantine. Três bibliotecas.
+  `#dee2e6` do Mantine. Três bibliotecas. [CSS]
 - Três jeitos de criar nas capturas de 07/11. "Adicionar primeira tarefa"
   em caixa alta, "Adicionar atividade" com seta e um "+" redondo. Telas 11,
-  13 e 17.
+  13 e 17. [Tela]
 - Quatro formas de criar no comparativo de 08/11: "Adicionar tarefa",
   "Adicionar", "+" sem rótulo e "Adicionar documento" com seta. Voltar
-  aparece em três formas. As cores não foram medidas de novo.
+  aparece em três formas. As cores não foram medidas de novo. [Varredura 08/11]
 - Seletor nativo do navegador no widget, customizado no modal. Telas 11
-  e 14.
-- A mesma cor azul para link, número de estatística e botão. Tela 11.
-- O menu lateral não tem estado ativo. O fundo cinza é só hover. PA-01.
+  e 14. [Tela]
+- A mesma cor azul para link, número de estatística e botão. Tela 11. [CSS]
+- O menu lateral não tem estado ativo. O fundo cinza é só hover. PA-01. [Tela]
 
 Causa provável: não existe fonte única. Cada time puxou a biblioteca que
 tinha à mão. É a terceira restrição do briefing, com hex.
@@ -167,15 +189,15 @@ Sintoma:
 
 - Faixa de campanha com contador regressivo, vista nas capturas de 07/11.
   Ela não apareceu na sessão de 08/11. A faixa é campanha, e campanha tem
-  data. Tela 11.
+  data. Tela 11. [Tela]
 - Cinco ícones, selo "1 ano grátis" e botão verde "Contratar" no
-  cabeçalho. A varredura de 08/11 confirmou os três. Tela 11.
+  cabeçalho. A varredura de 08/11 confirmou os três. Tela 11. [Tela] [Varredura 08/11]
 - "Conheça as IAs" com cor própria e fundo lilás no menu. A IA nasce fora
-  do padrão. Telas 11 e 13.
+  do padrão. Telas 11 e 13. [Tela]
 - Estatísticas em azul de link. Na árvore de acessibilidade elas são link
-  sem destino. Ninguém testou o clique ainda. Tela 11.
+  sem destino. Ninguém testou o clique ainda. Tela 11. [Varredura 08/11]
 - A nuvem do cabeçalho significa "Resultados de buscas". Um especialista
-  leu como salvar. PA-05.
+  leu como salvar. PA-05. [Tela]
 
 Causa provável: a moldura não tem dono de produto. Marketing e IA entram
 nela sem passar por um padrão.
