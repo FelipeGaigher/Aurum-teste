@@ -146,3 +146,18 @@ Felipe pediu estas melhorias enquanto revisava o protótipo.
 - Correção: o menu de ações dentro de tabela com rolagem saía do quadro e criava barras. O DS agora posiciona o menu em relação à tela.
 - Resumo do caso nos processos, gerado pela IA do Astrea, com atores, local e data. Aparece no painel e na ficha. Em andamento.
 - Modo cards em Atendimentos, igual ao de Contatos. Em andamento.
+
+### Segunda rodada de melhorias, pedido de 08/11 entre 16h30 e 18h
+
+Felipe seguiu a revisão ao vivo e pediu estes itens.
+
+- Modo cards em Atendimentos e Documentos, como em Contatos. Documentos ganhou barra com busca e tipo.
+- Card de registro único no DS, `cardRegistro`. Tem três níveis de hierarquia e botão de copiar o número. Contatos, Atendimentos e Documentos o usam.
+- Processos: os filtros vão para o Filtro avançado, em painel lateral. A barra fica numa linha, com busca, Tipo, contagem de filtros e chips removíveis. O cabeçalho da ficha vira contêiner e destaca o número CNJ.
+- Resumo do caso, gerado pela IA em cada processo, com atores, local e data. Aparece no painel e na ficha.
+- Menu lateral: Alertas mostra o número de pendências em vermelho e um traço no início. A regra do alerta mora em `dados.js`.
+- Páginas de upsell (IAs, Publicações, Financeiro, Indicadores): faixa de plano e grade de cards por recurso.
+- As barras de filtros ficam numa linha só acima de 1100px, no DS e na Área de trabalho.
+- Área de trabalho: as seções ganham faixa que abre e fecha e tag de status com contagem. O padrão segue os grupos do projeto Importação.
+- Decisão de Felipe: saem o fundo vermelho das seções e a linha de números. Isso reverte o PA-39, estatísticas em linha de leitura. As seções já dizem o mesmo.
+- Correção: o menu de ações dentro de tabela que rola saía do quadro. O DS posiciona o menu em relação à tela.
