@@ -18,8 +18,19 @@ const LARGURAS_ESTREITAS = [1024, 700];
 const TEMPO_MS = 4000;
 const MAX_MOTIVOS = 10;
 const CAMADAS = '[role="dialog"]:visible, [role="alertdialog"]:visible';
-const CONTROLE_NATIVO = ['select', 'input[type=date]', 'input[type=checkbox]', 'input[type=radio]']
+const CONTROLE_NATIVO = ['select', 'input[type=date]', 'input[type=datetime-local]', 'input[type=month]',
+  'input[type=week]', 'input[type=time]', 'input[type=checkbox]', 'input[type=radio]']
   .map((s) => s + ':visible').join(', ');
+// Estados além da abertura simples, medidos por RF-07 e pelo contraste de RF-12.
+const VARIANTES = {
+  'agenda.html': ['?estado=vazio'],
+  'contatos.html': ['?ficha=1', '?adicionar=1'],
+  'processos.html': ['?ficha=1'],
+};
+const ABRE_PAINEL = ['[data-abre-painel]', '[data-acao="criar-atividade"]', '[data-acao="nova-etiqueta"]']
+  .map((s) => s + ':visible').join(', ');
+// Página cujo item ativo do menu é de outro módulo.
+const MODULO_DA_PAGINA = { 'buscas.html': 'processos.html' };
 const CONTROLES = 'a[href], button, input:not([type=hidden]), select, textarea, summary, [tabindex], '
   + '[contenteditable="true"], [role="button"], [role="link"], [role="radio"], [role="checkbox"], '
   + '[role="switch"], [role="tab"], [role="combobox"]';
@@ -155,6 +166,21 @@ async function contarCamadas(page) {
   return page.locator(CAMADAS).count();
 }
 
+// Mede a página aberta, cada variante de URL e cada painel aberto nelas.
+async function emCadaEstado(page, nome, medir) {
+  for (const alvo of [nome, ...(VARIANTES[nome] || []).map((q) => nome + q)]) {
+    await abrir(page, alvo);
+    await medir(alvo);
+    const total = await page.locator(ABRE_PAINEL).count();
+    for (let i = 0; i < total; i++) {
+      await abrir(page, alvo);
+      await page.locator(ABRE_PAINEL).nth(i).click();
+      await aberta(page);
+      await medir(`${alvo}, painel ${i + 1}`);
+    }
+  }
+}
+
 // --- RF-01, RF-03, RF-04, RF-05: moldura ------------------------------------
 
 async function clicarItemMenu(page, nome, i, fora) {
@@ -215,14 +241,18 @@ function fundo(locator) {
 async function checarItemAtivo(page, nome) {
   await abrir(page, nome);
   await page.mouse.move(VIEWPORT.width - 1, VIEWPORT.height - 1);
-  if (nome === 'administracao.html') {
-    const total = await page.locator('.cabecalho [aria-current="page"]').count();
-    exigir(total > 0, 'sem [aria-current="page"] no menu do usuário (.cabecalho)');
-    return;
-  }
   const ativos = page.locator('.menu-lateral a[aria-current="page"]');
   const total = await ativos.count();
+  if (nome === 'administracao.html') {
+    exigir(total === 0, `${total} item(ns) do menu lateral com aria-current="page"`);
+    const noUsuario = await page.locator('.cabecalho [aria-current="page"]').count();
+    exigir(noUsuario > 0, 'sem [aria-current="page"] no menu do usuário (.cabecalho)');
+    return;
+  }
   exigir(total === 1, `${total} itens com aria-current="page"`);
+  const modulo = MODULO_DA_PAGINA[nome] || nome;
+  const alvoAtivo = arquivoDe(await ativos.first().getAttribute('href'));
+  exigir(alvoAtivo === modulo, `item ativo aponta para ${alvoAtivo}, esperado ${modulo}`);
   const inativos = page.locator('.menu-lateral a:not([aria-current])');
   exigir(await inativos.count() > 0, 'menu sem item inativo para comparar');
   const [corAtivo, corInativo] = [await fundo(ativos), await fundo(inativos)];
@@ -291,11 +321,10 @@ async function rf07({ page }, { restritas }, falhas) {
   const paginas = restritas.filter((p) => p !== 'kanban.html');
   exigirPaginas(paginas);
   for (const nome of paginas) {
-    await passo(falhas, nome, async () => {
-      await abrir(page, nome);
+    await passo(falhas, nome, () => emCadaEstado(page, nome, async (estado) => {
       const total = await page.locator(CONTROLE_NATIVO).count();
-      exigir(total === 0, `${total} controle(s) nativo(s) visível(is)`);
-    });
+      if (total > 0) falhas.push(`${estado}: ${total} controle(s) nativo(s) visível(is)`);
+    }));
   }
 }
 
@@ -592,17 +621,20 @@ function medirContraste() {
 }
 
 async function checarContraste(page, nome, falhas) {
-  await abrir(page, nome);
-  await page.addStyleTag({ content: '*,*::before,*::after{transition:none!important;animation:none!important}' });
-  const registrar = async () => {
-    const tema = await temaDe(page) || 'padrão';
-    for (const achado of await page.evaluate(medirContraste)) falhas.push(`${nome} [${tema}]: ${achado}`);
+  const medirNoTema = (tema) => async (estado) => {
+    const atual = await temaDe(page);
+    exigir(atual === tema, `${estado}: tema ${atual}, esperado ${tema}`);
+    await page.addStyleTag({ content: '*,*::before,*::after{transition:none!important;animation:none!important}' });
+    for (const achado of await page.evaluate(medirContraste)) falhas.push(`${estado} [${tema || 'padrão'}]: ${achado}`);
   };
-  await registrar();
+  await abrir(page, nome);
   const antes = await temaDe(page);
+  await emCadaEstado(page, nome, medirNoTema(antes));
+  await abrir(page, nome);
   await page.click('#alternar-tema');
-  exigir(await temaDe(page) !== antes, '#alternar-tema não mudou o tema');
-  await registrar();
+  const depois = await temaDe(page);
+  exigir(depois !== antes, '#alternar-tema não mudou o tema');
+  await emCadaEstado(page, nome, medirNoTema(depois));
 }
 
 async function rf12({ page }, { restritas, opcoes }, falhas) {
