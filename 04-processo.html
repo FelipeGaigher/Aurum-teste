@@ -170,13 +170,13 @@
     <thead><tr><th>Ferramenta</th><th>Para quê</th></tr></thead>
     <tbody>
       <tr><td>Claude Code</td><td data-r="Para quê">Par de trabalho: documentos, código, subagentes, portões e commits.</td></tr>
-      <tr><td>Claude in Chrome</td><td data-r="Para quê">Leitura do trial logado. Envio dos PNG ao Figma depois do fim da cota do MCP.</td></tr>
+      <tr><td>Claude in Chrome</td><td data-r="Para quê">Leitura do trial logado. Envio dos PNG dos decks ao Figma.</td></tr>
       <tr><td>Playwright</td><td data-r="Para quê">Portão de navegador sem janela. <a href="scripts/exportar-slides.js">scripts/exportar-slides.js</a> gera os PNG de 1920 por 1080 dos decks. <a href="scripts/capturar-kanban.js">scripts/capturar-kanban.js</a> gera as capturas do Kanban.</td></tr>
-      <tr><td>Figma MCP</td><td data-r="Para quê">Montou os seis slides da Questão 2 com variáveis. A cota do plano Starter esgotou no primeiro dia.</td></tr>
+      <tr><td>Figma MCP</td><td data-r="Para quê">Montou os seis slides da Questão 2 com variáveis.</td></tr>
       <tr><td>Claude Design e Artifacts</td><td data-r="Para quê">Apoio ao deck e publicação do painel do redesign.</td></tr>
     </tbody>
   </table>
-  <p>Sem a cota do MCP, os decks passaram a nascer em HTML, nas medidas do frame. O Playwright gera o PNG, e o Claude in Chrome envia o PNG ao Figma. O Figma web não tem campo de arquivo no DOM. A saída foi um campo de arquivo criado na página e um evento de drop no canvas.</p>
+  <p>Os decks nascem em HTML, nas medidas do frame. O Playwright gera o PNG, e o Claude in Chrome envia o PNG ao Figma. O Figma web não tem campo de arquivo no DOM. A saída foi um campo de arquivo criado na página e um evento de drop no canvas.</p>
 </section>
 
 <section>
@@ -186,7 +186,7 @@
     <thead><tr><th>Quando</th><th>O que aconteceu</th></tr></thead>
     <tbody>
       <tr><td class="hora">07/11 18:49</td><td data-r="O quê">Briefing e documento-fonte da Questão 2.</td></tr>
-      <tr><td class="hora">07/11 19:16 a 19:38</td><td data-r="O quê">Slides da Questão 2 em HTML, depois do fim da cota do MCP.</td></tr>
+      <tr><td class="hora">07/11 19:16 a 19:38</td><td data-r="O quê">Slides da Questão 2 em HTML.</td></tr>
       <tr><td class="hora">07/11 20:04 a 20:57</td><td data-r="O quê">Diário aberto. Levantamento em fontes públicas. Registro das telas do cadastro e do produto.</td></tr>
       <tr><td class="hora">07/11 20:26 a 21:11</td><td data-r="O quê">Contrato da tela, plano do Kanban e as cinco tasks, cada uma com commit.</td></tr>
       <tr><td class="hora">07/11 21:21 a 21:34</td><td data-r="O quê">Leitura do produto logado pelo Chrome. O Nectar aparece no CSS. O protótipo passa ao visual atual do Astrea.</td></tr>
@@ -287,8 +287,8 @@
     <li>O detector anti "cara de IA" usa padrões de texto. Ele não julga a composição da tela.</li>
     <li>A fonte Museo Sans do Astrea não carrega pela rede no protótipo. Sem ela instalada, a tela usa a fonte do sistema.</li>
     <li>No Figma, os decks das Questões 1 e 3 são imagens, sem camadas.</li>
-    <li>A tela da Questão 3 foi ao Figma por <code>generate_figma_design</code>, que não conta na cota do plano Starter. O <code>scripts/capturar-figma.js</code> serve o protótipo em localhost, injeta o capture.js do Figma em Chrome sem janela e envia a árvore DOM. A Área de trabalho é o nó 26-2 do arquivo. Uma primeira captura, o nó 24-2, saiu antes de um ajuste e será apagada. A captura da página do design system foi enviada e ainda estava em conversão ao fechar este documento.</li>
-    <li>Felipe tem um componente de participantes no Figma. A IA não o leu, porque a cota do MCP acabou.</li>
+    <li>A tela da Questão 3 foi ao Figma por <code>generate_figma_design</code>. O <code>scripts/capturar-figma.js</code> serve o protótipo em localhost, injeta o capture.js do Figma em Chrome sem janela e envia a árvore DOM. A Área de trabalho é o nó 26-2 do arquivo. Uma primeira captura, o nó 24-2, saiu antes de um ajuste e será apagada. A captura da página do design system foi enviada e ainda estava em conversão ao fechar este documento.</li>
+    <li>Felipe tem um componente de participantes no Figma. A IA não o leu.</li>
     <li>Dois terminais trabalharam em paralelo na mesma pasta. Um refez o deck da Questão 1 com prints anotados e enriqueceu o artifact das respostas. Os dois combinaram por mensagem quais arquivos cada um tocava. Uma captura teve de ser refeita. A regra que ficou: capturar só com a árvore limpa.</li>
   </ul>
 </section>
