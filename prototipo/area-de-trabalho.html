@@ -21,70 +21,49 @@
   /* PA-35 a PA-37: cada filtro tem rótulo fixo, e a escolha volta ao abrir a página. */
   .barra-filtros { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: flex-start; gap: var(--space-3); min-width: 0; }
 
-  /* PA-39: estatísticas viram uma linha de leitura. Cada número leva à seção que ele conta. */
-  .leitura {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--border-width);
-    margin: 0 0 var(--space-5);
-    padding: 0;
-    overflow: hidden;
-    list-style: none;
-    background-color: var(--color-border-default);
-    border: var(--border-width) solid var(--color-border-default);
-    border-radius: var(--radius-card);
-  }
-  .leitura li { display: flex; flex: 1 1 calc(var(--size-column) / 2); min-width: 0; background-color: var(--color-bg-surface); }
-  .leitura-item {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: var(--space-1);
-    padding: var(--space-3) var(--space-4);
-    color: var(--color-text-default);
-    text-decoration: none;
-  }
-  a.leitura-item:hover { background-color: var(--color-bg-subtle); }
-  a.leitura-item:hover .leitura-rotulo { color: var(--color-text-default); text-decoration: underline; }
-  .leitura-numero {
-    font-size: var(--font-size-title);
-    font-weight: var(--font-weight-semibold);
-    font-variant-numeric: tabular-nums;
-    line-height: var(--font-leading-tight);
-  }
-  .leitura-rotulo { color: var(--color-text-muted); font-size: var(--font-size-label); line-height: var(--font-leading-tight); }
-  .leitura .is-alerta .leitura-numero { color: var(--color-text-danger); }
 
   .area-aviso:empty { display: none; }
   .area-aviso { margin-bottom: var(--space-4); }
 
   /* PA-32: três seções em ordem fixa. O cabeçalho repete o tom do chip, e o texto diz o estado. */
   .secao { margin-bottom: var(--space-6); scroll-margin-top: calc(var(--component-header-height) + var(--space-3)); }
-  .secao-cabeca {
+  /* Cabeçalho da seção: faixa que abre e fecha, como os grupos do Importação. A tag diz o status. */
+  .secao-cabeca { margin: 0; font: inherit; }
+  .secao-faixa {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--space-1) var(--space-2);
-    padding: 0 var(--space-3) var(--space-2);
-    border-bottom: var(--border-width) solid var(--color-border-strong);
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    min-height: var(--component-control-height);
+    padding: var(--space-2) var(--space-3);
+    background-color: var(--color-bg-surface);
+    border: var(--border-width) solid var(--color-border-default);
+    border-radius: var(--radius);
+    color: var(--color-text-default);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
   }
-  .secao-cabeca h2 {
-    margin: 0;
+  .secao-faixa:hover { background-color: var(--color-bg-hover); border-color: var(--color-action); }
+  .secao-faixa:focus-visible { outline: var(--focus-width) solid var(--color-action); outline-offset: var(--space-1); }
+  .secao-faixa > svg { flex: 0 0 auto; color: var(--color-text-muted); transition: transform 150ms; }
+  .secao-faixa[aria-expanded="false"] > svg { transform: rotate(-90deg); }
+  .secao-titulo {
     font-size: var(--font-size-label);
     font-weight: var(--font-weight-semibold);
     letter-spacing: var(--font-tracking-caps);
     line-height: var(--font-leading-tight);
     text-transform: uppercase;
   }
-  .secao[data-secao="atrasadas"] h2 { color: var(--color-text-danger); }
-  .secao-nota { color: var(--color-text-muted); font-size: var(--font-size-label); }
+  .secao-nota { font-size: var(--font-size-label); }
+  .secao-corpo { padding-top: var(--space-3); }
   .secao .estado-vazio { padding: var(--space-4) var(--space-3); }
 
   /* Filtros e alternância na mesma linha: a barra do DS tem largura total, aqui ela divide a linha. */
   /* Uma linha só: os filtros encolhem entre p e m, e o lado direito nunca quebra. */
   .area-topo { flex-wrap: nowrap; }
   .area-topo .barra-filtros { flex: 1 1 auto; flex-wrap: nowrap; width: auto; }
-  .area-topo .barra-filtros .campo { flex: 1 1 0; width: auto; min-width: var(--component-field-width-p); max-width: var(--component-field-width-m); }
+  .area-topo .barra-filtros .campo { flex: 1 1 0; width: auto; min-width: calc(var(--component-field-width-p) * 0.7); max-width: var(--component-field-width-m); }
   .area-direita { display: flex; flex: 0 0 auto; flex-wrap: nowrap; align-items: center; gap: var(--space-3); margin-left: auto; min-height: var(--component-control-height); }
   @media (max-width: 1100px) {
     .area-topo, .area-topo .barra-filtros, .area-direita { flex-wrap: wrap; }
@@ -118,12 +97,11 @@
   }
 
   /* Cards: cada grupo é um container. Atrasadas ocupa a largura toda e fica acima de Hoje (PA-32). */
-  [data-area-principal]:is([data-visao="cards"], [data-visao="kanban"]) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); align-items: start; gap: var(--space-4); margin-bottom: var(--space-6); }
-  :is([data-visao="cards"], [data-visao="kanban"]) .secao { margin: 0; padding: var(--space-4); background-color: var(--color-bg-subtle); border-radius: var(--radius-card); }
-  :is([data-visao="cards"], [data-visao="kanban"]) .secao[data-secao="atrasadas"], :is([data-visao="cards"], [data-visao="kanban"]) .secao[data-secao="concluidas"] { grid-column: 1 / -1; }
-  :is([data-visao="cards"], [data-visao="kanban"]) .secao[data-secao="atrasadas"] { background-color: var(--color-bg-danger); }
-  :is([data-visao="cards"], [data-visao="kanban"]) .secao[data-secao="atrasadas"] h2, :is([data-visao="cards"], [data-visao="kanban"]) .secao-nota { color: var(--color-text-default); }
-  :is([data-visao="cards"], [data-visao="kanban"]) .secao-cabeca { padding: 0 0 var(--space-3); border-bottom: 0; }
+  [data-area-principal][data-visao="cards"] { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); margin-bottom: var(--space-4); }
+  [data-visao="cards"] .secao { margin: 0; }
+  [data-area-principal][data-visao="kanban"] { display: grid; align-items: start; gap: var(--space-4); margin-bottom: var(--space-4); }
+  [data-visao="kanban"] .secao { margin: 0; padding: var(--space-3); background-color: var(--color-bg-subtle); border-radius: var(--radius-card); }
+  [data-visao="kanban"] .secao-faixa > svg { display: none; }
   .cards-atividade { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--size-column)), 1fr)); gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
   /* Kanban: as mesmas seções, lado a lado como colunas (pedido de Felipe, 08/11). */
   [data-area-principal][data-visao="kanban"] { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); align-items: stretch; }
@@ -157,26 +135,25 @@
       </div>
     </div>
 
-    <ul class="leitura" id="leitura" aria-label="Resumo das atividades"></ul>
 
     <div class="area-aviso" id="area-aviso"></div>
 
     <div data-area-principal>
       <section class="secao" id="secao-atrasadas" data-secao="atrasadas" aria-labelledby="titulo-atrasadas">
-        <div class="secao-cabeca"><h2 id="titulo-atrasadas">Atrasadas</h2><span class="secao-nota"></span></div>
-        <div class="secao-corpo"></div>
+        <h2 class="secao-cabeca"><button type="button" class="secao-faixa" aria-expanded="true" aria-controls="corpo-atrasadas" data-dobra="atrasadas"><span class="secao-titulo" id="titulo-atrasadas">Atrasadas</span><span class="secao-nota tag"></span></button></h2>
+        <div class="secao-corpo" id="corpo-atrasadas"></div>
       </section>
       <section class="secao" id="secao-hoje" data-secao="hoje" aria-labelledby="titulo-hoje">
-        <div class="secao-cabeca"><h2 id="titulo-hoje">Hoje</h2><span class="secao-nota"></span></div>
-        <div class="secao-corpo"></div>
+        <h2 class="secao-cabeca"><button type="button" class="secao-faixa" aria-expanded="true" aria-controls="corpo-hoje" data-dobra="hoje"><span class="secao-titulo" id="titulo-hoje">Hoje</span><span class="secao-nota tag"></span></button></h2>
+        <div class="secao-corpo" id="corpo-hoje"></div>
       </section>
       <section class="secao" id="secao-proximos" data-secao="proximos" aria-labelledby="titulo-proximos">
-        <div class="secao-cabeca"><h2 id="titulo-proximos">Próximos</h2><span class="secao-nota"></span></div>
-        <div class="secao-corpo"></div>
+        <h2 class="secao-cabeca"><button type="button" class="secao-faixa" aria-expanded="true" aria-controls="corpo-proximos" data-dobra="proximos"><span class="secao-titulo" id="titulo-proximos">Próximos</span><span class="secao-nota tag"></span></button></h2>
+        <div class="secao-corpo" id="corpo-proximos"></div>
       </section>
       <section class="secao" id="secao-concluidas" data-secao="concluidas" aria-labelledby="titulo-concluidas" hidden>
-        <div class="secao-cabeca"><h2 id="titulo-concluidas">Concluídas</h2><span class="secao-nota"></span></div>
-        <div class="secao-corpo"></div>
+        <h2 class="secao-cabeca"><button type="button" class="secao-faixa" aria-expanded="true" aria-controls="corpo-concluidas" data-dobra="concluidas"><span class="secao-titulo" id="titulo-concluidas">Concluídas</span><span class="secao-nota tag"></span></button></h2>
+        <div class="secao-corpo" id="corpo-concluidas"></div>
       </section>
     </div>
   </main>
@@ -565,7 +542,9 @@
     const raiz = document.querySelector(`[data-secao="${secao.chave}"]`);
     const daqui = lista.filter(secao.pertence).sort((x, y) => x.prazoEmDias - y.prazoEmDias);
     raiz.hidden = !visivel;
-    raiz.querySelector('.secao-nota').textContent = plural(daqui.length, 'atividade', 'atividades');
+    const nota = raiz.querySelector('.secao-nota');
+    nota.textContent = STATUS_DA_SECAO[secao.chave].texto(daqui.length);
+    nota.dataset.cor = STATUS_DA_SECAO[secao.chave].cor;
     const corpo = raiz.querySelector('.secao-corpo');
     if (!daqui.length) {
       corpo.replaceChildren(vazio(secao));
@@ -579,42 +558,40 @@
     return daqui.length;
   }
 
-  function itemDeLeitura(numero, rotulo, destino, alerta) {
-    const li = document.createElement('li');
-    const el = document.createElement(destino ? 'a' : 'span');
-    el.className = 'leitura-item' + (alerta ? ' is-alerta' : '');
-    if (destino) el.href = destino;
-    const n = document.createElement('span');
-    n.className = 'leitura-numero';
-    n.textContent = numero;
-    const r = document.createElement('span');
-    r.className = 'leitura-rotulo';
-    r.textContent = rotulo;
-    el.append(n, r);
-    li.append(el);
-    return li;
+  // Seções abrem e fecham pela faixa (padrão do Importação); a escolha fica no navegador. No Kanban as colunas ficam sempre abertas.
+  const CHAVE_DOBRAS = 'astrea-area-secoes-fechadas';
+  const lerDobras = () => { try { return new Set(JSON.parse(localStorage.getItem(CHAVE_DOBRAS) || '[]')); } catch { return new Set(); } };
+  const fechadas = lerDobras();
+  const STATUS_DA_SECAO = {
+    atrasadas: { cor: 'red', texto: (n) => `${n} ${n === 1 ? 'vencida' : 'vencidas'}` },
+    hoje: { cor: 'yellow', texto: (n) => `${n} ${n === 1 ? 'vence hoje' : 'vencem hoje'}` },
+    proximos: { cor: 'blue', texto: (n) => `${n} a vencer` },
+    concluidas: { cor: 'green', texto: (n) => `${n} ${n === 1 ? 'concluída' : 'concluídas'}` },
+  };
+  function aplicarDobras() {
+    document.querySelectorAll('.secao-faixa').forEach((botao) => {
+      const aberta = visao === 'kanban' || !fechadas.has(botao.dataset.dobra);
+      botao.setAttribute('aria-expanded', String(aberta));
+      document.getElementById(`corpo-${botao.dataset.dobra}`).hidden = !aberta;
+    });
   }
-
-  // A leitura segue os filtros de linha. O número só vira link quando a seção dele está na tela.
-  function desenharLeitura(contagem, lista, visiveis) {
-    const destino = (chave) => (visiveis.includes(chave) ? `#secao-${chave}` : null);
-    const processos = new Set(lista.filter((a) => !concluida(a)).map((a) => a.processo)).size;
-    document.getElementById('leitura').replaceChildren(
-      itemDeLeitura(contagem.atrasadas, contagem.atrasadas === 1 ? 'atrasada' : 'atrasadas', destino('atrasadas'), contagem.atrasadas > 0),
-      itemDeLeitura(contagem.hoje, contagem.hoje === 1 ? 'vence hoje' : 'vencem hoje', destino('hoje')),
-      itemDeLeitura(contagem.proximos, 'nos próximos dias', destino('proximos')),
-      itemDeLeitura(processos, processos === 1 ? 'processo com atividade aberta' : 'processos com atividade aberta'),
-      itemDeLeitura(contagem.concluidas, contagem.concluidas === 1 ? 'concluída' : 'concluídas', destino('concluidas')),
-    );
-  }
+  document.querySelectorAll('.secao-faixa').forEach((botao) => {
+    botao.prepend(DS.icone('seta'));
+    botao.addEventListener('click', () => {
+      if (visao === 'kanban') return;
+      const chave = botao.dataset.dobra;
+      if (fechadas.has(chave)) fechadas.delete(chave); else fechadas.add(chave);
+      try { localStorage.setItem(CHAVE_DOBRAS, JSON.stringify([...fechadas])); } catch { /* sem armazenamento, a escolha vale só nesta tela */ }
+      aplicarDobras();
+    });
+  });
 
   function desenhar() {
     document.querySelector('[data-area-principal]').dataset.visao = visao;
     const lista = atividades.filter(passa);
     const visiveis = SECOES_DA_SITUACAO[filtro.situacao];
-    const contagem = {};
-    SECOES.forEach((secao) => { contagem[secao.chave] = desenharSecao(secao, lista, visiveis.includes(secao.chave)); });
-    desenharLeitura(contagem, lista, visiveis);
+    SECOES.forEach((secao) => desenharSecao(secao, lista, visiveis.includes(secao.chave)));
+    aplicarDobras();
     detalhe.sincronizar(visao === 'kanban' ? [] : itensVisiveis(lista, visiveis));
   }
 
