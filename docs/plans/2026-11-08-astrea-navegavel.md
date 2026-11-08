@@ -1245,7 +1245,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: `window.DS` e `window.DADOS`.
 - Produces: `[data-agenda-data]`, com a data em `AAAA-MM-DD`, `.grade-agenda`, `[data-visao="lista|dia|semana|mes"]` e o parâmetro `?estado=vazio`.
 
-- [ ] **Step 1: Confirmar o estado vermelho**
+- [x] **Step 1: Confirmar o estado vermelho**
 
 ```bash
 node scripts/verificar-app.js --rf RF-09
@@ -1253,7 +1253,7 @@ node scripts/verificar-app.js --rf RF-09
 
 Esperado: `RF-09 FALHOU`.
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 - Quatro visões: lista, dia, semana e mês.
 - Abra sempre em Hoje, sem lembrar a última sessão (PA-49).
@@ -1264,7 +1264,7 @@ Esperado: `RF-09 FALHOU`.
 
 Esperado: as quatro visões trocam sem recarregar.
 
-- [ ] **Step 3: Executar e confirmar que passa**
+- [x] **Step 3: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/agenda.html
@@ -1273,7 +1273,7 @@ node scripts/verificar-app.js --rf RF-07,RF-09,RF-12,RF-15 --paginas agenda.html
 
 Esperado: `verificar: 0 erro(s)` e os quatro RF com `ok`.
 
-- [ ] **Step 4: Entregar**
+- [x] **Step 4: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 

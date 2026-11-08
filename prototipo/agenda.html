@@ -6,12 +6,435 @@
 <title>Agenda, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
+<script src="dados.js"></script>
+<style>
+  /* Agenda: a grade e a lista de prioridades lado a lado; abaixo de 1180px a lista desce. */
+  .agenda {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--size-column);
+    align-items: start;
+    gap: var(--space-5);
+  }
+  .agenda-barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+  .agenda-navegar { display: flex; align-items: center; gap: var(--space-2); }
+  .agenda-periodo {
+    margin: 0;
+    font-size: var(--font-size-emphasis);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--font-leading-tight);
+  }
+
+  /* abas das visões: sublinhado na ativa, como nas abas de Alertas */
+  .visoes { display: flex; gap: var(--space-1); border-bottom: var(--border-width) solid var(--color-border-default); }
+  .visao {
+    height: var(--size-control);
+    padding: 0 var(--space-3);
+    background: none;
+    border: 0;
+    border-bottom: var(--focus-width) solid transparent;
+    color: var(--color-text-muted);
+    font: inherit;
+    font-size: var(--font-size-button);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+  }
+  .visao:hover { color: var(--color-text-default); }
+  .visao[aria-selected="true"] { border-bottom-color: var(--color-action); color: var(--color-action); font-weight: var(--font-weight-semibold); }
+
+  .grade-agenda { min-width: 0; }
+  .agenda-vazio { margin-bottom: var(--space-3); }
+
+  /* mês e semana: sete colunas, domingo a sábado */
+  .mes-semana, .mes-dias, .semana-dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .mes-semana { border-bottom: var(--border-width) solid var(--color-border-default); }
+  .mes-semana span {
+    padding: var(--space-1) var(--space-2);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-label);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--font-tracking-caps);
+    text-transform: uppercase;
+  }
+  .mes-dias, .semana-dias { margin: 0; padding: 0; list-style: none; border-left: var(--border-width) solid var(--color-border-default); }
+  /* PA-47: a célula do mês tem três linhas da densidade compacta, e o mês inteiro cabe em 1440 por 900 */
+  .mes-dias { grid-auto-rows: calc(var(--density-row-compact) * 3); }
+  .dia {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+    padding: var(--space-1);
+    overflow: hidden;
+    border-right: var(--border-width) solid var(--color-border-default);
+    border-bottom: var(--border-width) solid var(--color-border-default);
+  }
+  .semana-dias { border-top: var(--border-width) solid var(--color-border-default); }
+  .semana-dias .dia { min-height: calc(var(--density-row-compact) * 8); padding: var(--space-2); }
+  .dia-numero {
+    display: inline-grid;
+    place-items: center;
+    align-self: flex-start;
+    min-width: var(--size-chip);
+    height: var(--size-chip);
+    padding: 0 var(--space-1);
+    border-radius: var(--radius-round);
+    color: var(--color-text-default);
+    font-size: var(--font-size-label);
+    font-weight: var(--font-weight-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+  .dia-fora .dia-numero { color: var(--color-text-muted); }
+  .dia-hoje .dia-numero { background-color: var(--color-action); color: var(--color-action-text); }
+  .semana-cabeca { display: flex; align-items: center; gap: var(--space-2); color: var(--color-text-muted); font-size: var(--font-size-label); text-transform: uppercase; }
+
+  /* atividade dentro da célula: o texto diz o estado, a cor reforça (PA-34) */
+  .itens-dia { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; min-width: 0; }
+  .item-dia {
+    min-width: 0;
+    padding: 0 var(--space-1);
+    overflow: hidden;
+    background-color: var(--component-chip-bg);
+    border-left: var(--focus-width) solid var(--color-border-strong);
+    color: var(--color-text-default);
+    font-size: var(--font-size-label);
+    line-height: var(--font-leading-base);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .semana-dias .item-dia { white-space: normal; }
+  .item-dia[data-prazo="vencido"] { background-color: var(--color-bg-danger); border-left-color: var(--color-text-danger); }
+  .item-dia[data-prazo="hoje"] { background-color: var(--color-bg-warning); border-left-color: var(--color-text-warning); }
+  .item-dia[data-prazo="concluido"] { background-color: var(--color-bg-surface); color: var(--color-text-muted); }
+  .item-estado { font-weight: var(--font-weight-semibold); }
+  .item-mais { color: var(--color-text-muted); font-size: var(--font-size-label); }
+
+  /* dia: atividades sem hora em "Dia todo", e a grade de horas abaixo */
+  .dia-todo h3, .lista-dia h3, .prioridades h2 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--font-size-emphasis);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--font-leading-tight);
+  }
+  .dia-todo { padding-bottom: var(--space-3); border-bottom: var(--border-width) solid var(--color-border-default); }
+  .dia-sem-item { margin: 0; color: var(--color-text-muted); }
+  .horas { margin: 0; padding: 0; list-style: none; }
+  .horas li {
+    min-height: var(--density-row-compact);
+    padding: var(--space-1) 0;
+    border-bottom: var(--border-width) solid var(--color-border-default);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-label);
+    font-variant-numeric: tabular-nums;
+  }
+  .lista-dia + .lista-dia { margin-top: var(--space-4); }
+
+  /* PA-48: prazos a vencer numa lista só, ao lado da grade */
+  .prioridades {
+    padding: var(--space-4);
+    background-color: var(--component-card-bg);
+    border: var(--border-width) solid var(--component-card-border);
+    border-radius: var(--radius-card);
+  }
+  .prioridades-ajuda { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-size: var(--font-size-label); }
+  .prioridades ol { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+  .prioridade { display: grid; justify-items: start; gap: var(--space-1); }
+  .prioridade-titulo { font-weight: var(--font-weight-medium); overflow-wrap: anywhere; }
+
+  @media (max-width: 1180px) {
+    .agenda { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
 </head>
 <body data-pagina="agenda.html" data-titulo="Agenda">
 <div class="corpo">
   <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
+    <div class="agenda-barra" id="agenda-barra">
+      <div class="visoes" role="tablist" aria-label="Visão da agenda" id="visoes"></div>
+      <div class="agenda-navegar" id="agenda-navegar"></div>
+      <h2 class="agenda-periodo" id="agenda-periodo" aria-live="polite"></h2>
+    </div>
+    <div class="agenda">
+      <section class="grade-agenda" id="grade-agenda" role="tabpanel" aria-labelledby="visao-dia"></section>
+      <aside class="prioridades" aria-labelledby="prioridades-titulo">
+        <h2 id="prioridades-titulo">Prioridades por prazo</h2>
+        <p class="prioridades-ajuda">Tudo que está em aberto, do prazo mais urgente ao mais distante.</p>
+        <div id="prioridades-lista"></div>
+      </aside>
+    </div>
   </main>
 </div>
+<script>
+(function () {
+  const VISOES = [
+    { id: 'lista', rotulo: 'Em lista' },
+    { id: 'dia', rotulo: 'Por dia' },
+    { id: 'semana', rotulo: 'Por semana' },
+    { id: 'mes', rotulo: 'Por mês' },
+  ];
+  const TIPOS = { tarefa: 'Tarefa', prazo: 'Prazo', audiencia: 'Audiência', evento: 'Evento' };
+  const DIAS_DA_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const LIMITE_DO_MES = 2;
+  const HORAS = Array.from({ length: 11 }, (_, i) => 8 + i);
+
+  const vazio = new URLSearchParams(location.search).get('estado') === 'vazio';
+  const hoje = semHora(new Date());
+
+  // PA-49: abre sempre em Hoje, na visão por dia, sem ler a última sessão.
+  const estado = { visao: 'dia', data: hoje };
+
+  function semHora(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function somarDias(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+  function doisDigitos(n) { return String(n).padStart(2, '0'); }
+  function iso(d) { return `${d.getFullYear()}-${doisDigitos(d.getMonth() + 1)}-${doisDigitos(d.getDate())}`; }
+  function mesmoDia(a, b) { return iso(a) === iso(b); }
+  function inicial(texto) { return texto.charAt(0).toUpperCase() + texto.slice(1); }
+  function curta(d) { return `${doisDigitos(d.getDate())}/${doisDigitos(d.getMonth() + 1)}`; }
+
+  function criar(tag, classe, texto) {
+    const el = document.createElement(tag);
+    if (classe) el.className = classe;
+    if (texto !== undefined) el.textContent = texto;
+    return el;
+  }
+
+  const ATIVIDADES = (vazio ? [] : window.DADOS.ATIVIDADES).map((a) => {
+    const concluida = a.status === 'concluido';
+    return { ...a, data: somarDias(hoje, a.prazoEmDias), concluida, ...DS.descreverPrazo(a.prazoEmDias, concluida) };
+  });
+
+  function doDia(d) { return ATIVIDADES.filter((a) => mesmoDia(a.data, d)); }
+
+  // --- peças das visões ----------------------------------------------------
+
+  function linha(a) {
+    return DS.linhaAtividade({
+      titulo: a.titulo, tipo: a.tipo, estadoPrazo: a.estadoPrazo, prazo: a.rotulo,
+      processo: a.processo, responsavel: a.responsavel, densidade: 'compacta',
+    });
+  }
+
+  function listaDeLinhas(itens) {
+    const ul = criar('ul', 'lista-atividades');
+    ul.append(...itens.map(linha));
+    return ul;
+  }
+
+  const PREFIXO = { vencido: 'Vencido', concluido: 'Concluída' };
+
+  function itemDoDia(a) {
+    const li = criar('li', 'item-dia');
+    li.dataset.prazo = a.estadoPrazo;
+    li.title = `${TIPOS[a.tipo]}, ${a.rotulo}: ${a.titulo}`;
+    if (PREFIXO[a.estadoPrazo]) li.append(criar('span', 'item-estado', `${PREFIXO[a.estadoPrazo]}: `));
+    li.append(`${TIPOS[a.tipo]} · ${a.titulo}`);
+    return li;
+  }
+
+  function itensDoDia(itens, limite) {
+    const ul = criar('ul', 'itens-dia');
+    const mostrados = limite ? itens.slice(0, limite) : itens;
+    ul.append(...mostrados.map(itemDoDia));
+    if (itens.length > mostrados.length) ul.append(criar('li', 'item-mais', `mais ${itens.length - mostrados.length}`));
+    return ul;
+  }
+
+  function numeroDoDia(d) {
+    const numero = criar('span', 'dia-numero', String(d.getDate()));
+    if (mesmoDia(d, hoje)) numero.append(criar('span', 'visualmente-oculto', ', hoje'));
+    return numero;
+  }
+
+  function celula(d, classeExtra) {
+    const li = criar('li', 'dia' + (classeExtra || ''));
+    if (mesmoDia(d, hoje)) li.classList.add('dia-hoje');
+    li.dataset.dia = iso(d);
+    return li;
+  }
+
+  function cabecaDaSemana() {
+    const cabeca = criar('div', 'mes-semana');
+    cabeca.setAttribute('aria-hidden', 'true');
+    cabeca.append(...DIAS_DA_SEMANA.map((n) => criar('span', null, n)));
+    return cabeca;
+  }
+
+  function inicioDaSemana(d) { return somarDias(d, -d.getDay()); }
+
+  // --- visões --------------------------------------------------------------
+
+  function visaoMes(ref) {
+    const primeiro = new Date(ref.getFullYear(), ref.getMonth(), 1);
+    const ultimo = new Date(ref.getFullYear(), ref.getMonth() + 1, 0);
+    const inicio = inicioDaSemana(primeiro);
+    const total = Math.ceil((primeiro.getDay() + ultimo.getDate()) / 7) * 7;
+    const dias = criar('ul', 'mes-dias');
+    dias.setAttribute('aria-label', 'Dias do mês');
+    for (let i = 0; i < total; i++) {
+      const d = somarDias(inicio, i);
+      const li = celula(d, d.getMonth() === ref.getMonth() ? '' : ' dia-fora');
+      li.append(numeroDoDia(d));
+      const itens = doDia(d);
+      if (itens.length) li.append(itensDoDia(itens, LIMITE_DO_MES));
+      dias.append(li);
+    }
+    return [cabecaDaSemana(), dias];
+  }
+
+  function visaoSemana(ref) {
+    const inicio = inicioDaSemana(ref);
+    const dias = criar('ul', 'semana-dias');
+    dias.setAttribute('aria-label', 'Dias da semana');
+    for (let i = 0; i < 7; i++) {
+      const d = somarDias(inicio, i);
+      const li = celula(d);
+      const cabeca = criar('div', 'semana-cabeca');
+      cabeca.append(criar('span', null, DIAS_DA_SEMANA[i]), numeroDoDia(d));
+      li.append(cabeca);
+      const itens = doDia(d);
+      if (itens.length) li.append(itensDoDia(itens));
+      dias.append(li);
+    }
+    return [dias];
+  }
+
+  function visaoDia(ref) {
+    const todo = criar('section', 'dia-todo');
+    todo.append(criar('h3', null, 'Dia todo'));
+    const itens = doDia(ref);
+    todo.append(itens.length ? listaDeLinhas(itens) : criar('p', 'dia-sem-item', 'Nenhuma atividade neste dia.'));
+    const horas = criar('ul', 'horas');
+    horas.setAttribute('aria-label', 'Horas do dia');
+    horas.append(...HORAS.map((h) => criar('li', null, `${doisDigitos(h)}:00`)));
+    return [todo, horas];
+  }
+
+  function visaoLista(ref) {
+    const ultimo = new Date(ref.getFullYear(), ref.getMonth() + 1, 0).getDate();
+    const blocos = [];
+    for (let dia = 1; dia <= ultimo; dia++) {
+      const d = new Date(ref.getFullYear(), ref.getMonth(), dia);
+      const itens = doDia(d);
+      if (!itens.length) continue;
+      const bloco = criar('section', 'lista-dia');
+      const titulo = d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+      bloco.append(criar('h3', null, inicial(titulo) + (mesmoDia(d, hoje) ? ', hoje' : '')), listaDeLinhas(itens));
+      blocos.push(bloco);
+    }
+    if (!blocos.length && !vazio) blocos.push(criar('p', 'dia-sem-item', 'Nenhuma atividade neste mês.'));
+    return blocos;
+  }
+
+  const DESENHO = { lista: visaoLista, dia: visaoDia, semana: visaoSemana, mes: visaoMes };
+
+  function rotuloDoPeriodo(visao, ref) {
+    const mes = inicial(ref.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }));
+    if (visao === 'dia') return inicial(ref.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }));
+    if (visao === 'semana') {
+      const inicio = inicioDaSemana(ref);
+      return `Semana de ${curta(inicio)} a ${curta(somarDias(inicio, 6))}`;
+    }
+    return mes;
+  }
+
+  // PA-46: no estado vazio a grade continua na tela, e o aviso ensina a usá-la.
+  function avisoVazio() {
+    const aviso = DS.estadoVazio({
+      titulo: 'Nenhuma atividade na agenda',
+      texto: 'Prazos, audiências, tarefas e eventos aparecem nesta grade, no dia em que vencem. '
+        + 'Para criar a primeira, use Adicionar, no cabeçalho, e escolha Tarefa ou Evento.',
+    });
+    aviso.classList.add('agenda-vazio');
+    return aviso;
+  }
+
+  // --- prioridades ---------------------------------------------------------
+
+  function prioridades() {
+    const destino = document.getElementById('prioridades-lista');
+    const abertas = ATIVIDADES.filter((a) => !a.concluida).sort((a, b) => a.prazoEmDias - b.prazoEmDias);
+    if (!abertas.length) {
+      destino.replaceChildren(DS.estadoVazio({ titulo: 'Nenhum prazo em aberto', texto: 'Quando houver atividade a vencer, ela entra aqui pela ordem do prazo.' }));
+      return;
+    }
+    const ol = criar('ol');
+    ol.append(...abertas.map((a) => {
+      const li = criar('li', 'prioridade');
+      li.append(DS.chipPrazo({ estadoPrazo: a.estadoPrazo, rotulo: a.rotulo }), criar('span', 'prioridade-titulo', a.titulo), DS.tag({ rotulo: TIPOS[a.tipo] }));
+      return li;
+    }));
+    destino.replaceChildren(ol);
+  }
+
+  // --- barra: abas e navegação ---------------------------------------------
+
+  const grade = document.getElementById('grade-agenda');
+  const abas = VISOES.map((v) => {
+    const aba = criar('button', 'visao', v.rotulo);
+    aba.type = 'button';
+    aba.id = `visao-${v.id}`;
+    aba.dataset.visao = v.id;
+    aba.setAttribute('role', 'tab');
+    aba.setAttribute('aria-controls', 'grade-agenda');
+    aba.addEventListener('click', () => trocar(v.id));
+    return aba;
+  });
+
+  function trocar(visao, focar) {
+    estado.visao = visao;
+    desenhar();
+    if (focar) abas.find((a) => a.dataset.visao === visao).focus();
+  }
+
+  // Abas com foco itinerante: Tab entra na aba ativa, as setas trocam de visão.
+  document.getElementById('visoes').append(...abas);
+  document.getElementById('visoes').addEventListener('keydown', (e) => {
+    const atual = VISOES.findIndex((v) => v.id === estado.visao);
+    const destino = { ArrowRight: atual + 1, ArrowLeft: atual - 1, Home: 0, End: VISOES.length - 1 }[e.key];
+    if (destino === undefined) return;
+    e.preventDefault();
+    trocar(VISOES[(destino + VISOES.length) % VISOES.length].id, true);
+  });
+
+  function mover(passo) {
+    const d = estado.data;
+    if (estado.visao === 'dia') estado.data = somarDias(d, passo);
+    else if (estado.visao === 'semana') estado.data = somarDias(d, passo * 7);
+    else estado.data = new Date(d.getFullYear(), d.getMonth() + passo, 1);
+    desenhar();
+  }
+
+  const botaoHoje = DS.botao({ variante: 'secundario', tamanho: 'pequeno', rotulo: 'Hoje' });
+  botaoHoje.addEventListener('click', () => { estado.data = hoje; desenhar(); });
+  const anterior = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'esquerda', rotulo: 'Período anterior' });
+  anterior.addEventListener('click', () => mover(-1));
+  const proximo = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'direita', rotulo: 'Próximo período' });
+  proximo.addEventListener('click', () => mover(1));
+  document.getElementById('agenda-navegar').append(botaoHoje, anterior, proximo);
+
+  function desenhar() {
+    abas.forEach((aba) => {
+      const ativa = aba.dataset.visao === estado.visao;
+      aba.setAttribute('aria-selected', String(ativa));
+      aba.tabIndex = ativa ? 0 : -1;
+    });
+    grade.setAttribute('aria-labelledby', `visao-${estado.visao}`);
+    grade.dataset.agendaData = iso(estado.data);
+    grade.dataset.visaoAtual = estado.visao;
+    document.getElementById('agenda-periodo').textContent = rotuloDoPeriodo(estado.visao, estado.data);
+    const pecas = DESENHO[estado.visao](estado.data);
+    grade.replaceChildren(...(vazio ? [avisoVazio()] : []), ...pecas);
+  }
+
+  desenhar();
+  prioridades();
+})();
+</script>
 </body>
 </html>
