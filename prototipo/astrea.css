@@ -1788,6 +1788,12 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .painel-detalhe-linha + .painel-detalhe-linha { border-top: var(--border-width) solid var(--color-border-default); }
 .painel-detalhe-linha dt { display: inline-flex; flex: none; align-items: center; gap: var(--space-2); color: var(--color-text-muted); font-size: var(--font-size-label); }
 .painel-detalhe-linha dd { min-width: 0; margin: 0; text-align: end; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+/* Painel estreito (coluna da Agenda): rótulo em cima e valor embaixo, para o número não quebrar no meio. */
+.painel-detalhe { container-type: inline-size; }
+@container (max-width: 360px) {
+  .painel-detalhe-linha { flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+  .painel-detalhe-linha dd { text-align: start; }
+}
 .painel-detalhe-rodape { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); padding: var(--space-3) var(--space-5); border-top: var(--border-width) solid var(--color-border-default); }
 .painel-detalhe-reabrir { border-radius: var(--radius-round); box-shadow: var(--shadow-card); }
 
