@@ -687,7 +687,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: `prototipo/kanban.html` das Tasks 2 a 4, e `prototipo/verificar.py` da Task 1.
 - Produces: `prototipo/README.md`.
 
-- [ ] **Step 1: Executar o verificador e confirmar a falha**
+- [x] **Step 1: Executar o verificador e confirmar a falha**
 
 ```bash
 python prototipo/verificar.py prototipo/kanban.html prototipo/README.md
@@ -695,7 +695,7 @@ python prototipo/verificar.py prototipo/kanban.html prototipo/README.md
 
 Esperado: `prototipo/README.md: arquivo nao existe.` e código 1.
 
-- [ ] **Step 2: Escrever o README**
+- [x] **Step 2: Escrever o README**
 
 Leia `prototipo/kanban.html` antes de escrever. O README descreve o que o arquivo faz, não o que o plano pediu.
 
@@ -709,7 +709,7 @@ O README tem cinco seções, nesta ordem:
 
 Na seção 4, registre que IBM Plex Sans só aparece quando a fonte está instalada. Sem ela, a tela usa a fonte do sistema.
 
-- [ ] **Step 3: Executar o verificador e confirmar que passa**
+- [x] **Step 3: Executar o verificador e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/kanban.html prototipo/README.md
@@ -717,7 +717,7 @@ python prototipo/verificar.py prototipo/kanban.html prototipo/README.md
 
 Esperado: `prototipo\README.md: 0 erro(s)` vindo do linter, `verificar: 0 erro(s)` e código 0.
 
-- [ ] **Step 4: Entregar**
+- [x] **Step 4: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` e não execute `git commit`. O plano é do pai: ele marca o checkbox e commita por caminho, depois do portão.
 
@@ -725,20 +725,20 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 ## Self-Review
 
-- [ ] Todo `### Task N` usa a palavra inglesa `Task`.
-- [ ] Toda task tem `Papel`: `busca`, `escrita` ou `analise`.
-- [ ] Toda task tem `Verificação` com um comando.
-- [ ] Toda task tem `Aprovação`: `nenhuma`, ou `exige — <a acao exata>`.
-- [ ] Task marcada `exige` e a que PRODUZ o efeito externo ao executar. Task
+- [x] Todo `### Task N` usa a palavra inglesa `Task`.
+- [x] Toda task tem `Papel`: `busca`, `escrita` ou `analise`.
+- [x] Toda task tem `Verificação` com um comando.
+- [x] Toda task tem `Aprovação`: `nenhuma`, ou `exige — <a acao exata>`.
+- [x] Task marcada `exige` e a que PRODUZ o efeito externo ao executar. Task
       que so altera codigo executado depois pelo humano escreve `nenhuma`.
-- [ ] O comando de `Verificação` executa a partir da raiz do repositorio.
-- [ ] Toda task tem `Fontes`, com caminho ou com a palavra `nenhuma`.
-- [ ] Todo caminho de `Fontes` existe no disco.
-- [ ] Todo caminho no comando de `Verificação` existe no disco, ou nasce em
+- [x] O comando de `Verificação` executa a partir da raiz do repositorio.
+- [x] Toda task tem `Fontes`, com caminho ou com a palavra `nenhuma`.
+- [x] Todo caminho de `Fontes` existe no disco.
+- [x] Todo caminho no comando de `Verificação` existe no disco, ou nasce em
       `Files` de alguma task.
-- [ ] Todo item de `Files` tem prefixo `Create`, `Test`, `Modify` ou `Delete`.
-- [ ] Todo passo tem comando e resultado esperado.
-- [ ] Todo bloco de teste esta inteiro, sem reticencia.
-- [ ] Todo bloco de codigo usa cerca, nunca indentacao de quatro espacos.
-- [ ] Toda task tem `Interfaces`, com `Consumes` e `Produces`.
-- [ ] Nenhuma task depende de arquivo que nenhuma task anterior criou.
+- [x] Todo item de `Files` tem prefixo `Create`, `Test`, `Modify` ou `Delete`.
+- [x] Todo passo tem comando e resultado esperado.
+- [x] Todo bloco de teste esta inteiro, sem reticencia.
+- [x] Todo bloco de codigo usa cerca, nunca indentacao de quatro espacos.
+- [x] Toda task tem `Interfaces`, com `Consumes` e `Produces`.
+- [x] Nenhuma task depende de arquivo que nenhuma task anterior criou.
