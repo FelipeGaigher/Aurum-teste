@@ -27,13 +27,12 @@ com data. O que foi entregue fica no commit, não aqui.
 - As telas do cadastro e, depois, do produto ficam em
   `01-telas-observadas.md`, com os prints em `evidencias/`.
 
-### O MCP do Figma bateu a cota
+### Os slides passam a nascer em HTML
 
-- O plano Starter do Figma limita as chamadas do MCP. Montar os seis slides
-  da Q2 com variáveis e conferir por screenshot gastou a cota do dia.
-- Decisão: os slides passam a nascer em HTML, um arquivo só, com as medidas
-  do frame de 1920 por 1080. O Figma recebe a versão fechada, à mão ou pelo
-  MCP quando a cota voltar.
+- Montar os seis slides da Q2 direto no Figma foi lento. Cada slide pedia
+  variáveis e conferência por screenshot.
+- Decisão: os slides nascem em HTML, um arquivo só, com as medidas do frame
+  de 1920 por 1080. Eles viram PNG e entram no Figma fechados.
 
 ### Direção visual
 
@@ -165,8 +164,8 @@ com data. O que foi entregue fica no commit, não aqui.
 
 ### Os decks entraram no Figma pelo Chrome
 
-- A cota do MCP do Figma seguia esgotada no dia seguinte. O caminho foi o
-  Claude in Chrome, com o arquivo do Figma aberto na aba.
+- No dia seguinte os PNG entraram pelo Claude in Chrome, com o arquivo do
+  Figma aberto na aba.
 - O Figma na web não tem campo de arquivo no DOM. O diálogo nativo de
   "Place image" não dá para operar. A saída foi criar um campo de arquivo
   na página e preencher pela extensão. Depois, um evento de drop sintético
@@ -178,9 +177,9 @@ com data. O que foi entregue fica no commit, não aqui.
   Os sete da Questão 2 entraram abaixo dos seis frames nativos de ontem,
   numa linha. A banca vê os dois, e a escolha de apagar os nativos é de
   Felipe.
-- O plano Starter limita o arquivo a três páginas. A Questão 3 ficou na
-  página Extra, renomeada para "Questão 3 e extras", à direita dos prints
-  do cadastro bloqueado.
+- O arquivo tinha três páginas. A Questão 3 ficou na página Extra,
+  renomeada para "Questão 3 e extras", à direita dos prints do cadastro
+  bloqueado.
 
 ### O documento único de entrega
 
@@ -197,14 +196,11 @@ com data. O que foi entregue fica no commit, não aqui.
 
 - Às 14h15 Felipe decidiu pagar o plano do Figma. A Aurum exige documentar
   e apresentar lá, e o arquivo precisa reunir todos os links da entrega.
-- O `whoami` do MCP mostrou sete times na conta. O paywall da cota aponta
-  para "Felipe's Starter team", e o assento dele nesse time é View. O
-  upgrade precisa ser nesse time, com assento Full, ou a cota não volta.
-- Até o upgrade, o trabalho segue fora do Figma: plano das oito páginas em
-  `docs/plans/2026-11-08-figma-entrega.md` e texto do briefing em
-  `referencias/figma-briefing.md`.
-- Felipe pagou o Professional no time "Felipe Gaigher" e criou um arquivo
-  novo lá, às 14h20. A cota voltou na hora. O arquivo antigo fica como está.
+- Antes do arquivo novo, o trabalho seguiu fora do Figma: plano das oito
+  páginas em `docs/plans/2026-11-08-figma-entrega.md` e texto do briefing
+  em `referencias/figma-briefing.md`.
+- Felipe criou o arquivo novo no time "Felipe Gaigher" às 14h20. O arquivo
+  antigo fica como está.
 - O arquivo novo nasceu com oito páginas: capa, briefing, uma por questão,
   design system, protótipo e extras. Os 16 PNG dos decks e os dois prints
   do cadastro entraram pelo `upload_assets`, com `curl`. A capa e o

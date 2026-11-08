@@ -28,6 +28,8 @@ async function exportar(page, arquivo, prefixo) {
   // As fontes do deck entram só na exportação. O HTML continua sem CDN.
   await page.addStyleTag({ url: FONTES });
   await page.addStyleTag({ content: 'body{padding:0!important;background:#fff} .tema,.capa{display:none!important} .slide{width:1920px!important;margin:0 0 40px!important;border:0!important}' });
+  // Deck interativo: o PNG mostra tudo aberto, como a mídia print.
+  await page.evaluate(() => document.querySelectorAll('details').forEach((d) => { d.open = true; }));
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(800);
   const slides = await page.$$('section.slide');
