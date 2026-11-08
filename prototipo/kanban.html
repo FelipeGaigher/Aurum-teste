@@ -109,6 +109,9 @@
   --size-header: var(--primitive-size-56);
   --size-sidebar: var(--primitive-size-240);
   --size-search: var(--primitive-size-440);
+  --size-dialog: var(--primitive-size-440);
+
+  --color-scrim: light-dark(color-mix(in srgb, var(--primitive-gray-900) 45%, transparent), color-mix(in srgb, var(--primitive-gray-950) 70%, transparent));
 }
 :root:has(#tema-claro:checked) { color-scheme: light; }
 :root:has(#tema-escuro:checked) { color-scheme: dark; }
@@ -129,6 +132,17 @@
   --component-avatar-bg: var(--color-bg-hover);
   --component-avatar-size: var(--size-chip);
   --component-skeleton-bg: var(--color-bg-hover);
+  --component-column-drop-bg: var(--color-bg-hover);
+  --component-column-drop-border: var(--color-text-muted);
+  --component-control-bg: var(--color-bg-surface);
+  --component-control-border: var(--color-border-strong);
+  --component-control-height: var(--size-control);
+  --component-button-primary-bg: var(--color-action);
+  --component-button-primary-bg-hover: var(--color-action-hover);
+  --component-button-primary-text: var(--color-action-text);
+  --component-dialog-bg: var(--color-bg-surface);
+  --component-dialog-width: var(--size-dialog);
+  --component-dialog-backdrop: var(--color-scrim);
 }
 /* fim dos componentes */
 
@@ -152,7 +166,7 @@ body {
   outline-offset: var(--focus-width);
 }
 
-button, input { font: inherit; color: inherit; }
+button, input, select { font: inherit; color: inherit; }
 
 .visualmente-oculto {
   position: absolute;
@@ -240,7 +254,8 @@ svg.icone {
   border-radius: var(--radius);
 }
 .busca input::placeholder { color: var(--color-text-muted); }
-.busca-campo svg {
+.busca-campo svg,
+.seletor svg {
   position: absolute;
   right: var(--space-2);
   top: 50%;
@@ -384,6 +399,11 @@ svg.icone {
   border: var(--border-width) solid var(--color-border-default);
   border-radius: var(--radius);
 }
+.coluna[data-destino] {
+  background-color: var(--component-column-drop-bg);
+  border-style: dashed;
+  border-color: var(--component-column-drop-border);
+}
 .coluna h2 {
   display: flex;
   align-items: baseline;
@@ -519,6 +539,107 @@ svg.icone {
   .esqueleto span { animation: none; }
 }
 
+/* ferramentas: filtros e botão */
+#ferramentas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-4);
+}
+#ferramentas .botao-primario { margin-left: auto; }
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+.campo label {
+  font-size: var(--font-size-1);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+}
+
+.controle {
+  height: var(--component-control-height);
+  padding: 0 var(--space-3);
+  background-color: var(--component-control-bg);
+  border: var(--border-width) solid var(--component-control-border);
+  border-radius: var(--radius);
+}
+.seletor {
+  position: relative;
+  display: grid;
+}
+.seletor select {
+  appearance: none;
+  padding-right: var(--space-6);
+  cursor: pointer;
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  height: var(--component-control-height);
+  padding: 0 var(--space-4);
+  background: none;
+  border: var(--border-width) solid var(--component-control-border);
+  border-radius: var(--radius);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+.botao:hover { background-color: var(--color-bg-hover); }
+.botao-primario {
+  background-color: var(--component-button-primary-bg);
+  border-color: var(--component-button-primary-bg);
+  color: var(--component-button-primary-text);
+}
+.botao-primario:hover {
+  background-color: var(--component-button-primary-bg-hover);
+  border-color: var(--component-button-primary-bg-hover);
+}
+
+/* painel de criar */
+.painel {
+  width: min(var(--component-dialog-width), calc(100vw - var(--space-6)));
+  padding: var(--space-5);
+  background-color: var(--component-dialog-bg);
+  color: var(--color-text-default);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius);
+}
+.painel::backdrop { background-color: var(--component-dialog-backdrop); }
+.painel h2 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--font-size-4);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--font-leading-tight);
+}
+.painel-campos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.painel-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+.painel-rodape p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-1);
+}
+
 /* rodapé da demonstração */
 #rodape-demo {
   margin-top: var(--space-6);
@@ -640,7 +761,41 @@ svg.icone {
 
   <main id="conteudo">
     <h1>Área de trabalho</h1>
-    <div id="ferramentas"></div>
+    <div id="ferramentas">
+      <div class="filtros" role="group" aria-label="Filtros do quadro">
+        <div class="campo">
+          <label for="filtro-responsavel">Responsável</label>
+          <span class="seletor">
+            <select id="filtro-responsavel" class="controle" data-filtro="responsavel">
+              <option value="todos">Todos</option>
+            </select>
+            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
+          </span>
+        </div>
+        <div class="campo">
+          <label for="filtro-tipo">Tipo</label>
+          <span class="seletor">
+            <select id="filtro-tipo" class="controle" data-filtro="tipo">
+              <option value="todos">Todos</option>
+            </select>
+            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
+          </span>
+        </div>
+        <div class="campo">
+          <label for="filtro-periodo">Período</label>
+          <span class="seletor">
+            <select id="filtro-periodo" class="controle" data-filtro="periodo">
+              <option value="todos">Todo o período</option>
+              <option value="vencidas">Vencidas</option>
+              <option value="hoje">Hoje</option>
+              <option value="proximos-7">Próximos 7 dias</option>
+            </select>
+            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
+          </span>
+        </div>
+      </div>
+      <button type="button" id="criar-atividade" class="botao botao-primario" aria-haspopup="dialog">Criar atividade</button>
+    </div>
     <div id="quadro"></div>
     <footer id="rodape-demo">
       <fieldset class="demo">
@@ -651,8 +806,49 @@ svg.icone {
       </fieldset>
     </footer>
     <div id="anuncio" class="visualmente-oculto" aria-live="polite"></div>
+    <p id="dica-mover" class="visualmente-oculto">As setas para a esquerda e para a direita movem a atividade entre as colunas.</p>
   </main>
 </div>
+
+<dialog id="painel-criar" class="painel" aria-labelledby="painel-criar-titulo" aria-describedby="painel-criar-nota">
+  <h2 id="painel-criar-titulo">Criar atividade</h2>
+  <div class="painel-campos">
+    <div class="campo">
+      <label for="criar-titulo">Título</label>
+      <input id="criar-titulo" class="controle" type="text" autocomplete="off">
+    </div>
+    <div class="campo">
+      <label for="criar-tipo">Tipo</label>
+      <span class="seletor">
+        <select id="criar-tipo" class="controle">
+          <option value="">Selecione o tipo</option>
+        </select>
+        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
+      </span>
+    </div>
+    <div class="campo">
+      <label for="criar-processo">Processo</label>
+      <input id="criar-processo" class="controle" type="text" inputmode="numeric" autocomplete="off">
+    </div>
+    <div class="campo">
+      <label for="criar-responsavel">Responsável</label>
+      <span class="seletor">
+        <select id="criar-responsavel" class="controle">
+          <option value="">Selecione o responsável</option>
+        </select>
+        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
+      </span>
+    </div>
+    <div class="campo">
+      <label for="criar-prazo">Prazo fatal</label>
+      <input id="criar-prazo" class="controle" type="date">
+    </div>
+  </div>
+  <div class="painel-rodape">
+    <p id="painel-criar-nota">O protótipo não salva atividades.</p>
+    <button type="button" id="fechar-painel" class="botao">Fechar</button>
+  </div>
+</dialog>
 <script>
 const COLUNAS = [
   { status: 'a-fazer', nome: 'A fazer' },
@@ -675,9 +871,21 @@ const ATIVIDADES = [
 
 const TIPOS = { tarefa: 'Tarefa', evento: 'Evento', prazo: 'Prazo', audiencia: 'Audiência' };
 
+const RESPONSAVEIS = [...new Set(ATIVIDADES.map((atividade) => atividade.responsavel))]
+  .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+const PERIODOS = {
+  vencidas: (dias) => dias < 0,
+  hoje: (dias) => dias === 0,
+  'proximos-7': (dias) => dias >= 0 && dias <= 7,
+};
+
+const TIPO_ARRASTE = 'application/x-atividade';
+
 const estado = {
   atividades: ATIVIDADES.map((atividade) => ({ ...atividade })),
   modo: 'dados',
+  filtros: { responsavel: 'todos', tipo: 'todos', periodo: 'todos' },
 };
 
 function el(tag, classe, texto) {
@@ -731,6 +939,7 @@ function criarCard(atividade) {
   card.draggable = true;
   const tituloId = 'card-' + atividade.id + '-titulo';
   card.setAttribute('aria-labelledby', tituloId);
+  card.setAttribute('aria-describedby', 'dica-mover');
 
   const prazo = descreverPrazo(atividade);
   const linhaPrazo = el('p', 'card-prazo', prazo.texto);
@@ -768,13 +977,29 @@ function criarEsqueleto() {
 
 function criarVazio(coluna) {
   const bloco = el('div', 'coluna-vazia');
-  bloco.append(el('p', null, 'Nenhuma atividade em ' + coluna.nome + '.'), el('p', null, 'Arraste um card para cá.'));
+  const convite = filtrosAtivos() ? 'Ajuste os filtros para ver mais.' : 'Arraste um card para cá.';
+  bloco.append(el('p', null, 'Nenhuma atividade em ' + coluna.nome + '.'), el('p', null, convite));
   return bloco;
+}
+
+function passaNosFiltros(atividade) {
+  const { responsavel, tipo, periodo } = estado.filtros;
+  return (responsavel === 'todos' || atividade.responsavel === responsavel)
+    && (tipo === 'todos' || atividade.tipo === tipo)
+    && (periodo === 'todos' || PERIODOS[periodo](atividade.prazoEmDias));
+}
+
+function atividadesVisiveis() {
+  return estado.atividades.filter(passaNosFiltros);
+}
+
+function filtrosAtivos() {
+  return Object.values(estado.filtros).some((valor) => valor !== 'todos');
 }
 
 function atividadesDaColuna(status) {
   if (estado.modo === 'vazio') return [];
-  return estado.atividades
+  return atividadesVisiveis()
     .filter((atividade) => atividade.status === status)
     .sort((a, b) => a.prazoEmDias - b.prazoEmDias);
 }
@@ -812,6 +1037,21 @@ function nomeDaColuna(status) {
   return COLUNAS.find((coluna) => coluna.status === status).nome;
 }
 
+function resumoContagem(statuses) {
+  return statuses.map((status) => nomeDaColuna(status) + ': ' + atividadesDaColuna(status).length + '.').join(' ');
+}
+
+function moverAtividade(id, status) {
+  const atividade = estado.atividades.find((item) => item.id === id);
+  if (!atividade) throw new Error('moverAtividade: atividade desconhecida: ' + id);
+  if (atividade.status === status) return;
+  const origem = atividade.status;
+  atividade.status = status;
+  render();
+  document.querySelector('.card[data-id="' + id + '"]').focus();
+  anunciar('Movida para ' + nomeDaColuna(status) + '. ' + resumoContagem([origem, status]));
+}
+
 function confirmarSugestao(id) {
   const atividade = estado.atividades.find((item) => item.id === id);
   delete atividade.sugestaoIa;
@@ -828,6 +1068,86 @@ function desfazerSugestao(id) {
   anunciar('Sugestão desfeita. ' + atividade.titulo + ' saiu do quadro. '
     + nomeDaColuna(atividade.status) + ': ' + atividadesDaColuna(atividade.status).length + '.');
 }
+
+function marcarDestino(coluna) {
+  for (const outra of document.querySelectorAll('.coluna[data-destino]')) {
+    if (outra !== coluna) delete outra.dataset.destino;
+  }
+  if (coluna) coluna.dataset.destino = '';
+}
+
+function preencherOpcoes(id, pares) {
+  const select = document.getElementById(id);
+  for (const [valor, rotulo] of pares) {
+    const opcao = el('option', null, rotulo);
+    opcao.value = valor;
+    select.append(opcao);
+  }
+}
+
+const quadro = document.getElementById('quadro');
+
+quadro.addEventListener('dragstart', (evento) => {
+  const card = evento.target.closest('.card');
+  if (!card) return;
+  evento.dataTransfer.setData(TIPO_ARRASTE, card.dataset.id);
+  evento.dataTransfer.effectAllowed = 'move';
+});
+
+quadro.addEventListener('dragover', (evento) => {
+  const coluna = evento.target.closest('.coluna');
+  if (!coluna || !evento.dataTransfer.types.includes(TIPO_ARRASTE)) return;
+  evento.preventDefault();
+  evento.dataTransfer.dropEffect = 'move';
+  marcarDestino(coluna);
+});
+
+quadro.addEventListener('dragleave', (evento) => {
+  const coluna = evento.target.closest('.coluna');
+  if (coluna && !coluna.contains(evento.relatedTarget)) delete coluna.dataset.destino;
+});
+
+quadro.addEventListener('drop', (evento) => {
+  const coluna = evento.target.closest('.coluna');
+  if (!coluna) return;
+  evento.preventDefault();
+  marcarDestino(null);
+  moverAtividade(evento.dataTransfer.getData(TIPO_ARRASTE), coluna.dataset.status);
+});
+
+quadro.addEventListener('dragend', () => marcarDestino(null));
+
+const SETAS = { ArrowLeft: -1, ArrowRight: 1 };
+
+quadro.addEventListener('keydown', (evento) => {
+  const passo = SETAS[evento.key];
+  const modificador = evento.altKey || evento.ctrlKey || evento.metaKey || evento.shiftKey;
+  if (!passo || modificador || !evento.target.matches('.card')) return;
+  const atividade = estado.atividades.find((item) => item.id === evento.target.dataset.id);
+  const destino = COLUNAS[COLUNAS.findIndex((coluna) => coluna.status === atividade.status) + passo];
+  if (!destino) return;
+  evento.preventDefault();
+  moverAtividade(atividade.id, destino.status);
+});
+
+const paresResponsavel = RESPONSAVEIS.map((nome) => [nome, nome]);
+const paresTipo = Object.entries(TIPOS);
+preencherOpcoes('filtro-responsavel', paresResponsavel);
+preencherOpcoes('filtro-tipo', paresTipo);
+preencherOpcoes('criar-responsavel', paresResponsavel);
+preencherOpcoes('criar-tipo', paresTipo);
+
+document.querySelector('.filtros').addEventListener('change', (evento) => {
+  estado.filtros[evento.target.dataset.filtro] = evento.target.value;
+  render();
+  anunciar('Filtro aplicado. ' + resumoContagem(COLUNAS.map((coluna) => coluna.status)));
+});
+
+const painel = document.getElementById('painel-criar');
+const botaoCriar = document.getElementById('criar-atividade');
+botaoCriar.addEventListener('click', () => painel.showModal());
+document.getElementById('fechar-painel').addEventListener('click', () => painel.close());
+painel.addEventListener('close', () => botaoCriar.focus());
 
 document.querySelector('.busca').addEventListener('submit', (evento) => evento.preventDefault());
 

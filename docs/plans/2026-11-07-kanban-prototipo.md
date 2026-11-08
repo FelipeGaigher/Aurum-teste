@@ -599,14 +599,14 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Produces: `atividadesVisiveis() -> Atividade[]` — as atividades que passam nos três filtros. O `render()` passa a usar esta lista.
 - Produces: `<dialog id="painel-criar">` — o painel de criar atividade, sem salvar.
 
-- [ ] **Step 1: Escrever o arrastar**
+- [x] **Step 1: Escrever o arrastar**
 
 - `dragstart` no card grava o `id` no `dataTransfer`.
 - `dragover` na coluna chama `preventDefault()` e marca a coluna de destino com um token.
 - `drop` na coluna chama `moverAtividade(id, status)`.
 - `moverAtividade` chama `anunciar()` com o destino e as duas contagens, como "Movida para Fazendo. A fazer: 4. Fazendo: 4."
 
-- [ ] **Step 2: Escrever o teclado**
+- [x] **Step 2: Escrever o teclado**
 
 - Seta para a direita no card em foco move o card para a coluna seguinte.
 - Seta para a esquerda move o card para a coluna anterior.
@@ -614,7 +614,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - A seta só age quando o foco está no próprio card, nunca num campo ou botão dentro dele.
 - Depois do movimento, o foco fica no card, já na coluna nova.
 
-- [ ] **Step 3: Escrever os filtros e o botão**
+- [x] **Step 3: Escrever os filtros e o botão**
 
 O `#ferramentas` vem antes do `#quadro` no DOM. Assim o Tab passa por filtros, botão, colunas e cards, nesta ordem.
 
@@ -631,7 +631,7 @@ Siga estas regras:
 - A contagem da coluna mostra os cards visíveis depois do filtro.
 - O botão "Criar atividade" é o único elemento com `--color-action` de fundo.
 
-- [ ] **Step 4: Escrever o painel de criar**
+- [x] **Step 4: Escrever o painel de criar**
 
 O botão abre `<dialog id="painel-criar">` por `showModal()`. O painel não salva nada.
 
@@ -639,7 +639,7 @@ O botão abre `<dialog id="painel-criar">` por `showModal()`. O painel não salv
 - Um botão "Fechar" e uma linha de texto: "O protótipo não salva atividades."
 - Esc e Fechar fecham o painel. O foco volta ao botão "Criar atividade".
 
-- [ ] **Step 5: Executar o verificador e confirmar que passa**
+- [x] **Step 5: Executar o verificador e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/kanban.html
@@ -647,7 +647,7 @@ python prototipo/verificar.py prototipo/kanban.html
 
 Esperado: `verificar: 0 erro(s)` e código 0.
 
-- [ ] **Step 6: Provar arrastar, teclado e Tab no navegador headless**
+- [x] **Step 6: Provar arrastar, teclado e Tab no navegador headless**
 
 Use um navegador headless. Nunca abra janela na tela do humano.
 
@@ -661,7 +661,7 @@ Use um navegador headless. Nunca abra janela na tela do humano.
 
 Esperado: A fazer vai de 5 a 4, e Fazendo vai de 3 a 4. O `a7` passa para Concluído e segue em foco. A sequência do Tab passa por filtros, botão, colunas e cards. Cada captura mostra o contorno de `--color-focus`. O filtro Prazo deixa só cards do tipo Prazo, e a contagem acompanha. O foco volta ao botão "Criar atividade". Largura e tema seguem como na Task 2.
 
-- [ ] **Step 7: Entregar**
+- [x] **Step 7: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` e não execute `git commit`. O plano é do pai: ele marca o checkbox e commita por caminho, depois do portão.
 
