@@ -1788,7 +1788,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 **Aviso:** a lista de nomes reais fica fora do repositório. Nunca copie, imprima ou cite um termo dela.
 
-- [ ] **Step 1: Atualizar a documentação**
+- [x] **Step 1: Atualizar a documentação**
 
 - `prototipo/README.md`: descreva as páginas, os arquivos compartilhados e os dois portões.
 - `README.md`: atualize a linha de `prototipo/` e a de `scripts/`.
@@ -1796,7 +1796,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 Esperado: nenhum documento diz que a Agenda não leva a nenhuma tela.
 
-- [ ] **Step 2: Executar a suíte inteira**
+- [x] **Step 2: Executar a suíte inteira**
 
 ```bash
 python prototipo/test_verificar.py
@@ -1809,7 +1809,7 @@ Esperado: `OK`, `verificar: 0 erro(s)` nos dois comandos, e os 12 RF de navegado
 
 Falha em tela de task anterior volta como correção nesta task, com `> nota:` no plano.
 
-- [ ] **Step 3: Entregar**
+- [x] **Step 3: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
@@ -1817,20 +1817,20 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 ## Self-Review
 
-- [ ] Todo `### Task N` usa a palavra inglesa `Task`.
-- [ ] Toda task tem `Papel`: `busca`, `escrita` ou `analise`.
-- [ ] Toda task tem `Verificação` com um comando.
-- [ ] Toda task tem `Aprovação`: `nenhuma`, ou `exige — <a acao exata>`.
-- [ ] Task marcada `exige` e a que PRODUZ o efeito externo ao executar. Task
+- [x] Todo `### Task N` usa a palavra inglesa `Task`.
+- [x] Toda task tem `Papel`: `busca`, `escrita` ou `analise`.
+- [x] Toda task tem `Verificação` com um comando.
+- [x] Toda task tem `Aprovação`: `nenhuma`, ou `exige — <a acao exata>`.
+- [x] Task marcada `exige` e a que PRODUZ o efeito externo ao executar. Task
       que so altera codigo executado depois pelo humano escreve `nenhuma`.
-- [ ] O comando de `Verificação` executa a partir da raiz do repositorio.
-- [ ] Toda task tem `Fontes`, com caminho ou com a palavra `nenhuma`.
-- [ ] Todo caminho de `Fontes` existe no disco.
-- [ ] Todo caminho no comando de `Verificação` existe no disco, ou nasce em
+- [x] O comando de `Verificação` executa a partir da raiz do repositorio.
+- [x] Toda task tem `Fontes`, com caminho ou com a palavra `nenhuma`.
+- [x] Todo caminho de `Fontes` existe no disco.
+- [x] Todo caminho no comando de `Verificação` existe no disco, ou nasce em
       `Files` de alguma task.
-- [ ] Todo item de `Files` tem prefixo `Create`, `Test`, `Modify` ou `Delete`.
-- [ ] Todo passo tem comando e resultado esperado.
-- [ ] Todo bloco de teste esta inteiro, sem reticencia.
-- [ ] Todo bloco de codigo usa cerca, nunca indentacao de quatro espacos.
-- [ ] Toda task tem `Interfaces`, com `Consumes` e `Produces`.
-- [ ] Nenhuma task depende de arquivo que nenhuma task anterior criou.
+- [x] Todo item de `Files` tem prefixo `Create`, `Test`, `Modify` ou `Delete`.
+- [x] Todo passo tem comando e resultado esperado.
+- [x] Todo bloco de teste esta inteiro, sem reticencia.
+- [x] Todo bloco de codigo usa cerca, nunca indentacao de quatro espacos.
+- [x] Toda task tem `Interfaces`, com `Consumes` e `Produces`.
+- [x] Nenhuma task depende de arquivo que nenhuma task anterior criou.

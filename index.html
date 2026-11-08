@@ -40,7 +40,6 @@
   td:last-child, th:last-child { padding-right: 0; }
   .decisao { border-left: 2px solid var(--stamp); padding-left: 14px; margin: 12px 0; }
   .ia { background: var(--surface); border-radius: var(--radius); padding: 16px 16px 4px; }
-  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
   @media (max-width: 600px) {
     h1 { font-size: 1.75rem; }
     thead { position: absolute; left: -9999px; }
@@ -64,7 +63,7 @@
 
 <section>
   <h2>Como ler</h2>
-  <p>Os três decks estão no <a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/">arquivo do Figma</a>, um por página. O protótipo do Kanban abre no navegador. As fontes e o processo estão no repositório. A leitura leva cerca de quatro minutos.</p>
+  <p>A entrega segue a ordem do enunciado. Vêm as três questões, o protótipo navegável, os documentos de apoio e, no fim, o parágrafo de uso de IA. Cada questão tem os slides e o documento-fonte. A tela da Questão 3 está no <a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/">arquivo do Figma</a> e no protótipo, que abre no navegador.</p>
 </section>
 
 <section>
@@ -72,9 +71,10 @@
   <table>
     <thead><tr><th>Item</th><th>O que a banca pediu</th><th>O que foi entregue</th><th>Link</th></tr></thead>
     <tbody>
-      <tr><td>Questão 1</td><td>Cinco problemas, princípios e o que verificar. Até 5 páginas.</td><td>5 páginas no Figma.</td><td><a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-12">Página Questão 1</a></td></tr>
-      <tr><td>Questão 2</td><td>Design system e plano incremental. Até 6 páginas.</td><td>6 páginas, mais uma de IA.</td><td><a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-20">Página Questão 2</a></td></tr>
-      <tr><td>Questão 3</td><td>Uma tela em alta fidelidade e até 3 páginas.</td><td>1 tela, 3 páginas e um protótipo navegável.</td><td><a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-25">Página Questão 3</a></td></tr>
+      <tr><td>Questão 1</td><td>Cinco problemas, princípios e o que verificar. Até 5 páginas.</td><td>5 slides e o diagnóstico.</td><td><a href="01-slides-q1.html">Slides da Questão 1</a></td></tr>
+      <tr><td>Questão 2</td><td>Design system e plano incremental. Até 6 páginas.</td><td>Uma apresentação interativa de 6 slides e o plano.</td><td><a href="https://claude.ai/artifact/59bdPZCtBBMUU6F6FL9Kgs">Apresentação da Questão 2</a></td></tr>
+      <tr><td>Questão 3</td><td>Uma tela em alta fidelidade e até 3 páginas.</td><td>A Área de trabalho no Figma, 3 slides e um protótipo navegável.</td><td><a href="03-slides-q3.html">Slides da Questão 3</a></td></tr>
+      <tr><td>Protótipo</td><td>Apoio da Questão 3 e da Parte B.</td><td>O Astrea inteiro, com o Kanban e o design system.</td><td><a href="prototipo/area-de-trabalho.html">Abrir o protótipo</a></td></tr>
       <tr><td>Parágrafo de IA</td><td>Ferramentas, etapas e o que foi feito com o resultado.</td><td>Um parágrafo, no fim deste documento.</td><td><a href="#ia">Uso de IA</a></td></tr>
     </tbody>
   </table>
@@ -84,49 +84,89 @@
   <h2>Questão 1: o Astrea sabe o que é um prazo, mas a interface ainda não mostra isso</h2>
   <p>Cinco problemas de experiência na gestão de atividades, cada um com evidência das telas do produto e o motivo de importar.</p>
   <ol>
-    <li>O prazo não domina a tela que existe para ele.</li>
-    <li>Dois nomes e três lugares para a mesma atividade.</li>
+    <li>O prazo não domina as telas que existem para ele.</li>
+    <li>Sem hierarquia de nomes, a mesma atividade em quatro lugares.</li>
     <li>Criar uma atividade interrompe quem cria.</li>
     <li>Três azuis, três cinzas, três jeitos de criar.</li>
     <li>A moldura compete com o trabalho.</li>
   </ol>
-  <p>A página fecha com seis princípios de design e com o que verificar antes de seguir. <a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-12">Abrir a Questão 1 no Figma</a>.</p>
+  <p>Os slides fecham com os princípios de design e com o que verificar antes de seguir.</p>
+  <ul>
+    <li><a href="01-slides-q1.html">Slides da Questão 1</a></li>
+    <li><a href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/01-diagnostico.md">Diagnóstico, o documento-fonte com o detalhe de cada problema</a></li>
+    <li><a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-12">Página da Questão 1 no Figma</a></li>
+  </ul>
 </section>
 
 <section>
   <h2>Questão 2: um design system que nasce do roadmap dos squads</h2>
-  <p>Seis decisões, uma por página.</p>
+  <p>Seis decisões, uma por slide.</p>
   <ol>
-    <li>Tokens semânticos primeiro, componentes depois.</li>
-    <li>Uma fonte só: o Figma lê a fonte, ele não é a fonte.</li>
-    <li>Governança com papéis claros: quem decide, quem contribui, quem veta.</li>
-    <li>A moldura fica fixa primeiro, o conteúdo migra depois.</li>
-    <li>A contribuição dos quatro designers sai do roadmap, não de tarefa extra.</li>
-    <li>Três riscos, com mitigação e as métricas que provam o avanço.</li>
+    <li>Primeiro os tokens semânticos, porque o legado os consome sem reescrita.</li>
+    <li>Um componente com propriedades serve cada contexto, sem cópia.</li>
+    <li>A direção do DS decide, a Engenharia veta e os squads contribuem.</li>
+    <li>Tokens, moldura, configuração e, por último, os fluxos principais.</li>
+    <li>A divisão do trabalho sai da conversa com cada designer.</li>
+    <li>Os riscos são a moldura, o prazo e o tempo do time.</li>
   </ol>
-  <p>A sétima página é o parágrafo de IA. <a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-20">Abrir a Questão 2 no Figma</a>.</p>
+  <ul>
+    <li><a href="https://claude.ai/artifact/59bdPZCtBBMUU6F6FL9Kgs">Apresentação interativa da Questão 2</a></li>
+    <li><a href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/02-plano-ds.md">Plano do design system, o documento-fonte</a></li>
+    <li><a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-20">Página da Questão 2 no Figma</a></li>
+  </ul>
 </section>
 
 <section>
-  <h2>Questão 3: o Kanban da Gestão de atividades</h2>
-  <p>A tela é o Kanban que o onboarding do Astrea promete, dentro da moldura que o escritório já conhece. Cinco componentes nasceram dela:</p>
+  <h2>Questão 3: a Área de trabalho, com o prazo como dado dominante</h2>
+  <p>A tela é a Área de trabalho, a que o escritório abre todo dia. A planilha de pedidos dos clientes cobre só ela, com 80 sugestões e 407 votos. Cinco componentes sustentam a tela:</p>
   <ul>
-    <li>card de atividade;</li>
+    <li>linha de atividade;</li>
     <li>chip de prazo;</li>
-    <li>seletor de responsável;</li>
-    <li>filtro;</li>
+    <li>seletor;</li>
+    <li>chip de filtro;</li>
     <li>estado vazio.</li>
   </ul>
   <h3>A decisão difícil</h3>
   <div class="decisao">
-    <p>O card de um Kanban comum abre pelo título. O nosso abre pelo prazo. Isso contraria o hábito de quem vem do Trello. Escolhi assim porque o escritório não perde uma tarefa por não saber o nome dela, e sim por não ver a data. O custo é uma estranheza na primeira semana. Para reduzi-lo, o título fica na segunda linha, e o prazo leva texto e cor, nunca só cor.</p>
+    <p>Hoje a Área de trabalho abre na lista escolhida, e os prazos ficam num widget de lembretes, no canto. A tela nova abre em todas as listas, com Atrasadas acima de Hoje. Isso obriga a pessoa a reaprender a tela que ela mais abre. Escolhi alterar assim mesmo: o escritório não perde prazo por não achar a lista, e sim por não ver a data. Para reduzir o custo, o seletor de lista e a moldura ficam onde estavam. O chip de prazo leva texto e cor, nunca só cor.</p>
   </div>
-  <p>O protótipo tem tema escuro, é responsivo e abre com o plano de 12 meses do redesign dentro do próprio Kanban, como uma sprint real.</p>
   <ul>
-    <li><a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-25">Página da Questão 3 no Figma</a></li>
-    <li><a href="https://felipegaigher.github.io/Aurum-teste/prototipo/kanban.html">Protótipo navegável do Kanban</a></li>
-    <li><a href="https://felipegaigher.github.io/Aurum-teste/03-componentes.html">Página de componentes, com estados e tokens</a></li>
+    <li><a href="03-slides-q3.html">Slides da Questão 3</a></li>
+    <li><a href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/03-tela.md">Contrato da tela, o documento-fonte com a decisão completa</a></li>
+    <li><a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/?node-id=26-2">A tela da Área de trabalho no Figma</a></li>
+    <li><a href="prototipo/design-system.html">Design system, com componentes, estados e propriedades</a></li>
   </ul>
+</section>
+
+<section>
+  <h2>Protótipo navegável</h2>
+  <p>O protótipo é o Astrea inteiro, com o Kanban no topo do menu e os módulos abaixo. Ele tem tema claro e escuro e menu recolhível. Todo dado nele é fictício. O Kanban abre com o plano de 12 meses do redesign, como uma sprint real.</p>
+  <ul>
+    <li><a href="prototipo/area-de-trabalho.html">Entrada do protótipo, na Área de trabalho</a></li>
+    <li><a href="https://felipegaigher.github.io/Aurum-teste/prototipo/kanban.html">Gestão kanban</a></li>
+    <li><a href="https://felipegaigher.github.io/Aurum-teste/03-componentes.html">Componentes do Kanban, com estados e tokens</a></li>
+  </ul>
+</section>
+
+<section>
+  <h2>Ajustes e processo</h2>
+  <ul>
+    <li><a href="05-ajustes-plataforma.html">Ajustes na plataforma</a>: fluxos alterados e recursos sem efeito visual, mas com peso no dia a dia.</li>
+    <li><a href="04-processo.html">Como este trabalho foi feito</a>: o processo de desenvolvimento, do diário ao protótipo.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Evidência</h2>
+  <ul>
+    <li><a href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/01-pontos-de-atencao.md">Pontos de atenção</a>: o catálogo de 97 pontos, base do diagnóstico e do protótipo.</li>
+    <li><a href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/01-pedidos-clientes.md">Pedidos de clientes</a>: 80 sugestões e 407 votos sobre a Área de trabalho.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Repositório</h2>
+  <p><a href="https://github.com/FelipeGaigher/Aurum-teste">github.com/FelipeGaigher/Aurum-teste</a>. Os arquivos de texto e HTML do repositório são a fonte. O Figma e o protótipo são a entrega.</p>
 </section>
 
 <section id="ia">
@@ -135,10 +175,6 @@
     <p>Usei o Claude Code como par de trabalho durante toda a atividade. O MCP do Figma ficou ligado enquanto a cota permitiu. Quando a cota do MCP acabou, os decks viraram PNG pelo Playwright e entraram no Figma pelo Claude in Chrome. A IA não escreveu a estratégia. Ela recebeu as minhas decisões em conversa e as transformou em documento-fonte, que eu iterei linha a linha. Do mesmo documento saíram os slides da Questão 2, o diagnóstico da Questão 1 e este texto. Na Questão 3, a IA executou um plano de cinco tasks com subagentes. Outro agente revisou cada task antes do commit. O resultado é o protótipo navegável do Kanban. Duas skills minhas guardaram o padrão. Uma de português técnico lintou cada frase. Uma contra a cara de IA barrou o grid de cards iguais. Barrou também a paleta creme que o modelo propôs primeiro. A direção visual, os cinco problemas e o trade-off foram decisões minhas. O kit de skills e agentes do slide 3 da Questão 2 é o modelo que usei aqui. Regra escrita uma vez, no repositório, lida por toda ferramenta que gera tela.</p>
   </div>
 </section>
-
-<footer>
-  <p>Repositório: <a href="https://github.com/FelipeGaigher/Aurum-teste">github.com/FelipeGaigher/Aurum-teste</a>. Os arquivos de texto e HTML do repositório são a fonte. O Figma e o protótipo são a entrega.</p>
-</footer>
 </main>
 
 </body>
