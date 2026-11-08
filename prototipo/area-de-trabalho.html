@@ -65,7 +65,29 @@
   /* No rodapé do painel a dica abre para cima, senão corta na borda. */
   .tooltip:has(> .acao-redonda) .dica { top: auto; right: auto; left: 50%; bottom: 100%; margin: 0 0 var(--space-1); transform: translateX(-50%); }
   :is([data-visao="cards"], [data-visao="kanban"]) .secao-corpo { padding: var(--space-3); }
-  [data-visao="lista"] .lista-atividades > .linha-atividade:last-child { border-bottom: 0; }
+  /* Lista: a tabela do DS, a mesma de Atendimentos e Processos, dentro do contêiner da seção. */
+  /* O contorno é o da seção; a tabela não ganha um segundo, e o fundo fica no tom da página. */
+  .secao .tabela-quadro { border: 0; border-radius: 0; background-color: transparent; }
+  .secao .tabela .celula-prazo, .secao .tabela .celula-processo, .secao .tabela td:last-child { white-space: nowrap; }
+  .secao .tabela td:last-child { width: 1%; }
+  /* Com largura sobrando, as colunas das quatro seções alinham; com o painel aberto, a tabela se ajusta ao conteúdo. */
+  [data-visao="lista"] .secao { container-type: inline-size; }
+  @container (min-width: 960px) {
+    .secao .tabela th:nth-child(1) { width: calc(var(--component-row-prazo-width) + var(--space-7)); }
+    .secao .tabela th:nth-child(3) { width: calc(var(--component-row-processo-width) + var(--space-5)); }
+    .secao .tabela th:nth-child(4) { width: calc(var(--component-row-pessoa-width) + var(--space-5)); }
+    .secao .tabela th:nth-child(5) { width: calc(var(--component-row-prazo-width) - var(--space-4)); }
+    .secao .tabela td:last-child { width: auto; }
+  }
+  .celula-atividade { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); min-width: 0; }
+  .celula-atividade-titulo { font-weight: var(--font-weight-semibold); overflow-wrap: anywhere; }
+  .celula-processo { display: inline-flex; align-items: center; gap: var(--space-1); }
+  /* PA-40: as ações aparecem no hover e no foco da linha, e seguem no Tab mesmo invisíveis. */
+  .tabela tbody tr:is(:hover, :focus-within) .linha-acoes { opacity: 1; }
+  /* A tabela rola por dentro: a dica abre ao lado do botão, na altura da linha, e a última linha não a corta. */
+  .secao .tabela .tooltip > .dica { top: 50%; margin: 0; transform: translateY(-50%); }
+  .secao .tabela .celula-processo .tooltip > .dica { right: auto; left: 100%; margin-left: var(--space-1); }
+  .secao .tabela .linha-acoes .tooltip > .dica { right: 100%; margin-right: var(--space-1); }
   .secao .estado-vazio { padding: var(--space-4) var(--space-3); }
 
   /* Filtros e alternância na mesma linha: a barra do DS tem largura total, aqui ela divide a linha. */
@@ -126,9 +148,7 @@
   }
 
   /* Detalhe ao lado da lista (pedido de Felipe, 08/11): a linha e o card escolhem a atividade. */
-  .linha-atividade[data-selecionavel], .card-atividade[data-selecionavel] { cursor: pointer; }
-  .linha-atividade[data-selecionavel]:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
-  .linha-atividade.is-selecionado { background-color: var(--color-bg-hover); box-shadow: inset calc(var(--focus-width) + var(--border-width)) 0 0 var(--color-action); }
+  .card-atividade[data-selecionavel] { cursor: pointer; }
   .painel-detalhe-rodape a.botao { text-decoration: none; }
   .detalhe-processo { display: inline-flex; align-items: center; gap: var(--space-1); }
   /* O número leva à ficha: cor de ação, sem sublinhado em repouso. O copiar segue ao lado. */
@@ -469,7 +489,9 @@
     casca.append(principal, divisor.el, painel.el);
 
     function marcar(id) {
-      principal.querySelectorAll('[data-selecionavel]').forEach((el) => {
+      // A linha da tabela marca como as outras páginas (aria-selected); o card, pela classe.
+      principal.querySelectorAll('tr[data-selecionavel]').forEach((tr) => tr.setAttribute('aria-selected', String(tr.dataset.id === id)));
+      principal.querySelectorAll('.card-atividade[data-selecionavel]').forEach((el) => {
         const sim = el.dataset.id === id;
         el.classList.toggle('is-selecionado', sim);
         el.setAttribute('aria-current', String(sim));
@@ -517,17 +539,74 @@
 
   // --- desenho -----------------------------------------------------------------
 
-  function linha(a) {
-    const prazo = DS.descreverPrazo(a.prazoEmDias, concluida(a));
-    const el = DS.linhaAtividade({
-      titulo: a.titulo, tipo: a.tipo, estadoPrazo: prazo.estadoPrazo, prazo: prazo.rotulo,
-      processo: a.processo, hrefProcesso: a.processo ? urlDoProcesso(a.processo) : undefined,
-      responsavel: a.responsavel, acoes: acoesDe(a),
-    });
-    el.dataset.id = a.id;
-    el.tabIndex = 0;
-    selecionavel(el, a);
+  // --- Lista: a tabela do DS, com as colunas das outras páginas -----------------
+
+  const COLUNAS = [['prazo', 'Prazo'], ['atividade', 'Atividade'], ['processo', 'Processo'],
+    ['responsavel', 'Responsável'], ['acoes', 'Ações']];
+
+  function celulaProcesso(numero) {
+    if (!numero) return '';
+    const el = document.createElement('span');
+    el.className = 'celula-processo';
+    const link = document.createElement('a');
+    link.className = 'numero-processo numero-processo-link';
+    link.href = urlDoProcesso(numero);
+    link.dataset.acao = 'abrir-processo';
+    const oculto = document.createElement('span');
+    oculto.className = 'visualmente-oculto';
+    oculto.textContent = 'Abrir processo ';
+    link.append(oculto, numero);
+    el.append(link, DS.botaoCopiar(numero));
     return el;
+  }
+
+  function celulaAtividade(a) {
+    const el = document.createElement('span');
+    el.className = 'celula-atividade';
+    const titulo = document.createElement('span');
+    titulo.className = 'celula-atividade-titulo';
+    titulo.textContent = a.titulo;
+    el.append(titulo, DS.tag({ rotulo: NOME_DO_TIPO[a.tipo] }));
+    return el;
+  }
+
+  // Os mesmos ícones da linha de antes: aparecem no hover e no foco, cada um com dica.
+  function celulaAcoes(a) {
+    const grupo = document.createElement('div');
+    grupo.className = 'linha-acoes';
+    grupo.append(...acoesDe(a).map((acao) => {
+      const b = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: acao.icone, rotulo: acao.rotulo });
+      b.addEventListener('click', acao.aoClicar);
+      return DS.tooltip({ alvo: b, rotulo: acao.rotulo });
+    }));
+    return grupo;
+  }
+
+  function celulasDe(a) {
+    const prazo = DS.descreverPrazo(a.prazoEmDias, concluida(a));
+    const chip = document.createElement('span');
+    chip.className = 'celula-prazo';
+    chip.append(DS.chipPrazo(prazo));
+    return {
+      prazo: chip, atividade: celulaAtividade(a), processo: celulaProcesso(a.processo),
+      responsavel: a.responsavel ? DS.avatar({ nome: a.responsavel, mostrarNome: true }) : '',
+      acoes: celulaAcoes(a),
+    };
+  }
+
+  function tabelaDaSecao(secao, daqui) {
+    const quadro = DS.tabela({
+      rotulo: document.getElementById(`titulo-${secao.chave}`).textContent,
+      colunas: COLUNAS, linhas: daqui.map(celulasDe),
+    });
+    quadro.querySelectorAll('tbody tr').forEach((tr, i) => {
+      const a = daqui[i];
+      tr.dataset.id = a.id;
+      tr.dataset.tipo = a.tipo;
+      tr.tabIndex = 0;
+      selecionavel(tr, a);
+    });
+    return quadro;
   }
 
   function card(a) {
@@ -573,10 +652,14 @@
       corpo.replaceChildren(vazio(secao));
       return daqui.length;
     }
+    if (visao === 'lista') {
+      corpo.replaceChildren(tabelaDaSecao(secao, daqui));
+      return daqui.length;
+    }
     const ul = document.createElement('ul');
-    ul.className = visao === 'lista' ? 'lista-atividades' : 'cards-atividade';
+    ul.className = 'cards-atividade';
     ul.setAttribute('aria-labelledby', `titulo-${secao.chave}`);
-    ul.append(...daqui.map(visao === 'lista' ? linha : card));
+    ul.append(...daqui.map(card));
     corpo.replaceChildren(ul);
     return daqui.length;
   }
