@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Como este trabalho foi feito</title>
+<style>
+  :root {
+    --paper: #ffffff; --surface: #eef1f6; --ink: #1b2a4a; --text: #1b2a4a; --muted: #5b6478; --inverse: #ffffff;
+    --line: #c9cfda; --line-strong: #1b2a4a; --stamp: #b3261e; --page: #f3f4f7; --radius: 4px;
+    --serif: "Fraunces", "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "Geist", "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "Cascadia Code", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) { body:not(:has(#tema:checked)) { --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0; --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0; --stamp: #e0665c; --page: #0a0f1c; } }
+  @media (prefers-color-scheme: light) { body:has(#tema:checked) { --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0; --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0; --stamp: #e0665c; --page: #0a0f1c; } }
+  @media (prefers-color-scheme: no-preference) { body:has(#tema:checked) { --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0; --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0; --stamp: #e0665c; --page: #0a0f1c; } }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--paper); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.6; padding: 0 16px 64px; }
+  .tema { position: fixed; top: 12px; right: 16px; z-index: 2; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 10px; cursor: pointer; }
+  .tema input { accent-color: var(--stamp); margin: 0; }
+  main { max-width: 760px; margin: 0 auto; }
+  header { padding: 64px 0 24px; border-bottom: 1px solid var(--line-strong); }
+  .sup { font-size: 14px; color: var(--muted); margin: 0 0 8px; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: 2.25rem; line-height: 1.12; letter-spacing: -0.005em; margin: 0 0 16px; }
+  .autor { margin: 0; font-size: 15px; color: var(--muted); }
+  .autor strong { color: var(--text); font-weight: 500; }
+  section { padding: 40px 0 8px; }
+  h2 { font-family: var(--serif); font-weight: 400; font-size: 1.625rem; line-height: 1.2; margin: 0 0 12px; }
+  h3 { font-size: 1rem; font-weight: 500; margin: 28px 0 4px; }
+  p { margin: 0 0 12px; }
+  a { color: var(--text); text-decoration: underline; text-decoration-color: var(--stamp); text-underline-offset: 3px; text-decoration-thickness: 1px; overflow-wrap: anywhere; }
+  a:hover { text-decoration-thickness: 2px; }
+  a:focus-visible, .tema:has(input:focus-visible) { outline: 2px solid var(--stamp); outline-offset: 2px; }
+  code { font-family: var(--mono); font-size: 0.86em; background: var(--surface); border-radius: var(--radius); padding: 1px 4px; overflow-wrap: anywhere; }
+  ul, ol { margin: 0 0 12px; padding-left: 1.2em; display: grid; gap: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.45; margin: 8px 0 12px; }
+  th { text-align: left; font-weight: 500; font-size: 13px; color: var(--muted); padding: 0 12px 6px 0; border-bottom: 1px solid var(--line-strong); }
+  td { padding: 10px 12px 10px 0; vertical-align: top; border-bottom: 1px solid var(--line); }
+  td:first-child { font-weight: 500; }
+  td:last-child, th:last-child { padding-right: 0; }
+  .hora { white-space: nowrap; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+  .decisao { border-left: 2px solid var(--stamp); padding-left: 14px; margin: 12px 0; }
+  .fluxo { list-style: none; padding: 0; counter-reset: passo; gap: 0; }
+  .fluxo li { counter-increment: passo; position: relative; padding: 12px 0 12px 44px; border-bottom: 1px solid var(--line); }
+  .fluxo li::before { content: counter(passo); position: absolute; left: 0; top: 12px; width: 28px; height: 28px; border: 1px solid var(--line-strong); border-radius: var(--radius); display: grid; place-items: center; font-size: 13px; font-weight: 500; }
+  .fluxo strong { font-weight: 500; }
+  .nota { background: var(--surface); border-radius: var(--radius); padding: 16px 16px 4px; margin: 12px 0; }
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+  @media (max-width: 600px) {
+    h1 { font-size: 1.75rem; }
+    thead { position: absolute; left: -9999px; }
+    table, tbody, tr, td { display: block; width: 100%; }
+    tr { border-bottom: 1px solid var(--line); padding: 10px 0; }
+    td { border: 0; padding: 2px 0; }
+    td[data-r]::before { content: attr(data-r) ": "; color: var(--muted); font-size: 13px; font-weight: 400; }
+  }
+</style>
+</head>
+<body>
+
+<label class="tema" for="tema"><input type="checkbox" id="tema"> Trocar tema</label>
+
+<main>
+<header>
+  <p class="sup">Atividade prática, UX/UI Designer Especialista · Parte B</p>
+  <h1>Como este trabalho foi feito</h1>
+  <p class="autor"><strong>Felipe Gaigher</strong> · 7 e 8 de novembro de 2026</p>
+</header>
+
+<section>
+  <h2>Resumo</h2>
+  <p>O trabalho levou dois dias. O Claude Code foi o par de trabalho do início ao fim. A IA leu o produto, escreveu documentos-fonte e código, e executou os portões. Felipe decidiu a direção visual, os problemas, o trade-off e o escopo. Cada decisão ficou num arquivo do repositório. Cada entrega ficou num commit.</p>
+  <p>O diário completo está em <a href="04-processo.md">04-processo.md</a>. O parágrafo de IA da entrega está em <a href="04-uso-de-ia.md">04-uso-de-ia.md</a>.</p>
+</section>
+
+<section>
+  <h2>As fontes de evidência</h2>
+  <p>Nenhuma proposta nasceu de suposição sobre o produto. Cada ponto de atenção aponta para uma destas fontes.</p>
+  <table>
+    <thead><tr><th>Fonte</th><th>Leitura</th><th>Onde ficou</th></tr></thead>
+    <tbody>
+      <tr><td>Trial do Astrea</td><td data-r="Como">O Claude in Chrome varreu o produto logado, só em leitura. Ele não enviou nenhum formulário. Um snippet de console contou 646 variáveis CSS, 609 delas do Nectar, o DS legado.</td><td data-r="Onde"><a href="01-varredura-modulos.md">01-varredura-modulos.md</a>, <a href="01-inventario-css-astrea.md">01-inventario-css-astrea.md</a></td></tr>
+      <tr><td>Telas observadas</td><td data-r="Como">Felipe percorreu o cadastro e o produto e comentou os prints. A IA registrou cada tela com fato e hipótese.</td><td data-r="Onde"><a href="01-telas-observadas.md">01-telas-observadas.md</a>, pasta <code>evidencias/</code></td></tr>
+      <tr><td>Planilha de pedidos</td><td data-r="Como">80 sugestões e 407 votos sobre a Área de trabalho. Só o título e o voto entraram no repositório.</td><td data-r="Onde"><a href="01-pedidos-clientes.md">01-pedidos-clientes.md</a></td></tr>
+      <tr><td>Inventário de CSS e de UI</td><td data-r="Como">Cores, componentes, tokens e vocabulário da interface atual.</td><td data-r="Onde"><a href="01-inventario-ui.md">01-inventario-ui.md</a>, <a href="01-inventario-css-astrea.md">01-inventario-css-astrea.md</a></td></tr>
+      <!-- lint-ignore: deriva-terminologica — nome de arquivo do repositório -->
+      <tr><td>Fontes públicas</td><td data-r="Como">Um subagente leu site, central de ajuda e lojas de app enquanto o trial não abria.</td><td data-r="Onde"><a href="03-pesquisa-astrea.md">03-pesquisa-astrea.md</a></td></tr>
+    </tbody>
+  </table>
+  <p>As fontes viraram um catálogo único de 97 pontos de atenção, com heurística de Nielsen, severidade e destino: <a href="01-pontos-de-atencao.md">01-pontos-de-atencao.md</a>. Os cinco problemas da Questão 1 são o recorte desse catálogo para a gestão de atividades.</p>
+  <p>Nome de parte e número de processo do trial ficam fora do repositório. Todo dado do protótipo é fictício. O portão verifica isso contra uma lista mantida fora do repositório. O relatório traz arquivo e contagem, nunca o termo.</p>
+</section>
+
+<section>
+  <h2>O fluxo: spec, plano, task, portão, revisão, commit</h2>
+  <ol class="fluxo">
+    <li><strong>Spec em HTML, para Felipe ler e decidir.</strong> Problema, escopo, solução, riscos, decisões e critérios de aceite. Felipe aprova com um ok. Exemplo: <a href="docs/specs/2026-11-08-astrea-navegavel.html">docs/specs/2026-11-08-astrea-navegavel.html</a>.</li>
+    <li><strong>Spec de máquina e plano com tasks.</strong> Depois do ok, um agente deriva a spec em markdown, com RF-01 a RF-15, e o plano. O cabeçalho da spec de máquina guarda o hash da spec HTML. Exemplo: <a href="docs/plans/2026-11-08-astrea-navegavel.md">docs/plans/2026-11-08-astrea-navegavel.md</a>, com 23 tasks.</li>
+    <li><strong>Implementação por subagente, um por task.</strong> O subagente recebe só caminhos de arquivo. Ele entrega a lista de arquivos alterados. Ele não marca checkbox e não commita.</li>
+    <li><strong>Portão automático.</strong> O comando do campo Verificação da task precisa sair com código 0. Os portões estão descritos abaixo.</li>
+    <li><strong>Revisão por outro agente.</strong> Um revisor em contexto limpo compara a task com a spec, sem o raciocínio de quem implementou. Reprovação volta para o mesmo subagente.</li>
+    <li><strong>Commit por task, com o veredito.</strong> A mensagem diz a task e a alteração. Exemplo: "Task 4: título do cabeçalho alinha com o conteúdo; Enter na busca não recarrega".</li>
+  </ol>
+  <p>O plano do Kanban, de 07/11, é menor: <a href="docs/plans/2026-11-07-kanban-prototipo.md">docs/plans/2026-11-07-kanban-prototipo.md</a>. Ele não teve spec. O pedido e o contrato da tela, em <a href="03-tela.md">03-tela.md</a>, bastaram para cinco tasks.</p>
+
+  <h3>O formato de uma task</h3>
+  <table>
+    <thead><tr><th>Campo</th><th>O que diz</th></tr></thead>
+    <tbody>
+      <tr><td>Papel</td><td data-r="O que diz">Busca, escrita ou análise. O papel escolhe o modelo.</td></tr>
+      <tr><td>Verificação</td><td data-r="O que diz">Um comando, executado a partir da raiz do repositório.</td></tr>
+      <tr><td>Aprovação</td><td data-r="O que diz">"Nenhuma", ou a ação externa exata que exige o ok de Felipe.</td></tr>
+      <tr><td>Fontes</td><td data-r="O que diz">Os arquivos que decidem a task, com a seção.</td></tr>
+      <tr><td>Files</td><td data-r="O que diz">Cada arquivo, com Create, Modify ou Test.</td></tr>
+      <tr><td>Interfaces</td><td data-r="O que diz">O que a task consome de outra e o que ela produz para a próxima.</td></tr>
+      <tr><td>Steps</td><td data-r="O que diz">Confirmar o estado vermelho, implementar, confirmar que passa, entregar. Cada passo traz o comando e a saída que ele precisa dar.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Os portões</h3>
+  <table>
+    <thead><tr><th>Portão</th><th>O que verifica</th></tr></thead>
+    <tbody>
+      <tr><td><a href="prototipo/verificar.py">prototipo/verificar.py</a></td><td data-r="Verifica">Sem navegador. Cor literal só no bloco de primitivos. Primitivo só no bloco semântico. Nenhuma referência de rede. O Kanban igual ao commit base no quadro e nos dados (RF-02). Tokens e menu do Kanban iguais aos arquivos compartilhados. Nenhum dado real (RF-13). Tem teste próprio, em <code>prototipo/test_verificar.py</code>.</td></tr>
+      <tr><td><a href="scripts/verificar-app.js">scripts/verificar-app.js</a></td><td data-r="Verifica">Playwright sem janela, com o Chrome da máquina. Cada item do menu abre a página, sem erro no console. A moldura fica na mesma posição em toda página. O item ativo tem <code>aria-current</code>. Tema e menu persistem. Nenhum controle nativo. O teclado alcança todo controle. Texto e fundo passam no AA nos dois temas. Nenhuma rolagem lateral em 1024px e 700px.</td></tr>
+      <tr><td>Detector anti "cara de IA"</td><td data-r="Verifica">Padrões de interface gerada por IA: ícone em caixinha, grid de cards iguais, gradiente, raio grande em tudo. O <code>verificar.py</code> executa o detector em todo HTML, CSS e JS.</td></tr>
+      <tr><td>Linter de português técnico</td><td data-r="Verifica">Frase longa, voz passiva, gerúndio, sinônimo rotativo e enchimento. Vale para todo markdown e para este documento.</td></tr>
+    </tbody>
+  </table>
+  <p>Um agente de interface nunca abre janela na tela de Felipe. Todo teste de navegador executa sem janela.</p>
+</section>
+
+<section>
+  <h2>Papéis e modelos</h2>
+  <p>Cada subagente recebe o modelo pelo papel. O critério de desempate é este: se o erro passa despercebido, use o modelo mais forte. Busca errada aparece na hora. Análise errada só aparece depois.</p>
+  <table>
+    <thead><tr><th>Papel</th><th>Modelo</th><th>Exemplo nesta atividade</th></tr></thead>
+    <tbody>
+      <tr><td>Busca</td><td data-r="Modelo">Haiku</td><td data-r="Exemplo">Achar arquivo, listar ocorrência, extrair valor. Sem julgamento.</td></tr>
+      <tr><td>Escrita</td><td data-r="Modelo">Sonnet</td><td data-r="Exemplo">Aplicar padrão conhecido, como as páginas de upsell da Task 22 e o verificador do Kanban.</td></tr>
+      <tr><td>Análise e revisão</td><td data-r="Modelo">Opus ou Fable</td><td data-r="Exemplo">Portões, moldura, design system, revisão de cada task e a conferência do plano contra as questões.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>O que a IA fez e o que Felipe decidiu</h2>
+  <table>
+    <thead><tr><th>Tema</th><th>A IA</th><th>Felipe</th></tr></thead>
+    <tbody>
+      <tr><td>Direção visual</td><td data-r="A IA">Propôs uma paleta creme, com serifa e terracota.</td><td data-r="Felipe">Recusou a paleta, que é a cara padrão de deck de IA. Depois mandou o protótipo seguir o visual atual do Astrea. Pediu o tema escuro de volta.</td></tr>
+      <tr><td>Problemas da Questão 1</td><td data-r="A IA">Registrou telas, montou o catálogo de 97 pontos e propôs severidade.</td><td data-r="Felipe">Escolheu os cinco problemas. Limitou a Questão 1 à gestão de atividades.</td></tr>
+      <tr><td>Trade-off</td><td data-r="A IA">Montou o slide com o card nas duas ordens.</td><td data-r="Felipe">Escolheu o card que abre pelo prazo, contra o hábito do Kanban comum.</td></tr>
+      <tr><td>Escopo</td><td data-r="A IA">Propôs a regra de corte e as ondas do protótipo.</td><td data-r="Felipe">Aprovou a spec. Tirou cadastro, onboarding e Contatos da Questão 1. Decidiu que a moldura recebe uma alteração só, e depois fica fixa.</td></tr>
+      <tr><td>Kanban</td><td data-r="A IA">Primeiro usou as fases como colunas.</td><td data-r="Felipe">Corrigiu: coluna de Kanban é situação, e não fase. Vetou modal sobre modal.</td></tr>
+      <tr><td>Plano contra as questões</td><td data-r="A IA">Achou sete divergências entre o plano do Kanban e as Questões 1 e 2.</td><td data-r="Felipe">Aprovou as sete correções.</td></tr>
+      <tr><td>Execução</td><td data-r="A IA">Escreveu documentos-fonte, slides, protótipo e portões. Exportou os decks em PNG e os enviou ao Figma.</td><td data-r="Felipe">Iterou cada documento-fonte linha a linha.</td></tr>
+    </tbody>
+  </table>
+  <div class="decisao">
+    <p>A IA não escreveu a estratégia. Ela recebeu as decisões em conversa e as transformou em documento, código e portão.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Ferramentas</h2>
+  <table>
+    <thead><tr><th>Ferramenta</th><th>Para quê</th></tr></thead>
+    <tbody>
+      <tr><td>Claude Code</td><td data-r="Para quê">Par de trabalho: documentos, código, subagentes, portões e commits.</td></tr>
+      <tr><td>Claude in Chrome</td><td data-r="Para quê">Leitura do trial logado. Envio dos PNG ao Figma depois do fim da cota do MCP.</td></tr>
+      <tr><td>Playwright</td><td data-r="Para quê">Portão de navegador sem janela. <a href="scripts/exportar-slides.js">scripts/exportar-slides.js</a> gera os PNG de 1920 por 1080 dos decks. <a href="scripts/capturar-kanban.js">scripts/capturar-kanban.js</a> gera as capturas do Kanban.</td></tr>
+      <tr><td>Figma MCP</td><td data-r="Para quê">Montou os seis slides da Questão 2 com variáveis. A cota do plano Starter esgotou no primeiro dia.</td></tr>
+      <tr><td>Claude Design e Artifacts</td><td data-r="Para quê">Apoio ao deck e publicação do painel do redesign.</td></tr>
+    </tbody>
+  </table>
+  <p>Sem a cota do MCP, os decks passaram a nascer em HTML, nas medidas do frame. O Playwright gera o PNG, e o Claude in Chrome envia o PNG ao Figma. O Figma web não tem campo de arquivo no DOM. A saída foi um campo de arquivo criado na página e um evento de drop no canvas.</p>
+</section>
+
+<section>
+  <h2>Linha do tempo</h2>
+  <p>Fonte: <code>git log</code> do repositório.</p>
+  <table>
+    <thead><tr><th>Quando</th><th>O que aconteceu</th></tr></thead>
+    <tbody>
+      <tr><td class="hora">07/11 18:49</td><td data-r="O quê">Briefing e documento-fonte da Questão 2.</td></tr>
+      <tr><td class="hora">07/11 19:16 a 19:38</td><td data-r="O quê">Slides da Questão 2 em HTML, depois do fim da cota do MCP.</td></tr>
+      <tr><td class="hora">07/11 20:04 a 20:57</td><td data-r="O quê">Diário aberto. Levantamento em fontes públicas. Registro das telas do cadastro e do produto.</td></tr>
+      <tr><td class="hora">07/11 20:26 a 21:11</td><td data-r="O quê">Contrato da tela, plano do Kanban e as cinco tasks, cada uma com commit.</td></tr>
+      <tr><td class="hora">07/11 21:21 a 21:34</td><td data-r="O quê">Leitura do produto logado pelo Chrome. O Nectar aparece no CSS. O protótipo passa ao visual atual do Astrea.</td></tr>
+      <tr><td class="hora">07/11 21:42 a 23:30</td><td data-r="O quê">Iterações do Kanban com Felipe: sidebar, slides em PNG, histórias com subtarefas, colunas por situação, sprints e tema escuro. Plano verificado contra as questões.</td></tr>
+      <tr><td class="hora">08/11 07:05</td><td data-r="O quê">Documento único de entrega. Decks no Figma pelo Chrome.</td></tr>
+      <tr><td class="hora">08/11 11:54 a 12:02</td><td data-r="O quê">Catálogo de 97 pontos e varredura dos módulos. Questões 1 e 2 revistas com as evidências.</td></tr>
+      <tr><td class="hora">08/11 12:13</td><td data-r="O quê">Spec e plano do Astrea navegável, com 23 tasks.</td></tr>
+      <tr><td class="hora">08/11 12:22 a 12:55</td><td data-r="O quê">Tasks 1 a 6: portões, tokens, moldura e o início do design system, com commit por task.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Limites e o que ficou sem verificação</h2>
+  <ul>
+    <li>Nenhum teste com usuário. A severidade dos pontos é julgamento nosso até existir dado que a confirme.</li>
+    <li>A planilha de pedidos cobre só a Área de trabalho. Ela vem de quem escolheu pedir, e parte dos pedidos é antiga.</li>
+    <!-- lint-ignore: deriva-terminologica — rótulo literal do destino no catálogo -->
+    <li>Os pontos com destino Validar dependem de analytics, Suporte, Marketing ou Comercial. A lista está no fim de <a href="01-pontos-de-atencao.md">01-pontos-de-atencao.md</a>.</li>
+    <li>No commit 63088be, o plano do Astrea navegável tem as Tasks 1 a 6 concluídas. As Tasks 7 a 23 estão abertas no plano.</li>
+    <li>O portão de navegador mede teclado, foco e contraste. Ele não substitui o teste com leitor de tela.</li>
+    <li>O detector anti "cara de IA" usa padrões de texto. Ele não julga a composição da tela.</li>
+    <li>A fonte Museo Sans do Astrea não carrega pela rede no protótipo. Sem ela instalada, a tela usa a fonte do sistema.</li>
+    <li>No Figma, os decks das Questões 1 e 3 são imagens, sem camadas.</li>
+    <li>Felipe tem um componente de participantes no Figma. A IA não o leu, porque a cota do MCP acabou.</li>
+    <li>Dois terminais trabalharam no mesmo repositório ao mesmo tempo, e uma captura teve de ser refeita. A regra que ficou: capturar só com a árvore limpa.</li>
+  </ul>
+</section>
+
+<footer>
+  <p>Fontes: <a href="04-processo.md">04-processo.md</a>, <a href="04-uso-de-ia.md">04-uso-de-ia.md</a>, <a href="README.md">README.md</a>, <a href="prototipo/README.md">prototipo/README.md</a> e o <code>git log</code>. Entrega principal: <a href="index.html">index.html</a>.</p>
+</footer>
+</main>
+
+</body>
+</html>
