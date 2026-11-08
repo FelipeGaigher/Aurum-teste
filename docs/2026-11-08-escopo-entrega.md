@@ -46,6 +46,12 @@ Este arquivo guarda o que Felipe pediu. O detalhe do app mora na spec e no plano
 - Entra o que reorganiza, padroniza ou destaca dado que já existe.
 - Fica fora o que exige dado, serviço ou permissão nova.
 
+### Padrão lista e detalhe ao lado, pedido de 08/11 às 15h33
+
+- Em toda tela com tabela ou cards, clicar no item mostra o detalhe ao lado. O painel fica no fluxo, é redimensionável e tem ‹ › e ×.
+- Referências: Cotação da Fotus e Náutica. A peça mora no DS: `painelDetalhe` e `divisorRedimensionavel`.
+- O Kanban fica de fora.
+
 ### Design system completo
 
 - Estados: default, hover, active, disabled e error.
