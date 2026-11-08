@@ -135,7 +135,7 @@ Onde mais aparece: dia vazio da Agenda, coluna vazia do Kanban.
 | Pedido | Onde |
 |---|---|
 | A tela em alta fidelidade no Figma | Frame importado do protótipo, 1440 de largura, nó `26-2` do arquivo da entrega |
-| 3 a 5 componentes com estados | Página "Questão 3", um frame por componente, com as propriedades acima |
+| 3 a 5 componentes com estados | Página do design system importada para o Figma, nó `28-2`, com os estados de cada peça |
 | Uma decisão difícil | Seção abaixo |
 
 ## A decisão difícil
