@@ -20,6 +20,9 @@
     alerta: '<path d="M12 4 3 20h18zM12 10v4M12 17h.01"/>',
     info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
     relogio: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+    telefone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+    email: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+    pessoa: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
     cadeado: '<rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   };
   const GIRO = '<circle cx="12" cy="12" r="9" stroke-dasharray="42 15"/>';

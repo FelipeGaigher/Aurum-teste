@@ -428,11 +428,11 @@
     const docs = (window.DADOS.DOCUMENTOS_DE_CONTATO || {})[c.id] || [];
     const processo = window.DADOS.PROCESSOS.find((p) => p.numero === c.processo);
     const linhas = [
-      { icone: 'info', rotulo: 'Telefone', valor: c.telefone },
-      { icone: 'info', rotulo: 'E-mail', valor: c.email },
+      { icone: 'telefone', rotulo: 'Telefone', valor: c.telefone },
+      { icone: 'email', rotulo: 'E-mail', valor: c.email },
       { icone: 'busca', rotulo: 'Origem', valor: '' },
       { icone: 'marca', rotulo: 'Etiquetas', valor: c.etiquetas.join(', ') },
-      { icone: 'info', rotulo: 'Responsável', valor: processo ? processo.responsavel : '' },
+      { icone: 'pessoa', rotulo: 'Responsável', valor: processo ? processo.responsavel : '' },
     ];
     if (docs.length) linhas.push({ icone: 'arquivar', rotulo: 'Documentos', valor: `${docs.length} ${docs.length === 1 ? 'documento' : 'documentos'}` });
 
