@@ -60,6 +60,8 @@
   }
   .secao-nota { font-size: var(--font-size-label); }
   .secao-corpo { background-color: var(--color-bg-page); }
+  .acao-redonda { border-radius: var(--radius-round); border-color: var(--color-border-strong); background-color: var(--color-bg-page); color: var(--color-text-default); }
+  .acao-redonda:hover, .acao-redonda:focus-visible { border-color: var(--color-action); }
   :is([data-visao="cards"], [data-visao="kanban"]) .secao-corpo { padding: var(--space-3); }
   [data-visao="lista"] .lista-atividades > .linha-atividade:last-child { border-bottom: 0; }
   .secao .estado-vazio { padding: var(--space-4) var(--space-3); }
@@ -283,7 +285,7 @@
         aoClicar: () => alterar(atividade, { prazoEmDias: atividade.prazoEmDias + 1 },
           `"${atividade.titulo}" adiada: agora ${DS.descreverPrazo(atividade.prazoEmDias + 1).rotulo.toLowerCase()}.`) },
       // Atrasada leva direto ao processo: é onde o advogado resolve o atraso (pedido de Felipe, 08/11).
-      ...(atividade.prazoEmDias < 0 ? [{ rotulo: 'Abrir processo', icone: 'arquivar',
+      ...(atividade.prazoEmDias < 0 ? [{ rotulo: 'Abrir processo', icone: 'arquivar', soNaLista: true,
         aoClicar: () => { location.href = urlDoProcesso(atividade.processo); } }] : []),
     ];
   }
@@ -402,6 +404,13 @@
     return `processos.html?ficha=${i + 1 || 1}`;
   }
 
+  function acaoRedonda(acao) {
+    const b = DS.botao({ variante: 'icone', iconeEsquerda: acao.icone, rotulo: acao.rotulo });
+    b.classList.add('acao-redonda');
+    b.addEventListener('click', acao.aoClicar);
+    return DS.tooltip({ alvo: b, rotulo: acao.rotulo });
+  }
+
   function dadosDoDetalhe(a, itens) {
     const prazo = DS.descreverPrazo(a.prazoEmDias, concluida(a));
     const linhas = [
@@ -411,7 +420,8 @@
       { icone: 'marca', rotulo: 'Situação', valor: concluida(a) ? 'Concluída' : 'Aberta' },
     ];
     if (a.prioridade) linhas.push({ icone: 'alerta', rotulo: 'Prioridade', valor: a.prioridade });
-    const acoes = acoesDe(a).map((acao) => ({ rotulo: acao.rotulo, iconeEsquerda: acao.icone, aoClicar: acao.aoClicar }));
+    // No painel as ações viram botões redondos de ícone, como o Tipo de Nova atividade; a primária é Abrir processo.
+    const acoes = acoesDe(a).filter((acao) => !acao.soNaLista).map(acaoRedonda);
     const abrir = document.createElement('a');
     abrir.className = 'botao botao-primario';
     abrir.href = urlDoProcesso(a.processo);
