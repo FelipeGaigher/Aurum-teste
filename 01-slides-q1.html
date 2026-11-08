@@ -186,9 +186,24 @@
   .legenda .ponto { width: 1cqw; height: 1cqw; }
   .legenda strong { margin-left: auto; font-family: var(--serif); font-weight: 400; font-size: 1.354cqw; color: var(--text); }
 
+  /* Dois ou três problemas por slide */
+  .corpo.par { display: grid; grid-template-columns: 1fr 1fr; gap: 4.167cqw; align-items: stretch; }
+  .corpo.trio { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3.125cqw; align-items: stretch; }
+  .prob { display: flex; flex-direction: column; gap: 0.833cqw; min-width: 0; min-height: 0; border-top: 2px solid var(--line-strong); padding-top: 0.833cqw; }
+  .prob .titulo { font-family: var(--serif); font-size: 1.875cqw; line-height: 1.15; margin: 0; }
+  .trio .titulo { font-size: 1.563cqw; }
+  .prob .ref { margin-top: auto; }
+  .ev { display: flex; gap: 1.667cqw; align-items: center; }
+  .ev svg { width: auto; height: 15cqw; flex: none; max-width: 60%; }
+  .cifras.pilha { grid-template-columns: 1fr; border-top: 0; padding-top: 0; gap: 1.042cqw; }
+  .amostra.baixa { height: 2.604cqw; }
+  .validar .nota { margin-top: 1.042cqw; }
+
+  .validar td { padding: 0.833cqw 0; }
+
   @media (max-width: 720px) {
     .slide { aspect-ratio: auto; }
-    .corpo, .corpo.principios-corpo { display: flex; flex-direction: column; }
+    .corpo, .corpo.principios-corpo, .corpo.par, .corpo.trio { display: flex; flex-direction: column; }
     .col.lado { width: 100%; }
     ol.problemas li { grid-template-columns: 2.5em 1fr; }
   }
@@ -196,7 +211,7 @@
 </head>
 <body>
 
-<p class="capa"><strong>Questão 1, documento-fonte dos slides.</strong> Oito frames de 1920 por 1080. Um problema por slide: texto à esquerda, evidência desenhada à direita. O texto completo do diagnóstico está em <code>01-diagnostico.md</code>.</p>
+<p class="capa"><strong>Questão 1, documento-fonte dos slides.</strong> Cinco frames de 1920 por 1080, dentro do limite de cinco páginas. O texto completo do diagnóstico está em <code>01-diagnostico.md</code>.</p>
 
 <!-- ============ 1 ============ -->
 <section class="slide abertura" id="q1s1">
@@ -206,393 +221,179 @@
     <h2>O Astrea sabe o que é um prazo. A interface ainda não mostra isso</h2>
   </header>
   <div class="corpo">
-    <p class="tese">Os cinco ficam na gestão de atividades. Cada um traz o sintoma visto, a causa provável e o porquê de importar para quem usa.</p>
+    <p class="tese">Os cinco ficam na gestão de atividades. A evidência vem das telas do trial, do inventário de UI, de 407 votos em pedidos e da varredura de 08/11.</p>
     <ol class="problemas">
-      <li><b>O prazo não domina as telas que existem para ele</b><span>A Agenda mostra duas semanas do mês por tela. A tarefa atrasada fica fora da lista inicial.</span><i>Hierarquia e densidade</i></li>
+      <li><b>O prazo não domina as telas que existem para ele</b><span>A Área de trabalho marca atraso só pela cor da data. A Agenda mostra duas semanas do mês.</span><i>Hierarquia e densidade</i></li>
       <li><b>Sem hierarquia de nomes, a mesma atividade em quatro lugares</b><span>Tarefa num módulo, atividade no outro, e a mesma atividade em quatro visões.</span><i>Arquitetura de informação. Hipótese</i></li>
       <li><b>Criar uma atividade interrompe quem cria</b><span>Quatro campos obrigatórios, um popover sobre o modal e um diálogo para a data passada.</span><i>Usabilidade de fluxo</i></li>
-      <li><b>Três azuis, três cinzas, três jeitos de criar</b><span>Cada time puxou a biblioteca que tinha à mão. Não existe fonte única.</span><i>Consistência</i></li>
-      <li><b>A moldura compete com o trabalho</b><span>Campanha, botão de contratar e IA em lilás ocupam a moldura de toda tela.</span><i>Hierarquia e ruído</i></li>
+      <li><b>Três azuis, três cinzas, quatro jeitos de criar</b><span>Cada time puxou a biblioteca que tinha à mão. Não existe fonte única.</span><i>Consistência</i></li>
+      <li><b>A moldura compete com o trabalho</b><span>Selo, botão de contratar e IA em lilás ocupam a moldura de toda tela.</span><i>Hierarquia e ruído</i></li>
     </ol>
   </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>1 de 8</span></footer>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>1 de 5</span></footer>
 </section>
 
 <!-- ============ 2 ============ -->
 <section class="slide" id="q1s2">
   <header>
-    <p class="item">Questão 1, item 1 de 3. Problema 1 de 5. Hierarquia e densidade</p>
+    <p class="item">Questão 1, item 1 de 3. Problemas 1 e 2 de 5</p>
     <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
-    <h2>O prazo não domina as telas que existem para ele</h2>
+    <h2>O prazo some da abertura, e a atividade muda de nome</h2>
   </header>
-  <div class="corpo problema">
-    <div class="col lado">
-      <p class="tese">A Agenda mostra duas semanas do mês numa tela de 1920 por 960. A Área de trabalho abre em uma lista e esconde a tarefa atrasada de outra lista. Prazo vencido não tem seção própria.</p>
+  <div class="corpo par">
+    <div class="prob">
+      <h3>Problema 1. Hierarquia e densidade</h3>
+      <p class="titulo">O prazo não domina as telas que existem para ele</p>
+      <p class="texto">A Área de trabalho marca atraso só pela cor da data. Não existe seção de atrasadas. A Agenda mostra duas semanas do mês por tela. Em 08/11, ela abriu em “Ontem” e não mostrou as duas tarefas datadas.</p>
+      <div class="ev">
+        <svg class="desenho" viewBox="0 0 460 262" role="img" aria-label="Grade do mês da Agenda. Duas semanas cabem na tela. As outras três ficam abaixo da dobra">
+          <text class="t" x="0" y="18">Agenda, por mês. Telas 19 e 20</text>
+          <text class="semana" x="26" y="44">D</text><text class="semana" x="78" y="44">S</text><text class="semana" x="130" y="44">T</text><text class="semana" x="182" y="44">Q</text><text class="semana" x="234" y="44">Q</text><text class="semana" x="286" y="44">S</text><text class="semana" x="338" y="44">S</text>
+          <rect class="cel" x="0" y="52" width="364" height="80"/>
+          <rect class="cel fora" x="0" y="132" width="364" height="120"/>
+          <path class="linha fina" d="M52 52 V252 M104 52 V252 M156 52 V252 M208 52 V252 M260 52 V252 M312 52 V252 M0 92 H364 M0 172 H364 M0 212 H364"/>
+          <rect class="evento" x="58" y="70" width="36" height="10" rx="2"/>
+          <rect class="evento" x="214" y="70" width="30" height="10" rx="2"/>
+          <rect class="evento" x="110" y="110" width="34" height="10" rx="2"/>
+          <rect class="evento" x="266" y="110" width="38" height="10" rx="2"/>
+          <line class="dobra" x1="0" y1="132" x2="456" y2="132"/>
+          <text class="t verm" x="374" y="124">Dobra</text>
+          <text class="s" x="374" y="80">2 semanas</text>
+          <text class="s" x="374" y="196">Resto do mês</text>
+        </svg>
+        <div class="cifras pilha">
+          <p class="cifra"><b>2 semanas</b><span>por tela de 1920 por 960, na visão por mês.</span></p>
+          <p class="cifra"><b>33%</b><span>dos votos pedem destaque de prazo e de atividades do dia: 136 de 407.</span></p>
+        </div>
+      </div>
       <div class="bloco-txt">
         <h3>Por que importa</h3>
-        <p class="texto">O escritório depende do Astrea para não perder prazo. É a primeira restrição do briefing. O dado existe: Alertas já mostra “Tarefa atrasada”. A tela de abertura não mostra.</p>
+        <p class="texto">O escritório depende do Astrea para não perder prazo. É a primeira restrição do briefing. Alertas já mostra “Tarefa atrasada”, mas a tela de abertura não mostra.</p>
       </div>
-      <div class="bloco-txt">
-        <h3>Heurística de Nielsen</h3>
-        <p class="texto">Visibilidade do estado do sistema. Telas 11, 14, 17 a 20. <span class="id">PA-31</span>, <span class="id">PA-32</span> e <span class="id">PA-47</span>.</p>
-      </div>
-      <p class="fecho">Prazo perdido é o risco mais caro que a interface carrega.</p>
+      <p class="nota ref">Visibilidade do estado do sistema. Telas 11, 14, 17 a 20. <span class="id">PA-31</span>, <span class="id">PA-32</span> e <span class="id">PA-47</span>. Varredura de 08/11, desk research.</p>
     </div>
-    <div class="col evidencia">
-      <h3>Agenda, visão por mês. Desenho da tela 20</h3>
-      <svg class="desenho" viewBox="0 0 920 520" role="img" aria-label="Grade do mês da Agenda. A tela mostra a barra de visões, os dias da semana e duas semanas. As outras semanas ficam abaixo da dobra">
-        <rect class="caixa suave" x="0" y="0" width="760" height="42"/>
-        <text class="t" x="16" y="27">Agenda</text>
-        <rect class="caixa" x="396" y="9" width="80" height="24" rx="4"/><text class="s" x="436" y="26" text-anchor="middle">Por dia</text>
-        <rect class="caixa" x="482" y="9" width="84" height="24" rx="4"/><text class="s" x="524" y="26" text-anchor="middle">Em lista</text>
-        <rect class="caixa" x="572" y="9" width="100" height="24" rx="4"/><text class="s" x="622" y="26" text-anchor="middle">Por semana</text>
-        <rect class="caixa tinta" x="678" y="9" width="74" height="24" rx="4"/><text class="s inv" x="715" y="26" text-anchor="middle">Por mês</text>
-        <text class="semana" x="54.3" y="62">D</text><text class="semana" x="162.9" y="62">S</text><text class="semana" x="271.4" y="62">T</text><text class="semana" x="380" y="62">Q</text><text class="semana" x="488.6" y="62">Q</text><text class="semana" x="597.1" y="62">S</text><text class="semana" x="705.7" y="62">S</text>
-        <rect class="cel" x="0.0" y="72" width="108.6" height="89"/>
-        <text class="dia" x="10.0" y="94">1</text>
-        <rect class="cel" x="108.6" y="72" width="108.6" height="89"/>
-        <text class="dia" x="118.6" y="94">2</text>
-        <rect class="cel" x="217.1" y="72" width="108.6" height="89"/>
-        <text class="dia" x="227.1" y="94">3</text>
-        <rect class="cel" x="325.7" y="72" width="108.6" height="89"/>
-        <text class="dia" x="335.7" y="94">4</text>
-        <rect class="cel" x="434.3" y="72" width="108.6" height="89"/>
-        <text class="dia" x="444.3" y="94">5</text>
-        <rect class="cel" x="542.9" y="72" width="108.6" height="89"/>
-        <text class="dia" x="552.9" y="94">6</text>
-        <rect class="cel" x="651.4" y="72" width="108.6" height="89"/>
-        <text class="dia" x="661.4" y="94">7</text>
-        <rect class="cel" x="0.0" y="161" width="108.6" height="89"/>
-        <text class="dia" x="10.0" y="183">8</text>
-        <rect class="cel" x="108.6" y="161" width="108.6" height="89"/>
-        <text class="dia" x="118.6" y="183">9</text>
-        <rect class="cel" x="217.1" y="161" width="108.6" height="89"/>
-        <text class="dia" x="227.1" y="183">10</text>
-        <rect class="cel" x="325.7" y="161" width="108.6" height="89"/>
-        <text class="dia" x="335.7" y="183">11</text>
-        <rect class="cel" x="434.3" y="161" width="108.6" height="89"/>
-        <text class="dia" x="444.3" y="183">12</text>
-        <rect class="cel" x="542.9" y="161" width="108.6" height="89"/>
-        <text class="dia" x="552.9" y="183">13</text>
-        <rect class="cel" x="651.4" y="161" width="108.6" height="89"/>
-        <text class="dia" x="661.4" y="183">14</text>
-        <rect class="cel fora" x="0.0" y="250" width="108.6" height="89"/>
-        <text class="dia sutil" x="10.0" y="272">15</text>
-        <rect class="cel fora" x="108.6" y="250" width="108.6" height="89"/>
-        <text class="dia sutil" x="118.6" y="272">16</text>
-        <rect class="cel fora" x="217.1" y="250" width="108.6" height="89"/>
-        <text class="dia sutil" x="227.1" y="272">17</text>
-        <rect class="cel fora" x="325.7" y="250" width="108.6" height="89"/>
-        <text class="dia sutil" x="335.7" y="272">18</text>
-        <rect class="cel fora" x="434.3" y="250" width="108.6" height="89"/>
-        <text class="dia sutil" x="444.3" y="272">19</text>
-        <rect class="cel fora" x="542.9" y="250" width="108.6" height="89"/>
-        <text class="dia sutil" x="552.9" y="272">20</text>
-        <rect class="cel fora" x="651.4" y="250" width="108.6" height="89"/>
-        <text class="dia sutil" x="661.4" y="272">21</text>
-        <rect class="cel fora" x="0.0" y="339" width="108.6" height="89"/>
-        <text class="dia sutil" x="10.0" y="361">22</text>
-        <rect class="cel fora" x="108.6" y="339" width="108.6" height="89"/>
-        <text class="dia sutil" x="118.6" y="361">23</text>
-        <rect class="cel fora" x="217.1" y="339" width="108.6" height="89"/>
-        <text class="dia sutil" x="227.1" y="361">24</text>
-        <rect class="cel fora" x="325.7" y="339" width="108.6" height="89"/>
-        <text class="dia sutil" x="335.7" y="361">25</text>
-        <rect class="cel fora" x="434.3" y="339" width="108.6" height="89"/>
-        <text class="dia sutil" x="444.3" y="361">26</text>
-        <rect class="cel fora" x="542.9" y="339" width="108.6" height="89"/>
-        <text class="dia sutil" x="552.9" y="361">27</text>
-        <rect class="cel fora" x="651.4" y="339" width="108.6" height="89"/>
-        <text class="dia sutil" x="661.4" y="361">28</text>
-        <rect class="cel fora" x="0.0" y="428" width="108.6" height="89"/>
-        <text class="dia sutil" x="10.0" y="450">29</text>
-        <rect class="cel fora" x="108.6" y="428" width="108.6" height="89"/>
-        <text class="dia sutil" x="118.6" y="450">30</text>
-        <rect class="cel fora" x="217.1" y="428" width="108.6" height="89"/>
-        <text class="dia sutil" x="227.1" y="450">1</text>
-        <rect class="cel fora" x="325.7" y="428" width="108.6" height="89"/>
-        <text class="dia sutil" x="335.7" y="450">2</text>
-        <rect class="cel fora" x="434.3" y="428" width="108.6" height="89"/>
-        <text class="dia sutil" x="444.3" y="450">3</text>
-        <rect class="cel fora" x="542.9" y="428" width="108.6" height="89"/>
-        <text class="dia sutil" x="552.9" y="450">4</text>
-        <rect class="cel fora" x="651.4" y="428" width="108.6" height="89"/>
-        <text class="dia sutil" x="661.4" y="450">5</text>
-        <rect class="evento" x="118.6" y="112" width="70.9" height="14" rx="2"/>
-        <rect class="evento" x="444.3" y="112" width="53.1" height="14" rx="2"/>
-        <rect class="evento" x="227.1" y="201" width="62.0" height="14" rx="2"/>
-        <rect class="evento" x="552.9" y="201" width="70.9" height="14" rx="2"/>
-        <rect class="evento" x="10.0" y="201" width="44.3" height="14" rx="2"/>
-        <rect x="0" y="0" width="760" height="250" fill="none" stroke="var(--line-strong)" stroke-width="2"/>
-        <line class="dobra" x1="0" y1="250" x2="912" y2="250"/>
-        <text class="t verm" x="784" y="242">Dobra da tela</text>
-        <path class="linha fina" d="M776 6 H786 V200 H776"/>
-        <text class="s" x="796" y="110">Cabe na tela:</text>
-        <text class="s" x="796" y="128">duas semanas</text>
-        <path class="linha fina" d="M776 260 H786 V512 H776"/>
-        <text class="s" x="796" y="378">Abaixo da dobra:</text>
-        <text class="s" x="796" y="396">o resto do mês</text>
+    <div class="prob">
+      <h3>Problema 2. Arquitetura de informação, hipótese</h3>
+      <p class="titulo">Sem hierarquia de nomes, a mesma atividade em quatro lugares</p>
+      <p class="texto">A Área de trabalho e o modal dizem “tarefa”. A Agenda e o botão de criar dizem “atividade”. Nos pedidos, tarefa, prazo, audiência e evento são tipos diferentes.</p>
+      <svg class="desenho" viewBox="0 0 820 262" role="img" aria-label="Dois nomes para o mesmo objeto, tarefa e atividade. A mesma atividade aparece na Área de trabalho, na Agenda, em Tarefas sem data e em Alertas">
+        <text class="s" x="0" y="16">Área de trabalho e modal</text>
+        <rect class="caixa" x="0" y="26" width="300" height="56" rx="4"/>
+        <text class="t g" x="150" y="62" text-anchor="middle">Tarefa</text>
+        <text x="410" y="72" text-anchor="middle" font-family="var(--serif)" font-size="56" class="verm">≠</text>
+        <text class="s" x="520" y="16">Agenda e botão de criar</text>
+        <rect class="caixa" x="520" y="26" width="300" height="56" rx="4"/>
+        <text class="t g" x="670" y="62" text-anchor="middle">Atividade</text>
+        <line class="linha fina" x1="0" y1="112" x2="820" y2="112"/>
+        <text class="s" x="0" y="140">A mesma atividade, em quatro lugares. Tela 18</text>
+        <rect class="caixa tinta" x="0" y="154" width="190" height="56" rx="4"/><text class="t inv" x="95" y="188" text-anchor="middle">Área de trabalho</text>
+        <rect class="caixa" x="210" y="154" width="190" height="56" rx="4"/><text class="t" x="305" y="188" text-anchor="middle">Agenda</text>
+        <rect class="caixa" x="420" y="154" width="190" height="56" rx="4"/><text class="t" x="515" y="188" text-anchor="middle">Tarefas sem data</text>
+        <rect class="caixa" x="630" y="154" width="190" height="56" rx="4"/><text class="t" x="725" y="188" text-anchor="middle">Alertas</text>
+        <text class="s" x="0" y="250">Na ficha do processo, Tarefa e Evento são tipos. Prazo e Audiência só existem como etiqueta.</text>
       </svg>
-      <div class="cifras">
-        <p class="cifra"><b>2 semanas</b><span>por tela de 1920 por 960, na visão por mês. Telas 19 e 20.</span></p>
-        <p class="cifra"><b>33%</b><span>dos votos pedem destaque de prazo, audiência, data limite e atividades do dia: 136 de 407.</span></p>
+      <div class="bloco-txt">
+        <h3>Por que importa</h3>
+        <p class="texto">Quem busca precisa saber onde a atividade está e como ela se chama. Falta um termo geral com os tipos abaixo dele, e “atividade” pode ser esse termo.</p>
       </div>
+      <p class="nota ref">Correspondência com o mundo real. Consistência e padrões. Telas 10, 11, 13 e 14. <span class="id">PA-23</span>. O número do processo já copia com 1 clique na lista e na ficha. A linha da atividade não mostra o número.</p>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>2 de 8</span></footer>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>2 de 5</span></footer>
 </section>
 
 <!-- ============ 3 ============ -->
 <section class="slide" id="q1s3">
   <header>
-    <p class="item">Questão 1, item 1 de 3. Problema 2 de 5. Arquitetura de informação, hipótese</p>
+    <p class="item">Questão 1, item 1 de 3. Problemas 3, 4 e 5 de 5</p>
     <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
-    <h2>Sem hierarquia de nomes, a mesma atividade em quatro lugares</h2>
+    <h2>Criar interrompe, nada combina, e a moldura disputa a atenção</h2>
   </header>
-  <div class="corpo problema">
-    <div class="col lado">
-      <p class="tese">A Área de trabalho e o modal dizem “tarefa”. A Agenda e o botão de criar dizem “atividade”. A mesma atividade aparece em quatro lugares.</p>
+  <div class="corpo trio">
+    <div class="prob">
+      <h3>Problema 3. Usabilidade de fluxo</h3>
+      <p class="titulo">Criar uma atividade interrompe quem cria</p>
+      <p class="texto">Quatro campos obrigatórios para uma tarefa simples. “Lista de tarefas” é obrigatório e tem um só valor. Incluir pessoa abre um popover, e data passada abre outro diálogo.</p>
+      <svg class="desenho" viewBox="0 0 560 222" role="img" aria-label="Três camadas: o modal Adicionar tarefa com seis campos, quatro obrigatórios; o popover Envolver mais pessoas; e o diálogo Data no passado">
+        <rect class="caixa" x="0" y="0" width="360" height="222" rx="4"/>
+        <text class="t" x="16" y="28">Adicionar tarefa</text>
+        <rect class="campo" x="16" y="42" width="328" height="24" rx="3"/><text class="s" x="24" y="59">Descrição *</text>
+        <rect class="campo" x="16" y="72" width="328" height="24" rx="3"/><text class="s" x="24" y="89">Data</text>
+        <rect class="campo" x="16" y="102" width="328" height="24" rx="3"/><text class="s" x="24" y="119">Lista de tarefas *</text>
+        <rect class="campo" x="16" y="132" width="328" height="24" rx="3"/><text class="s" x="24" y="149">Processo, caso ou atendimento</text>
+        <rect class="campo" x="16" y="162" width="328" height="24" rx="3"/><text class="s" x="24" y="179">Responsável *</text>
+        <rect class="campo" x="16" y="192" width="328" height="24" rx="3"/><text class="s" x="24" y="209">Prioridade *</text>
+        <rect class="caixa" x="236" y="56" width="236" height="72" rx="4"/>
+        <text class="t" x="250" y="82">Envolver mais pessoas</text>
+        <rect class="campo" x="250" y="96" width="208" height="20" rx="3"/>
+        <rect class="marca" x="196" y="140" width="360" height="78" rx="4"/>
+        <text class="t" x="212" y="168">Data no passado</text>
+        <text class="s" x="212" y="194">Você deseja continuar mesmo assim?</text>
+      </svg>
       <div class="bloco-txt">
         <h3>Por que importa</h3>
-        <p class="texto">Nos pedidos, tarefa, prazo, audiência e evento são tipos diferentes. O produto não organiza esses tipos. Falta um termo geral com os tipos abaixo dele, e “atividade” pode ser esse termo.</p>
+        <p class="texto">Criar atividade é a ação mais repetida do dia. Atrito pequeno, repetido todo dia, leva a equipe a anotar prazo fora do sistema.</p>
       </div>
-      <div class="bloco-txt">
-        <h3>Heurística de Nielsen</h3>
-        <p class="texto">Correspondência com o mundo real. Consistência e padrões. Hipótese a validar: ninguém mediu ainda o custo em chamado. Telas 10, 11, 13 e 14. <span class="id">PA-23</span>.</p>
-      </div>
-      <p class="fecho">Quem busca precisa saber onde a atividade está e como ela se chama.</p>
+      <p class="nota ref">Controle e liberdade. Prevenção de erros. Telas 14, 15 e 16. <span class="id">PA-54</span>, <span class="id">PA-57</span> e <span class="id">PA-58</span>.</p>
     </div>
-    <div class="col evidencia">
-      <svg class="desenho" viewBox="0 0 920 620" role="img" aria-label="Dois nomes para o mesmo objeto: tarefa na Área de trabalho e atividade na Agenda. A mesma atividade aparece na Área de trabalho, na Agenda, em Tarefas sem data e em Alertas. Na ficha do processo, tarefa e evento são tipos, e prazo e audiência só existem como etiqueta">
-        <text class="s" x="40" y="14">Área de trabalho e modal</text>
-        <rect class="caixa" x="40" y="24" width="300" height="60" rx="4"/>
-        <text class="t g" x="190" y="61" text-anchor="middle">Tarefa</text>
-        <text x="460" y="70" text-anchor="middle" font-family="var(--serif)" font-size="56" class="verm">≠</text>
-        <text class="s" x="580" y="14">Agenda e botão de criar</text>
-        <rect class="caixa" x="580" y="24" width="300" height="60" rx="4"/>
-        <text class="t g" x="730" y="61" text-anchor="middle">Atividade</text>
-
-        <path class="linha" d="M330 286 L300 206 M590 286 L620 206 M330 318 L300 398 M590 318 L620 398"/>
-        <rect class="caixa" x="40" y="150" width="260" height="56" rx="4"/><text class="t" x="170" y="184" text-anchor="middle">Área de trabalho</text>
-        <rect class="caixa" x="620" y="150" width="260" height="56" rx="4"/><text class="t" x="750" y="184" text-anchor="middle">Agenda</text>
-        <rect class="caixa tinta" x="330" y="270" width="260" height="64" rx="4"/><text class="t g inv" x="460" y="309" text-anchor="middle">Mesma atividade</text>
-        <rect class="caixa" x="40" y="398" width="260" height="56" rx="4"/><text class="t" x="170" y="432" text-anchor="middle">Tarefas sem data</text>
-        <rect class="caixa" x="620" y="398" width="260" height="56" rx="4"/><text class="t" x="750" y="432" text-anchor="middle">Alertas</text>
-
-        <line class="linha fina" x1="0" y1="500" x2="920" y2="500"/>
-        <text class="s" x="0" y="528">Na ficha do processo, o campo “Tipo de atividade”</text>
-        <rect class="caixa" x="0" y="544" width="150" height="44" rx="4"/><text class="t" x="75" y="572" text-anchor="middle">Tarefa</text>
-        <rect class="caixa" x="164" y="544" width="150" height="44" rx="4"/><text class="t" x="239" y="572" text-anchor="middle">Evento</text>
-        <text class="s" x="0" y="612">São tipos</text>
-        <rect class="caixa oculta" x="420" y="544" width="150" height="44" rx="4"/><text class="t sutil" x="495" y="572" text-anchor="middle">Prazo</text>
-        <rect class="caixa oculta" x="584" y="544" width="150" height="44" rx="4"/><text class="t sutil" x="659" y="572" text-anchor="middle">Audiência</text>
-        <text class="s" x="420" y="612">Só existem como etiqueta</text>
+    <div class="prob">
+      <h3>Problema 4. Consistência</h3>
+      <p class="titulo">Três azuis, três cinzas, quatro jeitos de criar</p>
+      <p class="texto">Os cinzas vêm do Material, do Bootstrap e do Mantine. Em 08/11, criar apareceu em quatro formas, e voltar em três. O menu lateral não marca o módulo atual.</p>
+      <div class="bloco-txt">
+        <h3 class="mesma-tela">Três azuis na mesma tela. Tela 11</h3>
+        <div class="amostras">
+          <div><div class="amostra baixa" style="background:#008fd5"></div><p class="hex"><code>#008fd5</code>marca</p></div>
+          <div><div class="amostra baixa" style="background:#228be6"></div><p class="hex"><code>#228be6</code>componente</p></div>
+          <div><div class="amostra baixa" style="background:#0255c4"></div><p class="hex"><code>#0255c4</code>campanha</p></div>
+        </div>
+      </div>
+      <svg class="desenho" viewBox="0 0 560 66" role="img" aria-label="Quatro botões de criar: Adicionar tarefa, Adicionar, um sinal de mais sem rótulo e Adicionar documento com seta">
+        <rect class="caixa tinta" x="0" y="4" width="150" height="40" rx="4"/><text class="t inv" x="75" y="30" text-anchor="middle">Adicionar tarefa</text>
+        <rect class="caixa tinta" x="160" y="4" width="96" height="40" rx="4"/><text class="t inv" x="208" y="30" text-anchor="middle">Adicionar</text>
+        <circle class="caixa tinta" cx="286" cy="24" r="20"/><path d="M277 24 H295 M286 15 V33" stroke="var(--inverse)" stroke-width="2.5"/>
+        <rect class="caixa tinta" x="318" y="4" width="240" height="40" rx="4"/><text class="t inv" x="332" y="30">Adicionar documento</text><path d="M522 20 L530 29 L538 20" stroke="var(--inverse)" stroke-width="2.5" fill="none"/>
+        <text class="s" x="0" y="64">Quatro formas de criar, no comparativo de 08/11</text>
       </svg>
+      <div class="bloco-txt">
+        <h3>Por que importa</h3>
+        <p class="texto">Cada divergência custa um reaprendizado a quem usa e manutenção ao time. A causa provável é a falta de fonte única.</p>
+      </div>
+      <p class="nota ref">Consistência e padrões. Telas 11, 13, 14, 17 a 20. <span class="id">PA-01</span>. As cores vêm do inventário de 07/11.</p>
+    </div>
+    <div class="prob">
+      <h3>Problema 5. Hierarquia e ruído</h3>
+      <p class="titulo">A moldura compete com o trabalho</p>
+      <p class="texto">O cabeçalho soma cinco ícones, o selo “1 ano grátis” e o botão “Contratar”. “Conheça as IAs” tem fundo lilás. As capturas de 07/11 mostram uma faixa de campanha com contador.</p>
+      <svg class="desenho" viewBox="0 0 560 222" role="img" aria-label="Desenho da Área de trabalho. No topo, a faixa de campanha vista em 07/11. No cabeçalho, busca, cinco ícones, selo 1 ano grátis e botão Contratar. No menu, Conheça as IAs em destaque">
+        <rect x="1" y="1" width="558" height="220" fill="var(--paper)" stroke="var(--line)" stroke-width="1.5"/>
+        <rect class="marca" x="2" y="2" width="556" height="28" style="stroke-dasharray: 6 5; stroke-width: 2"/>
+        <text class="s verm" x="12" y="21">Faixa de campanha com contador, captura de 07/11</text>
+        <rect class="barra" x="12" y="44" width="56" height="16" rx="3"/>
+        <rect class="campo" x="80" y="40" width="130" height="24" rx="3"/><text class="s" x="88" y="57">Busca</text>
+        <circle class="barra" cx="228" cy="52" r="8"/><circle class="barra" cx="250" cy="52" r="8"/><circle class="barra" cx="272" cy="52" r="8"/><circle class="barra" cx="294" cy="52" r="8"/><circle class="barra" cx="316" cy="52" r="8"/>
+        <rect class="caixa tinta" x="336" y="38" width="108" height="28" rx="4"/><text class="s inv" x="390" y="57" text-anchor="middle">1 ano grátis</text>
+        <rect class="caixa tinta" x="452" y="38" width="100" height="28" rx="4"/><text class="s inv" x="502" y="57" text-anchor="middle">Contratar</text>
+        <line class="linha fina" x1="0" y1="76" x2="560" y2="76"/>
+        <line class="linha fina" x1="124" y1="76" x2="124" y2="222"/>
+        <rect class="barra" x="12" y="90" width="90" height="10" rx="2"/><rect class="barra" x="12" y="110" width="70" height="10" rx="2"/><rect class="barra" x="12" y="130" width="80" height="10" rx="2"/><rect class="barra" x="12" y="150" width="60" height="10" rx="2"/>
+        <rect class="caixa tinta" x="4" y="174" width="116" height="30" rx="4"/><text class="s inv" x="62" y="194" text-anchor="middle" font-size="13">Conheça as IAs</text>
+        <rect class="caixa suave" x="140" y="90" width="250" height="118" rx="4"/><text class="s" x="152" y="112">Área de trabalho</text>
+        <rect class="caixa suave" x="404" y="90" width="146" height="118" rx="4"/><text class="s" x="414" y="112">Estatísticas</text>
+        <text class="s" x="414" y="140" style="fill: var(--link)">12   4   7</text>
+      </svg>
+      <div class="bloco-txt">
+        <h3>Por que importa</h3>
+        <p class="texto">Quem vive no produto lê esse ruído o dia inteiro. A moldura não tem dono, e o briefing pede a IA no mesmo padrão.</p>
+      </div>
+      <p class="nota ref">Estética e design minimalista. Telas 11 e 13. <span class="id">PA-08</span> a <span class="id">PA-10</span>. Estatísticas são link sem destino na árvore de acessibilidade. Ninguém testou o clique.</p>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>3 de 8</span></footer>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>3 de 5</span></footer>
 </section>
 
 <!-- ============ 4 ============ -->
 <section class="slide" id="q1s4">
-  <header>
-    <p class="item">Questão 1, item 1 de 3. Problema 3 de 5. Usabilidade de fluxo</p>
-    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
-    <h2>Criar uma atividade interrompe quem cria</h2>
-  </header>
-  <div class="corpo problema">
-    <div class="col lado">
-      <p class="tese">Quatro campos obrigatórios para uma tarefa simples. “Lista de tarefas” é obrigatório e tem um só valor possível. “Envolver mais pessoas” abre um popover dentro do modal. Data no passado abre outro diálogo, que só pergunta se deseja continuar.</p>
-      <div class="bloco-txt">
-        <h3>Por que importa</h3>
-        <p class="texto">Criar atividade é a ação mais repetida do dia. Atrito pequeno, repetido todo dia, vira o motivo de a equipe anotar prazo fora do sistema.</p>
-      </div>
-      <div class="bloco-txt">
-        <h3>Heurística de Nielsen</h3>
-        <p class="texto">Controle e liberdade. Prevenção de erros. Telas 14, 15 e 16. <span class="id">PA-54</span>, <span class="id">PA-57</span> e <span class="id">PA-58</span>.</p>
-      </div>
-      <p class="fecho">Cada campo faz sentido sozinho. Juntos, viram atrito.</p>
-    </div>
-    <div class="col evidencia">
-      <svg class="desenho" viewBox="0 0 920 630" role="img" aria-label="Três camadas sobre a Agenda: o modal Adicionar tarefa com seis campos, quatro obrigatórios; o popover Envolver mais pessoas sobre o modal; e o diálogo Data no passado sobre o modal">
-        <rect class="caixa suave" x="0" y="0" width="560" height="420" rx="4"/>
-        <text class="s" x="18" y="30">Agenda</text>
-
-        <rect class="caixa" x="44" y="48" width="500" height="460" rx="4"/>
-        <text class="t" x="66" y="82">Adicionar tarefa</text>
-        <text class="s" x="66" y="118">Descrição da tarefa *</text><rect class="campo" x="66" y="126" width="456" height="26" rx="3"/>
-        <text class="s" x="66" y="176">Data</text><rect class="campo" x="66" y="184" width="456" height="26" rx="3"/>
-        <text class="s" x="66" y="234">Lista de tarefas *</text><rect class="campo" x="66" y="242" width="456" height="26" rx="3"/>
-        <text class="s" x="66" y="292">Processo, caso ou atendimento</text><rect class="campo" x="66" y="300" width="456" height="26" rx="3"/>
-        <text class="s" x="66" y="350">Responsável *</text><rect class="campo" x="66" y="358" width="456" height="26" rx="3"/>
-        <text class="s" x="66" y="408">Prioridade *</text><rect class="campo" x="66" y="416" width="456" height="26" rx="3"/>
-        <text class="s" x="66" y="486">Cancelar</text><text class="t" x="146" y="486">Salvar</text>
-
-        <rect class="caixa" x="310" y="330" width="290" height="150" rx="4"/>
-        <text class="t" x="328" y="360">Envolver mais pessoas</text>
-        <rect class="campo" x="328" y="374" width="254" height="28" rx="3"/><text class="s" x="338" y="393">Encontre alguém</text>
-        <rect class="campo" x="328" y="416" width="14" height="14" rx="2"/><text class="s" x="352" y="428">Pessoas</text>
-        <rect class="caixa tinta" x="482" y="438" width="100" height="30" rx="4"/><text class="s inv" x="532" y="458" text-anchor="middle">Confirmar</text>
-
-        <rect class="marca" x="150" y="490" width="450" height="130" rx="4"/>
-        <text class="t" x="172" y="522">Data no passado</text>
-        <text class="s" x="172" y="548">A data selecionada já passou.</text>
-        <text class="s" x="172" y="568">Você deseja continuar mesmo assim?</text>
-        <text class="s" x="440" y="604">Cancelar</text><text class="t" x="510" y="604">Continuar</text>
-
-        <path class="linha fina" d="M544 72 H636"/>
-        <text class="t" x="648" y="70">1. Modal</text>
-        <text class="s" x="648" y="90">Seis campos, quatro obrigatórios.</text>
-        <text class="s" x="648" y="108">Lista de tarefas tem um só valor.</text>
-        <path class="linha fina" d="M600 352 H636"/>
-        <text class="t" x="648" y="350">2. Popover sobre o modal</text>
-        <text class="s" x="648" y="370">Para incluir uma pessoa,</text>
-        <text class="s" x="648" y="388">uma segunda camada.</text>
-        <path class="linha fina" d="M600 512 H636"/>
-        <text class="t" x="648" y="510">3. Diálogo sobre o modal</text>
-        <text class="s" x="648" y="530">Pergunta se deseja continuar.</text>
-        <text class="s" x="648" y="548">Não diz o motivo nem oferece</text>
-        <text class="s" x="648" y="566">salvar como concluída.</text>
-      </svg>
-    </div>
-  </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>4 de 8</span></footer>
-</section>
-
-<!-- ============ 5 ============ -->
-<section class="slide" id="q1s5">
-  <header>
-    <p class="item">Questão 1, item 1 de 3. Problema 4 de 5. Consistência</p>
-    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
-    <h2>Três azuis, três cinzas, três jeitos de criar</h2>
-  </header>
-  <div class="corpo problema">
-    <div class="col lado">
-      <p class="tese">Na mesma tela, o azul da marca, o do componente e o da campanha. Os cinzas vêm de três bibliotecas. O widget usa o seletor nativo, e o modal usa um customizado. O menu lateral não marca o módulo atual.</p>
-      <div class="bloco-txt">
-        <h3>Por que importa</h3>
-        <p class="texto">Cada divergência é um reaprendizado pequeno para quem usa e um custo de manutenção para o time. A causa provável é a falta de fonte única. É a terceira restrição do briefing.</p>
-      </div>
-      <div class="bloco-txt">
-        <h3>Heurística de Nielsen</h3>
-        <p class="texto">Consistência e padrões. Telas 11, 13, 14, 17 a 20. <span class="id">PA-01</span>.</p>
-      </div>
-      <p class="fecho">Quando tudo é azul, nada parece clicável.</p>
-    </div>
-    <div class="col evidencia" style="gap: 1.667cqw;">
-      <div class="paleta">
-        <div class="bloco-txt">
-          <h3 class="mesma-tela">Três azuis na mesma tela. Tela 11</h3>
-          <div class="amostras">
-            <div><div class="amostra" style="background:#008fd5"></div><p class="hex"><code>#008fd5</code>marca</p></div>
-            <div><div class="amostra" style="background:#228be6"></div><p class="hex"><code>#228be6</code>componente</p></div>
-            <div><div class="amostra" style="background:#0255c4"></div><p class="hex"><code>#0255c4</code>campanha</p></div>
-          </div>
-        </div>
-        <div class="bloco-txt">
-          <h3 style="border-top: 2px solid var(--line); padding-top: 0.417cqw;">Três cinzas, três bibliotecas</h3>
-          <div class="amostras">
-            <div><div class="amostra" style="background:#202124"></div><p class="hex"><code>#202124</code>texto, Material</p></div>
-            <div><div class="amostra" style="background:#6c757d"></div><p class="hex"><code>#6c757d</code>texto, Bootstrap</p></div>
-            <div><div class="amostra" style="background:#dee2e6"></div><p class="hex"><code>#dee2e6</code>divisor, Mantine</p></div>
-          </div>
-        </div>
-      </div>
-      <div class="bloco-txt">
-        <h3 style="border-top: 2px solid var(--line); padding-top: 0.417cqw;">Três jeitos de criar. Telas 11, 13 e 17</h3>
-        <svg class="desenho" viewBox="0 0 920 120" role="img" aria-label="Três botões de criar: retângulo em caixa alta com Adicionar primeira tarefa, retângulo com Adicionar atividade e seta de menu, e um círculo com sinal de mais">
-          <rect class="caixa tinta" x="0" y="14" width="350" height="54" rx="4"/>
-          <path d="M22 41 H38 M30 33 V49" stroke="var(--inverse)" stroke-width="2.5"/>
-          <text class="t inv" x="50" y="47" font-size="16" letter-spacing="1">ADICIONAR PRIMEIRA TAREFA</text>
-          <text class="s" x="0" y="100">Área de trabalho, em caixa alta</text>
-          <rect class="caixa tinta" x="410" y="14" width="250" height="54" rx="4"/>
-          <text class="t inv" x="430" y="47">Adicionar atividade</text>
-          <path d="M624 36 L632 46 L640 36" stroke="var(--inverse)" stroke-width="2.5" fill="none"/>
-          <text class="s" x="410" y="100">Agenda, com seta de menu</text>
-          <circle class="caixa tinta" cx="747" cy="41" r="27"/>
-          <path d="M735 41 H759 M747 29 V53" stroke="var(--inverse)" stroke-width="3"/>
-          <text class="s" x="720" y="100">Agenda, um “+” redondo</text>
-        </svg>
-      </div>
-    </div>
-  </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>5 de 8</span></footer>
-</section>
-
-<!-- ============ 6 ============ -->
-<section class="slide" id="q1s6">
-  <header>
-    <p class="item">Questão 1, item 1 de 3. Problema 5 de 5. Hierarquia e ruído</p>
-    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
-    <h2>A moldura compete com o trabalho</h2>
-  </header>
-  <div class="corpo problema">
-    <div class="col lado">
-      <p class="tese">Uma faixa de campanha com contador ocupa o topo do produto logado, em toda tela. O cabeçalho soma o selo “1 ano grátis” e o botão verde “Contratar”. “Conheça as IAs” tem cor própria e fundo lilás no menu.</p>
-      <div class="bloco-txt">
-        <h3>Por que importa</h3>
-        <p class="texto">Quem vive no produto lê esse ruído o dia inteiro. A moldura não tem dono de produto: marketing e IA entram nela sem passar por um padrão. E o briefing pede que a IA nasça no mesmo padrão do resto.</p>
-      </div>
-      <div class="bloco-txt">
-        <h3>Heurística de Nielsen</h3>
-        <p class="texto">Estética e design minimalista. Telas 11 e 13. <span class="id">PA-08</span>, <span class="id">PA-09</span> e <span class="id">PA-10</span>.</p>
-      </div>
-      <p class="fecho">Campanha e IA ocupam a moldura de quem controla prazo o dia inteiro.</p>
-    </div>
-    <div class="col evidencia">
-      <h3>Área de trabalho, desenho da tela 11 na proporção do print</h3>
-      <svg class="desenho wire" viewBox="0 0 1900 908" role="img" aria-label="Desenho da Área de trabalho. No topo, a faixa de campanha. No cabeçalho, busca, cinco ícones, selo 1 ano grátis e botão Contratar. No menu, Conheça as IAs em destaque. No centro, a área de trabalho com o estado vazio. À direita, três widgets">
-        <rect x="1" y="1" width="1898" height="906" fill="var(--paper)" stroke="var(--line)" stroke-width="3"/>
-        <rect class="marca" x="3" y="3" width="1894" height="60"/>
-        <text class="verm" x="32" y="44">Faixa de campanha, com contador, em toda tela</text>
-
-        <line class="linha fina" x1="0" y1="143" x2="1900" y2="143" style="stroke-width:2"/>
-        <rect class="barra" x="24" y="83" width="175" height="40" rx="4"/>
-        <rect class="campo" x="338" y="79" width="555" height="48" rx="4"/>
-        <text class="s" x="356" y="112">Busca</text>
-        <circle class="barra" cx="1258" cy="103" r="16"/><circle class="barra" cx="1305" cy="103" r="16"/><circle class="barra" cx="1353" cy="103" r="16"/><circle class="barra" cx="1400" cy="103" r="16"/><circle class="barra" cx="1448" cy="103" r="16"/>
-        <rect class="barra" x="1478" y="94" width="56" height="18" rx="3"/>
-        <rect class="caixa tinta" x="1548" y="82" width="174" height="42" rx="4"/>
-        <text class="s inv" x="1635" y="112" text-anchor="middle">1 ano grátis</text>
-        <rect class="caixa tinta" x="1730" y="82" width="148" height="42" rx="4"/>
-        <text class="s inv" x="1804" y="112" text-anchor="middle">Contratar</text>
-
-        <line class="linha fina" x1="308" y1="143" x2="308" y2="908" style="stroke-width:2"/>
-        <rect class="barra" x="30" y="240" width="170" height="16" rx="3"/>
-        <rect class="barra" x="30" y="289" width="110" height="16" rx="3"/>
-        <rect class="barra" x="30" y="338" width="120" height="16" rx="3"/>
-        <rect class="barra" x="30" y="387" width="150" height="16" rx="3"/>
-        <rect class="barra" x="30" y="436" width="180" height="16" rx="3"/>
-        <rect class="barra" x="30" y="485" width="130" height="16" rx="3"/>
-        <rect class="barra" x="30" y="534" width="120" height="16" rx="3"/>
-        <rect class="barra" x="30" y="583" width="130" height="16" rx="3"/>
-        <rect class="barra" x="30" y="632" width="120" height="16" rx="3"/>
-        <rect class="barra" x="30" y="681" width="90" height="16" rx="3"/>
-        <line class="linha fina" x1="10" y1="732" x2="298" y2="732" style="stroke-width:2"/>
-        <rect class="caixa tinta" x="10" y="756" width="288" height="52" rx="4"/>
-        <text class="s inv" x="32" y="791">Conheça as IAs</text>
-        <rect class="barra" x="30" y="822" width="100" height="16" rx="3"/>
-
-        <text class="t" x="340" y="270">Área de trabalho</text>
-        <rect class="caixa suave" x="518" y="430" width="520" height="200" rx="4"/>
-        <text class="s" x="778" y="538" text-anchor="middle">Estado vazio, quatro passos</text>
-        <rect class="barra" x="621" y="661" width="313" height="48" rx="4"/>
-
-        <rect class="caixa suave" x="1247" y="233" width="618" height="238" rx="4"/>
-        <text class="t" x="1278" y="285">Processos e casos</text>
-        <rect class="caixa suave" x="1247" y="504" width="618" height="316" rx="4"/>
-        <text class="t" x="1278" y="556">Estatísticas</text>
-        <rect class="caixa suave" x="1247" y="852" width="618" height="56" rx="4"/>
-        <text class="t" x="1278" y="896">Lembretes</text>
-      </svg>
-      <p class="nota">Em tinta escura, o que a moldura vende: selo “1 ano grátis”, botão “Contratar” e “Conheça as IAs”. Em cinza, o que serve ao trabalho. O menu ocupa 240px fixos e não recolhe, <span class="id">PA-12</span>.</p>
-    </div>
-  </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>6 de 8</span></footer>
-</section>
-
-<!-- ============ 7 ============ -->
-<section class="slide" id="q1s7">
   <header>
     <p class="item">Questão 1, item 2 de 3. Princípios de design</p>
     <p class="pergunta">Quais princípios de design devem guiar o redesign?</p>
@@ -621,6 +422,7 @@
         <use href="#lista" x="415" y="56" filter="url(#desfoque)"/>
       </svg>
       <p class="por-que">Se o prazo some no desfoque, a tela volta.</p>
+      <p class="nota">O protótipo navegável aplica os seis princípios em 17 páginas, com a mesma moldura e as mesmas peças do design system.</p>
     </div>
     <ul class="principios">
       <li>
@@ -645,11 +447,11 @@
       </li>
     </ul>
   </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>7 de 8</span></footer>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>4 de 5</span></footer>
 </section>
 
-<!-- ============ 8 ============ -->
-<section class="slide validar" id="q1s8">
+<!-- ============ 5 ============ -->
+<section class="slide validar" id="q1s5">
   <header>
     <p class="item">Questão 1, item 3 de 3. O que validar</p>
     <p class="pergunta">O que validar antes de seguir, e como?</p>
@@ -657,21 +459,24 @@
   </header>
   <div class="corpo">
     <table>
-      <colgroup><col style="width:36%"><col style="width:7.5%"><col style="width:7.5%"><col style="width:7.5%"><col style="width:7.5%"><col></colgroup>
-      <thead><tr><th class="esq" scope="col">Hipótese</th><th scope="col">Pedido</th><th scope="col">Chamado</th><th scope="col">Analytics</th><th scope="col">Entrevista</th><th class="esq teste" scope="col">Primeiro teste</th></tr></thead>
+      <colgroup><col style="width:34%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col></colgroup>
+      <thead><tr><th class="esq" scope="col">Hipótese</th><th scope="col">Pedido</th><th scope="col">Chamado</th><th scope="col">Analytics</th><th scope="col">Entrevista</th><th class="esq teste" scope="col">Método e métrica do primeiro teste</th></tr></thead>
       <tbody>
         <tr class="grupo"><td colspan="6">Confirmar antes de seguir</td></tr>
-        <tr><td class="esq"><div class="hip"><i>1</i>A Área de trabalho esconde o que atrasou</div></td><td><span class="ponto meio" role="img" aria-label="A planilha responde em parte"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Contas com tarefa atrasada fora da lista inicial</td></tr>
-        <tr><td class="esq"><div class="hip"><i>2</i>“Atividade” serve como termo geral</div></td><td><span class="ponto meio" role="img" aria-label="A planilha responde em parte"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Teste de cinco segundos na Agenda</td></tr>
+        <tr><td class="esq"><div class="hip"><i>1</i>A Área de trabalho esconde o que atrasou</div></td><td><span class="ponto meio" role="img" aria-label="A planilha responde em parte"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Analytics: contas com tarefa atrasada fora da lista inicial</td></tr>
+        <tr><td class="esq"><div class="hip"><i>1</i>A tarefa some porque a Agenda abre fora de hoje</div></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td></td><td class="esq teste">Trial: tarefa com data de hoje e filtro em “Todas”</td></tr>
+        <tr><td class="esq"><div class="hip"><i>2</i>“Atividade” serve como termo geral</div></td><td><span class="ponto meio" role="img" aria-label="A planilha responde em parte"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Teste de cinco segundos na Agenda: acerto do termo</td></tr>
         <tr><td class="esq"><div class="hip"><i>3</i>O modal de criar tem abandono</div></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td class="esq teste">Funil do modal: aberto, preenchido, salvo</td></tr>
-        <tr><td class="esq"><div class="hip"><i>5</i>O ruído da moldura custa atenção</div></td><td></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Conversão de “Contratar” contra CSAT</td></tr>
+        <tr><td class="esq"><div class="hip"><i>5</i>O ruído da moldura custa atenção</div></td><td></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Marketing: faixa fixa ou sazonal. “Contratar” contra CSAT</td></tr>
+        <tr><td class="esq"><div class="hip"><i>5</i>Os números de Estatísticas levam a algum lugar</div></td><td></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td class="esq teste">Trial: destino do clique. Analytics: cliques por conta</td></tr>
         <tr class="grupo corte"><td colspan="6">Segue para a Questão 2: o inventário já prova</td></tr>
-        <tr><td class="esq"><div class="hip"><i>4</i>A inconsistência custa reaprendizado</div></td><td></td><td></td><td></td><td></td><td class="esq teste">Bugs visuais abertos e tempo de handoff</td></tr>
+        <tr><td class="esq"><div class="hip"><i>4</i>A inconsistência custa reaprendizado</div></td><td></td><td></td><td></td><td></td><td class="esq teste">Backlog: bugs visuais abertos e tempo de handoff</td></tr>
       </tbody>
     </table>
+    <p class="nota">Desk research já feita: a varredura de 08/11 leu 12 módulos e a moldura em produção. O comparativo contou cliques de 48 tarefas. Clique mede esforço; sucesso só entrevista e analytics confirmam.</p>
     <p class="legenda"><span><i class="ponto"></i>Fonte a cruzar</span><span><i class="ponto meio"></i>A planilha responde em parte</span><strong>Duas fontes de tipos diferentes na mesma direção confirmam.</strong></p>
   </div>
-  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>8 de 8</span></footer>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>5 de 5</span></footer>
 </section>
 
 </body>
