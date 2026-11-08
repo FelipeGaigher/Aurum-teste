@@ -246,6 +246,14 @@ li::marker { color: var(--color-text-muted); }
   .tabela td:first-child { white-space: normal; }
   .tabela td[data-r]::before { content: attr(data-r) ": "; color: var(--color-text-muted); font-size: var(--font-size-label); }
 }
+
+/* Modal dos decks: sobrepõe a página inteira; o deck abre num iframe e o link original continua para nova aba. */
+.hub-deck { width: calc(96vw / var(--escala-da-pagina)); max-width: none; height: calc(var(--altura-da-tela) * 0.94); max-height: none; padding: 0; overflow: hidden; }
+.hub-deck[open] { display: flex; flex-direction: column; }
+.hub-deck-topo { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4); border-bottom: var(--border-width) solid var(--color-border-default); }
+.hub-deck-topo h2 { flex: 1; margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
+.hub-deck iframe { flex: 1; min-height: 0; width: 100%; border: 0; background-color: var(--color-bg-page); }
+html:has(.hub-deck[open]) { overflow: hidden; }
 </style>
 </head>
 <body>
@@ -504,6 +512,43 @@ li::marker { color: var(--color-text-muted); }
     if (atual) marcar(atual[1]);
   }, { rootMargin: `-${Math.round(topo)}px 0px -60% 0px` });
   alvos.forEach(([el]) => observador.observe(el));
+})();
+</script>
+
+<dialog class="dialogo hub-deck" id="hub-deck" aria-labelledby="hub-deck-titulo">
+  <div class="hub-deck-topo">
+    <h2 id="hub-deck-titulo">Slides</h2>
+    <a class="botao botao-secundario" id="hub-deck-aba" href="01-slides-q1.html" target="_blank" rel="noopener">Abrir em nova aba</a>
+    <button class="botao botao-texto" type="button" id="hub-deck-fechar">Fechar</button>
+  </div>
+  <iframe id="hub-deck-quadro" title="Slides" src="about:blank" loading="lazy"></iframe>
+</dialog>
+<script>
+(() => {
+  const modal = document.getElementById('hub-deck');
+  if (!modal || typeof modal.showModal !== 'function') return;
+  const titulo = document.getElementById('hub-deck-titulo');
+  const quadro = document.getElementById('hub-deck-quadro');
+  const aba = document.getElementById('hub-deck-aba');
+  const fechar = document.getElementById('hub-deck-fechar');
+  let gatilho = null;
+  const ehDeck = (href) => /^0[1-3]-slides-q[1-3]\.html$/.test(href || '');
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href]');
+    if (!a || !ehDeck(a.getAttribute('href')) || e.ctrlKey || e.metaKey || e.button !== 0 || a.target === '_blank') return;
+    e.preventDefault();
+    gatilho = a;
+    const n = a.getAttribute('href').match(/q([1-3])/)[1];
+    titulo.textContent = 'Slides da Questão ' + n;
+    aba.href = a.getAttribute('href');
+    quadro.title = titulo.textContent;
+    quadro.src = a.getAttribute('href');
+    modal.showModal();
+    fechar.focus();
+  });
+  fechar.addEventListener('click', () => modal.close());
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
+  modal.addEventListener('close', () => { quadro.src = 'about:blank'; if (gatilho) gatilho.focus(); });
 })();
 </script>
 </body>
