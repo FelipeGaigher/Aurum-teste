@@ -145,7 +145,6 @@
   @media (max-width: 1100px) { [data-area-principal][data-visao="kanban"] { grid-template-columns: minmax(0, 1fr); } [data-visao="kanban"] .secao { min-height: 0; } }
   .cards-atividade > li { display: flex; min-width: 0; }
   .cards-atividade .card-atividade { width: 100%; }
-  .card-acoes { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: auto; padding-top: var(--space-1); }
   @media (max-width: 900px) {
     [data-area-principal]:is([data-visao="cards"], [data-visao="kanban"]) { grid-template-columns: minmax(0, 1fr); }
   }
@@ -299,7 +298,7 @@
     avisar(mensagem, () => {
       Object.assign(atividade, antes);
       desenhar();
-      const linha = document.querySelector(`[data-id="${atividade.id}"] .linha-acoes button, [data-id="${atividade.id}"] .card-acoes button`);
+      const linha = document.querySelector(`[data-id="${atividade.id}"] .linha-acoes button`);
       if (linha) linha.focus();
     });
   }
@@ -620,14 +619,7 @@
       responsavel: a.responsavel, copiarNumero: true,
     });
     el.dataset.id = a.id;
-    const acoes = document.createElement('div');
-    acoes.className = 'card-acoes';
-    acoes.append(...acoesDe(a).map((acao, i) => {
-      const botao = DS.botao({ rotulo: acao.rotulo, iconeEsquerda: acao.icone, tamanho: 'pequeno', variante: i === 0 ? 'secundario' : 'texto' });
-      botao.addEventListener('click', acao.aoClicar);
-      return botao;
-    }));
-    el.append(acoes);
+    // As ações ficam no painel de detalhe ao lado; o card só mostra e seleciona (decisão de Felipe, 08/11).
     selecionavel(el, a);
     const li = document.createElement('li');
     li.append(el);
