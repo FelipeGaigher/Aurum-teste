@@ -66,7 +66,7 @@
   .mes-dias, .semana-dias { margin: 0; padding: 0; list-style: none; border-left: var(--border-width) solid var(--color-border-default); }
   /* PA-47: a célula do mês tem três linhas da densidade compacta, e o mês inteiro cabe em 1440 por 900 */
   /* O mês e a semana preenchem a altura que sobra na tela; as linhas da hora têm o dobro da altura compacta (pedido de Felipe, 08/11). */
-  .mes-dias { grid-auto-rows: minmax(calc(var(--density-row-compact) * 3), 1fr); min-height: calc(100vh - 220px); }
+  .mes-dias { grid-auto-rows: minmax(calc(var(--density-row-compact) * 3), 1fr); min-height: calc(100vh - 250px); }
   .dia {
     display: flex;
     flex-direction: column;
@@ -78,7 +78,7 @@
     border-bottom: var(--border-width) solid var(--color-border-default);
   }
   .semana-dias { border-top: var(--border-width) solid var(--color-border-default); }
-  .semana-dias .dia { min-height: max(calc(var(--density-row-compact) * 10), calc(100vh - 220px)); padding: var(--space-2); }
+  .semana-dias .dia { min-height: max(calc(var(--density-row-compact) * 10), calc(100vh - 250px)); padding: var(--space-2); }
   .dia-numero {
     display: inline-grid;
     place-items: center;
