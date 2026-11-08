@@ -26,7 +26,7 @@
   .area-aviso { margin-bottom: var(--space-4); }
 
   /* PA-32: três seções em ordem fixa. O cabeçalho repete o tom do chip, e o texto diz o estado. */
-  /* Item e subitens no mesmo contêiner: faixa branca em cima, corpo cinza um degrau acima da página. */
+  /* Item e subitens no mesmo contêiner: faixa branca em cima, corpo no tom da página, um passo abaixo do branco. */
   .secao { margin-bottom: var(--space-6); scroll-margin-top: calc(var(--component-header-height) + var(--space-3)); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); overflow: hidden; }
   /* Cabeçalho da seção: faixa que abre e fecha, como os grupos do Importação. A tag diz o status. */
   .secao-cabeca { margin: 0; font: inherit; }
@@ -59,7 +59,7 @@
     text-transform: uppercase;
   }
   .secao-nota { font-size: var(--font-size-label); }
-  .secao-corpo { background-color: var(--color-bg-subtle); }
+  .secao-corpo { background-color: var(--color-bg-page); }
   :is([data-visao="cards"], [data-visao="kanban"]) .secao-corpo { padding: var(--space-3); }
   [data-visao="lista"] .lista-atividades > .linha-atividade:last-child { border-bottom: 0; }
   .secao .estado-vazio { padding: var(--space-4) var(--space-3); }
