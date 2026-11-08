@@ -1069,22 +1069,34 @@
   const TECLAS_DE_RADIO = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
 
   function radio(props = {}) {
-    const { opcoes, valor, aoEscolher, desabilitado, grupo: nomeDoGrupo = novoId('radio') } = props;
+    const { opcoes, valor, aoEscolher, desabilitado, grupo: nomeDoGrupo = novoId('radio'), icones } = props;
     validarOpcoes('radio', opcoes);
     if (valor !== undefined) validarValor('radio', opcoes, valor);
+    if (icones) opcoes.forEach(([chave]) => exigir(ICONES[icones[chave]], 'radio', `icone desconhecido para "${chave}"`));
 
-    const grupo = criar('div', 'radio-grupo');
+    // Variante com ícones (pedido de Felipe, 08/11): cada opção é um círculo com ícone, e o
+    // texto da opção marcada aparece ao lado do grupo. A acessibilidade é a mesma do rádio.
+    const grupo = criar('div', icones ? 'radio-grupo radio-grupo-icones' : 'radio-grupo');
     grupo.setAttribute('role', 'radiogroup');
     const itens = opcoes.map(([chave, rotulo]) => {
-      const el = criarBotao('radio');
+      const el = criarBotao(icones ? 'radio radio-icone' : 'radio');
       el.setAttribute('role', 'radio');
       el.dataset.grupo = nomeDoGrupo;
       el.dataset.valor = chave;
       el.disabled = Boolean(desabilitado);
-      el.append(criar('span', 'radio-bola'), criar('span', 'radio-texto', rotulo));
+      if (icones) {
+        const bola = criar('span', 'radio-icone-bola');
+        bola.append(svg(icones[chave], 'icone'));
+        el.append(bola, criar('span', 'visualmente-oculto', rotulo));
+        el.title = rotulo;
+      } else {
+        el.append(criar('span', 'radio-bola'), criar('span', 'radio-texto', rotulo));
+      }
       return el;
     });
+    const rotuloAtual = icones ? criar('span', 'radio-atual') : null;
     grupo.append(...itens);
+    if (rotuloAtual) { rotuloAtual.setAttribute('aria-live', 'polite'); grupo.append(rotuloAtual); }
     const { raiz } = casco('radio', props, [grupo], grupo);
 
     // Tabindex móvel: um ponto de Tab por grupo, na opção marcada ou na primeira.
@@ -1097,6 +1109,7 @@
       });
       if (atual === undefined) itens[0].tabIndex = 0;
       raiz.dataset.valor = atual ?? '';
+      if (rotuloAtual) rotuloAtual.textContent = (opcoes.find(([chave]) => chave === atual) || [])[1] || '';
     }
     function escolher(el) {
       const mudou = el.dataset.valor !== atual;
@@ -2056,6 +2069,7 @@
     const formulario = criar('div', 'criar-atividade-campos');
     const tipoEl = radio({
       rotulo: 'Tipo', opcoes: Object.entries(TIPOS_DE_ATIVIDADE), valor: tipo,
+      icones: { tarefa: 'marca', prazo: 'alerta', audiencia: 'relogio', evento: 'calendario' },
       aoEscolher: (novo) => { tipo = novo; desenhar(); },
     });
     const barra = barraAcoes({
