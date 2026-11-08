@@ -41,8 +41,10 @@
   .ficha-etiquetas .tag { padding-right: 0; }
 
   .ficha-grade { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-5) var(--space-6); align-items: start; }
-  .ficha-coluna { display: grid; gap: var(--space-5); min-width: 0; }
-  .bloco { min-width: 0; }
+  .ficha-coluna { display: grid; gap: var(--space-4); min-width: 0; align-content: start; }
+  /* Cada bloco da ficha é um contêiner (pedido de Felipe: as informações estavam soltas). */
+  .bloco { min-width: 0; padding: var(--space-4) var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
+  .ficha-topo { padding: var(--space-4) var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
   .bloco-cabeca {
     display: flex;
     flex-wrap: wrap;
