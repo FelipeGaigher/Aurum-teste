@@ -343,7 +343,7 @@ svg.icone {
   display: grid;
   grid-template-columns: var(--component-sidebar-width) minmax(0, 1fr) auto;
   align-items: center;
-  column-gap: var(--space-6);
+  column-gap: var(--space-5);
   height: var(--component-header-height);
   padding-right: var(--space-5);
   background-color: var(--component-header-bg);
@@ -700,7 +700,7 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 body[data-menu="recolhido"] .rodape-menu { display: none; }
 
 @media (max-width: 1024px) {
-  .cabecalho { column-gap: var(--space-4); }
+  .cabecalho { column-gap: var(--space-5); }
   .busca { width: 18vw; }
 }
 

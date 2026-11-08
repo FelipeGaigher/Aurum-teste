@@ -240,7 +240,7 @@
   </div>
 
   <div class="acoes">
-    <form class="busca" role="search">
+    <form class="busca" role="search" onsubmit="event.preventDefault()">
       <label for="busca-global" class="visualmente-oculto">Pesquisar</label>
       <div class="busca-campo">
         <input id="busca-global" type="search" placeholder="Pesquisar contato, processo ou atividade" autocomplete="off">
