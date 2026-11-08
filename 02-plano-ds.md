@@ -1,7 +1,7 @@
 # Q2 — Design system e plano de redesign incremental
 
-Documento-fonte de `02-slides-q2.html`. São 6 slides da Q2, o limite do
-enunciado, e 1 slide de fechamento sobre uso de IA. Cada slide tem um
+Documento-fonte de `02-slides-q2.html`. São 6 slides, o limite do
+enunciado. O parágrafo de uso de IA fecha o `index.html`. Cada slide tem um
 título que responde à pergunta, uma ideia central e pouco texto.
 
 Legenda:
@@ -131,12 +131,18 @@ Atendimentos e Documentos.
 
 | Fase | Período | O que entra | Entrega |
 |---|---|---|---|
-| 1 | Semanas 1 e 2 | Inventário e linha de base das métricas; o protótipo já adiantou o inventário | Mapa do que existe e do time |
-| 2 | Semanas 3 a 6 | Tokens semânticos sobre o Nectar; o legado ganha a pele por token | Legado e novo com a mesma pele |
-| 3 | Meses 2 e 3 | Componentes principais e piloto na gestão de atividades, atrás de feature flag | Primeira tela nova em produção |
-| 4 | Meses 4 a 6 | Demais módulos, no ritmo da migração do front; primeiras funcionalidades com IA nos mesmos componentes | O DS cobre o produto |
+| 1 | Semanas 1 a 6 | Inventário, linha de base das métricas e tokens semânticos sobre o Nectar; o legado ganha a pele por token | Legado e novo com a mesma pele |
+| 2 | Meses 2 e 3 | Moldura única: cabeçalho, menu lateral, ações e filtros, com os componentes principais | A âncora que não muda mais |
+| 3 | Meses 3 e 4 | Configuração e administração, as primeiras telas novas, atrás de feature flag | Primeira tela nova em produção |
+| 4 | Meses 4 a 6 | Fluxos principais, a começar pela gestão de atividades com grupo beta. Demais módulos no ritmo da migração. Primeiras funcionalidades com IA | O DS cobre o produto |
+| 5 | Meses 7 a 9 | Onboarding do novo layout: tour por módulo e "o que mudou" por tela. Flags desligadas. Telas legadas e bibliotecas parciais aposentadas. Tela estreita | Legado desligado, sem chamado de "onde ficou" |
+| 6 | Meses 10 a 12 | IA em todos os fluxos, nos padrões do DS: sugerir, confirmar, desfazer e errar. DS em regime: versão 1.0, changelog, auditoria trimestral e segunda rodada de entrevistas | DS como produto, IA no mesmo padrão |
 
 **Critério:** frequência de uso × dor relatada × onde a migração do front já acontece.
+Configuração e administração estreiam a flag, porque errar ali custa pouco.
+
+**Horizonte:** o redesign fecha em 6 meses, e o briefing dá 12. O segundo semestre
+é onboarding do novo layout, legado desligado e IA em todos os fluxos.
 
 **Decisão:** o que é moldura fica fixo. O que é conteúdo migra.
 
@@ -224,11 +230,3 @@ base das três frentes sai nas semanas 1 e 2.
 
 > nota: `verificar-app.js` mede RF-01, RF-03 a RF-12 e RF-15. O
 > `verificar.py` cobre RF-02, RF-13 e RF-14, os portões estáticos.
-
----
-
-## Slide 7 — Fechamento: uso de IA
-
-Fora da conta dos 6 slides da Q2. O parágrafo de uso de IA fecha a entrega
-geral, como o enunciado pede. O kit de agentes e skills fica para as
-perguntas ao vivo.
