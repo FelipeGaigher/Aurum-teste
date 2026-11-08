@@ -284,34 +284,9 @@
     return [texto, atores, local, origem];
   }
 
-  // PA-11 e PA-38: o número é texto, e copiar é um botão de ícone com dica.
-  // O DS ainda não exporta botaoCopiar: esta cópia segue o mesmo contrato (data-acao, aviso, volta em 2 s).
-  function copiarNumero(numero) {
-    const botao = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
-    botao.dataset.acao = 'copiar-numero';
-    const envolto = DS.tooltip({ alvo: botao, rotulo: 'Copiar número' });
-    const anuncio = elemento('span', 'visualmente-oculto');
-    anuncio.setAttribute('role', 'status');
-    let relogio;
-    botao.addEventListener('click', () => {
-      const area = navigator.clipboard;
-      const dica = envolto.querySelector('.dica');
-      const dizer = (texto) => {
-        anuncio.textContent = texto;
-        dica.textContent = texto;
-        clearTimeout(relogio);
-        relogio = setTimeout(() => { dica.textContent = 'Copiar número'; anuncio.textContent = ''; }, 2000);
-      };
-      if (!area) { dizer('Não foi possível copiar'); return; }
-      area.writeText(numero).then(() => dizer('Número copiado'), () => dizer('Não foi possível copiar'));
-    });
-    envolto.append(anuncio);
-    return envolto;
-  }
-
   function numeroComCopia(numero) {
     const el = elemento('span', 'celula-numero');
-    el.append(elemento('span', 'numero-processo', numero), copiarNumero(numero));
+    el.append(elemento('span', 'numero-processo', numero), DS.botaoCopiar(numero));
     return el;
   }
 
@@ -472,7 +447,7 @@
       let destaque = { rotulo: 'Número CNJ', valor: 'Caso, sem número' };
       if (r.numero) {
         const valor = elemento('span', 'detalhe-numero');
-        valor.append(elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero));
+        valor.append(elemento('span', 'numero-processo', r.numero), DS.botaoCopiar(r.numero));
         destaque = { rotulo: 'Número CNJ', valor };
       }
       const adicionarAtividade = DS.botao({ variante: 'secundario', iconeEsquerda: 'mais', rotulo: 'Adicionar atividade' });
@@ -767,7 +742,7 @@
     // O tipo é rótulo pequeno acima; o número CNJ vem em tamanho de título, com Copiar ao lado.
     const numero = elemento('div', 'ficha-numero');
     const linhaNumero = elemento('p', 'ficha-numero-valor');
-    if (r.numero) linhaNumero.append(elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero));
+    if (r.numero) linhaNumero.append(elemento('span', 'numero-processo', r.numero), DS.botaoCopiar(r.numero));
     else linhaNumero.append(elemento('span', null, 'Caso, sem número'));
     numero.append(elemento('p', 'ficha-numero-rotulo', TIPOS[r.tipo]), linhaNumero);
     const leitura = elemento('dl', 'ficha-leitura');
@@ -919,17 +894,42 @@
       return span;
     };
     const dados = extra
-      ? [['Ação', r.acao], ['Número', [elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero)]],
+      ? [['Ação', r.acao], ['Número', [elemento('span', 'numero-processo', r.numero), DS.botaoCopiar(r.numero)]],
         ['Juízo', `${r.juizo}, ${extra.foro}`], ['Link no tribunal', linkNoTribunal(extra.linkNoTribunal)],
         ['Valor da causa', reais(r.valor)],
         ['Valor da condenação', extra.valorCondenacao ? reais(extra.valorCondenacao) : 'Sem condenação até agora'],
         ['Distribuído em', dataCurta(diaDe(extra.distribuidoHaDias))], ['Criado em', dataCurta(diaDe(extra.criadoHaDias))]]
       : [['Cliente', r.cliente], ['Criado em', dataCurta(diaDe(90 + r.id))]];
-    // O protótipo não traz documento: a ficha mostra o estado vazio.
-    const documentos = DS.estadoVazio({
-      titulo: 'Nenhum documento neste processo.',
-      texto: 'Junte petições, procurações e contratos para achar tudo pela ficha. Arquivos PDF, DOCX e imagens.',
-      acao: { rotulo: 'Adicionar documentos', variante: 'secundario', iconeEsquerda: 'mais', aoClicar: foraDoPrototipo } });
+    // Documentos do processo: os de DOCUMENTOS_DE_CONTATO cujo campo processo é o número da ficha.
+    const arquivos = Object.values(window.DADOS.DOCUMENTOS_DE_CONTATO || {}).flat()
+      .filter((d) => d.processo === r.numero)
+      .sort((x, y) => y.enviadoEm.localeCompare(x.enviadoEm));
+    const adicionarDocumentos = { rotulo: 'Adicionar documentos', variante: 'secundario', iconeEsquerda: 'mais', aoClicar: foraDoPrototipo };
+    let documentos;
+    if (!arquivos.length) {
+      documentos = DS.estadoVazio({
+        titulo: 'Nenhum documento neste processo.',
+        texto: 'Junte petições, procurações e contratos para achar tudo pela ficha. Arquivos PDF, DOCX e imagens.',
+        acao: adicionarDocumentos });
+    } else {
+      documentos = elemento('div');
+      const ul = elemento('ul', 'lista-atividades');
+      ul.append(...arquivos.map((d) => {
+        const li = elemento('li', 'linha-principal');
+        const nome = elemento('a', null, d.nome);
+        nome.href = '#';
+        nome.addEventListener('click', (e) => { e.preventDefault(); foraDoPrototipo(); });
+        const rotulo = elemento('span', 'texto-com-icone');
+        rotulo.append(DS.icone('arquivar'), nome);
+        const [ano, mes, dia] = d.enviadoEm.split('-');
+        li.append(rotulo, DS.tag({ rotulo: d.tipo }),
+          elemento('span', 'campo-ajuda', `Enviado por ${d.enviadoPor} em ${dia}/${mes}/${ano}`));
+        return li;
+      }));
+      const adicionar = DS.botao({ variante: 'secundario', iconeEsquerda: 'mais', rotulo: adicionarDocumentos.rotulo });
+      adicionar.addEventListener('click', foraDoPrototipo);
+      documentos.append(ul, adicionar);
+    }
     const esquerda = elemento('div', 'ficha-coluna');
     if (r.resumo) esquerda.append(bloco('Resumo do caso', 2, ...conteudoDoResumo(r.resumo)).sec);
     esquerda.append(bloco(extra ? 'Dados do processo' : 'Dados do caso', 2, listaDeDados(dados)).sec);
@@ -966,7 +966,7 @@
         botaoDeIcone(`Desvincular ${grau}`, 'lixeira', foraDoPrototipo).el);
       cabeca.append(h3, icones);
       grauCard.append(cabeca, elemento('p', 'ficha-grau-nome', r.titulo), listaDeDados([
-        ['Número', [elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero)]],
+        ['Número', [elemento('span', 'numero-processo', r.numero), DS.botaoCopiar(r.numero)]],
         ['Juízo', `${r.juizo}, ${extra.foro}`], ['Réu', extra.reu], ['Advogado da outra parte', extra.advogadoContrario],
         ['Distribuído em', dataCurta(diaDe(extra.distribuidoHaDias))]]));
       historico.append(grauCard);

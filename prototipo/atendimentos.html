@@ -207,36 +207,11 @@
   const enderecoDaFicha = (a) => `${PAGINA}?ficha=1&id=${encodeURIComponent(a.id)}`;
   const fichaDoProcesso = (numero) => `processos.html?ficha=${PROCESSOS.findIndex((p) => p.numero === numero) + 1}`;
 
-  // PA-11 e PA-38: o número é texto, e copiar é um botão de ícone com dica.
-  // O DS ainda não exporta botaoCopiar: esta cópia segue o mesmo contrato (data-acao, aviso, volta em 2 s).
-  function copiarNumero(numero) {
-    const botao = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
-    botao.dataset.acao = 'copiar-numero';
-    const envolto = DS.tooltip({ alvo: botao, rotulo: 'Copiar número' });
-    const anuncio = elemento('span', 'visualmente-oculto');
-    anuncio.setAttribute('role', 'status');
-    let relogio;
-    botao.addEventListener('click', () => {
-      const area = navigator.clipboard;
-      const dica = envolto.querySelector('.dica');
-      const dizer = (texto) => {
-        anuncio.textContent = texto;
-        dica.textContent = texto;
-        clearTimeout(relogio);
-        relogio = setTimeout(() => { dica.textContent = 'Copiar número'; anuncio.textContent = ''; }, 2000);
-      };
-      if (!area) { dizer('Não foi possível copiar'); return; }
-      area.writeText(numero).then(() => dizer('Número copiado'), () => dizer('Não foi possível copiar'));
-    });
-    envolto.append(anuncio);
-    return envolto;
-  }
-
   // Na tabela, o número leva à ficha do processo e copia ao lado; sem processo, texto apagado.
   function numeroDoProcesso(numero) {
     if (!numero) return elemento('span', 'texto-apagado', 'Sem processo');
     const el = elemento('span', 'celula-numero');
-    el.append(link(numero, fichaDoProcesso(numero), 'numero-processo'), copiarNumero(numero));
+    el.append(link(numero, fichaDoProcesso(numero), 'numero-processo'), DS.botaoCopiar(numero));
     return el;
   }
 
@@ -514,7 +489,7 @@
       let processo = '';
       if (a.processo) {
         processo = elemento('span', 'detalhe-numero');
-        processo.append(link(a.processo, fichaDoProcesso(a.processo), 'numero-processo'), copiarNumero(a.processo));
+        processo.append(link(a.processo, fichaDoProcesso(a.processo), 'numero-processo'), DS.botaoCopiar(a.processo));
       }
       const ficha = enderecoDaFicha(a);
       return {

@@ -413,31 +413,6 @@
   });
   document.getElementById('lista').append(detalhe.casca);
 
-  // O DS ainda não exporta botaoCopiar: esta cópia segue o mesmo contrato (data-acao, aviso, volta em 2 s).
-  function copiarNumero(numero) {
-    const botao = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
-    botao.dataset.acao = 'copiar-numero';
-    const envolto = DS.tooltip({ alvo: botao, rotulo: 'Copiar número' });
-    const anuncio = document.createElement('span');
-    anuncio.className = 'visualmente-oculto';
-    anuncio.setAttribute('role', 'status');
-    let relogio;
-    botao.addEventListener('click', () => {
-      const area = navigator.clipboard;
-      const dica = envolto.querySelector('.dica');
-      const dizer = (texto) => {
-        anuncio.textContent = texto;
-        dica.textContent = texto;
-        clearTimeout(relogio);
-        relogio = setTimeout(() => { dica.textContent = 'Copiar número'; anuncio.textContent = ''; }, 2000);
-      };
-      if (!area) { dizer('Não foi possível copiar'); return; }
-      area.writeText(numero).then(() => dizer('Número copiado'), () => dizer('Não foi possível copiar'));
-    });
-    envolto.append(anuncio);
-    return envolto;
-  }
-
   // Número de processo leva à ficha (pelo índice em DADOS.PROCESSOS) e copia ao lado; contato fica texto.
   function processoOuContato(d) {
     if (!d.processo) return d.contato;
@@ -447,7 +422,7 @@
     a.textContent = d.processo;
     const el = document.createElement('span');
     el.className = 'celula-numero';
-    el.append(a, copiarNumero(d.processo));
+    el.append(a, DS.botaoCopiar(d.processo));
     return el;
   }
 

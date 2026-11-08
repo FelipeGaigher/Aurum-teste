@@ -631,25 +631,10 @@
     return `processos.html?ficha=${i + 1 || 1}`;
   }
 
-  // O mesmo botão de copiar da linha: o verificador lê data-acao="copiar-numero".
-  function copiarNumero(numero) {
-    const el = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
-    el.dataset.acao = 'copiar-numero';
-    const envolto = DS.tooltip({ alvo: el, rotulo: 'Copiar número' });
-    const dica = envolto.querySelector('.dica');
-    el.addEventListener('click', () => {
-      const area = navigator.clipboard;
-      const avisar = (texto) => { if (dica) dica.textContent = texto; };
-      if (!area) { avisar('Não foi possível copiar'); return; }
-      area.writeText(numero).then(() => avisar('Número copiado'), () => avisar('Não foi possível copiar'));
-    });
-    return envolto;
-  }
-
   function valorDoProcesso(numero) {
     if (!numero) return '';
     const el = criar('span', 'detalhe-processo');
-    el.append(criar('span', 'numero-processo', numero), copiarNumero(numero));
+    el.append(criar('span', 'numero-processo', numero), DS.botaoCopiar(numero));
     return el;
   }
 
