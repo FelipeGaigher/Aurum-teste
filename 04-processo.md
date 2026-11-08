@@ -75,3 +75,28 @@ com data. O que foi entregue fica no commit, não aqui.
   públicas. Site da Aurum, central de ajuda, lojas de app e avaliações. O
   resultado vai em `03-pesquisa-astrea.md`. Ele segue útil para a Q3 mesmo
   com o acesso recuperado.
+
+### Os slides da Q3 e a exportação sem o MCP
+
+- A Q3 tinha protótipo, página de componentes e documento-fonte, mas não
+  tinha slides. O deck nasceu em `03-slides-q3.html`, no molde das
+  Questões 1 e 2: um frame da tela e três páginas.
+- Os componentes aparecem ao vivo no slide, com os tokens do protótipo,
+  e não como imagem. O slide da decisão difícil mostra o mesmo card nas
+  duas ordens, título primeiro e prazo primeiro, lado a lado.
+- Caminho para o Figma sem o MCP: `scripts/exportar-slides.js` abre cada
+  deck no Chrome da máquina, pelo Playwright. Cada frame vira um PNG de
+  1920 por 1080 em `slides/`. O Figma recebe os 16 PNG por arrastar.
+- As fontes Fraunces e Geist não estão instaladas na máquina. O script
+  injeta o Google Fonts só na hora da exportação. O HTML continua sem CDN,
+  e aberto direto no navegador cai em Georgia e Segoe UI.
+- O Playwright do MCP já estava no cache do npx, mas o navegador que ele
+  pedia não. A saída foi o canal `chrome`, que usa o Chrome instalado.
+- Divergência achada: `03-componentes.html` ainda usa corpo 14px e
+  controle 40px. O protótipo commitado usa 13px e 36px. O deck da Q3
+  seguiu o protótipo, que é a tela. A página de componentes fica para
+  alinhar.
+- Dois terminais trabalharam no mesmo repositório ao mesmo tempo. O
+  Kanban mudou duas vezes durante a montagem do deck. A captura da tela
+  foi refeita depois do último commit. Regra que ficou: capturar só com a
+  árvore limpa.
