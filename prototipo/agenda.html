@@ -123,18 +123,28 @@
 
   /* atividade dentro da célula: o texto diz o estado, a cor reforça (PA-34) */
   .itens-dia { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; min-width: 0; }
+  .itens-dia > li { min-width: 0; }
   .item-dia {
+    display: block;
+    width: 100%;
     min-width: 0;
     padding: 0 var(--space-1);
     overflow: hidden;
     background-color: var(--component-chip-bg);
+    border: 0;
     border-left: var(--focus-width) solid var(--color-border-strong);
+    border-radius: 0;
     color: var(--color-text-default);
+    font: inherit;
     font-size: var(--font-size-label);
     line-height: var(--font-leading-base);
+    text-align: start;
     text-overflow: ellipsis;
     white-space: nowrap;
+    cursor: pointer;
   }
+  .item-dia:hover { box-shadow: inset 0 0 0 var(--border-width) var(--color-border-strong); }
+  .item-dia:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
   .semana-dias .item-dia { white-space: normal; }
   .item-dia[data-prazo="vencido"] { background-color: var(--color-bg-danger); border-left-color: var(--color-text-danger); }
   .item-dia[data-prazo="hoje"] { background-color: var(--color-bg-warning); border-left-color: var(--color-text-warning); }
@@ -166,15 +176,47 @@
   .hora-botao:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
   .lista-dia + .lista-dia { margin-top: var(--space-4); }
 
+  /* Coluna da direita: o detalhe do item escolhido em cima, as prioridades embaixo, na altura da grade. */
+  .agenda-lado {
+    position: sticky;
+    top: calc(var(--component-header-height) + var(--space-5));
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    max-height: var(--grade-altura, calc(100vh - var(--component-header-height) - 2 * var(--space-5)));
+  }
+  .agenda-lado > [hidden] { display: none; }
+  /* O detalhe ocupa a altura que precisa; as prioridades ficam com o resto, com no mínimo quatro linhas. */
+  .agenda-lado .painel-detalhe {
+    position: static;
+    display: flex;
+    flex: none;
+    max-height: calc(var(--grade-altura, 640px) - var(--density-row-compact) * 4 - var(--space-3));
+  }
+  .agenda-lado .painel-detalhe-card { flex: 1 1 auto; max-height: none; min-height: 0; }
+  .agenda-lado .painel-detalhe-reabrir { display: none; }
+  .painel-detalhe-rodape a.botao { text-decoration: none; }
+  .detalhe-processo { display: inline-flex; align-items: center; gap: var(--space-1); }
+  .acao-redonda { border-radius: var(--radius-round); border-color: var(--color-border-strong); background-color: var(--color-bg-page); color: var(--color-text-default); }
+  .acao-redonda:hover, .acao-redonda:focus-visible { border-color: var(--color-action); }
+  /* No rodapé do painel a dica abre para cima, senão corta na borda. */
+  .tooltip:has(> .acao-redonda) .dica { top: auto; right: auto; left: 50%; bottom: 100%; margin: 0 0 var(--space-1); transform: translateX(-50%); }
+
+  /* Item escolhido: a mesma marca da Área de trabalho, na linha, no item da grade e na prioridade. */
+  .linha-atividade[data-id] { cursor: pointer; }
+  .linha-atividade[data-id]:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
+  .linha-atividade.is-selecionado { background-color: var(--color-bg-hover); box-shadow: inset calc(var(--focus-width) + var(--border-width)) 0 0 var(--color-action); }
+  .item-dia.is-selecionado, .prioridade-botao.is-selecionado { box-shadow: inset 0 0 0 var(--border-width) var(--color-action); }
+
   /* PA-48: prazos a vencer numa lista só, ao lado da grade */
   .prioridades {
+    flex: 1 1 auto;
+    min-height: calc(var(--density-row-compact) * 4);
     padding: var(--space-4);
     background-color: var(--component-card-bg);
     border: var(--border-width) solid var(--component-card-border);
     border-radius: var(--radius-card);
-    position: sticky;
-    top: calc(var(--component-header-height) + var(--space-5));
-    max-height: var(--grade-altura, calc(100vh - var(--component-header-height) - 2 * var(--space-5)));
     overflow-y: auto;
   }
   .prioridades-ajuda { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-size: var(--font-size-label); }
@@ -185,8 +227,23 @@
   .prioridade { display: grid; justify-items: start; gap: var(--space-1); }
   .prioridade-titulo { font-weight: var(--font-weight-medium); overflow-wrap: anywhere; }
 
+  /* Filtros ao lado da busca, com rótulo fixo. A barra de cima tem visões, busca, filtros e Criar;
+     a linha de baixo tem o período, a contagem e o Limpar filtros (a barra inteira não cabe em 1440). */
+  .agenda-filtros { display: flex; align-items: flex-end; gap: var(--space-3); }
+  .agenda-resultado { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-4); margin-bottom: var(--space-3); }
+  .agenda-resultado .agenda-contagem:not(:empty) { margin-bottom: 0; }
+  @media (min-width: 1101px) {
+    .agenda-barra { flex-wrap: nowrap; }
+    .agenda-buscar { flex: 0 1 var(--component-field-width-p); min-width: calc(var(--component-field-width-p) * 0.7); }
+    .agenda-buscar .campo { width: 100%; }
+    .agenda-filtros { flex: 0 1 calc(var(--component-field-width-p) * 2 + var(--space-3)); min-width: 0; }
+    .agenda-filtros .campo { flex: 1 1 0; width: auto; min-width: calc(var(--component-field-width-p) * 0.7); max-width: var(--component-field-width-p); }
+    .agenda-criar { flex: none; }
+  }
+
   @media (max-width: 1180px) {
     .agenda { grid-template-columns: minmax(0, 1fr); }
+    .agenda-lado { position: static; max-height: none; }
   }
 </style>
 </head>
@@ -195,19 +252,25 @@
   <main id="conteudo">
     <div class="agenda-barra" id="agenda-barra">
       <div class="visoes" role="tablist" aria-label="Visão da agenda" id="visoes"></div>
-      <div class="agenda-navegar" id="agenda-navegar"></div>
-      <h2 class="agenda-periodo" id="agenda-periodo" aria-live="polite"></h2>
       <div class="agenda-buscar" id="agenda-buscar"></div>
+      <div class="agenda-filtros" id="agenda-filtros" role="group" aria-label="Filtros da agenda"></div>
       <div class="agenda-criar" id="agenda-criar"></div>
     </div>
-    <p class="agenda-contagem" id="agenda-contagem" role="status"></p>
+    <div class="agenda-resultado">
+      <div class="agenda-navegar" id="agenda-navegar"></div>
+      <h2 class="agenda-periodo" id="agenda-periodo" aria-live="polite"></h2>
+      <p class="agenda-contagem" id="agenda-contagem" role="status"></p>
+      <span id="agenda-limpar"></span>
+    </div>
     <div class="agenda">
       <section class="grade-agenda" id="grade-agenda" tabindex="-1" role="tabpanel" aria-labelledby="visao-dia"></section>
-      <aside class="prioridades" aria-labelledby="prioridades-titulo">
-        <h2 id="prioridades-titulo">Prioridades por prazo</h2>
-        <p class="prioridades-ajuda">Tudo que está em aberto, do prazo mais urgente ao mais distante.</p>
-        <div id="prioridades-lista"></div>
-      </aside>
+      <div class="agenda-lado" id="agenda-lado">
+        <aside class="prioridades" aria-labelledby="prioridades-titulo">
+          <h2 id="prioridades-titulo">Prioridades por prazo</h2>
+          <p class="prioridades-ajuda">Tudo que está em aberto, do prazo mais urgente ao mais distante.</p>
+          <div id="prioridades-lista"></div>
+        </aside>
+      </div>
     </div>
   </main>
 </div>
@@ -267,17 +330,60 @@
     const digitos = soDigitos(termo);
     return /^[\d\s.\-/]+$/.test(termo) && digitos !== '' && soDigitos(a.processo).includes(digitos);
   }
-  function visiveis() { return ATIVIDADES.filter(casa); }
+  // Filtros de pessoa e de tipo, como no Astrea; a escolha volta ao abrir a página.
+  // Valor gravado fora das opções volta ao padrão: a pessoa pode ter saído da conta.
+  const CHAVE_FILTROS = 'astrea-agenda-filtros';
+  const FILTROS = {
+    responsavel: {
+      rotulo: 'Responsável',
+      opcoes: [['todas', 'Todas as pessoas'], ...[...window.DADOS.RESPONSAVEIS].sort().map((nome) => [nome, nome])],
+      aceita: (valor, a) => valor === 'todas' || a.responsavel === valor,
+    },
+    tipo: {
+      rotulo: 'Tipo',
+      opcoes: [['todos', 'Todos'], ...Object.entries(TIPOS)],
+      aceita: (valor, a) => valor === 'todos' || a.tipo === valor,
+    },
+  };
+  const PADRAO = Object.fromEntries(Object.entries(FILTROS).map(([chave, f]) => [chave, f.opcoes[0][0]]));
+  const filtro = lerFiltros();
+
+  function lerFiltros() {
+    let salvo = {};
+    try { salvo = JSON.parse(localStorage.getItem(CHAVE_FILTROS)) || {}; } catch (e) { salvo = {}; }
+    return Object.fromEntries(Object.entries(FILTROS).map(([chave, f]) => {
+      const valido = f.opcoes.some(([opcao]) => opcao === salvo[chave]);
+      return [chave, valido ? salvo[chave] : PADRAO[chave]];
+    }));
+  }
+  function gravarFiltros() {
+    try { localStorage.setItem(CHAVE_FILTROS, JSON.stringify(filtro)); } catch (e) { /* sem armazenamento */ }
+  }
+  function filtrando() { return Object.keys(FILTROS).some((chave) => filtro[chave] !== PADRAO[chave]); }
+  function passa(a) { return Object.entries(FILTROS).every(([chave, f]) => f.aceita(filtro[chave], a)); }
+
+  function visiveis() { return ATIVIDADES.filter((a) => casa(a) && passa(a)); }
 
   function doDia(d) { return visiveis().filter((a) => mesmoDia(a.data, d)); }
 
   // --- peças das visões ----------------------------------------------------
 
+  // Clique e Enter abrem o detalhe; o número e o copiar da linha seguem sozinhos.
   function linha(a) {
-    return DS.linhaAtividade({
+    const el = DS.linhaAtividade({
       titulo: a.titulo, tipo: a.tipo, estadoPrazo: a.estadoPrazo, prazo: a.rotulo,
-      processo: a.processo, responsavel: a.responsavel, densidade: 'compacta',
+      processo: a.processo, hrefProcesso: a.processo ? urlDoProcesso(a.processo) : undefined,
+      responsavel: a.responsavel, densidade: 'compacta',
     });
+    el.dataset.id = a.id;
+    el.tabIndex = 0;
+    el.addEventListener('click', (e) => { if (!e.target.closest('button, a')) detalhe.abrir(a.id, el); });
+    el.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || e.target !== el) return;
+      e.preventDefault();
+      detalhe.abrir(a.id, el);
+    });
+    return el;
   }
 
   function listaDeLinhas(itens) {
@@ -288,12 +394,18 @@
 
   const PREFIXO = { vencido: 'Vencido', concluido: 'Concluída' };
 
+  // Item da semana e do mês: botão que abre o detalhe ao lado (Enter e Espaço vêm do botão).
   function itemDoDia(a) {
-    const li = criar('li', 'item-dia');
-    li.dataset.prazo = a.estadoPrazo;
-    li.title = `${TIPOS[a.tipo]}, ${a.rotulo}: ${a.titulo}`;
-    if (PREFIXO[a.estadoPrazo]) li.append(criar('span', 'item-estado', `${PREFIXO[a.estadoPrazo]}: `));
-    li.append(`${TIPOS[a.tipo]} · ${a.titulo}`);
+    const li = criar('li');
+    const botao = criar('button', 'item-dia');
+    botao.type = 'button';
+    botao.dataset.prazo = a.estadoPrazo;
+    botao.dataset.id = a.id;
+    botao.title = `${TIPOS[a.tipo]}, ${a.rotulo}: ${a.titulo}`;
+    if (PREFIXO[a.estadoPrazo]) botao.append(criar('span', 'item-estado', `${PREFIXO[a.estadoPrazo]}: `));
+    botao.append(`${TIPOS[a.tipo]} · ${a.titulo}`);
+    botao.addEventListener('click', () => detalhe.abrir(a.id, botao));
+    li.append(botao);
     return li;
   }
 
@@ -457,16 +569,20 @@
   }
 
   function contagem(n) {
-    return `${n} ${n === 1 ? 'atividade encontrada' : 'atividades encontradas'} ${NO_PERIODO[estado.visao]}`;
+    return `${n} ${n === 1 ? 'atividade' : 'atividades'} ${NO_PERIODO[estado.visao]}`;
   }
 
   function avisoBusca() {
     const total = visiveis().length;
+    const titulo = buscando()
+      ? `Nenhuma atividade para “${busca.termo.trim()}” ${NO_PERIODO[estado.visao]}`
+      : `Nenhuma atividade com estes filtros ${NO_PERIODO[estado.visao]}`;
+    const semNenhuma = buscando()
+      ? 'A busca olha o título, o número do processo e o nome do responsável. Confira o que foi digitado ou limpe a busca.'
+      : 'Nenhuma atividade da agenda tem esta pessoa e este tipo. Troque os filtros ou use Limpar filtros.';
     const aviso = DS.estadoVazio({
-      titulo: `Nenhuma atividade para “${busca.termo.trim()}” ${NO_PERIODO[estado.visao]}`,
-      texto: total
-        ? `Há ${total} em outros períodos. Use as setas de período ou troque de visão.`
-        : 'A busca olha o título, o número do processo e o nome do responsável. Confira o que foi digitado ou limpe a busca.',
+      titulo,
+      texto: total ? `Há ${total} em outros períodos. Use as setas de período ou troque de visão.` : semNenhuma,
     });
     aviso.classList.add('agenda-vazio');
     return aviso;
@@ -478,28 +594,166 @@
     const destino = document.getElementById('prioridades-lista');
     const abertas = visiveis().filter((a) => !a.concluida).sort((a, b) => a.prazoEmDias - b.prazoEmDias);
     if (!abertas.length) {
-      destino.replaceChildren(buscando() && ATIVIDADES.length
-        ? DS.estadoVazio({ titulo: `Nenhum prazo em aberto para “${busca.termo.trim()}”`, texto: 'Limpe a busca para ver todas as prioridades.' })
+      const motivo = buscando() ? `para “${busca.termo.trim()}”` : 'com estes filtros';
+      destino.replaceChildren((buscando() || filtrando()) && ATIVIDADES.length
+        ? DS.estadoVazio({ titulo: `Nenhum prazo em aberto ${motivo}`, texto: 'Limpe a busca e os filtros para ver todas as prioridades.' })
         : DS.estadoVazio({ titulo: 'Nenhum prazo em aberto', texto: 'Quando houver atividade a vencer, ela entra aqui pela ordem do prazo.' }));
       return;
     }
     const ol = criar('ol');
     ol.append(...abertas.map((a) => {
       const li = criar('li', 'prioridade');
-      // Cada prioridade é ação: abre o dia da atividade na grade (pergunta de Felipe: "isso é informativo?").
+      // Cada prioridade é ação: abre o dia da atividade na grade e o detalhe dela ao lado
+      // (pergunta de Felipe: "isso é informativo?").
       const botao = criar('button', 'prioridade-botao');
       botao.type = 'button';
-      botao.setAttribute('aria-label', `Abrir o dia de ${a.titulo}`);
+      botao.dataset.id = a.id;
+      botao.setAttribute('aria-label', `Abrir ${a.titulo}, no dia dela`);
       botao.append(DS.chipPrazo({ estadoPrazo: a.estadoPrazo, rotulo: a.rotulo }), criar('span', 'prioridade-titulo', a.titulo), DS.tag({ rotulo: TIPOS[a.tipo] }));
       botao.addEventListener('click', () => {
-        estado.data = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + a.prazoEmDias);
-        document.getElementById('visao-dia').click();
-        gradeEl.focus({ preventScroll: true });
+        estado.data = a.data;
+        trocar('dia');
+        detalhe.abrir(a.id, botao);
       });
       li.append(botao);
       return li;
     }));
     destino.replaceChildren(ol);
+    detalhe.sincronizar();
+  }
+
+  // --- detalhe do item, acima das prioridades (padrão da Área de trabalho) ---
+
+  const NOME_DA_LISTA = { tarefa: 'Lista de tarefas', prazo: 'Lista de tarefas', audiencia: 'Agenda', evento: 'Agenda' };
+
+  function urlDoProcesso(numero) {
+    const i = (window.DADOS.PROCESSOS || []).findIndex((p) => p.numero === numero);
+    return `processos.html?ficha=${i + 1 || 1}`;
+  }
+
+  // O mesmo botão de copiar da linha: o verificador lê data-acao="copiar-numero".
+  function copiarNumero(numero) {
+    const el = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
+    el.dataset.acao = 'copiar-numero';
+    const envolto = DS.tooltip({ alvo: el, rotulo: 'Copiar número' });
+    const dica = envolto.querySelector('.dica');
+    el.addEventListener('click', () => {
+      const area = navigator.clipboard;
+      const avisar = (texto) => { if (dica) dica.textContent = texto; };
+      if (!area) { avisar('Não foi possível copiar'); return; }
+      area.writeText(numero).then(() => avisar('Número copiado'), () => avisar('Não foi possível copiar'));
+    });
+    return envolto;
+  }
+
+  function valorDoProcesso(numero) {
+    if (!numero) return '';
+    const el = criar('span', 'detalhe-processo');
+    el.append(criar('span', 'numero-processo', numero), copiarNumero(numero));
+    return el;
+  }
+
+  function acaoRedonda(acao) {
+    const b = DS.botao({ variante: 'icone', iconeEsquerda: acao.icone, rotulo: acao.rotulo });
+    b.classList.add('acao-redonda');
+    b.dataset.acao = acao.chave;
+    b.addEventListener('click', acao.aoClicar);
+    return DS.tooltip({ alvo: b, rotulo: acao.rotulo });
+  }
+
+  // Concluir e Adiar mudam a atividade no lugar e redesenham a grade e as prioridades.
+  function alterar(a, mudanca) {
+    Object.assign(a, naAgenda({ ...a, ...mudanca }));
+    desenhar();
+    prioridades();
+    const foco = document.querySelector(`#agenda-detalhe [data-acao="${mudanca.status ? 'concluir' : 'adiar'}"], #agenda-detalhe [data-acao="reabrir"]`);
+    if (foco) foco.focus();
+  }
+
+  function acoesDe(a) {
+    if (a.concluida) return [{ chave: 'reabrir', rotulo: 'Reabrir', icone: 'editar', aoClicar: () => alterar(a, { status: 'a-fazer' }) }];
+    return [
+      { chave: 'concluir', rotulo: 'Concluir', icone: 'marca', aoClicar: () => alterar(a, { status: 'concluido' }) },
+      { chave: 'adiar', rotulo: 'Adiar 1 dia', icone: 'calendario', aoClicar: () => alterar(a, { prazoEmDias: a.prazoEmDias + 1 }) },
+    ];
+  }
+
+  function dadosDoDetalhe(a, navegavel) {
+    const linhas = [
+      { icone: 'arquivar', rotulo: 'Processo', valor: valorDoProcesso(a.processo) },
+      { icone: 'pessoa', rotulo: 'Responsável', valor: a.responsavel ? DS.avatar({ nome: a.responsavel, mostrarNome: true }) : '' },
+      { icone: 'calendario', rotulo: 'Lista', valor: NOME_DA_LISTA[a.tipo] },
+      { icone: 'marca', rotulo: 'Situação', valor: a.concluida ? 'Concluída' : 'Aberta' },
+    ];
+    const abrir = criar('a', 'botao botao-primario', 'Abrir processo');
+    abrir.href = urlDoProcesso(a.processo);
+    abrir.dataset.acao = 'abrir-processo';
+    return {
+      titulo: a.titulo,
+      chips: [DS.chipPrazo({ estadoPrazo: a.estadoPrazo, rotulo: a.rotulo }), DS.tag({ rotulo: TIPOS[a.tipo] })],
+      destaque: { rotulo: 'Prazo', valor: a.rotulo },
+      linhas, corpo: [], acoes: [...acoesDe(a).map(acaoRedonda), ...(a.processo ? [abrir] : [])], navegavel,
+    };
+  }
+
+  // Sem escolha, o painel fica escondido e a coluna mostra só as prioridades.
+  // O × esconde o painel inteiro; o próximo clique num item o mostra de novo.
+  // Se o filtro ou a busca tira a atividade escolhida, o painel some com ela.
+  function criarDetalhe() {
+    let escolhido = null;
+    let origem = null;
+    const ordem = () => visiveis().slice().sort((x, y) => x.prazoEmDias - y.prazoEmDias);
+    const painel = DS.painelDetalhe({
+      rotulo: 'Atividade escolhida',
+      rotulos: { anterior: 'Atividade anterior', proximo: 'Próxima atividade',
+        esconder: 'Fechar o detalhe da atividade', mostrar: 'Mostrar o detalhe da atividade' },
+      aoAnterior: () => andar(-1),
+      aoProximo: () => andar(1),
+      aoFechar: fechar,
+    });
+    painel.el.id = 'agenda-detalhe';
+    painel.el.hidden = true;
+    document.getElementById('agenda-lado').prepend(painel.el);
+
+    function andar(passo) {
+      const itens = ordem();
+      const i = Math.max(0, itens.findIndex((a) => a.id === escolhido));
+      abrir(itens[(i + passo + itens.length) % itens.length].id, null);
+    }
+
+    function fechar() {
+      escolhido = null;
+      painel.el.hidden = true;
+      marcar('');
+      if (origem && origem.isConnected) origem.focus(); else gradeEl.focus({ preventScroll: true });
+    }
+
+    function marcar(id) {
+      document.querySelectorAll('#grade-agenda [data-id], #prioridades-lista [data-id]').forEach((el) => {
+        const sim = el.dataset.id === id;
+        el.classList.toggle('is-selecionado', sim);
+        if (sim) el.setAttribute('aria-current', 'true'); else el.removeAttribute('aria-current');
+      });
+    }
+
+    function sincronizar() {
+      const itens = ordem();
+      const a = itens.find((x) => x.id === escolhido);
+      if (!a) { if (escolhido) { escolhido = null; painel.el.hidden = true; } marcar(''); return; }
+      painel.mostrar(dadosDoDetalhe(a, itens.length > 1));
+      marcar(a.id);
+    }
+
+    function abrir(id, gatilho) {
+      if (!visiveis().some((a) => a.id === id)) return;
+      escolhido = id;
+      if (gatilho) origem = gatilho;
+      if (painel.oculto()) painel.reabrir();
+      painel.el.hidden = false;
+      sincronizar();
+    }
+
+    return { abrir, sincronizar };
   }
 
   // --- barra: abas e navegação ---------------------------------------------
@@ -556,6 +810,7 @@
     document.documentElement.style.setProperty('--grade-altura', `${Math.max(320, Math.round(sobra))}px`);
   }
   window.addEventListener('resize', ajustarAltura);
+  const detalhe = criarDetalhe();
 
   function desenhar() {
     abas.forEach((aba) => {
@@ -568,19 +823,47 @@
     grade.dataset.visaoAtual = estado.visao;
     document.getElementById('agenda-periodo').textContent = rotuloDoPeriodo(estado.visao, estado.data);
     const pecas = DESENHO[estado.visao](estado.data);
-    const achados = buscando() && ATIVIDADES.length ? achadosNoPeriodo() : null;
+    const achados = (buscando() || filtrando()) && ATIVIDADES.length ? achadosNoPeriodo() : null;
     document.getElementById('agenda-contagem').textContent = achados === null ? '' : contagem(achados);
+    document.getElementById('agenda-limpar').replaceChildren(...(filtrando() ? [botaoLimpar] : []));
     const avisos = !ATIVIDADES.length ? [avisoVazio()] : achados === 0 ? [avisoBusca()] : [];
     grade.replaceChildren(...avisos, ...pecas);
     ajustarAltura();
+    detalhe.sincronizar();
   }
 
   document.getElementById('agenda-buscar').append(DS.busca({
     rotulo: 'Buscar na agenda',
-    placeholder: 'Título, processo ou responsável',
-    largura: 'm',
+    placeholder: 'Título, nº ou pessoa',
+    largura: 'p',
     aoMudar: (valor) => { busca.termo = valor; desenhar(); prioridades(); },
   }));
+
+  // --- filtros: pessoa e tipo ----------------------------------------------
+
+  function montarFiltros() {
+    const seletores = Object.entries(FILTROS).map(([chave, f]) => {
+      const el = DS.seletor({
+        rotulo: f.rotulo, opcoes: f.opcoes, valor: filtro[chave], largura: 'p',
+        aoEscolher: (valor) => { filtro[chave] = valor; gravarFiltros(); desenhar(); prioridades(); },
+      });
+      el.dataset.filtro = chave;
+      return el;
+    });
+    document.getElementById('agenda-filtros').replaceChildren(...seletores);
+  }
+
+  const botaoLimpar = DS.botao({ variante: 'texto', tamanho: 'pequeno', rotulo: 'Limpar filtros' });
+  botaoLimpar.dataset.acao = 'limpar-filtros';
+  botaoLimpar.addEventListener('click', () => {
+    Object.assign(filtro, PADRAO);
+    gravarFiltros();
+    montarFiltros();
+    desenhar();
+    prioridades();
+    document.querySelector('#agenda-filtros button').focus();
+  });
+  montarFiltros();
 
   // --- criar atividade -----------------------------------------------------
 
