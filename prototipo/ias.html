@@ -36,7 +36,7 @@ IAS.forEach((ia) => {
   h.textContent = ia.nome;
   const p = document.createElement('p');
   p.textContent = ia.texto;
-  li.append(h, p, DS.tag({ rotulo: ia.vale ? 'Vale no plano atual' : 'Não vale no plano atual' }));
+  li.append(h, p, DS.tag({ rotulo: ia.vale ? 'Vale no plano atual' : 'Fora do plano atual' }));
   lista.append(li);
 });
 document.getElementById('bloqueio').append(DS.upsell({ titulo: 'Três das quatro IAs estão em planos superiores', texto: 'Seu plano de teste, o Light, inclui a priorização de andamentos.' }));
