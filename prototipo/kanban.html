@@ -1305,6 +1305,36 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 /* os tópicos de deveres em negrito, no acordeão e na vista da subtarefa */
 .subtarefa-deveres { margin: 0; padding-left: var(--space-5); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); }
 #subtarefa-deveres li { font-weight: var(--font-weight-semibold); }
+/* skills por papel: o que cada equipe traz e como passa adiante. Ocupa a largura toda, abaixo das duas colunas. */
+.detalhe-skills { grid-column: 1 / -1; }
+.detalhe-skills h3 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+  color: var(--color-text-muted);
+}
+.skills-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.skills-papel { display: grid; gap: var(--space-2); align-content: start; }
+.skills-papel > .chip { justify-self: start; }
+.skills-papel dl { display: grid; gap: var(--space-2); margin: 0; }
+.skills-papel dt {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+  text-transform: uppercase;
+  letter-spacing: var(--font-tracking-caps);
+}
+.skills-papel dd { margin: var(--space-1) 0 0; font-size: var(--font-size-body); }
+.skills-kit { margin: var(--space-4) 0 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
 @media (max-width: 800px) { .detalhe-colunas { grid-template-columns: minmax(0, 1fr); } }
 
 /* responsivo. Tablet: as colunas param de crescer e o quadro rola. */
@@ -1596,6 +1626,11 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
       <section class="detalhe-subtarefas" aria-labelledby="detalhe-subtarefas-titulo">
         <h3 id="detalhe-subtarefas-titulo">Subtarefas <span id="detalhe-progresso" class="detalhe-progresso"></span></h3>
         <div id="detalhe-subtarefas"></div>
+      </section>
+      <section class="detalhe-skills" aria-labelledby="detalhe-skills-titulo">
+        <h3 id="detalhe-skills-titulo">Skills para compartilhar</h3>
+        <ul id="detalhe-skills" class="skills-lista"></ul>
+        <p class="skills-kit">O kit de skills e agentes do DS fica no repositório, em <code>skills/astrea-ds</code>. Quem entra na história usa o mesmo kit.</p>
       </section>
     </div>
   </div>
@@ -2571,6 +2606,58 @@ function listaDeChips(nomes) {
   return nomes.map((nome) => { const li = el('li', null); li.append(chipTexto(nome)); return li; });
 }
 
+// Skills por papel, tiradas do plano da Q2 (02-plano-ds.md, slides 2, 3, 5 e 6): o que cada papel traz e por onde passa adiante.
+// Nenhum ritual novo: o plano compartilha pelo pedido, pela triagem semanal, pela biblioteca, pelo pacote e pelo kit.
+const SKILLS_POR_PAPEL = {
+  'Direção do DS': {
+    traz: 'Define o que entra no DS, mantém a fonte dos tokens em JSON e lidera o redesign.',
+    compartilha: 'Triagem semanal de 30 minutos com o ponto técnico, e changelog a cada versão do pacote.' },
+  'Engenharia': {
+    traz: 'Mantém o pacote de código e gera CSS e TS da mesma fonte pelo Style Dictionary. Tem o veto técnico.',
+    compartilha: 'Veto sempre com justificativa na triagem semanal, e os portões verificar.py e verificar-app.js no repositório.' },
+  'Designer forte em Figma': {
+    traz: 'Estrutura da biblioteca, variantes e auditoria. Variáveis com escopo nas três coleções do Figma.',
+    compartilha: 'Uma biblioteca só, Astrea DS, publicada para os quatro squads.' },
+  'Designer perto do código': {
+    traz: 'Code Connect, Storybook e revisão do pacote.',
+    compartilha: 'Code Connect liga cada componente do Figma ao pacote, e o Storybook mostra todos os estados.' },
+  'Designer perto do usuário': {
+    traz: 'Padrões de UX writing e pesquisa nos fluxos.',
+    compartilha: 'Os padrões entram no DS pela triagem semanal e servem a todas as telas.' },
+  'Designer do squad Atividades': {
+    traz: 'O que o roadmap de Atividades pede e trava.',
+    compartilha: 'Pedido de componente com problema, onde aparece e quem mais usa. Dois squads usam, entra no DS.' },
+  'Designer do squad Processos': {
+    traz: 'O que o roadmap de Processos pede e trava.',
+    compartilha: 'Pedido de componente com problema, onde aparece e quem mais usa. Dois squads usam, entra no DS.' },
+  'Designer do squad Clientes': {
+    traz: 'O que o roadmap de Clientes pede e trava.',
+    compartilha: 'Pedido de componente com problema, onde aparece e quem mais usa. Dois squads usam, entra no DS.' },
+  'Líderes dos squads': {
+    traz: 'O tempo dos designers e a prioridade no roadmap.',
+    compartilha: 'Combinam o tempo de cada designer no discovery, sem tarefa extra.' },
+  'Marketing': {
+    traz: 'Tokens de marca.',
+    compartilha: 'A ponte com o marketing passa pelo designer perto do marketing, nos tokens de marca.' },
+  'Suporte': {
+    traz: 'Chamados por módulo, a métrica de experiência.',
+    compartilha: 'Os chamados por módulo entram na linha de base do mês 1 e no acompanhamento do beta.' },
+};
+
+function itemSkills(papel) {
+  const skills = SKILLS_POR_PAPEL[papel];
+  if (!skills) throw new Error('papel sem skills: ' + papel);
+  const item = el('li', 'skills-papel');
+  const dados = el('dl', null);
+  for (const [rotulo, texto] of [['Traz', skills.traz], ['Compartilha', skills.compartilha]]) {
+    const linha = el('div', null);
+    linha.append(el('dt', null, rotulo), el('dd', null, texto));
+    dados.append(linha);
+  }
+  item.append(chipTexto(papel), dados);
+  return item;
+}
+
 function preencherDetalhe(historia) {
   const campos = { titulo: historia.titulo, objetivo: historia.objetivo, entregavel: historia.entregavel, pronto: historia.pronto };
   for (const [campo, texto] of Object.entries(campos)) {
@@ -2583,6 +2670,7 @@ function preencherDetalhe(historia) {
     tag('Situação', STATUS[historia.status], historia.status),
   );
   document.getElementById('detalhe-equipes').replaceChildren(...listaDeChips(historia.equipes));
+  document.getElementById('detalhe-skills').replaceChildren(...historia.equipes.map(itemSkills));
   const subtarefas = subtarefasDe(historia);
   const feitas = subtarefas.filter((s) => s.status === 'feito').length;
   document.getElementById('detalhe-progresso').textContent = feitas + ' de ' + subtarefas.length + ' feitas';
