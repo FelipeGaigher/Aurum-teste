@@ -942,7 +942,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Produces: `DS.chipPrazo`, `DS.chipFiltro`, `DS.tag`, `DS.selo`, `DS.avatar`, `DS.tabela`, `DS.cardContato`, `DS.paginacao`.
 - Produces: a classe `.chip-prazo`, com texto e cor por estado.
 
-- [ ] **Step 1: Confirmar o estado vermelho**
+- [x] **Step 1: Confirmar o estado vermelho**
 
 ```bash
 node scripts/verificar-app.js --rf RF-06 --grupos feedback,dados
@@ -950,7 +950,7 @@ node scripts/verificar-app.js --rf RF-06 --grupos feedback,dados
 
 Esperado: `RF-06 FALHOU`.
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 - Chip de prazo com texto e cor: vencido, hoje e próximos (PA-34).
 - Número do processo é texto, nunca link azul (PA-11). O copiar é botão de ícone com rótulo.
@@ -961,7 +961,7 @@ Esperado: `RF-06 FALHOU`.
 
 Esperado: seções `Feedback` e `Dados` completas.
 
-- [ ] **Step 3: Executar e confirmar que passa**
+- [x] **Step 3: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/astrea.css prototipo/componentes.js prototipo/design-system.html
@@ -970,7 +970,7 @@ node scripts/verificar-app.js --rf RF-06,RF-07,RF-12 --grupos feedback,dados --p
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 4: Entregar**
+- [x] **Step 4: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 

@@ -16,6 +16,10 @@
     menos: '<path d="M6 12h12"/>',
     esquerda: '<path d="M14 8l-4 4 4 4"/>',
     direita: '<path d="M10 8l4 4-4 4"/>',
+    alerta: '<path d="M12 4 3 20h18zM12 10v4M12 17h.01"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+    relogio: '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+    cadeado: '<rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   };
   const GIRO = '<circle cx="12" cy="12" r="9" stroke-dasharray="42 15"/>';
 
@@ -633,7 +637,7 @@
     return (partes[0][0] + (partes.length > 1 ? partes.at(-1)[0] : '')).toUpperCase();
   }
 
-  function avatar(nome) {
+  function avatarDecorativo(nome) {
     const el = criar('span', 'pessoa-avatar', iniciais(nome));
     el.setAttribute('aria-hidden', 'true');
     return el;
@@ -644,14 +648,14 @@
     el.setAttribute('aria-label', `Remover ${nome}`);
     el.title = nome;
     el.disabled = Boolean(desabilitado);
-    el.append(avatar(nome), icone('fechar'));
+    el.append(avatarDecorativo(nome), icone('fechar'));
     el.addEventListener('click', aoRemover);
     return el;
   }
 
   function opcaoDePessoa(nome, aoAdicionar) {
     const el = criarBotao('pessoas-opcao');
-    el.append(avatar(nome), criar('span', null, nome));
+    el.append(avatarDecorativo(nome), criar('span', null, nome));
     el.addEventListener('click', aoAdicionar);
     return el;
   }
@@ -1144,8 +1148,624 @@
     return raiz;
   }
 
+  // --- feedback --------------------------------------------------------------
+
+  // O prefixo é lido pelo leitor de tela: o tipo nunca depende só da cor e do ícone.
+  const TIPOS_DE_AVISO = {
+    info: { icone: 'info', prefixo: 'Informação' },
+    sucesso: { icone: 'marca', prefixo: 'Concluído' },
+    aviso: { icone: 'alerta', prefixo: 'Atenção' },
+    erro: { icone: 'alerta', prefixo: 'Erro' },
+  };
+
+  function botaoDeAcao(peca, acao) {
+    exigir(acao.rotulo, peca, 'acao sem rotulo');
+    const el = botao({ variante: 'texto', tamanho: 'pequeno', rotulo: acao.rotulo });
+    if (acao.aoClicar) el.addEventListener('click', acao.aoClicar);
+    return el;
+  }
+
+  function botaoFechar(rotulo, aoClicar) {
+    const el = botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'fechar', rotulo });
+    el.addEventListener('click', aoClicar);
+    return el;
+  }
+
+  function aviso(peca, classe, props = {}) {
+    const { tipo = 'info', mensagem, acao, fechar = false, aoFechar } = props;
+    const meta = TIPOS_DE_AVISO[tipo];
+    exigir(meta, peca, `tipo desconhecido "${tipo}"`);
+    exigir(mensagem, peca, 'mensagem é obrigatória');
+
+    const raiz = criar('div', `${classe} ${classe}-${tipo}`);
+    raiz.setAttribute('role', tipo === 'erro' ? 'alert' : 'status');
+    const texto = criar('p', `${classe}-mensagem`);
+    texto.append(criar('span', 'visualmente-oculto', `${meta.prefixo}: `), mensagem);
+    raiz.append(icone(meta.icone), texto);
+    if (acao) raiz.append(botaoDeAcao(peca, acao));
+    if (fechar) {
+      raiz.append(botaoFechar('Fechar aviso', () => {
+        raiz.remove();
+        if (aoFechar) aoFechar();
+      }));
+    }
+    return raiz;
+  }
+
+  // PA-30: o toast avisa só o que acontece fora da tela. O resultado de uma ação
+  // visível fica junto dela, na barra de ações ou no próprio campo.
+  function toast(props) {
+    return aviso('toast', 'toast', props);
+  }
+
+  function faixaAviso(props) {
+    return aviso('faixaAviso', 'faixa-aviso', props);
+  }
+
+  // PA-27: uma camada por vez na página. Diálogo e painel lateral passam por aqui.
+  let camada = null;
+
+  function ocuparCamada(peca, dono) {
+    exigir(!camada || camada === dono, peca, 'já existe uma camada aberta (PA-27)');
+    camada = dono;
+  }
+
+  function soltarCamada(dono) {
+    if (camada === dono) camada = null;
+  }
+
+  function cabecaDoDialogo(titulo, aoFechar) {
+    const tituloEl = criar('h2', 'dialogo-titulo', titulo);
+    tituloEl.id = novoId('dialogo-titulo');
+    const topo = criar('div', 'dialogo-topo');
+    topo.append(tituloEl, botaoFechar('Fechar', aoFechar));
+    return { topo, tituloId: tituloEl.id };
+  }
+
+  function dialogo(props = {}) {
+    const { titulo, texto, acoes, aoFechar } = props;
+    exigir(titulo, 'dialogo', 'titulo é obrigatório');
+    exigir(Array.isArray(acoes) && acoes.length, 'dialogo', 'acoes precisa de ao menos uma ação');
+
+    const el = criar('dialog', 'dialogo');
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    const { topo, tituloId } = cabecaDoDialogo(titulo, fechar);
+    el.setAttribute('aria-labelledby', tituloId);
+    el.append(topo);
+    if (texto) {
+      const textoEl = criar('p', 'dialogo-texto', texto);
+      textoEl.id = novoId('dialogo-texto');
+      el.setAttribute('aria-describedby', textoEl.id);
+      el.append(textoEl);
+    }
+    const rodape = grupoBotoes(acoes.map((acao) => {
+      const botaoDaAcao = botao(acao);
+      botaoDaAcao.addEventListener('click', () => {
+        if (acao.aoClicar) acao.aoClicar();
+        if (acao.fecha !== false) fechar();
+      });
+      return botaoDaAcao;
+    }));
+    rodape.classList.add('dialogo-acoes');
+    el.append(rodape);
+
+    let origem = null;
+    const controle = { el, abrir, fechar };
+
+    function abrir(de) {
+      ocuparCamada('dialogo', controle);
+      origem = de || document.activeElement;
+      if (!el.isConnected) document.body.append(el);
+      el.showModal();
+      rodape.querySelector('button').focus();
+    }
+
+    function fechar() {
+      if (el.open) el.close();
+    }
+
+    // Esc fecha pelo próprio dialog; o close devolve o foco a quem abriu.
+    el.addEventListener('close', () => {
+      soltarCamada(controle);
+      if (origem && origem.isConnected) origem.focus();
+      origem = null;
+      if (aoFechar) aoFechar();
+    });
+    return controle;
+  }
+
+  function tooltip(props = {}) {
+    const { alvo, rotulo } = props;
+    exigir(alvo instanceof HTMLElement, 'tooltip', 'alvo precisa ser um elemento');
+    exigir(rotulo, 'tooltip', 'rotulo é obrigatório');
+
+    const raiz = criar('span', 'tooltip');
+    const dica = criar('span', 'dica', rotulo);
+    dica.id = novoId('dica');
+    dica.setAttribute('role', 'tooltip');
+    alvo.removeAttribute('title');
+    // Botão de ícone já tem o rótulo como nome. A dica só vira descrição quando diz outra coisa.
+    if (alvo.getAttribute('aria-label') !== rotulo) {
+      const antes = (alvo.getAttribute('aria-describedby') || '').split(' ').filter(Boolean);
+      alvo.setAttribute('aria-describedby', [...antes, dica.id].join(' '));
+    }
+    raiz.append(alvo, dica);
+    // WCAG 1.4.13: Esc dispensa a dica sem tirar o foco.
+    raiz.addEventListener('keydown', (e) => { if (e.key === 'Escape') raiz.classList.add('is-dispensada'); });
+    raiz.addEventListener('focusout', () => raiz.classList.remove('is-dispensada'));
+    raiz.addEventListener('pointerleave', () => raiz.classList.remove('is-dispensada'));
+    return raiz;
+  }
+
+  function progresso(props = {}) {
+    const { rotulo, valor, maximo = 100, erro } = props;
+    exigir(rotulo, 'progresso', 'rotulo é obrigatório');
+    const indeterminado = valor === undefined || valor === null;
+    exigir(indeterminado || (valor >= 0 && valor <= maximo), 'progresso', `valor fora de 0 a ${maximo}`);
+
+    const raiz = criar('div', 'progresso');
+    const rotuloEl = criar('span', 'progresso-rotulo', rotulo);
+    rotuloEl.id = novoId('progresso');
+    let leitura = 'Carregando';
+    if (!indeterminado) leitura = maximo === 100 ? `${valor}%` : `${valor} de ${maximo}`;
+    const topo = criar('div', 'progresso-topo');
+    topo.append(rotuloEl, criar('span', 'progresso-valor', leitura));
+
+    const barra = criar('div', 'progresso-barra');
+    barra.setAttribute('role', 'progressbar');
+    barra.setAttribute('aria-labelledby', rotuloEl.id);
+    barra.setAttribute('aria-valuemin', '0');
+    barra.setAttribute('aria-valuemax', String(maximo));
+    if (indeterminado) {
+      raiz.classList.add('is-indeterminado');
+    } else {
+      barra.setAttribute('aria-valuenow', String(valor));
+      barra.setAttribute('aria-valuetext', leitura);
+      barra.style.setProperty('--progresso', `${(valor / maximo) * 100}%`);
+    }
+    barra.append(criar('span', 'progresso-preenchido'));
+    raiz.append(topo, barra);
+    if (erro) {
+      raiz.classList.add('is-erro');
+      const erroEl = criar('p', 'campo-erro', erro);
+      erroEl.id = novoId('erro');
+      erroEl.setAttribute('role', 'alert');
+      barra.setAttribute('aria-describedby', erroEl.id);
+      raiz.append(erroEl);
+    }
+    return raiz;
+  }
+
+  const FORMAS_DO_ESQUELETO = ['bloco', 'linha'];
+
+  function skeleton(props = {}) {
+    const { rotulo = 'Carregando', linhas = 3, forma = 'bloco' } = props;
+    exigir(FORMAS_DO_ESQUELETO.includes(forma), 'skeleton', `forma desconhecida "${forma}"`);
+    exigir(Number.isInteger(linhas) && linhas > 0, 'skeleton', 'linhas é um inteiro maior que zero');
+    const raiz = criar('div', `skeleton skeleton-${forma}`);
+    raiz.setAttribute('role', 'status');
+    raiz.append(criar('span', 'visualmente-oculto', rotulo));
+    for (let i = 0; i < linhas; i++) {
+      const traco = criar('span', 'skeleton-traco');
+      traco.setAttribute('aria-hidden', 'true');
+      raiz.append(traco);
+    }
+    return raiz;
+  }
+
+  // acao: as props de DS.botao com aoClicar, ou um elemento pronto.
+  function botaoDeProps(acao) {
+    if (acao instanceof HTMLElement) return acao;
+    const el = botao({ variante: 'primario', ...acao });
+    if (acao.aoClicar) el.addEventListener('click', acao.aoClicar);
+    return el;
+  }
+
+  function estadoVazio(props = {}) {
+    const { titulo, texto, acao } = props;
+    exigir(titulo, 'estadoVazio', 'titulo é obrigatório');
+    const raiz = criar('div', 'estado-vazio');
+    raiz.append(criar('p', 'estado-vazio-titulo', titulo));
+    if (texto) raiz.append(criar('p', 'estado-vazio-texto', texto));
+    if (acao) raiz.append(botaoDeProps(acao));
+    return raiz;
+  }
+
+  const ROTULO_DO_UPSELL = 'Conhecer planos';
+
+  // A peça única de bloqueio por plano (PA-13). O botão é sempre o mesmo.
+  function upsell(props = {}) {
+    const { titulo, texto, nivel = 2, aoConhecer } = props;
+    exigir(titulo, 'upsell', 'titulo é obrigatório');
+    exigir(texto, 'upsell', 'texto é obrigatório');
+    exigir([2, 3, 4].includes(nivel), 'upsell', 'nivel é 2, 3 ou 4');
+    const raiz = criar('section', 'upsell');
+    const tituloEl = criar(`h${nivel}`, 'upsell-titulo', titulo);
+    tituloEl.id = novoId('upsell');
+    raiz.setAttribute('aria-labelledby', tituloEl.id);
+    const conhecer = botao({ variante: 'primario', rotulo: ROTULO_DO_UPSELL });
+    if (aoConhecer) conhecer.addEventListener('click', aoConhecer);
+    raiz.append(icone('cadeado'), tituloEl, criar('p', 'upsell-texto', texto), conhecer);
+    return raiz;
+  }
+
+  // --- dados -----------------------------------------------------------------
+
+  const TIPOS_DE_ATIVIDADE = { tarefa: 'Tarefa', prazo: 'Prazo', audiencia: 'Audiência', evento: 'Evento' };
+  const ICONE_DO_PRAZO = { vencido: 'alerta', hoje: 'relogio', proximo: 'calendario', concluido: 'marca' };
+  const DENSIDADES = ['padrao', 'compacta'];
+
+  function dataDoPrazo(dias) {
+    const d = somarDias(new Date(), dias);
+    return `${doisDigitos(d.getDate())}/${doisDigitos(d.getMonth() + 1)}`;
+  }
+
+  // PA-34: vencido, hoje e próximos se distinguem pelo texto, e a cor reforça.
+  function descreverPrazo(dias, concluida = false) {
+    exigir(Number.isInteger(dias), 'descreverPrazo', 'dias é um inteiro');
+    if (concluida) return { estadoPrazo: 'concluido', rotulo: `${dias < 0 ? 'Venceu' : 'Vence'} em ${dataDoPrazo(dias)}` };
+    if (dias < 0) return { estadoPrazo: 'vencido', rotulo: `Vencido há ${-dias} ${dias === -1 ? 'dia' : 'dias'}` };
+    if (dias === 0) return { estadoPrazo: 'hoje', rotulo: 'Vence hoje' };
+    return { estadoPrazo: 'proximo', rotulo: `Vence em ${dataDoPrazo(dias)}` };
+  }
+
+  function chipPrazo(props = {}) {
+    const { estadoPrazo, rotulo } = props;
+    exigir(ICONE_DO_PRAZO[estadoPrazo], 'chipPrazo', `estadoPrazo desconhecido "${estadoPrazo}"`);
+    exigir(rotulo, 'chipPrazo', 'rotulo é obrigatório: a cor nunca fala sozinha (PA-34)');
+    const el = criar('span', `chip-prazo chip-prazo-${estadoPrazo}`);
+    el.dataset.prazo = estadoPrazo;
+    el.append(icone(ICONE_DO_PRAZO[estadoPrazo]), criar('span', null, rotulo));
+    return el;
+  }
+
+  function tag(props = {}) {
+    exigir(props.rotulo, 'tag', 'rotulo é obrigatório');
+    return criar('span', 'tag', props.rotulo);
+  }
+
+  function tagDoTipo(tipo) {
+    exigir(TIPOS_DE_ATIVIDADE[tipo], 'tipo', `tipo desconhecido "${tipo}"`);
+    return tag({ rotulo: TIPOS_DE_ATIVIDADE[tipo] });
+  }
+
+  function chipFiltro(props = {}) {
+    const { rotulo, ativo = false, contagem, desabilitado, aoAlternar } = props;
+    exigir(rotulo, 'chipFiltro', 'rotulo é obrigatório');
+    const el = criarBotao('chip-filtro');
+    el.disabled = Boolean(desabilitado);
+    el.append(icone('marca'), criar('span', null, rotulo));
+    if (contagem !== undefined) el.append(criar('span', 'chip-filtro-contagem', String(contagem)));
+    let estado = Boolean(ativo);
+    const aplicar = () => el.setAttribute('aria-pressed', String(estado));
+    el.addEventListener('click', () => {
+      estado = !estado;
+      aplicar();
+      if (aoAlternar) aoAlternar(estado);
+    });
+    aplicar();
+    return el;
+  }
+
+  // PA-29: selo sem explicação não entra. A descrição vira dica e texto lido.
+  function selo(props = {}) {
+    const { rotulo, descricao } = props;
+    exigir(rotulo, 'selo', 'rotulo é obrigatório');
+    const el = criar('span', 'selo', rotulo);
+    if (descricao) {
+      el.title = descricao;
+      el.append(criar('span', 'visualmente-oculto', `: ${descricao}`));
+    }
+    return el;
+  }
+
+  function avatar(props = {}) {
+    const { nome, mostrarNome = false } = props;
+    exigir(nome, 'avatar', 'nome é obrigatório');
+    const el = criar('span', 'avatar');
+    const inicial = criar('span', 'avatar-inicial', iniciais(nome));
+    if (mostrarNome) {
+      inicial.setAttribute('aria-hidden', 'true');
+      el.append(inicial, criar('span', 'avatar-nome', nome));
+    } else {
+      el.setAttribute('role', 'img');
+      el.setAttribute('aria-label', nome);
+      el.title = nome;
+      el.append(inicial);
+    }
+    return el;
+  }
+
+  function numeroDoProcesso(processo) {
+    const el = criar('span', 'numero-processo');
+    el.append(criar('span', 'visualmente-oculto', 'Processo '), processo);
+    return el;
+  }
+
+  // PA-11 e PA-38: o número é texto, e copiar é um botão de ícone com rótulo.
+  function botaoCopiar(processo) {
+    const el = botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
+    el.dataset.acao = 'copiar-numero';
+    const envolto = tooltip({ alvo: el, rotulo: 'Copiar número' });
+    const dica = envolto.querySelector('.dica');
+    const anuncio = criar('span', 'visualmente-oculto');
+    anuncio.setAttribute('role', 'status');
+    let relogio;
+    function avisar(texto) {
+      anuncio.textContent = texto;
+      dica.textContent = texto;
+      clearTimeout(relogio);
+      relogio = setTimeout(() => { dica.textContent = 'Copiar número'; anuncio.textContent = ''; }, 2000);
+    }
+    el.addEventListener('click', () => {
+      const area = navigator.clipboard;
+      if (!area) { avisar('Não foi possível copiar'); return; }
+      area.writeText(processo).then(() => avisar('Número copiado'), () => avisar('Não foi possível copiar'));
+    });
+    envolto.append(anuncio);
+    return envolto;
+  }
+
+  function acoesDaLinha(acoes) {
+    const grupo = criar('div', 'linha-acoes');
+    acoes.forEach((acao) => {
+      exigir(acao.rotulo && acao.icone, 'linhaAtividade', 'cada ação tem rotulo e icone');
+      const el = botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: acao.icone, rotulo: acao.rotulo });
+      if (acao.aoClicar) el.addEventListener('click', acao.aoClicar);
+      grupo.append(tooltip({ alvo: el, rotulo: acao.rotulo }));
+    });
+    return grupo;
+  }
+
+  function validarAtividade(peca, props) {
+    exigir(props.titulo, peca, 'titulo é obrigatório');
+    exigir(TIPOS_DE_ATIVIDADE[props.tipo], peca, `tipo desconhecido "${props.tipo}"`);
+  }
+
+  function linhaAtividade(props = {}) {
+    const {
+      titulo, tipo, estadoPrazo, prazo, processo, responsavel, acoes = [],
+      mostrarProcesso = true, copiarNumero = true, densidade = 'padrao',
+    } = props;
+    validarAtividade('linhaAtividade', props);
+    exigir(DENSIDADES.includes(densidade), 'linhaAtividade', `densidade desconhecida "${densidade}"`);
+    exigir(Array.isArray(acoes), 'linhaAtividade', 'acoes é uma lista');
+
+    const raiz = criar('li', `linha-atividade linha-${densidade}`);
+    raiz.dataset.tipo = tipo;
+    const prazoEl = criar('div', 'linha-prazo');
+    if (estadoPrazo) prazoEl.append(chipPrazo({ estadoPrazo, rotulo: prazo }));
+    const principal = criar('div', 'linha-principal');
+    principal.append(criar('span', 'linha-titulo', titulo), tagDoTipo(tipo));
+    raiz.append(prazoEl, principal);
+
+    const processoEl = criar('div', 'linha-processo');
+    if (mostrarProcesso && processo) {
+      processoEl.append(numeroDoProcesso(processo));
+      if (copiarNumero) processoEl.append(botaoCopiar(processo));
+    }
+    const pessoa = criar('div', 'linha-responsavel');
+    if (responsavel) pessoa.append(avatar({ nome: responsavel, mostrarNome: true }));
+    raiz.append(processoEl, pessoa, acoesDaLinha(acoes));
+    return raiz;
+  }
+
+  function cardAtividade(props = {}) {
+    const {
+      titulo, tipo, estadoPrazo, prazo, processo, responsavel, tags = [], aoAbrir,
+      mostrarPrazo = true, mostrarProcesso = true, mostrarResponsavel = true, mostrarTags = true,
+    } = props;
+    validarAtividade('cardAtividade', props);
+    exigir(Array.isArray(tags), 'cardAtividade', 'tags é uma lista de rótulos');
+
+    const raiz = criar('article', 'card-atividade');
+    raiz.dataset.tipo = tipo;
+    raiz.tabIndex = 0;
+    const tituloEl = criar('h3', 'card-atividade-titulo', titulo);
+    tituloEl.id = novoId('card');
+    raiz.setAttribute('aria-labelledby', tituloEl.id);
+
+    if (mostrarPrazo && estadoPrazo) raiz.append(chipPrazo({ estadoPrazo, rotulo: prazo }));
+    raiz.append(tituloEl);
+    const etiquetas = criar('div', 'card-atividade-tags');
+    etiquetas.append(tagDoTipo(tipo));
+    if (mostrarTags) etiquetas.append(...tags.map((rotulo) => tag({ rotulo })));
+    raiz.append(etiquetas);
+    if (mostrarProcesso && processo) raiz.append(numeroDoProcesso(processo));
+    if (mostrarResponsavel && responsavel) raiz.append(avatar({ nome: responsavel, mostrarNome: true }));
+
+    if (aoAbrir) {
+      raiz.addEventListener('click', (e) => { if (!e.target.closest('button, a')) aoAbrir(); });
+      raiz.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target === raiz) aoAbrir(); });
+    }
+    return raiz;
+  }
+
+  const CAMPOS_DO_CONTATO = [['email', 'E-mail'], ['telefone', 'Telefone'], ['processo', 'Processo']];
+
+  // O cartão inteiro abre a ficha. Pelo teclado, abre o botão do nome.
+  function cardContato(props = {}) {
+    const { nome, tipo, acoes = [], aoAbrir } = props;
+    exigir(nome, 'cardContato', 'nome é obrigatório');
+    const raiz = criar('article', 'card-contato');
+    const topo = criar('div', 'card-contato-topo');
+    const tituloEl = criar('h3', 'card-contato-nome');
+    tituloEl.id = novoId('contato');
+    raiz.setAttribute('aria-labelledby', tituloEl.id);
+    if (aoAbrir) {
+      const abrir = criarBotao('card-contato-abrir');
+      abrir.textContent = nome;
+      abrir.addEventListener('click', aoAbrir);
+      tituloEl.append(abrir);
+      raiz.addEventListener('click', (e) => { if (!e.target.closest('button, a')) aoAbrir(); });
+    } else {
+      tituloEl.textContent = nome;
+    }
+    const identidade = criar('div', 'card-contato-identidade');
+    identidade.append(tituloEl);
+    if (tipo) identidade.append(tag({ rotulo: tipo }));
+    const inicial = avatar({ nome });
+    inicial.removeAttribute('role');
+    inicial.removeAttribute('aria-label');
+    inicial.setAttribute('aria-hidden', 'true');
+    topo.append(inicial, identidade);
+    raiz.append(topo);
+
+    // A leitura não mostra campo vazio (RF-11).
+    const presentes = CAMPOS_DO_CONTATO.filter(([chave]) => props[chave]);
+    if (presentes.length) {
+      const lista = criar('dl', 'card-contato-dados');
+      presentes.forEach(([chave, rotulo]) => lista.append(criar('dt', null, rotulo), criar('dd', null, props[chave])));
+      raiz.append(lista);
+    }
+    if (acoes.length) {
+      const rodape = acoesDaLinha(acoes);
+      rodape.className = 'card-contato-acoes';
+      raiz.append(rodape);
+    }
+    return raiz;
+  }
+
+  function celula(valor) {
+    const td = criar('td');
+    if (valor instanceof HTMLElement) td.append(valor);
+    else if (valor === undefined || valor === null || valor === '') {
+      const traco = criar('span', 'tabela-sem-dado', '—');
+      traco.setAttribute('aria-hidden', 'true');
+      td.append(traco, criar('span', 'visualmente-oculto', 'Não informado'));
+    } else td.textContent = String(valor);
+    return td;
+  }
+
+  function linhasDeEsqueleto(colunas, total) {
+    return Array.from({ length: total }, () => {
+      const tr = criar('tr', 'tabela-carregando');
+      tr.append(...colunas.map(() => {
+        const td = criar('td');
+        const traco = criar('span', 'skeleton-traco');
+        traco.setAttribute('aria-hidden', 'true');
+        td.append(traco);
+        return td;
+      }));
+      return tr;
+    });
+  }
+
+  // colunas: pares [chave, rotulo]. linhas: objetos com as chaves; o valor é texto ou elemento.
+  function tabela(props = {}) {
+    const { rotulo, colunas, linhas = [], carregando = false, vazio, densidade = 'padrao' } = props;
+    exigir(rotulo, 'tabela', 'rotulo é obrigatório');
+    exigir(Array.isArray(colunas) && colunas.length && colunas.every((c) => Array.isArray(c) && c.length === 2),
+      'tabela', 'colunas são pares [chave, rotulo]');
+    exigir(DENSIDADES.includes(densidade), 'tabela', `densidade desconhecida "${densidade}"`);
+
+    const quadro = criar('div', 'tabela-quadro');
+    const tabelaEl = criar('table', `tabela tabela-${densidade}`);
+    const legenda = criar('caption', 'visualmente-oculto', rotulo);
+    legenda.id = novoId('tabela');
+    // A tabela larga rola dentro do quadro, e o quadro entra no Tab para rolar pelo teclado.
+    quadro.setAttribute('role', 'region');
+    quadro.setAttribute('aria-labelledby', legenda.id);
+    quadro.tabIndex = 0;
+
+    const cabeca = criar('thead');
+    const linhaCabeca = criar('tr');
+    linhaCabeca.append(...colunas.map(([, texto]) => {
+      const th = criar('th', null, texto);
+      th.scope = 'col';
+      return th;
+    }));
+    cabeca.append(linhaCabeca);
+
+    const corpo = criar('tbody');
+    if (carregando) {
+      tabelaEl.setAttribute('aria-busy', 'true');
+      corpo.append(...linhasDeEsqueleto(colunas, 3));
+    } else if (!linhas.length) {
+      const tr = criar('tr', 'tabela-vazia');
+      const td = criar('td');
+      td.colSpan = colunas.length;
+      td.append(estadoVazio(vazio || { titulo: 'Nenhum registro encontrado.' }));
+      tr.append(td);
+      corpo.append(tr);
+    } else {
+      corpo.append(...linhas.map((linha) => {
+        const tr = criar('tr');
+        tr.append(...colunas.map(([chave]) => celula(linha[chave])));
+        return tr;
+      }));
+    }
+    tabelaEl.append(legenda, cabeca, corpo);
+    quadro.append(tabelaEl);
+    return quadro;
+  }
+
+  const PAGINAS_SEM_RETICENCIAS = 7;
+
+  function paginasVisiveis(atual, total) {
+    if (total <= PAGINAS_SEM_RETICENCIAS) return Array.from({ length: total }, (_, i) => i + 1);
+    const perto = [1, atual - 1, atual, atual + 1, total].filter((p) => p >= 1 && p <= total);
+    const unicas = [...new Set(perto)].sort((a, b) => a - b);
+    return unicas.flatMap((p, i) => (i && p - unicas[i - 1] > 1 ? [null, p] : [p]));
+  }
+
+  function paginacao(props = {}) {
+    const { pagina = 1, total, rotulo = 'Paginação', desabilitado, aoMudar } = props;
+    exigir(Number.isInteger(total) && total > 1, 'paginacao', 'total é um inteiro maior que 1');
+    exigir(Number.isInteger(pagina) && pagina >= 1 && pagina <= total, 'paginacao', `pagina fora de 1 a ${total}`);
+
+    const raiz = criar('nav', 'paginacao');
+    raiz.setAttribute('aria-label', rotulo);
+    let atual = pagina;
+
+    function ir(destino) {
+      atual = destino;
+      desenhar();
+      raiz.querySelector('[aria-current="page"]').focus();
+      if (aoMudar) aoMudar(atual);
+    }
+
+    function botaoDePagina(numero) {
+      const el = criarBotao('paginacao-pagina');
+      el.textContent = numero;
+      el.setAttribute('aria-label', `Página ${numero}`);
+      el.disabled = Boolean(desabilitado);
+      if (numero === atual) el.setAttribute('aria-current', 'page');
+      else el.addEventListener('click', () => ir(numero));
+      return el;
+    }
+
+    function seta(iconeEsquerda, texto, destino) {
+      const el = botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda, rotulo: texto });
+      el.disabled = Boolean(desabilitado) || destino < 1 || destino > total;
+      el.addEventListener('click', () => ir(destino));
+      return el;
+    }
+
+    function desenhar() {
+      const lista = criar('ul', 'paginacao-lista');
+      lista.append(...paginasVisiveis(atual, total).map((numero) => {
+        const item = criar('li');
+        if (numero === null) {
+          const reticencias = criar('span', 'paginacao-reticencias', '…');
+          reticencias.setAttribute('aria-hidden', 'true');
+          item.append(reticencias);
+        } else item.append(botaoDePagina(numero));
+        return item;
+      }));
+      raiz.replaceChildren(seta('esquerda', 'Página anterior', atual - 1), lista, seta('direita', 'Próxima página', atual + 1));
+      raiz.dataset.valor = String(atual);
+    }
+
+    desenhar();
+    return raiz;
+  }
+
   window.DS = {
     ICONES: Object.keys(ICONES), icone, botao, grupoBotoes, menuAcoes,
     campo, areaTexto, busca, seletor, seletorMultiplo, seletorPessoas, data, periodo, caixa, radio, chave,
+    toast, faixaAviso, dialogo, tooltip, progresso, skeleton, estadoVazio, upsell,
+    descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade, cardAtividade, cardContato, paginacao,
   };
 })();

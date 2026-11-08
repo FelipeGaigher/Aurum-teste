@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
 <script src="componentes.js"></script>
+<script src="dados.js"></script>
 </head>
 <body data-pagina="design-system.html" data-titulo="Design system">
 <div class="corpo">
@@ -49,12 +50,45 @@
         <dt><code>valor</code></dt><dd>valor inicial; a raiz da peça guarda o atual em <code>data-valor</code></dd>
       </dl>
     </section>
+
+    <section class="ds-grupo" id="feedback" aria-labelledby="titulo-feedback">
+      <header>
+        <h2 id="titulo-feedback">Feedback</h2>
+        <p>O resultado aparece onde a pessoa olha. O toast avisa só o que acontece fora da tela (PA-30). O diálogo nunca abre sobre outra camada (PA-27), e o bloqueio por plano tem uma peça só.</p>
+      </header>
+      <dl class="ds-props">
+        <dt><code>tipo</code></dt><dd><code>info</code>, <code>sucesso</code>, <code>aviso</code> ou <code>erro</code>; o leitor de tela ouve o tipo antes da mensagem</dd>
+        <dt><code>mensagem</code></dt><dd>o fato e o próximo passo, em uma frase; obrigatória</dd>
+        <dt><code>acao</code></dt><dd><code>{ rotulo, aoClicar }</code>, um botão de texto ao lado da mensagem</dd>
+        <dt><code>fechar</code></dt><dd>mostra o botão de fechar; a peça sai da tela ao clicar</dd>
+      </dl>
+    </section>
+
+    <section class="ds-grupo" id="dados" aria-labelledby="titulo-dados">
+      <header>
+        <h2 id="titulo-dados">Dados</h2>
+        <p>O dado manda, o rótulo recua. Prazo vencido e prazo de hoje se distinguem pelo texto, e a cor reforça (PA-34). O número do processo é texto, e copiar é um botão (PA-11, PA-38).</p>
+      </header>
+      <dl class="ds-props">
+        <dt><code>titulo</code></dt><dd>o que fazer; obrigatório no card e na linha</dd>
+        <dt><code>tipo</code></dt><dd><code>tarefa</code>, <code>prazo</code>, <code>audiencia</code> ou <code>evento</code>; a raiz guarda em <code>data-tipo</code></dd>
+        <dt><code>estadoPrazo</code></dt><dd><code>vencido</code>, <code>hoje</code>, <code>proximo</code> ou <code>concluido</code>, com o texto em <code>prazo</code>. <code>DS.descreverPrazo(dias, concluida)</code> monta os dois</dd>
+        <dt><code>mostrarPrazo</code>, <code>mostrarProcesso</code>, <code>mostrarResponsavel</code>, <code>mostrarTags</code></dt><dd>booleanas do card; ligadas por padrão. O tipo aparece sempre</dd>
+        <dt><code>copiarNumero</code></dt><dd>botão de copiar ao lado do número, na linha</dd>
+        <dt><code>responsavel</code></dt><dd>nome da pessoa; vira avatar com o nome</dd>
+        <dt><code>acoes</code></dt><dd><code>{ rotulo, icone, aoClicar }</code>; botões de ícone com dica, visíveis no hover e no foco (PA-40)</dd>
+        <dt><code>densidade</code></dt><dd><code>padrao</code> ou <code>compacta</code>, por token de densidade</dd>
+      </dl>
+    </section>
   </main>
 </div>
 <script>
 (function () {
   const { botao, grupoBotoes, menuAcoes, icone, ICONES, campo, areaTexto, busca, seletor, seletorMultiplo,
-    seletorPessoas, data, periodo, caixa, radio, chave } = window.DS;
+    seletorPessoas, data, periodo, caixa, radio, chave, toast, faixaAviso, dialogo, tooltip, progresso, skeleton,
+    estadoVazio, upsell, descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade,
+    cardAtividade, cardContato, paginacao } = window.DS;
+  const { ATIVIDADES, CONTATOS } = window.DADOS;
 
   function h(tag, atributos, ...filhos) {
     const el = document.createElement(tag);
@@ -565,6 +599,446 @@
     });
   }
 
+  // --- feedback --------------------------------------------------------------
+
+  const SO_INFORMA = 'a peça só informa. Não recebe clique nem foco.';
+  const SEM_CURSOR = 'a peça não reage ao cursor. Ação e fechar são botões, com hover próprio.';
+
+  function pecaToast() {
+    const sincronia = { tipo: 'info', mensagem: 'A agenda foi sincronizada com o Google Agenda.', fechar: true };
+    const comFoco = toast({ ...sincronia, acao: { rotulo: 'Ver agenda' } });
+    comClasse(comFoco.querySelector('.botao-texto'), 'is-foco');
+    return pecaComEstados({
+      id: 'toast', titulo: 'Toast', nota: 'Avisa o que aconteceu fora da tela, como uma sincronização. O resultado de uma ação visível fica junto dela (PA-30).',
+      estados: [
+        ['default', toast(sincronia)],
+        ['foco', comFoco],
+        ['erro', toast({ tipo: 'erro', mensagem: 'A sincronização com o Google Agenda falhou.', acao: { rotulo: 'Tentar de novo' }, fechar: true })],
+      ],
+      ausentes: {
+        hover: SEM_CURSOR,
+        active: SEM_CURSOR,
+        disabled: 'aviso não desabilita. Sem ação possível, ele sai da tela.',
+        carregando: 'o toast avisa o que já aconteceu. A espera fica no progresso.',
+        vazio: 'toast sem mensagem não é desenhado. A peça exige mensagem.',
+      },
+      variacoes: [
+        ['Sucesso', toast({ tipo: 'sucesso', mensagem: '3 publicações novas foram capturadas.', acao: { rotulo: 'Ver publicações' } })],
+      ],
+    });
+  }
+
+  function pecaFaixa() {
+    const comFoco = faixaAviso({ tipo: 'aviso', mensagem: 'O prazo informado já passou. Confira a data antes de salvar.', fechar: true });
+    comClasse(comFoco.querySelector('.botao-icone'), 'is-foco');
+    return pecaComEstados({
+      id: 'faixa-aviso', titulo: 'Faixa de aviso', nota: 'Fica no topo da área que ela afeta e só sai quando a causa some ou a pessoa fecha.',
+      estados: [
+        ['default', faixaAviso({ tipo: 'info', mensagem: 'Você está vendo atividades de toda a equipe.', acao: { rotulo: 'Ver só as minhas' } })],
+        ['foco', comFoco],
+        ['erro', faixaAviso({ tipo: 'erro', mensagem: 'Não foi possível carregar os processos.', acao: { rotulo: 'Tentar de novo' } })],
+      ],
+      ausentes: {
+        hover: SEM_CURSOR,
+        active: SEM_CURSOR,
+        disabled: 'a faixa não desabilita. Sem causa, ela sai da tela.',
+        carregando: 'a espera fica no esqueleto ou no progresso da própria área.',
+        vazio: 'faixa sem mensagem não é desenhada. A peça exige mensagem.',
+      },
+      variacoes: [
+        ['Aviso', faixaAviso({ tipo: 'aviso', mensagem: 'O prazo informado já passou. Confira a data antes de salvar.' })],
+        ['Sucesso', faixaAviso({ tipo: 'sucesso', mensagem: 'O processo foi monitorado e as publicações chegam aqui.' })],
+      ],
+    });
+  }
+
+  const EXCLUIR = {
+    titulo: 'Excluir atividade?',
+    texto: 'Protocolar contestação sai da lista de toda a equipe. Esta ação não tem volta.',
+  };
+
+  // A amostra fica no fluxo da página: sem role="dialog", para não contar como camada aberta.
+  function amostraDoDialogo(acoes, transformar) {
+    const amostra = dialogo({ ...EXCLUIR, acoes }).el.cloneNode(true);
+    amostra.setAttribute('open', '');
+    amostra.setAttribute('role', 'group');
+    amostra.setAttribute('aria-label', 'Amostra do diálogo');
+    ['aria-modal', 'aria-labelledby', 'aria-describedby'].forEach((nome) => amostra.removeAttribute(nome));
+    amostra.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+    amostra.classList.add('is-estatico');
+    if (transformar) transformar(amostra);
+    return amostra;
+  }
+
+  const ACOES_DO_EXCLUIR = [{ variante: 'secundario', rotulo: 'Cancelar' }, { variante: 'destrutivo', rotulo: 'Excluir' }];
+
+  function gatilhoDoDialogo() {
+    const real = dialogo({ ...EXCLUIR, acoes: ACOES_DO_EXCLUIR });
+    const gatilho = botao({ variante: 'secundario', rotulo: 'Abrir o diálogo' });
+    gatilho.setAttribute('data-abre-painel', '');
+    gatilho.setAttribute('aria-haspopup', 'dialog');
+    gatilho.addEventListener('click', () => real.abrir(gatilho));
+    return gatilho;
+  }
+
+  function pecaDialogo() {
+    return pecaComEstados({
+      id: 'dialogo', titulo: 'Diálogo', nota: 'Só para decisão com consequência. Uma camada por vez: não abre sobre painel nem sobre outro diálogo (PA-27). Esc fecha e o foco volta a quem abriu.',
+      estados: [
+        ['default', amostraDoDialogo(ACOES_DO_EXCLUIR)],
+        ['foco', amostraDoDialogo(ACOES_DO_EXCLUIR, (a) => comClasse(a.querySelector('.dialogo-acoes .botao'), 'is-foco'))],
+        ['carregando', amostraDoDialogo([{ variante: 'secundario', rotulo: 'Cancelar' }, { variante: 'destrutivo', rotulo: 'Excluir', carregando: true }])],
+      ],
+      ausentes: {
+        hover: 'o diálogo não reage ao cursor. Os botões dele reagem sozinhos.',
+        active: 'o diálogo não reage ao clique. Os botões dele reagem sozinhos.',
+        disabled: 'não existe diálogo desabilitado. Sem decisão possível, ele não abre.',
+        erro: 'o erro de um campo fica no campo, dentro do diálogo.',
+        vazio: 'a peça exige título e ao menos uma ação.',
+      },
+      variacoes: [['Aberto de verdade', gatilhoDoDialogo()]],
+    });
+  }
+
+  function dicaDemo(estado) {
+    const alvo = botao({ variante: 'icone', iconeEsquerda: 'arquivar', rotulo: 'Arquivar' });
+    const raiz = tooltip({ alvo, rotulo: 'Arquivar' });
+    if (estado) {
+      raiz.classList.add('is-aberta');
+      comClasse(alvo, estado);
+    }
+    return raiz;
+  }
+
+  function pecaTooltip() {
+    return pecaComEstados({
+      id: 'tooltip', titulo: 'Tooltip', nota: 'Nomeia o botão de ícone no hover e no foco de teclado. Esc dispensa a dica sem tirar o foco.',
+      estados: [
+        ['default', dicaDemo()],
+        ['hover', dicaDemo('is-hover')],
+        ['foco', dicaDemo('is-foco')],
+      ],
+      ausentes: {
+        active: 'o clique é do alvo. A dica não muda.',
+        disabled: 'a dica acompanha o alvo. Alvo desabilitado explica o motivo em texto, fora da dica.',
+        erro: 'a dica nomeia, não valida. O erro fica no campo.',
+        carregando: 'o texto da dica é local e não há espera.',
+        vazio: 'a peça exige rótulo.',
+      },
+    });
+  }
+
+  function pecaProgresso() {
+    const base = { rotulo: 'Importação de processos', maximo: 5 };
+    return pecaComEstados({
+      id: 'progresso', titulo: 'Progresso', nota: 'Para tarefa longa com etapas contáveis. Mostra o número, não só a barra. O passo a passo de formulário é o stepper (PA-28).',
+      estados: [
+        ['default', progresso({ ...base, valor: 3 })],
+        ['erro', progresso({ ...base, valor: 3, erro: 'A etapa 4 falhou. Os processos já importados continuam salvos.' })],
+        ['carregando', progresso({ rotulo: 'Importação de processos' })],
+        ['vazio', progresso({ ...base, valor: 0 })],
+      ],
+      ausentes: {
+        hover: SO_INFORMA,
+        active: SO_INFORMA,
+        foco: SO_INFORMA,
+        disabled: 'progresso parado continua informando. Não existe desabilitado.',
+      },
+    });
+  }
+
+  function pecaSkeleton() {
+    const naoSeAplica = 'o esqueleto é o próprio estado carregando de outra peça.';
+    return pecaComEstados({
+      id: 'skeleton', titulo: 'Skeleton', nota: 'Desenha a forma do conteúdo que vem. A animação para com movimento reduzido.',
+      estados: [['carregando', skeleton({ rotulo: 'Carregando atividades' })]],
+      ausentes: {
+        default: 'o esqueleto só existe enquanto carrega. Carregado, o conteúdo toma o lugar.',
+        hover: naoSeAplica,
+        active: naoSeAplica,
+        foco: naoSeAplica,
+        disabled: naoSeAplica,
+        erro: 'a falha ao carregar troca o esqueleto pela faixa de aviso.',
+        vazio: 'sem resultado, o esqueleto dá lugar ao estado vazio.',
+      },
+      variacoes: [['Linha', skeleton({ forma: 'linha', linhas: 4, rotulo: 'Carregando a linha' })]],
+    });
+  }
+
+  function pecaVazio() {
+    const naoSeAplica = 'só o botão da ação reage, com os estados dele.';
+    return pecaComEstados({
+      id: 'estado-vazio', titulo: 'Estado vazio', nota: 'Diz o que falta e convida a agir. Com filtro ativo, o convite muda.',
+      estados: [
+        ['default', estadoVazio({ titulo: 'Nenhuma atividade para hoje.', texto: 'As próximas aparecem abaixo, por data.', acao: { rotulo: 'Adicionar atividade' } })],
+      ],
+      ausentes: {
+        hover: naoSeAplica,
+        active: naoSeAplica,
+        foco: naoSeAplica,
+        disabled: 'sem ação possível, a peça fica só com o título e o texto.',
+        erro: 'a falha ao carregar não é lista vazia. Ela vai para a faixa de aviso.',
+        carregando: 'enquanto a lista carrega, vale o esqueleto.',
+        vazio: 'a peça já é o estado vazio das listas e tabelas.',
+      },
+      variacoes: [
+        ['Com filtro', estadoVazio({ titulo: 'Nenhuma atividade com estes filtros.', texto: 'Ajuste os filtros para ver mais.', acao: { variante: 'secundario', rotulo: 'Limpar filtros' } })],
+        ['Sem ação', estadoVazio({ titulo: 'Nenhuma publicação nova.' })],
+      ],
+    });
+  }
+
+  function upsellDemo(estado) {
+    const raiz = upsell({ nivel: 4, titulo: 'Timesheet está em planos superiores', texto: 'Registre as horas de cada processo e use o total no honorário.' });
+    if (estado) comClasse(raiz.querySelector('.botao'), estado);
+    return raiz;
+  }
+
+  function pecaUpsell() {
+    return pecaComEstados({
+      id: 'upsell', titulo: 'Upsell', nota: 'A peça única de bloqueio por plano, com um botão só, "Conhecer planos" (PA-13).',
+      estados: [
+        ['default', upsellDemo()],
+        ['hover', upsellDemo('is-hover')],
+        ['foco', upsellDemo('is-foco')],
+      ],
+      ausentes: {
+        active: 'o clique leva à página de planos na hora.',
+        disabled: 'o upsell existe para levar aos planos. Sem plano a oferecer, ele sai.',
+        erro: 'o upsell não guarda valor.',
+        carregando: 'o texto é local e não há espera.',
+        vazio: 'a peça exige título e texto.',
+      },
+    });
+  }
+
+  // --- dados -----------------------------------------------------------------
+
+  const SEM_VALOR = 'a peça não guarda valor.';
+  const SEM_ESPERA_DE_DADO = 'o dado já está na página e não há espera.';
+
+  function propsDe(atividade) {
+    const { estadoPrazo, rotulo } = descreverPrazo(atividade.prazoEmDias, atividade.status === 'concluido');
+    const { titulo, tipo, processo, responsavel } = atividade;
+    return { titulo, tipo, processo, responsavel, estadoPrazo, prazo: rotulo };
+  }
+
+  const [VENCIDA, HOJE, , , PROXIMA, , , , CONCLUIDA] = ATIVIDADES;
+
+  function pecaTag() {
+    return pecaComEstados({
+      id: 'tag', titulo: 'Tag', nota: 'Classifica sem pedir ação: tipo de atividade, etiqueta, tipo de pessoa.',
+      estados: [['default', tag({ rotulo: 'Prazo' })]],
+      ausentes: { hover: SO_INFORMA, active: SO_INFORMA, foco: SO_INFORMA, disabled: SO_INFORMA, erro: SEM_VALOR, carregando: SEM_ESPERA_DE_DADO, vazio: 'tag sem rótulo não é desenhada.' },
+      variacoes: [['Tipos', h('div', { class: 'card-atividade-tags' }, ...['Tarefa', 'Prazo', 'Audiência', 'Evento'].map((rotulo) => tag({ rotulo })))]],
+    });
+  }
+
+  function pecaChipFiltro() {
+    const base = { rotulo: 'Minhas' };
+    return pecaComEstados({
+      id: 'chip-filtro', titulo: 'Chip de filtro', nota: 'Liga e desliga um filtro. Marcado ganha a marca e o texto de ação, não só a cor.',
+      estados: [
+        ['default', chipFiltro(base)],
+        ['hover', comClasse(chipFiltro(base), 'is-hover')],
+        ['active', comClasse(chipFiltro(base), 'is-active')],
+        ['foco', comClasse(chipFiltro(base), 'is-foco')],
+        ['disabled', chipFiltro({ ...base, desabilitado: true })],
+      ],
+      ausentes: {
+        erro: 'o chip só tem dois valores, e os dois são válidos.',
+        carregando: 'o filtro é local. A espera fica na lista, com esqueleto.',
+        vazio: 'o chip sempre está marcado ou desmarcado.',
+      },
+      variacoes: [
+        ['Marcado', chipFiltro({ ...base, ativo: true })],
+        ['Com contagem', chipFiltro({ rotulo: 'Atrasadas', contagem: 2, ativo: true })],
+      ],
+    });
+  }
+
+  function pecaChipPrazo() {
+    const chip = (atividade) => {
+      const { estadoPrazo, prazo } = propsDe(atividade);
+      return chipPrazo({ estadoPrazo, rotulo: prazo });
+    };
+    return pecaComEstados({
+      id: 'chip-prazo', titulo: 'Chip de prazo', nota: 'O primeiro dado da atividade. Vencido, hoje e próximos se distinguem pelo texto; fundo e ícone reforçam (PA-34). Concluída nunca alerta.',
+      estados: [['default', chip(PROXIMA)]],
+      ausentes: { hover: SO_INFORMA, active: SO_INFORMA, foco: SO_INFORMA, disabled: SO_INFORMA, erro: 'prazo vencido não é erro da peça. É a variação Vencido.', carregando: SEM_ESPERA_DE_DADO, vazio: 'atividade sem prazo não mostra o chip.' },
+      variacoes: [['Vencido', chip(VENCIDA)], ['Vence hoje', chip(HOJE)], ['Concluída', chip(CONCLUIDA)]],
+    });
+  }
+
+  function pecaSelo() {
+    return pecaComEstados({
+      id: 'selo', titulo: 'Selo', nota: 'Conta ou marca novidade num item de menu. Selo sem explicação não entra (PA-29).',
+      estados: [['default', selo({ rotulo: '3', descricao: 'publicações não lidas' })]],
+      ausentes: { hover: SO_INFORMA, active: SO_INFORMA, foco: SO_INFORMA, disabled: SO_INFORMA, erro: SEM_VALOR, carregando: SEM_ESPERA_DE_DADO, vazio: 'com zero, o selo sai do item.' },
+      variacoes: [['Novidade', selo({ rotulo: 'Novo', descricao: 'módulo lançado neste mês' })]],
+    });
+  }
+
+  function pecaAvatar() {
+    return pecaComEstados({
+      id: 'avatar', titulo: 'Avatar', nota: 'Iniciais sobre fundo neutro, sem foto. Sozinho, o nome vira o rótulo e a dica.',
+      estados: [['default', avatar({ nome: 'Rafael Antunes', mostrarNome: true })]],
+      ausentes: { hover: SO_INFORMA, active: SO_INFORMA, foco: SO_INFORMA, disabled: SO_INFORMA, erro: SEM_VALOR, carregando: SEM_ESPERA_DE_DADO, vazio: 'atividade sem responsável não mostra avatar.' },
+      variacoes: [['Só iniciais', avatar({ nome: 'Marina Couto' })]],
+    });
+  }
+
+  const COLUNAS_DE_CONTATO = [['nome', 'Nome'], ['tipo', 'Tipo'], ['email', 'E-mail'], ['telefone', 'Telefone'], ['processo', 'Processo']];
+
+  function linhasDeContato(total) {
+    return CONTATOS.slice(0, total).map((c) => ({ ...c, tipo: tag({ rotulo: c.tipo }) }));
+  }
+
+  function tabelaDemo(props) {
+    return tabela({ rotulo: 'Contatos', colunas: COLUNAS_DE_CONTATO, ...props });
+  }
+
+  function pecaTabela() {
+    const comHover = tabelaDemo({ linhas: linhasDeContato(3) });
+    comHover.querySelector('tbody tr:nth-child(2)').classList.add('is-hover');
+    return pecaComEstados({
+      id: 'tabela', titulo: 'Tabela', nota: 'Padrão para lista longa, como processos e prazos. Larga, ela rola dentro do quadro e nunca a página.',
+      estados: [
+        ['default', tabelaDemo({ linhas: linhasDeContato(3) })],
+        ['hover', comHover],
+        ['carregando', tabelaDemo({ carregando: true })],
+        ['vazio', tabelaDemo({ linhas: [], vazio: { titulo: 'Nenhum contato com estes filtros.', texto: 'Ajuste os filtros para ver mais.' } })],
+      ],
+      ausentes: {
+        active: 'a linha não tem clique próprio. A ação fica no botão da célula.',
+        foco: 'o foco fica no quadro, para rolar, e em cada controle da célula.',
+        disabled: 'não existe tabela desabilitada. Sem permissão, a tela mostra o upsell.',
+        erro: 'a falha ao carregar vai para a faixa de aviso acima da tabela.',
+      },
+      variacoes: [['Compacta', tabelaDemo({ linhas: linhasDeContato(2), densidade: 'compacta' })]],
+    });
+  }
+
+  const ACOES_DA_ATIVIDADE = [{ rotulo: 'Editar', icone: 'editar' }, { rotulo: 'Arquivar', icone: 'arquivar' }];
+
+  function lista(...linhas) {
+    return h('ul', { class: 'lista-atividades', 'aria-label': 'Atividades' }, ...linhas);
+  }
+
+  function linhaDemo(atividade, extra) {
+    return linhaAtividade({ ...propsDe(atividade), acoes: ACOES_DA_ATIVIDADE, ...extra });
+  }
+
+  function pecaLinha() {
+    return pecaComEstados({
+      id: 'linha-atividade', titulo: 'Linha de atividade', nota: 'A leitura horizontal da Área de trabalho: prazo, o quê, processo, quem. As ações aparecem no hover e no foco, com dica (PA-40).',
+      estados: [
+        ['default', lista(linhaDemo(PROXIMA))],
+        ['hover', lista(comClasse(linhaDemo(PROXIMA), 'is-hover'))],
+        ['foco', lista((() => {
+          const linha = comClasse(linhaDemo(PROXIMA), 'is-foco');
+          comClasse(linha.querySelector('.linha-acoes .botao'), 'is-foco');
+          linha.querySelector('.linha-acoes .tooltip').classList.add('is-aberta');
+          return linha;
+        })())],
+        ['carregando', skeleton({ forma: 'linha', linhas: 4, rotulo: 'Carregando atividades' })],
+      ],
+      ausentes: {
+        active: 'a linha não tem clique próprio. O clique fica nos botões dela.',
+        disabled: 'atividade concluída não desabilita. O chip diz quando venceu.',
+        erro: 'a linha não guarda valor. A falha ao copiar aparece no próprio botão.',
+        vazio: 'lista sem atividade mostra o estado vazio.',
+      },
+      variacoes: [
+        ['Vencida e de hoje', lista(linhaDemo(VENCIDA), linhaDemo(HOJE))],
+        ['Compacta', lista(linhaDemo(VENCIDA, { densidade: 'compacta' }), linhaDemo(HOJE, { densidade: 'compacta' }))],
+        ['Sem processo e sem responsável', lista(linhaDemo(PROXIMA, { mostrarProcesso: false, responsavel: '' }))],
+        ['Sem copiar', lista(linhaDemo(PROXIMA, { copiarNumero: false }))],
+      ],
+    });
+  }
+
+  function cardDemo(atividade, extra) {
+    return cardAtividade({ ...propsDe(atividade), tags: ['Cível'], ...extra });
+  }
+
+  function pecaCard() {
+    return pecaComEstados({
+      id: 'card-atividade', titulo: 'Card de atividade', nota: 'Unidade autônoma: arrasta, foca, abre. Um componente para o Kanban, a Área de trabalho e a lista lateral da Agenda. As quatro booleanas são propriedades, não variantes.',
+      estados: [
+        ['default', cardDemo(PROXIMA)],
+        ['hover', comClasse(cardDemo(PROXIMA), 'is-hover')],
+        ['active', comClasse(cardDemo(PROXIMA), 'is-active')],
+        ['foco', comClasse(cardDemo(PROXIMA), 'is-foco')],
+        ['carregando', skeleton({ rotulo: 'Carregando a atividade' })],
+      ],
+      ausentes: {
+        disabled: 'o card não desabilita. Concluída mostra quando venceu, sem alerta.',
+        erro: 'o card não guarda valor. A falha ao mover volta o card e avisa na faixa.',
+        vazio: 'coluna sem card mostra o estado vazio.',
+      },
+      variacoes: [
+        ['Vencido', cardDemo(VENCIDA)],
+        ['Vence hoje', cardDemo(HOJE)],
+        ['Concluída', cardDemo(CONCLUIDA)],
+        ['Sem processo e responsável', cardDemo(PROXIMA, { mostrarProcesso: false, mostrarResponsavel: false })],
+        ['Sem prazo e sem tags', cardDemo(PROXIMA, { mostrarPrazo: false, mostrarTags: false })],
+      ],
+    });
+  }
+
+  function contatoDemo(contato, extra) {
+    return cardContato({ ...contato, aoAbrir: () => {}, acoes: [{ rotulo: 'Editar', icone: 'editar' }], ...extra });
+  }
+
+  function pecaContato() {
+    const [pessoa, , , , , empresa] = CONTATOS;
+    const comFoco = contatoDemo(pessoa);
+    comClasse(comFoco.querySelector('.card-contato-abrir'), 'is-foco');
+    return pecaComEstados({
+      id: 'card-contato', titulo: 'Card de contato', nota: 'Para carteira de clientes. O cartão inteiro abre a ficha, sem roubar o clique dos botões. A leitura não mostra campo vazio.',
+      estados: [
+        ['default', contatoDemo(pessoa)],
+        ['hover', comClasse(contatoDemo(pessoa), 'is-hover')],
+        ['foco', comFoco],
+        ['carregando', skeleton({ rotulo: 'Carregando o contato' })],
+      ],
+      ausentes: {
+        active: 'o clique abre a ficha na hora. Não há estado pressionado.',
+        disabled: 'o card não desabilita.',
+        erro: 'o card não guarda valor. O erro fica na ficha.',
+        vazio: 'lista sem contato mostra o estado vazio.',
+      },
+      variacoes: [['Sem telefone', contatoDemo(empresa, { telefone: '' })]],
+    });
+  }
+
+  function paginacaoDemo(transformar) {
+    const raiz = paginacao({ pagina: 2, total: 12 });
+    if (transformar) transformar(raiz);
+    return raiz;
+  }
+
+  function pecaPaginacao() {
+    const naPrimeira = (classe) => (raiz) => comClasse(raiz.querySelector('.paginacao-pagina'), classe);
+    return pecaComEstados({
+      id: 'paginacao', titulo: 'Paginação', nota: 'Página atual com texto de ação e borda, não só cor. Longe das pontas, as páginas do meio viram reticências.',
+      estados: [
+        ['default', paginacaoDemo()],
+        ['hover', paginacaoDemo(naPrimeira('is-hover'))],
+        ['active', paginacaoDemo(naPrimeira('is-active'))],
+        ['foco', paginacaoDemo(naPrimeira('is-foco'))],
+        ['disabled', paginacao({ pagina: 2, total: 12, desabilitado: true })],
+      ],
+      ausentes: {
+        erro: 'a paginação não guarda valor. A falha ao carregar a página vai para a faixa de aviso.',
+        carregando: 'a página nova carrega na tabela, com esqueleto.',
+        vazio: 'com uma página só, a paginação sai da tela.',
+      },
+      variacoes: [['Poucas páginas', paginacao({ pagina: 1, total: 4 })]],
+    });
+  }
+
   // --- montagem --------------------------------------------------------------
 
   document.getElementById('fundamentos').append(pecaCor(), pecaTipografia(), pecaEspaco(), pecaRaio(),
@@ -591,6 +1065,12 @@
 
   document.getElementById('formulario').append(pecaCampo(), pecaAreaTexto(), pecaBusca(), pecaSeletor(), pecaSeletorMultiplo(),
     pecaSeletorPessoas(), pecaData(), pecaPeriodo(), pecaCaixa(), pecaRadio(), pecaChave());
+
+  document.getElementById('feedback').append(pecaToast(), pecaFaixa(), pecaDialogo(), pecaTooltip(), pecaProgresso(),
+    pecaSkeleton(), pecaVazio(), pecaUpsell());
+
+  document.getElementById('dados').append(pecaTag(), pecaChipFiltro(), pecaChipPrazo(), pecaSelo(), pecaAvatar(),
+    pecaTabela(), pecaLinha(), pecaCard(), pecaContato(), pecaPaginacao());
 
   atualizarValores();
   new MutationObserver(atualizarValores).observe(document.documentElement, { attributes: true, attributeFilter: ['data-tema'] });
