@@ -45,7 +45,7 @@
     { rotulo: 'Financeiro', pagina: 'financeiro.html', icone: 'moeda' },
     { rotulo: 'Documentos', pagina: 'documentos.html', icone: 'clipe' },
     { rotulo: 'Indicadores', pagina: 'indicadores.html', icone: 'grafico' },
-    { rotulo: 'Alertas', pagina: 'alertas.html', icone: 'sino' },
+    { rotulo: 'Alertas', pagina: 'alertas.html', icone: 'sino', contagem: () => (window.DADOS && window.DADOS.contarAlertas ? window.DADOS.contarAlertas() : 0) },
     { rotulo: 'Suporte', pagina: 'suporte.html', icone: 'ajuda' },
     { rotulo: 'Conheça as IAs', pagina: 'ias.html', icone: 'chip' },
   ];
@@ -310,7 +310,8 @@
 
   // Item do menu. O design system monta a miniatura com esta mesma função.
   // selo: { rotulo, descricao }; selo sem explicação não entra (PA-29).
-  function htmlItemMenu({ pagina, icone, rotulo, selo, ativo = false, recolhido = false }) {
+  // contagem: função que devolve o número de itens pendentes; zero não desenha nada.
+  function htmlItemMenu({ pagina, icone, rotulo, selo, contagem, ativo = false, recolhido = false }) {
     if (!ICONES[icone]) throw new Error(`Moldura.htmlItemMenu: ícone desconhecido "${icone}"`);
     if (selo && !(selo.rotulo && selo.descricao)) throw new Error('Moldura.htmlItemMenu: selo exige rotulo e descricao (PA-29)');
     const atual = ativo ? ' aria-current="page"' : '';
@@ -318,8 +319,12 @@
     const marca = selo
       ? `<span class="selo" title="${escapar(selo.descricao)}">${escapar(selo.rotulo)}<span class="visualmente-oculto">: ${escapar(selo.descricao)}</span></span>`
       : '';
-    return `<a class="item-menu${recolhido ? ' is-recolhido' : ''}" href="${escapar(pagina)}"${atual}${dica}>`
-      + `${svg(icone)}<span class="rotulo">${escapar(rotulo)}</span>${marca}</a>`;
+    const pendentes = typeof contagem === 'function' ? contagem() : 0;
+    const numero = pendentes > 0
+      ? `<span class="contagem">${pendentes}<span class="visualmente-oculto"> ${pendentes === 1 ? 'pendente' : 'pendentes'}</span></span>`
+      : '';
+    return `<a class="item-menu${recolhido ? ' is-recolhido' : ''}${pendentes > 0 ? ' has-pendentes' : ''}" href="${escapar(pagina)}"${atual}${dica}>`
+      + `${svg(icone)}<span class="rotulo">${escapar(rotulo)}</span>${marca}${numero}</a>`;
   }
 
   function htmlLista(itens, ativa, atributos) {

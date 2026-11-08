@@ -95,7 +95,12 @@ const CONTATOS = PROCESSOS.map((p, i) => ({
   processo: p.numero,
 }));
 
-window.DADOS = { ATIVIDADES, CONTATOS, PROCESSOS, RESPONSAVEIS, RESUMOS_DE_CASO };
+// O alerta nasce da atividade aberta e vencida; só tarefa e prazo geram alerta.
+const TIPOS_EM_ALERTA = new Set(['tarefa', 'prazo']);
+const emAlerta = (a) => a.status !== 'concluido' && a.prazoEmDias < 0 && TIPOS_EM_ALERTA.has(a.tipo);
+const contarAlertas = () => ATIVIDADES.filter(emAlerta).length;
+
+window.DADOS = { ATIVIDADES, CONTATOS, PROCESSOS, RESPONSAVEIS, RESUMOS_DE_CASO, emAlerta, contarAlertas };
 
 // Ficha do processo: parte contrária, advogado dela e valores, na ordem de NUMEROS.
 // Nomes, foros e escritórios inventados. Link no tribunal é só texto.

@@ -95,7 +95,7 @@
   let ordem = 'recentes';
   let abaAtual = 'todos';
 
-  const emAlerta = (a) => a.status !== 'concluido' && a.prazoEmDias < 0 && MOTIVO[a.tipo] && !descartados.has(a.id);
+  const emAlerta = (a) => window.DADOS.emAlerta(a) && !descartados.has(a.id);
   const daAba = (aba) => (a) => aba === 'todos' || (aba === 'tarefas' && ['tarefa', 'prazo'].includes(a.tipo));
   const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
 
