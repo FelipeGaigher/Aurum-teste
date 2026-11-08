@@ -161,3 +161,16 @@ Felipe seguiu a revisão ao vivo e pediu estes itens.
 - Área de trabalho: as seções ganham faixa que abre e fecha e tag de status com contagem. O padrão segue os grupos do projeto Importação.
 - Decisão de Felipe: saem o fundo vermelho das seções e a linha de números. Isso reverte o PA-39, estatísticas em linha de leitura. As seções já dizem o mesmo.
 - Correção: o menu de ações dentro de tabela que rola saía do quadro. O DS posiciona o menu em relação à tela.
+
+### Terceira rodada de melhorias, pedido de 08/11 entre 18h e 19h30
+
+Felipe seguiu a revisão ao vivo e pediu estes itens.
+
+- Kanban da gestão: sai o conjunto "Atividades do escritório". O quadro ocupa a altura da tela, com rolagem nas colunas. A base do RF-02 passou de `ab21425` para `2f24358`.
+- Área de trabalho: as seções têm faixa que abre e fecha e tag de status. Item e subitens ficam no mesmo contêiner, com faixa branca e corpo no tom da página. A linha selecionada fica em azul-claro.
+- Área de trabalho, a pedido de Felipe: a linha de números do topo saiu, o que reverte o PA-39. A atividade atrasada ganha "Abrir processo". As ações do painel viram botões redondos de ícone.
+- Caminho de volta único: trilha com seta embaixo do título em toda página de segundo nível. Saem o chevron da ficha de processo e o link "Voltar para contatos".
+- Notificações: sino com contagem na navbar, ao lado do perfil. O painel abre à direita, no desenho da Náutica. Ele traz filtros por módulo e os grupos Para fazer e Avisos. Há também a marca Agora, Ver mais, Marcar avisos como lidos e Ver todos em Alertas. O badge sai do item Alertas do menu.
+- Limite das notificações: o Kanban tem cabeçalho próprio e ainda não mostra o sino.
+- Publicação: `main` subiu até `1e09261` às 18h40, com 55 commits. A rodada das notificações (`888faa8`) ficou local até o próximo "sobe".
+- Em andamento: varredura do Astrea em produção, só de leitura, e comparativo Astrea × protótipo por fluxo. Eles sustentam as respostas das questões.

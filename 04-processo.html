@@ -202,6 +202,7 @@
       <tr><td class="hora">08/11 13:46</td><td data-r="O quê">Fechamento com a suíte inteira verde.</td></tr>
       <tr><td class="hora">08/11 15:00 a 16:30</td><td data-r="O quê">Rodada de melhorias pedidas por Felipe na revisão ao vivo do protótipo.</td></tr>
       <tr><td class="hora">08/11 16:30 a 18:00</td><td data-r="O quê">Segunda rodada de melhorias pedidas por Felipe na revisão ao vivo.</td></tr>
+      <tr><td class="hora">08/11 18:00 a 19:30</td><td data-r="O quê">Terceira rodada de melhorias pedidas por Felipe: Kanban, Área de trabalho, trilha de volta e notificações. Publicação de <code>main</code> às 18h40.</td></tr>
     </tbody>
   </table>
 </section>
@@ -233,6 +234,19 @@
     <li><strong>Seções da Área de trabalho.</strong> Cada seção ganhou faixa que abre e fecha e tag de status com contagem, no padrão dos grupos do projeto Importação.</li>
     <li><strong>Decisão de Felipe, que reverte o PA-39.</strong> O fundo vermelho das seções e a linha de números do topo saem, porque as seções já dizem o mesmo. A linha de leitura das estatísticas deixa de valer.</li>
     <li><strong>Correção do menu de ações.</strong> Dentro de tabela que rola, o menu saía do quadro. O DS posiciona o menu em relação à tela.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Terceira rodada de melhorias na revisão ao vivo</h2>
+  <p>Entre 18h e 19h30 de 08/11, Felipe seguiu a revisão e pediu seis itens. A IA aplicou cada um e executou os portões.</p>
+  <ul>
+    <li><strong>Kanban da gestão.</strong> Sai o conjunto "Atividades do escritório". O quadro ocupa a altura da tela, com rolagem nas colunas. A base do RF-02 passou de <code>ab21425</code> para <code>2f24358</code>.</li>
+    <li><strong>Área de trabalho.</strong> As seções têm faixa que abre e fecha e tag de status. Item e subitens ficam no mesmo contêiner, com faixa branca e corpo no tom da página. A linha selecionada fica em azul-claro. A linha de números do topo saiu a pedido de Felipe, o que reverte o PA-39. A atividade atrasada ganha "Abrir processo". As ações do painel viram botões redondos de ícone.</li>
+    <li><strong>Caminho de volta único.</strong> Toda página de segundo nível mostra a trilha com seta embaixo do título. Saem o chevron da ficha de processo e o link "Voltar para contatos".</li>
+    <li><strong>Notificações.</strong> O sino com contagem fica na navbar, ao lado do perfil. O painel abre à direita, no desenho da Náutica. Ele traz filtros por módulo, os grupos Para fazer e Avisos, a marca Agora, Ver mais, Marcar avisos como lidos e Ver todos em Alertas. O badge sai do item Alertas do menu. Limite: o Kanban tem cabeçalho próprio e ainda não mostra o sino.</li>
+    <li><strong>Publicação.</strong> A <code>main</code> subiu até <code>1e09261</code> às 18h40, com 55 commits. A rodada das notificações (<code>888faa8</code>) ficou local até o próximo "sobe".</li>
+    <li><strong>Em andamento.</strong> A varredura do Astrea em produção, só de leitura, e o comparativo Astrea × protótipo por fluxo. Eles sustentam as respostas das questões.</li>
   </ul>
 </section>
 
