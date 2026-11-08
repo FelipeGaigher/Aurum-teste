@@ -591,6 +591,40 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 }
 .chip-acao:hover { background-color: var(--color-bg-hover); text-decoration: underline; }
 
+/* subtarefas da história, dentro do card */
+.card-subtarefas {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-label);
+  line-height: var(--font-leading-tight);
+}
+.card-subtarefas li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  overflow-wrap: anywhere;
+}
+.card-subtarefas li::before {
+  content: "";
+  flex: none;
+  width: var(--space-2);
+  height: var(--space-2);
+  translate: 0 -1px;
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-round);
+}
+.card-subtarefas li[data-status="fazendo"]::before { border-color: var(--color-action); }
+.card-subtarefas li[data-status="feito"]::before { border-color: var(--color-action); background-color: var(--color-action); }
+.card-subtarefas li[data-status="feito"] span { color: var(--color-text-muted); }
+.card-progresso {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  font-variant-numeric: tabular-nums;
+}
+
 .card-nota,
 .card-processo {
   color: var(--color-text-muted);
@@ -820,6 +854,19 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 .detalhe-dados dd { margin: var(--space-1) 0 0; }
 .detalhe-dados ul { margin: 0; padding-left: var(--space-5); }
 .detalhe-largo { grid-column: 1 / -1; }
+.detalhe-subtarefas { display: grid; gap: var(--space-3); padding-left: 0 !important; list-style: none; }
+.detalhe-subtarefa {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background-color: var(--color-bg-subtle);
+  border-radius: var(--radius-card);
+}
+.detalhe-subtarefa-titulo { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-3); margin: 0; }
+.detalhe-subtarefa-titulo b { font-weight: var(--font-weight-semibold); }
+.detalhe-subtarefa-meta { color: var(--color-text-muted); font-size: var(--font-size-label); }
+.detalhe-subtarefa-texto { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
+.detalhe-subtarefa-deveres { font-size: var(--font-size-label); }
 
 /* rodapé da demonstração */
 #rodape-demo {
@@ -999,7 +1046,7 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
     </footer>
     <div id="anuncio" class="visualmente-oculto" aria-live="polite"></div>
     <p id="dica-mover" class="visualmente-oculto">As setas para a esquerda e para a direita movem o card entre as colunas.</p>
-    <p id="dica-abrir" class="visualmente-oculto">Enter abre o detalhe da entrega.</p>
+    <p id="dica-abrir" class="visualmente-oculto">Enter abre o detalhe da história, com as subtarefas.</p>
   </main>
 </div>
 
@@ -1042,8 +1089,8 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
     <div><dt>Situação</dt><dd id="detalhe-situacao"></dd></div>
     <div class="detalhe-largo"><dt>Objetivo</dt><dd id="detalhe-objetivo"></dd></div>
     <div class="detalhe-largo"><dt>Entregável</dt><dd id="detalhe-entregavel"></dd></div>
-    <div class="detalhe-largo"><dt>Deveres</dt><dd><ul id="detalhe-deveres"></ul></dd></div>
     <div class="detalhe-largo"><dt>Pronto quando</dt><dd id="detalhe-pronto"></dd></div>
+    <div class="detalhe-largo"><dt>Subtarefas</dt><dd><ul id="detalhe-subtarefas" class="detalhe-subtarefas"></ul></dd></div>
   </dl>
   <div class="painel-rodape painel-rodape-fim">
     <button type="button" id="fechar-detalhe" class="botao">Fechar</button>
@@ -1205,7 +1252,63 @@ const CARDS = [
     pronto: 'Três relatórios publicados, com a comparação contra o mês 1.' },
 ];
 
-const DONOS = [...new Set(CARDS.map((entrega) => entrega.dono))]
+// Histórias, como no Jira: cada card do quadro é uma história, e as entregas acima são as subtarefas dela.
+const HISTORIAS = [
+  { id: 'h1', fase: 'f1', sprint: '1 e 2', titulo: 'Conhecer o produto antes de propor', dono: 'Direção do DS', subtarefas: ['c01', 'c03'],
+    objetivo: 'Saber o que existe e quanto custa hoje. Sem inventário e sem linha de base, o redesign começa no escuro.',
+    entregavel: 'Inventário de cores, componentes e palavras por tela, e o número de hoje de cada métrica.',
+    pronto: 'Todo item do recorte de atividades está listado e cada métrica tem um valor datado.' },
+  { id: 'h2', fase: 'f1', sprint: '1 e 2', titulo: 'Conhecer o time e abrir a fonte única', dono: 'Direção do DS', subtarefas: ['c02', 'c04'],
+    objetivo: 'Dividir o trabalho a partir de como cada designer trabalha, e ter onde guardar a regra antes do primeiro token.',
+    entregavel: 'Mapa de perfil dos quatro designers e o repositório do DS com README e kit de skills.',
+    pronto: 'Cada designer concorda com a própria frente e um deles instala o kit com um comando.' },
+  { id: 'h3', fase: 'f2', sprint: '3 a 5', titulo: 'Tokens como fonte única, no código e no Figma', dono: 'Direção do DS', subtarefas: ['c05', 'c07'],
+    objetivo: 'Um azul de ação, uma escala de cinza, um foco. Com nome de papel, gerado de um arquivo só.',
+    entregavel: 'JSON de tokens publicado como pacote, e a biblioteca Astrea DS com as variáveis geradas dele.',
+    pronto: 'Mudar um valor no JSON muda o CSS e a variável do Figma sem edição manual.' },
+  { id: 'h4', fase: 'f2', sprint: '4 a 6', titulo: 'Legado e front novo com a mesma pele', dono: 'Engenharia', subtarefas: ['c06', 'c08'],
+    objetivo: 'Aproximar tela antiga e tela nova antes de reescrever qualquer componente.',
+    entregavel: 'Tema do front novo e variáveis do legado lendo o mesmo pacote de tokens, atrás de flag.',
+    pronto: 'Legado e novo medem a mesma cor de ação e o mesmo foco com a flag ligada.' },
+  { id: 'h5', fase: 'f3', sprint: '7 a 9', titulo: 'Moldura, componentes e uma palavra para a atividade', dono: 'Designer do squad Processos', subtarefas: ['c09', 'c10', 'c12'],
+    objetivo: 'A âncora que o usuário reconhece, as peças da gestão de atividades e o vocabulário único.',
+    entregavel: 'Cabeçalho e menu no pacote e na biblioteca, cinco componentes com estados e o glossário aplicado.',
+    pronto: 'Toda tela mostra a mesma moldura, os cinco componentes passam no revisor e nenhuma tela usa duas palavras.' },
+  { id: 'h6', fase: 'f3', sprint: '9 a 12', titulo: 'Primeira tela nova em produção', dono: 'Designer do squad Atividades', subtarefas: ['c11', 'c13'],
+    objetivo: 'Provar o DS numa tela real sem parar o produto, e deixar cada componente ligado ao código.',
+    entregavel: 'Kanban atrás de flag para um grupo beta, Code Connect e Storybook publicados.',
+    pronto: 'Vinte escritórios usam o Kanban por quatro semanas sem aumento de chamados.' },
+  { id: 'h7', fase: 'f4', sprint: '13 a 20', titulo: 'Outros módulos no padrão novo', dono: 'Designer do squad Processos', subtarefas: ['c14', 'c15', 'c17'],
+    objetivo: 'Pegar carona na migração do front: cada módulo reescrito nasce no DS.',
+    entregavel: 'Processos, Contatos e Agenda compacta com os componentes do DS, atrás de flag.',
+    pronto: 'Cada módulo passa no revisor e fica quatro semanas em beta.' },
+  { id: 'h8', fase: 'f4', sprint: '12 a 24', titulo: 'IA no mesmo padrão e prova do resultado', dono: 'Direção do DS', subtarefas: ['c16', 'c18'],
+    objetivo: 'A IA entra pelos mesmos componentes, e os números dizem se o DS devolve mais tempo do que toma.',
+    entregavel: 'Padrões de sugestão, confirmação e erro de IA, e três relatórios trimestrais contra a linha de base.',
+    pronto: 'A primeira funcionalidade com IA passa no revisor e o terceiro relatório está publicado.' },
+];
+
+function subtarefasDe(historia) {
+  return historia.subtarefas.map((id) => {
+    const entrega = CARDS.find((c) => c.id === id);
+    if (!entrega) throw new Error('subtarefa desconhecida: ' + id);
+    return entrega;
+  });
+}
+
+function statusDaHistoria(historia) {
+  const lista = subtarefasDe(historia).map((s) => s.status);
+  if (lista.every((s) => s === 'feito')) return 'feito';
+  if (lista.some((s) => s !== 'a-fazer')) return 'fazendo';
+  return 'a-fazer';
+}
+
+function montarHistoria(historia, ordem) {
+  const equipes = [...new Set(subtarefasDe(historia).flatMap((s) => s.equipes))];
+  return { ...historia, ordem, equipes, status: statusDaHistoria(historia) };
+}
+
+const DONOS = [...new Set(HISTORIAS.map((historia) => historia.dono))]
   .sort((a, b) => a.localeCompare(b, 'pt-BR'));
 
 const CONJUNTOS = {
@@ -1213,13 +1316,13 @@ const CONJUNTOS = {
     nome: 'Plano do redesign',
     colunas: FASES.map((fase) => ({ id: fase.id, nome: fase.nome, subtitulo: fase.periodo })),
     campo: 'fase',
-    item: 'entrega',
+    item: 'história',
     filtrosIniciais: { equipe: 'todas', dono: 'todos', situacao: 'todas' },
-    passa: (entrega, { equipe, dono, situacao }) => (equipe === 'todas' || entrega.equipes.includes(equipe))
-      && (dono === 'todos' || entrega.dono === dono)
-      && (situacao === 'todas' || entrega.status === situacao),
+    passa: (historia, { equipe, dono, situacao }) => (equipe === 'todas' || historia.equipes.includes(equipe))
+      && (dono === 'todos' || historia.dono === dono)
+      && (situacao === 'todas' || historia.status === situacao),
     ordenar: (a, b) => a.ordem - b.ordem,
-    criarCard: criarCardEntrega,
+    criarCard: criarCardHistoria,
     abreDetalhe: true,
   },
   escritorio: {
@@ -1243,7 +1346,7 @@ const estado = {
   conjunto: 'plano',
   modo: 'dados',
   itens: {
-    plano: CARDS.map((entrega, ordem) => ({ ...entrega, ordem })),
+    plano: HISTORIAS.map(montarHistoria),
     escritorio: ATIVIDADES.map((atividade) => ({ ...atividade })),
   },
   filtros: {
@@ -1360,24 +1463,41 @@ function criarCardAtividade(atividade) {
   return card;
 }
 
-function criarCardEntrega(entrega) {
-  const [card, titulo] = criarCardBase(entrega, 'dica-mover dica-abrir');
+function listaSubtarefas(historia) {
+  const subtarefas = subtarefasDe(historia);
+  const feitas = subtarefas.filter((s) => s.status === 'feito').length;
+  const lista = el('ul', 'card-subtarefas');
+  lista.setAttribute('aria-label', 'Subtarefas, ' + feitas + ' de ' + subtarefas.length + ' feitas');
+  for (const sub of subtarefas) {
+    const item = el('li', null);
+    item.dataset.status = sub.status;
+    item.append(el('span', 'visualmente-oculto', STATUS[sub.status] + ': '), el('span', null, sub.titulo));
+    lista.append(item);
+  }
+  const progresso = el('p', 'card-progresso', feitas + ' de ' + subtarefas.length + ' feitas');
+  return [lista, progresso];
+}
+
+function criarCardHistoria(historia) {
+  const [card, titulo] = criarCardBase(historia, 'dica-mover dica-abrir');
 
   const linhaSprint = el('p', 'card-sprint');
   const situacao = el('span', 'card-situacao');
-  situacao.append(el('span', 'visualmente-oculto', 'Situação: '), STATUS[entrega.status]);
-  linhaSprint.append(el('span', null, textoSprint(entrega.sprint)), situacao);
+  situacao.append(el('span', 'visualmente-oculto', 'Situação: '), STATUS[historia.status]);
+  linhaSprint.append(el('span', null, textoSprint(historia.sprint)), situacao);
+
+  const [subtarefas, progresso] = listaSubtarefas(historia);
 
   const chips = el('div', 'card-chips');
-  for (const equipe of entrega.equipes.slice(0, 3)) chips.append(chipTexto(equipe));
-  const resto = entrega.equipes.length - 3;
+  for (const equipe of historia.equipes.slice(0, 3)) chips.append(chipTexto(equipe));
+  const resto = historia.equipes.length - 3;
   if (resto > 0) {
     const mais = chipTexto('+' + resto);
     mais.firstChild.append(el('span', 'visualmente-oculto', resto === 1 ? ' equipe' : ' equipes'));
     chips.append(mais);
   }
 
-  card.append(linhaSprint, titulo, chips, linhaResponsavel('Dono: ', entrega.dono));
+  card.append(linhaSprint, titulo, subtarefas, progresso, chips, linhaResponsavel('Dono: ', historia.dono));
   return card;
 }
 
@@ -1654,22 +1774,34 @@ window.addEventListener('resize', () => {
 const painelDetalhe = document.getElementById('painel-detalhe');
 let detalheAberto = null;
 
+function itemSubtarefa(sub) {
+  const item = el('li', 'detalhe-subtarefa');
+  item.dataset.status = sub.status;
+  const cabecalho = el('p', 'detalhe-subtarefa-titulo');
+  cabecalho.append(el('b', null, sub.titulo), el('span', 'detalhe-subtarefa-meta', textoSprint(sub.sprint) + '. ' + sub.dono + '. ' + STATUS[sub.status]));
+  item.append(cabecalho, el('p', 'detalhe-subtarefa-texto', sub.entregavel));
+  const deveres = el('ul', 'detalhe-subtarefa-deveres');
+  for (const dever of sub.deveres) deveres.append(el('li', null, dever));
+  item.append(deveres, el('p', 'detalhe-subtarefa-texto', 'Pronto quando: ' + sub.pronto));
+  return item;
+}
+
 function abrirDetalhe(id) {
-  const entrega = acharItem(id);
+  const historia = acharItem(id);
   const campos = {
-    titulo: entrega.titulo,
-    fase: nomeDaColuna(entrega.fase),
-    sprints: entrega.sprint,
-    dono: entrega.dono,
-    situacao: STATUS[entrega.status],
-    objetivo: entrega.objetivo,
-    entregavel: entrega.entregavel,
-    pronto: entrega.pronto,
+    titulo: historia.titulo,
+    fase: nomeDaColuna(historia.fase),
+    sprints: historia.sprint,
+    dono: historia.dono,
+    situacao: STATUS[historia.status],
+    objetivo: historia.objetivo,
+    entregavel: historia.entregavel,
+    pronto: historia.pronto,
   };
   for (const [campo, texto] of Object.entries(campos)) {
     document.getElementById('detalhe-' + campo).textContent = texto;
   }
-  document.getElementById('detalhe-deveres').replaceChildren(...entrega.deveres.map((dever) => el('li', null, dever)));
+  document.getElementById('detalhe-subtarefas').replaceChildren(...subtarefasDe(historia).map(itemSubtarefa));
   detalheAberto = id;
   painelDetalhe.showModal();
 }

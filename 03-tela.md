@@ -97,7 +97,9 @@ Trello estranha.
 > visão saiu.
 
 > decisão, 07/11, de Felipe: o Kanban abre com o plano do redesign. Quatro
-> fases e dezoito entregas, com o discovery com os designers entre elas. As
+> fases e oito histórias, cada uma com suas subtarefas, como no Jira. As
+> dezoito entregas viraram subtarefas; o discovery com os designers é uma
+> delas. As
 > atividades de escritório ficam como segundo conjunto, por chave no
 > rodapé. A banca pede uma tela do produto, e esse conjunto prova isso.
 
