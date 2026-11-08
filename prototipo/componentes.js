@@ -1989,7 +1989,7 @@
     return nomes.map((nome) => [nome, nome]);
   }
 
-  function camposDaAtividade({ responsavel, pessoas, aoMudarData, aoSalvarConcluida }) {
+  function camposDaAtividade({ responsavel, pessoas, aoMudarData, aoSalvarConcluida, dataInicial }) {
     // PA-57: a data passada avisa no próprio painel, sem segundo diálogo.
     const avisoData = faixaAviso({
       tipo: 'aviso',
@@ -2002,7 +2002,7 @@
       // PA-56 fica no Backlog: a descrição segue como o único texto da tarefa.
       descricao: areaTexto({ rotulo: 'Descrição', obrigatorio: true, largura: 'total' }),
       titulo: campo({ rotulo: 'Título do evento', obrigatorio: true, largura: 'total' }),
-      data: data({ rotulo: 'Data', obrigatorio: true, campo: 'data', valor: paraIso(new Date()), aoMudar: aoMudarData }),
+      data: data({ rotulo: 'Data', obrigatorio: true, campo: 'data', valor: dataInicial || paraIso(new Date()), aoMudar: aoMudarData }),
       avisoData,
       ate: data({ rotulo: 'Até', campo: 'data-fim' }),
       diaInteiro: caixa({ rotulo: 'Dia inteiro' }),
@@ -2045,11 +2045,11 @@
   // PA-27, PA-59 e PA-60: um painel só para os quatro tipos. Formulário vazio fecha
   // direto; com dado, a confirmação de saída troca o rodapé, sem outra camada.
   // Salvar dispara "atividade-criada" no document, com a atividade em detail.
-  function montarCriarAtividade({ tipo: tipoInicial, responsavel, pessoas }) {
+  function montarCriarAtividade({ tipo: tipoInicial, responsavel, pessoas, data: dataInicial }) {
     let tipo = tipoInicial;
     let painel = null;
     const campos = camposDaAtividade({
-      responsavel, pessoas,
+      responsavel, pessoas, dataInicial,
       aoMudarData: (iso) => { campos.avisoData.hidden = !iso || iso >= paraIso(new Date()); },
       aoSalvarConcluida: () => salvar(true),
     });
@@ -2115,11 +2115,11 @@
   // Cada abertura monta um formulário novo. pessoas: os nomes que o seletor oferece;
   // o responsável padrão é o usuário da moldura.
   function painelCriarAtividade(props = {}) {
-    const { tipo = 'tarefa', pessoas = (window.DADOS && window.DADOS.RESPONSAVEIS) || [] } = props;
+    const { tipo = 'tarefa', pessoas = (window.DADOS && window.DADOS.RESPONSAVEIS) || [], data } = props;
     const { responsavel = window.Moldura && window.Moldura.USUARIO } = props;
     exigir(CAMPOS_DO_TIPO[tipo], 'painelCriarAtividade', `tipo desconhecido "${tipo}"`);
     exigir(Array.isArray(pessoas), 'painelCriarAtividade', 'pessoas é uma lista de nomes');
-    return { abrir: (origem) => montarCriarAtividade({ tipo, responsavel, pessoas }).abrir(origem) };
+    return { abrir: (origem) => montarCriarAtividade({ tipo, responsavel, pessoas, data }).abrir(origem) };
   }
 
   // PA-30: o resultado da ação aparece na barra, junto do botão. Toast só para o que está fora da tela.

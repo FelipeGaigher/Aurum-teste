@@ -129,13 +129,17 @@
   .dia-sem-item { margin: 0; color: var(--color-text-muted); }
   .horas { margin: 0; padding: 0; list-style: none; }
   .horas li {
+    display: flex;
     min-height: calc(var(--density-row-compact) * 2);
-    padding: var(--space-1) 0;
+    padding: 0;
     border-bottom: var(--border-width) solid var(--color-border-default);
     color: var(--color-text-muted);
     font-size: var(--font-size-label);
     font-variant-numeric: tabular-nums;
   }
+  .hora-botao { flex: 1; align-self: stretch; padding: var(--space-1) var(--space-2); background: none; border: 0; border-radius: var(--radius); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+  .hora-botao:hover { background-color: var(--color-bg-subtle); }
+  .hora-botao:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
   .lista-dia + .lista-dia { margin-top: var(--space-4); }
 
   /* PA-48: prazos a vencer numa lista só, ao lado da grade */
@@ -325,7 +329,18 @@
     todo.append(itens.length ? listaDeLinhas(itens) : criar('p', 'dia-sem-item', 'Nenhuma atividade neste dia.'));
     const horas = criar('ul', 'horas');
     horas.setAttribute('aria-label', 'Horas do dia');
-    horas.append(...HORAS.map((h) => criar('li', null, `${doisDigitos(h)}:00`)));
+    // Clicar numa hora abre o painel de criar atividade já no dia da grade (pedido de Felipe, 08/11).
+    const isoDoDia = `${estado.data.getFullYear()}-${doisDigitos(estado.data.getMonth() + 1)}-${doisDigitos(estado.data.getDate())}`;
+    horas.append(...HORAS.map((h) => {
+      const li = criar('li');
+      const botao = criar('button', 'hora-botao', `${doisDigitos(h)}:00`);
+      botao.type = 'button';
+      botao.setAttribute('aria-label', `Criar atividade às ${doisDigitos(h)}:00 deste dia`);
+      botao.setAttribute('data-abre-painel', '');
+      botao.addEventListener('click', () => DS.painelCriarAtividade({ tipo: 'evento', data: isoDoDia }).abrir(botao));
+      li.append(botao);
+      return li;
+    }));
     return [todo, horas];
   }
 
