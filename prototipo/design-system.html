@@ -193,7 +193,7 @@
   const { botao, grupoBotoes, menuAcoes, icone, ICONES, campo, areaTexto, busca, seletor, seletorMultiplo,
     seletorPessoas, data, periodo, caixa, radio, chave, toast, faixaAviso, dialogo, tooltip, progresso, skeleton,
     estadoVazio, upsell, descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade,
-    cardAtividade, cardContato, paginacao, abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper,
+    cardAtividade, cardContato, cardRegistro, paginacao, abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper,
     painelDetalhe, divisorRedimensionavel } = window.DS;
   const { ATIVIDADES, CONTATOS } = window.DADOS;
 
@@ -332,7 +332,7 @@
 
   const NOME_DO_ESTADO = {
     default: 'Padrão', hover: 'Hover', active: 'Ativo', foco: 'Foco',
-    disabled: 'Desabilitado', erro: 'Erro', carregando: 'Carregando', vazio: 'Vazio', oculto: 'Oculto',
+    disabled: 'Desabilitado', selecionado: 'Selecionado', 'sem-destaque': 'Sem destaque', erro: 'Erro', carregando: 'Carregando', vazio: 'Vazio', oculto: 'Oculto',
   };
 
   function comClasse(el, classe) {
@@ -436,7 +436,7 @@
 
   function pecaMenu() {
     return pecaComEstados({
-      id: 'menu-acoes', titulo: 'Menu de ações', nota: 'As ações destrutivas ficam em grupo próprio, no fim da lista.',
+      id: 'menu-acoes', titulo: 'Menu de ações', nota: 'As ações destrutivas ficam em grupo próprio, no fim da lista. Dentro de contêiner que rola, a lista é posicionada em relação à tela e fecha quando algo rola.',
       estados: [
         ['default', menuDemo()],
         ['hover', menuComGatilho((b) => b.classList.add('is-hover'))],
@@ -1134,6 +1134,58 @@
     });
   }
 
+  const REGISTRO_COMPLETO = {
+    titulo: 'Contestação — Antunes e Couto',
+    chip: 'Cível',
+    destaque: { rotulo: 'Processo', valor: NUMERO_FICTICIO, copiar: NUMERO_FICTICIO },
+    linhas: [
+      { rotulo: 'Responsável', valor: 'Marina Couto', pessoa: true },
+      { rotulo: 'Data', valor: '12/11/2026' },
+      { rotulo: 'Tamanho', valor: '240 KB' },
+      { rotulo: 'Origem', valor: 'Protocolo digital' },
+    ],
+    selecionavel: true,
+  };
+
+  function registroDemo(extra) {
+    return cardRegistro({ ...REGISTRO_COMPLETO, ...extra });
+  }
+
+  function pecaCardRegistro() {
+    const semDestaque = { destaque: undefined, linhas: REGISTRO_COMPLETO.linhas.slice(0, 2) };
+    const vazio = {
+      chip: undefined, destaque: { rotulo: 'Processo', valor: '' },
+      linhas: REGISTRO_COMPLETO.linhas.map(({ rotulo }) => ({ rotulo, valor: '' })),
+    };
+    return pecaComEstados({
+      id: 'card-registro', titulo: 'Card de registro',
+      nota: 'Três níveis: título e chip, destaque com o número do processo e o botão copiar, linhas secundárias em grade compacta. Um card para Contatos, Atendimentos e Documentos.',
+      estados: [
+        ['default', registroDemo()],
+        ['hover', comClasse(registroDemo(), 'is-hover')],
+        ['foco', comClasse(registroDemo(), 'is-foco')],
+        ['selecionado', comClasse(registroDemo(), 'is-selecionado')],
+        ['sem-destaque', registroDemo(semDestaque)],
+        ['vazio', registroDemo(vazio)],
+      ],
+      ausentes: {
+        active: 'o clique seleciona ou abre na hora. Não há estado pressionado.',
+        disabled: 'o card não desabilita. Sem permissão, a tela mostra o upsell.',
+        erro: 'o card não guarda valor. A falha ao carregar vai para a faixa de aviso acima da lista.',
+        carregando: 'a lista carrega com esqueleto, e o card só nasce com o dado pronto.',
+      },
+      props: [
+        ['titulo', 'nome do registro; obrigatório'],
+        ['href', 'transforma o título em link'],
+        ['chip', 'texto ou elemento de etiqueta ao lado do título'],
+        ['destaque', '{ rotulo, valor, copiar }: o número do processo, com o botão de copiar quando há texto em copiar'],
+        ['linhas', '{ rotulo, valor, pessoa }: pares em grade compacta; pessoa vira avatar com o nome; sem valor, aparece o traço'],
+        ['rodape', 'lista de elementos no pé do card'],
+        ['selecionavel', 'entra no Tab e aceita .is-selecionado, que a página liga'],
+      ],
+    });
+  }
+
   function paginacaoDemo(transformar) {
     const raiz = paginacao({ pagina: 2, total: 12 });
     if (transformar) transformar(raiz);
@@ -1622,7 +1674,7 @@
     pecaSkeleton(), pecaVazio(), pecaUpsell());
 
   document.getElementById('dados').append(pecaTag(), pecaChipFiltro(), pecaChipPrazo(), pecaSelo(), pecaAvatar(),
-    pecaTabela(), pecaLinha(), pecaCard(), pecaContato(), pecaPaginacao());
+    pecaTabela(), pecaLinha(), pecaCard(), pecaContato(), pecaCardRegistro(), pecaPaginacao());
 
   document.getElementById('navegacao').append(pecaNavbar(),
     pecaMenuLateral('sidebar-expandida', 'Sidebar expandida', 'Ícone e nome de cada módulo. O item do módulo aberto tem fundo próprio e texto de ação, não só cor.', false),
