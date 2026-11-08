@@ -11,21 +11,18 @@
     --serif: "Fraunces", "Source Serif 4", Georgia, "Times New Roman", serif;
     --sans: "Geist", "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   }
-  @media (prefers-color-scheme: dark) { body:not(:has(#tema:checked)) { --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0; --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0; --stamp: #e0665c; --page: #0a0f1c; --veil: rgba(16, 24, 40, 0.72); } }
-  @media (prefers-color-scheme: light) { body:has(#tema:checked) { --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0; --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0; --stamp: #e0665c; --page: #0a0f1c; --veil: rgba(16, 24, 40, 0.72); } }
-  @media (prefers-color-scheme: no-preference) { body:has(#tema:checked) { --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0; --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0; --stamp: #e0665c; --page: #0a0f1c; --veil: rgba(16, 24, 40, 0.72); } }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body { background: var(--page); color: var(--text); font-family: var(--sans); padding: 24px 16px 64px; }
-  .tema { position: fixed; top: 12px; right: 16px; z-index: 5; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 10px; cursor: pointer; }
-  .tema input { accent-color: var(--stamp); margin: 0; }
-  .tema:has(input:focus-visible) { outline: 2px solid var(--stamp); outline-offset: 2px; }
   .capa { max-width: 1600px; margin: 0 auto 24px; color: var(--muted); font-size: 14px; line-height: 1.5; }
 
   .slide { container-type: inline-size; position: relative; width: min(100%, 1600px); aspect-ratio: 16 / 9; margin: 0 auto 32px; background: var(--paper); color: var(--text); overflow: hidden; border: 1px solid var(--line); }
-  h2 { position: absolute; top: 3cqw; left: 3.6cqw; right: 3.6cqw; margin: 0; font-family: var(--serif); font-weight: 400; font-size: 3.5cqw; line-height: 1.08; letter-spacing: -0.008em; }
-  .pag { position: absolute; right: 3.6cqw; bottom: 1.3cqw; margin: 0; font-size: 0.85cqw; color: var(--muted); }
-  .area { position: absolute; top: 9.6cqw; left: 3.6cqw; right: 3.6cqw; bottom: 3.4cqw; display: grid; gap: 4cqw; }
+  .item { position: absolute; top: 2.6cqw; left: 3.6cqw; right: 3.6cqw; margin: 0; font-size: 0.833cqw; font-weight: 500; line-height: 1.3; color: var(--text); }
+  .pergunta { position: absolute; top: 3.85cqw; left: 3.6cqw; right: 3.6cqw; margin: 0; font-size: 0.9375cqw; line-height: 1.3; color: var(--muted); }
+  .pergunta::before { content: "“"; } .pergunta::after { content: "”"; }
+  .rodape { position: absolute; left: 3.6cqw; right: 3.6cqw; bottom: 1.3cqw; margin: 0; display: flex; justify-content: space-between; font-size: 0.729cqw; color: var(--muted); }
+  h2 { position: absolute; top: 5.7cqw; left: 3.6cqw; right: 3.6cqw; margin: 0; font-family: var(--serif); font-weight: 400; font-size: 3.5cqw; line-height: 1.08; letter-spacing: -0.008em; }
+  .area { position: absolute; top: 12.3cqw; left: 3.6cqw; right: 3.6cqw; bottom: 3.4cqw; display: grid; gap: 4cqw; }
   .coluna { display: flex; flex-direction: column; min-width: 0; min-height: 0; justify-content: space-between; gap: 1cqw; }
   h3 { display: flex; align-items: center; gap: 0.8cqw; margin: 0; font-size: 1.75cqw; font-weight: 500; line-height: 1.2; }
   .n { flex: none; display: inline-grid; place-items: center; width: 2.1cqw; height: 2.1cqw; border-radius: 50%; background: var(--stamp); color: var(--inverse); font-size: 1.15cqw; font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -41,7 +38,7 @@
   .moldado { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 
   /* 1 */
-  .s1 h2 { top: 3.2cqw; font-size: 5.2cqw; }
+  .s1 h2 { top: 5.9cqw; font-size: 5.2cqw; }
   .s1 .tela { position: absolute; left: 0; bottom: 0; width: 77.4cqw; border-top: 1px solid var(--line); border-right: 1px solid var(--line); }
   .s1 ol { position: absolute; left: 79.8cqw; right: 3.6cqw; top: 19.4cqw; margin: 0; padding: 0; list-style: none; display: grid; gap: 1.9cqw; }
   .s1 li { display: grid; grid-template-columns: 2.1cqw 1fr; gap: 0.8cqw; font-size: 1.42cqw; line-height: 1.22; font-weight: 500; }
@@ -127,12 +124,13 @@
 </head>
 <body>
 
-<label class="tema" for="tema"><input type="checkbox" id="tema"> Trocar tema</label>
 
 <p class="capa">Questão 1. Cinco frames de 1920 por 1080. O texto completo do diagnóstico está em <code>01-diagnostico.md</code>.</p>
 
 <!-- ============ 1 ============ -->
 <section class="slide s1" id="q1s1">
+  <p class="item">Questão 1, item 1 de 3. Os cinco problemas</p>
+  <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
   <h2>O Astrea sabe o que é um prazo.<br>A interface ainda não mostra isso.</h2>
   <svg class="tela" viewBox="0 58 1880 908" role="img" aria-label="Área de trabalho do Astrea com cinco trechos marcados: faixa de campanha, título com a palavra tarefa, botão de criar, estatísticas em azul de link e Lembretes no fim da coluna direita">
     <defs><mask id="m1"><rect width="1901" height="966" fill="#fff"/><rect x="0" y="58" width="1895" height="63" fill="#000"/><rect x="575" y="360" width="408" height="42" rx="6" fill="#000"/><rect x="615" y="655" width="325" height="60" rx="8" fill="#000"/><rect x="1266" y="596" width="256" height="198" rx="6" fill="#000"/><rect x="1264" y="878" width="300" height="88" rx="6" fill="#000"/></mask></defs>
@@ -155,11 +153,13 @@
     <li><span class="n">4</span>Três azuis, três cinzas, três jeitos de criar</li>
     <li><span class="n">5</span>A moldura compete com o trabalho</li>
   </ol>
-  <p class="pag">1 de 5</p>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>1 de 5</span></footer>
 </section>
 
 <!-- ============ 2 ============ -->
 <section class="slide s2" id="q1s2">
+  <p class="item">Questão 1, item 1 de 3. Problemas 1 e 2</p>
+  <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
   <h2>O prazo se esconde. A atividade se espalha.</h2>
   <div class="area">
     <div class="coluna">
@@ -202,11 +202,13 @@
       <p class="por-que">Quem busca precisa saber onde a atividade está e como ela se chama.</p>
     </div>
   </div>
-  <p class="pag">2 de 5</p>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>2 de 5</span></footer>
 </section>
 
 <!-- ============ 3 ============ -->
 <section class="slide s3" id="q1s3">
+  <p class="item">Questão 1, item 1 de 3. Problemas 3, 4 e 5</p>
+  <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
   <h2>Criar interrompe, a paleta varia, a moldura compete.</h2>
   <div class="area">
     <div class="coluna">
@@ -257,11 +259,13 @@
       </div>
     </div>
   </div>
-  <p class="pag">3 de 5</p>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>3 de 5</span></footer>
 </section>
 
 <!-- ============ 4 ============ -->
 <section class="slide s4" id="q1s4">
+  <p class="item">Questão 1, item 2 de 3. Princípios de design</p>
+  <p class="pergunta">Quais princípios de design devem guiar o redesign?</p>
   <h2>Seis princípios decidem o redesign.</h2>
   <div class="area">
     <div class="coluna">
@@ -310,11 +314,13 @@
       </li>
     </ul>
   </div>
-  <p class="pag">4 de 5</p>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>4 de 5</span></footer>
 </section>
 
 <!-- ============ 5 ============ -->
 <section class="slide s5" id="q1s5">
+  <p class="item">Questão 1, item 3 de 3. O que validar</p>
+  <p class="pergunta">O que validar antes de seguir, e como?</p>
   <h2>Caro de corrigir se confirma antes. O resto segue por token.</h2>
   <div class="area">
     <table>
@@ -332,7 +338,7 @@
     </table>
     <p class="legenda"><span><i class="ponto"></i>Fonte a cruzar</span><span><i class="ponto meio"></i>A planilha responde em parte</span><strong>Duas fontes de tipos diferentes na mesma direção confirmam.</strong></p>
   </div>
-  <p class="pag">5 de 5</p>
+  <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>5 de 5</span></footer>
 </section>
 
 </body>

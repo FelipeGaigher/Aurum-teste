@@ -57,3 +57,18 @@ Hover usa a cor de ação.
 
 **Virou:** o módulo Questionários, em `prototipo/questionarios.html`, e os
 hovers do design system em azul.
+
+### 2026-11-08 — Slide de banca é claro, sem chave de tema
+
+Felipe reprovou os decks das três questões. A estrutura mudava de um para o
+outro. O tema escuro vencia o claro ao abrir. A chave "Trocar tema" ficava no canto.
+
+**Por quê:** o deck é desenhado para o modo claro e projetado numa sala. O
+tema escuro e a chave vieram da regra geral de documento HTML. Essa regra vale
+para documento de leitura, não para slide.
+
+**Regra:** deck de apresentação nasce só no modo claro, sem chave de tema. Os
+decks de uma mesma entrega compartilham cabeçalho, título e rodapé.
+
+**Virou:** os três decks sem `@media (prefers-color-scheme)` e sem a chave. A
+Questão 1 ganhou o cabeçalho e o rodapé da Questão 2 e da Questão 3.

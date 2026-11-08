@@ -21,27 +21,6 @@
     --sans: "Geist", "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   }
   /* Tema escuro: segue o sistema; a chave inverte o que o sistema disser. */
-  @media (prefers-color-scheme: dark) {
-    body:not(:has(#tema:checked)) {
-      --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0;
-      --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0;
-      --stamp: #e0665c; --page: #0a0f1c;
-    }
-  }
-  @media (prefers-color-scheme: light) {
-    body:has(#tema:checked) {
-      --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0;
-      --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0;
-      --stamp: #e0665c; --page: #0a0f1c;
-    }
-  }
-  @media (prefers-color-scheme: no-preference) {
-    body:has(#tema:checked) {
-      --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0;
-      --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0;
-      --stamp: #e0665c; --page: #0a0f1c;
-    }
-  }
 
   * { box-sizing: border-box; }
   html, body { margin: 0; }
@@ -52,14 +31,6 @@
     padding: 24px 16px 64px;
   }
 
-  .tema {
-    position: fixed; top: 12px; right: 16px; z-index: 2;
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 13px; color: var(--muted);
-    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 6px 10px; cursor: pointer;
-  }
-  .tema input { accent-color: var(--stamp); margin: 0; }
 
   .capa {
     max-width: 1600px; margin: 0 auto 24px; color: var(--muted); font-size: 14px; line-height: 1.5;
@@ -76,7 +47,7 @@
     background: var(--paper);
     color: var(--text);
     display: flex; flex-direction: column;
-    padding: 3.333cqw 5cqw 2.917cqw;       /* 64 96 56 */
+    padding: 2.6cqw 3.6cqw 2.917cqw;       /* 64 96 56 */
     gap: 2.083cqw;                          /* 40 */
     overflow: hidden;
     border: 1px solid var(--line);
@@ -180,7 +151,6 @@
 </head>
 <body>
 
-<label class="tema" for="tema"><input type="checkbox" id="tema"> Trocar tema</label>
 
 <p class="capa"><strong>Questão 2, documento-fonte dos slides.</strong> Cada bloco abaixo é um frame de 1920 por 1080. Papel branco, tinta azul, vermelho só no carimbo de decisão. Títulos em Fraunces, texto em Geist, raio único de 4px. Número só onde a ordem é real.</p>
 
