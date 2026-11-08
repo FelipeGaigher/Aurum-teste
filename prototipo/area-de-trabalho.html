@@ -20,7 +20,6 @@
   }
   /* PA-35 a PA-37: cada filtro tem rótulo fixo, e a escolha volta ao abrir a página. */
   .barra-filtros { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: flex-start; gap: var(--space-3); min-width: 0; }
-  .area-data { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
 
   /* PA-39: estatísticas viram uma linha de leitura. Cada número leva à seção que ele conta. */
   .leitura {
@@ -133,7 +132,6 @@
     <div class="area-topo">
       <div class="barra-filtros" id="filtros" role="group" aria-label="Filtros da área de trabalho"></div>
       <div class="area-direita">
-        <p class="area-data" id="area-data"></p>
         <div class="formato" id="formato" role="radiogroup" aria-label="Formato da lista"></div>
         <button type="button" id="criar-atividade" class="botao botao-primario" data-acao="criar-atividade" data-abre-painel aria-haspopup="dialog">Adicionar atividade</button>
       </div>
@@ -443,8 +441,6 @@
     desenharLeitura(contagem, lista, visiveis);
   }
 
-  const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
-  document.getElementById('area-data').textContent = hoje.charAt(0).toUpperCase() + hoje.slice(1);
 
   // Criar atividade na própria tela: o botão primário abre o painel único (PA-24, Task 13),
   // e a atividade salva entra na seção do prazo dela. O resultado aparece junto da ação.
