@@ -5,6 +5,7 @@
   const CHAVE_TEMA = 'astrea-tema';
   const CHAVE_MENU = 'astrea-menu';
   const USUARIO = 'Marina Couto';
+  const GRUPO_QUESTIONAMENTOS = 'Questionamentos';
   const GRUPO_ESPECIALISTA = 'Especialista UX/UI';
 
   const ICONES = {
@@ -29,9 +30,15 @@
     cadeado: '<rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
     lua: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
     seta: '<path d="M8 10l4 4 4-4"/>',
+    q1: '<circle cx="12" cy="12" r="9"/><path d="M10 9.5 12 8v8"/>',
+    q2: '<circle cx="12" cy="12" r="9"/><path d="M9.5 10a2.5 2.5 0 0 1 5 0c0 2-5 3.5-5 6h5"/>',
+    q3: '<circle cx="12" cy="12" r="9"/><path d="M9.5 8h5l-3 3.2c1.8 0 3 1 3 2.4s-1.2 2.4-2.6 2.4c-1.1 0-2-.5-2.4-1.3"/>',
   };
 
   const MENU = [
+    { rotulo: 'Questão 1', pagina: 'questao-1.html', icone: 'q1', grupo: GRUPO_QUESTIONAMENTOS },
+    { rotulo: 'Questão 2', pagina: 'questao-2.html', icone: 'q2', grupo: GRUPO_QUESTIONAMENTOS },
+    { rotulo: 'Questão 3', pagina: 'questao-3.html', icone: 'q3', grupo: GRUPO_QUESTIONAMENTOS },
     { rotulo: 'Gestão kanban', pagina: 'kanban.html', icone: 'kanban', grupo: GRUPO_ESPECIALISTA },
     { rotulo: 'Design system', pagina: 'design-system.html', icone: 'camadas', grupo: GRUPO_ESPECIALISTA },
     { rotulo: 'Área de trabalho', pagina: 'area-de-trabalho.html', icone: 'lista' },
@@ -327,9 +334,13 @@
 
   function htmlMenuLateral(pagina) {
     const ativa = MODULO_DA_PAGINA[pagina] || pagina;
+    const questionamentos = MENU.filter((i) => i.grupo === GRUPO_QUESTIONAMENTOS);
     const especialista = MENU.filter((i) => i.grupo === GRUPO_ESPECIALISTA);
     const modulos = MENU.filter((i) => !i.grupo);
     return `<nav class="menu-lateral" id="menu-principal" aria-label="Menu principal">
+    <p class="menu-grupo" id="grupo-questionamentos">${GRUPO_QUESTIONAMENTOS}</p>
+    ${htmlLista(questionamentos, ativa, 'aria-labelledby="grupo-questionamentos"')}
+    <hr>
     <p class="menu-grupo" id="grupo-especialista">${GRUPO_ESPECIALISTA}</p>
     ${htmlLista(especialista, ativa, 'aria-labelledby="grupo-especialista"')}
     <hr>

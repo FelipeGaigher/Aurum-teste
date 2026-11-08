@@ -36,7 +36,7 @@ const CONTROLES = 'a[href], button, input:not([type=hidden]), select, textarea, 
   + '[role="switch"], [role="tab"], [role="combobox"]';
 const NOME_ETIQUETA = 'Etiqueta de verificação';
 
-const PAGINAS = ['kanban.html', 'design-system.html', 'area-de-trabalho.html', 'agenda.html',
+const PAGINAS = ['questao-1.html', 'questao-2.html', 'questao-3.html', 'kanban.html', 'design-system.html', 'area-de-trabalho.html', 'agenda.html',
   'contatos.html', 'atendimentos.html', 'processos.html', 'publicacoes.html', 'financeiro.html',
   'documentos.html', 'indicadores.html', 'alertas.html', 'suporte.html', 'ias.html',
   'administracao.html', 'buscas.html'];

@@ -235,7 +235,7 @@
   --component-lock-size: var(--font-size-label);
   --component-dropdown-min-width: var(--size-sidebar);
   --component-shortcut-active-bg: var(--color-bg-subtle);
-  --component-sidebar-width: var(--size-sidebar);
+  --component-sidebar-width: max(var(--size-sidebar), 14.5rem);
   --component-sidebar-collapsed-width: var(--size-sidebar-recolhida);
   --component-sidebar-bg: var(--color-bg-page);
   --component-sidebar-toggle-size: var(--size-icon-button);
@@ -1410,6 +1410,19 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 <div class="corpo">
   <nav class="menu-lateral" id="menu-principal" aria-label="Menu principal">
     <!-- O grupo do teste vem primeiro: o rótulo é o cargo da vaga, e o item é o módulo oculto do próprio Astrea. -->
+    <p class="menu-grupo" id="grupo-questionamentos">Questionamentos</p>
+    <ul aria-labelledby="grupo-questionamentos">
+      <li><a href="questao-1.html">
+        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 9.5 12 8v8"/></svg>
+        <span class="rotulo">Questão 1</span></a></li>
+      <li><a href="questao-2.html">
+        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 10a2.5 2.5 0 0 1 5 0c0 2-5 3.5-5 6h5"/></svg>
+        <span class="rotulo">Questão 2</span></a></li>
+      <li><a href="questao-3.html">
+        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 8h5l-3 3.2c1.8 0 3 1 3 2.4s-1.2 2.4-2.6 2.4c-1.1 0-2-.5-2.4-1.3"/></svg>
+        <span class="rotulo">Questão 3</span></a></li>
+    </ul>
+    <hr>
     <p class="menu-grupo" id="grupo-especialista">Especialista UX/UI</p>
     <ul aria-labelledby="grupo-especialista">
       <li><a href="kanban.html" aria-current="page">
