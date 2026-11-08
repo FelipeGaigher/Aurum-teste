@@ -6,12 +6,177 @@
 <title>Atendimentos, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
+<script src="dados.js"></script>
+<style>
+  /* A ação de criar fica no topo, à direita, com lista ou sem lista. */
+  .modulo-topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  /* PA-83: o 1º Registro nasce do tamanho de duas linhas e cresce com o texto. */
+  .registro-crescente .campo-area {
+    field-sizing: content;
+    resize: none;
+    max-height: calc(var(--component-field-area-min-height) * 4);
+  }
+</style>
 </head>
 <body data-pagina="atendimentos.html" data-titulo="Atendimentos">
 <div class="corpo">
   <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
+    <div class="modulo-topo" id="topo"></div>
+    <div id="lista"></div>
   </main>
 </div>
+<script>
+(function () {
+  const { CONTATOS, PROCESSOS } = window.DADOS;
+  // Etiquetas inventadas para o protótipo. O Astrea mostra o campo só com o ícone.
+  const ETIQUETAS = [['', 'Sem etiqueta'], ['consulta', 'Consulta inicial'], ['retorno', 'Retorno'], ['acordo', 'Acordo']];
+  const PROCESSOS_DO_SELETOR = [['', 'Nenhum'], ...PROCESSOS.map((p) => [p.numero, p.numero])];
+
+  const atendimentos = [];
+  let criados = 0;
+  let painel = null;
+  let formulario = null;
+
+  function juntar(nomes) {
+    return nomes.length > 1 ? `${nomes.slice(0, -1).join(', ')} e ${nomes.at(-1)}` : nomes[0];
+  }
+
+  // PA-84: sem Responsável e sem Acesso, como no Astrea, até a regra de negócio ser confirmada.
+  function montarFormulario() {
+    const valores = { clientes: [], assunto: '', etiqueta: '', processo: '', registro: '' };
+    const opcoesClientes = CONTATOS.map((c) => [c.id, c.nome]);
+    const campoClientes = () => DS.seletorMultiplo({
+      rotulo: 'Clientes', obrigatorio: true, largura: 'total', opcoes: opcoesClientes, valor: valores.clientes,
+      placeholder: 'Selecione um ou mais clientes', aoEscolher: (v) => { valores.clientes = v; },
+    });
+    const novoCliente = DS.botao({ variante: 'texto', tamanho: 'pequeno', iconeEsquerda: 'mais', rotulo: 'Adicionar cliente' });
+    novoCliente.addEventListener('click', () => painel.trocar(conteudoDoNovoCliente()));
+    const registro = DS.areaTexto({
+      rotulo: '1º Registro do atendimento', obrigatorio: true, largura: 'total', linhas: 2,
+      placeholder: 'Insira as anotações referentes ao atendimento', aoMudar: (v) => { valores.registro = v.trim(); },
+    });
+    registro.classList.add('registro-crescente');
+    const pecas = {
+      clientes: campoClientes(),
+      novoCliente,
+      assunto: DS.campo({
+        rotulo: 'Assunto', obrigatorio: true, largura: 'total', placeholder: 'Digite um título para o seu atendimento',
+        aoMudar: (v) => { valores.assunto = v.trim(); },
+      }),
+      etiqueta: DS.seletor({ rotulo: 'Etiqueta', opcoes: ETIQUETAS, aoEscolher: (v) => { valores.etiqueta = v; } }),
+      processo: DS.seletor({
+        rotulo: 'Processo, caso ou atendimento', largura: 'total', opcoes: PROCESSOS_DO_SELETOR,
+        aoEscolher: (v) => { valores.processo = v; },
+      }),
+      registro,
+    };
+    return { valores, opcoesClientes, campoClientes, pecas };
+  }
+
+  function faltando() {
+    const v = formulario.valores;
+    return [[!v.clientes.length, 'Clientes'], [!v.assunto, 'Assunto'], [!v.registro, '1º Registro']]
+      .filter(([falta]) => falta).map(([, nome]) => nome);
+  }
+
+  function nomesDosClientes(chaves) {
+    return chaves.map((c) => formulario.opcoesClientes.find(([chave]) => chave === c)[1]).join(', ');
+  }
+
+  function conteudoDoFormulario() {
+    const barra = DS.barraAcoes({
+      rotulo: 'Ações do atendimento',
+      acoes: [
+        { variante: 'texto', rotulo: 'Cancelar', aoClicar: () => painel.fechar() },
+        { variante: 'primario', rotulo: 'Salvar', aoClicar: () => salvar(barra) },
+      ],
+    });
+    const p = formulario.pecas;
+    return {
+      titulo: 'Adicionar atendimento',
+      corpo: [p.clientes, p.novoCliente, p.assunto, p.etiqueta, p.processo, p.registro],
+      rodape: barra.el,
+    };
+  }
+
+  // O cliente novo nasce dentro do mesmo painel (PA-27) e volta já escolhido.
+  function conteudoDoNovoCliente() {
+    let nome = '';
+    const voltar = () => painel.trocar(conteudoDoFormulario());
+    const criar = () => {
+      if (!nome) { barra.definirSituacao('erro', 'Preencha o nome do cliente.'); return; }
+      const chave = `novo-${++criados}`;
+      formulario.opcoesClientes.push([chave, nome]);
+      formulario.valores.clientes = [...formulario.valores.clientes, chave];
+      formulario.pecas.clientes = formulario.campoClientes();
+      voltar();
+    };
+    const barra = DS.barraAcoes({
+      rotulo: 'Ações do cliente',
+      acoes: [{ variante: 'secundario', rotulo: 'Voltar', aoClicar: voltar }, { variante: 'primario', rotulo: 'Criar cliente', aoClicar: criar }],
+    });
+    return {
+      titulo: 'Adicionar cliente',
+      corpo: [DS.campo({ rotulo: 'Nome do cliente', obrigatorio: true, largura: 'total', aoMudar: (v) => { nome = v.trim(); } })],
+      rodape: barra.el,
+    };
+  }
+
+  function salvar(barra) {
+    const faltam = faltando();
+    if (faltam.length) { barra.definirSituacao('erro', `Preencha ${juntar(faltam)}.`); return; }
+    const v = formulario.valores;
+    atendimentos.unshift({
+      assunto: v.assunto,
+      clientes: nomesDosClientes(v.clientes),
+      processo: v.processo,
+      data: new Date().toLocaleDateString('pt-BR'),
+    });
+    painel.fechar();
+    desenhar();
+  }
+
+  const botaoAdicionar = DS.botao({ variante: 'primario', iconeEsquerda: 'mais', rotulo: 'Adicionar atendimento' });
+  botaoAdicionar.setAttribute('data-abre-painel', '');
+  botaoAdicionar.setAttribute('aria-haspopup', 'dialog');
+  botaoAdicionar.addEventListener('click', abrirFormulario);
+  document.getElementById('topo').append(botaoAdicionar);
+
+  function abrirFormulario() {
+    formulario = montarFormulario();
+    const conteudo = conteudoDoFormulario();
+    if (painel) painel.trocar(conteudo);
+    else painel = DS.painelLateral(conteudo);
+    painel.abrir(botaoAdicionar);
+  }
+
+  function desenhar() {
+    const lista = document.getElementById('lista');
+    if (!atendimentos.length) {
+      lista.replaceChildren(DS.estadoVazio({
+        titulo: 'Agilize e organize seus atendimentos',
+        texto: 'Registre conversas com seus clientes, adicione documentos e crie atividades de forma descomplicada.',
+      }));
+      return;
+    }
+    lista.replaceChildren(DS.tabela({
+      rotulo: 'Atendimentos',
+      colunas: [['assunto', 'Assunto'], ['clientes', 'Clientes'], ['processo', 'Processo, caso ou atendimento'], ['data', 'Data']],
+      linhas: atendimentos,
+    }));
+  }
+
+  desenhar();
+  if (new URLSearchParams(location.search).get('adicionar') === '1') abrirFormulario();
+})();
+</script>
 </body>
 </html>

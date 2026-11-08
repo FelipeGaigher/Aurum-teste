@@ -1605,7 +1605,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: `DS.estadoVazio`, `DS.campo`, `DS.stepper` e `.barra-acoes`.
 - Produces: `?adicionar=1` nas duas páginas.
 
-- [ ] **Step 1: Implementar**
+- [x] **Step 1: Implementar**
 
 - Atendimentos: estado vazio e adicionar, com os campos do Astrea.
 - "1º Registro" é área menor, que cresce com o texto (PA-83).
@@ -1616,7 +1616,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 Esperado: os dois módulos substituem as cascas.
 
-- [ ] **Step 2: Executar e confirmar que passa**
+- [x] **Step 2: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/atendimentos.html prototipo/documentos.html
@@ -1625,7 +1625,7 @@ node scripts/verificar-app.js --rf RF-07,RF-12,RF-15 --paginas atendimentos.html
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 3: Entregar**
+- [x] **Step 3: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 

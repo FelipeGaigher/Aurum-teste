@@ -6,12 +6,211 @@
 <title>Documentos, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
+<script src="dados.js"></script>
+<style>
+  /* O atalho para os modelos fica ao lado da ação de criar (PA-86). */
+  .modulo-topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  .resumo { display: grid; gap: var(--space-2); margin: 0; }
+  .resumo div { display: grid; gap: var(--space-1); }
+  .resumo dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
+  .resumo dd { margin: 0; overflow-wrap: anywhere; }
+  .passo-nota { margin: 0; color: var(--color-text-muted); }
+</style>
 </head>
 <body data-pagina="documentos.html" data-titulo="Documentos">
 <div class="corpo">
   <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
+    <div class="modulo-topo" id="topo"></div>
+    <div id="lista"></div>
   </main>
 </div>
+<script>
+(function () {
+  const { CONTATOS, PROCESSOS, RESPONSAVEIS } = window.DADOS;
+  // O usuário logado da moldura, que o Astrea traz como responsável padrão.
+  const EU = 'Marina Couto';
+  // Os quatro modelos padrão da conta. O Astrea deixa o autor vazio (PA-87).
+  const MODELOS = [
+    { chave: 'honorarios-pf', titulo: 'Contrato de Honorários PF', autor: '', data: '07/11/2026' },
+    { chave: 'honorarios-pj', titulo: 'Contrato de Honorários PJ', autor: '', data: '07/11/2026' },
+    { chave: 'procuracao-pf', titulo: 'Procuração PF', autor: '', data: '07/11/2026' },
+    { chave: 'procuracao-pj', titulo: 'Procuração PJ', autor: '', data: '07/11/2026' },
+  ];
+  const AUTOR_PADRAO = 'Modelo do Astrea';
+  const PASSOS = ['Dados do documento', 'Conteúdo do documento'];
+
+  const opcoes = {
+    modelo: [['', 'Selecione um modelo'], ...MODELOS.map((m) => [m.chave, m.titulo])],
+    processo: [['', 'Nenhum'], ...PROCESSOS.map((p) => [p.numero, p.numero])],
+    cliente: [['', 'Selecione um cliente'], ...CONTATOS.map((c) => [c.id, c.nome])],
+    responsavel: RESPONSAVEIS.map((nome) => [nome, nome]),
+  };
+  const rotuloDe = (campo, chave) => opcoes[campo].find(([c]) => c === chave)[1];
+
+  const documentos = [];
+  let painel = null;
+  let formulario = null;
+  let origem = null;
+
+  function juntar(nomes) {
+    return nomes.length > 1 ? `${nomes.slice(0, -1).join(', ')} e ${nomes.at(-1)}` : nomes[0];
+  }
+
+  function abrirPainel(conteudo, de) {
+    if (painel) painel.trocar(conteudo);
+    else painel = DS.painelLateral(conteudo);
+    painel.abrir(de);
+  }
+
+  // --- documento padrão: dois passos com indicador (PA-85) -------------------
+
+  function montarFormulario() {
+    const valores = { modelo: '', processo: '', cliente: '', titulo: '', responsavel: EU };
+    const escolher = (campo) => (v) => { valores[campo] = v; };
+    const pecas = [
+      DS.seletor({ rotulo: 'Documento', obrigatorio: true, largura: 'total', opcoes: opcoes.modelo, aoEscolher: escolher('modelo') }),
+      DS.seletor({ rotulo: 'Processo, caso ou atendimento', largura: 'total', opcoes: opcoes.processo, aoEscolher: escolher('processo') }),
+      DS.seletor({ rotulo: 'Cliente', obrigatorio: true, largura: 'total', opcoes: opcoes.cliente, aoEscolher: escolher('cliente') }),
+      DS.campo({ rotulo: 'Título', obrigatorio: true, largura: 'total', aoMudar: (v) => { valores.titulo = v.trim(); } }),
+      DS.seletor({ rotulo: 'Responsável', obrigatorio: true, largura: 'total', opcoes: opcoes.responsavel, valor: EU, aoEscolher: escolher('responsavel') }),
+    ];
+    return { valores, pecas };
+  }
+
+  function indicador(atual) {
+    return DS.stepper({ rotulo: 'Passos do documento padrão', passos: PASSOS, atual, aoIr: () => painel.trocar(passoDados()) });
+  }
+
+  function faltando() {
+    const v = formulario.valores;
+    return [[!v.modelo, 'Documento'], [!v.cliente, 'Cliente'], [!v.titulo, 'Título']]
+      .filter(([falta]) => falta).map(([, nome]) => nome);
+  }
+
+  function passoDados() {
+    const barra = DS.barraAcoes({
+      rotulo: 'Ações do documento padrão',
+      acoes: [
+        { variante: 'texto', rotulo: 'Cancelar', aoClicar: () => painel.fechar() },
+        { variante: 'primario', rotulo: 'Continuar', iconeDireita: 'direita', aoClicar: () => {
+          const faltam = faltando();
+          if (faltam.length) { barra.definirSituacao('erro', `Preencha ${juntar(faltam)}.`); return; }
+          painel.trocar(passoConteudo());
+        } },
+      ],
+    });
+    return { titulo: 'Documento padrão', corpo: [indicador(0), ...formulario.pecas], rodape: barra.el };
+  }
+
+  function linhaDoResumo(termo, valor) {
+    const div = document.createElement('div');
+    const dt = document.createElement('dt');
+    const dd = document.createElement('dd');
+    dt.textContent = termo;
+    dd.textContent = valor;
+    div.append(dt, dd);
+    return div;
+  }
+
+  function passoConteudo() {
+    const v = formulario.valores;
+    const resumo = document.createElement('dl');
+    resumo.className = 'resumo';
+    resumo.append(
+      linhaDoResumo('Documento', rotuloDe('modelo', v.modelo)),
+      linhaDoResumo('Cliente', rotuloDe('cliente', v.cliente)),
+      linhaDoResumo('Título', v.titulo),
+      linhaDoResumo('Responsável', v.responsavel),
+    );
+    const nota = document.createElement('p');
+    nota.className = 'passo-nota';
+    nota.textContent = 'O texto do modelo é preenchido com estes dados ao concluir.';
+    const barra = DS.barraAcoes({
+      rotulo: 'Ações do documento padrão',
+      acoes: [
+        { variante: 'secundario', rotulo: 'Voltar', aoClicar: () => painel.trocar(passoDados()) },
+        { variante: 'primario', rotulo: 'Concluir', aoClicar: concluir },
+      ],
+    });
+    return { titulo: 'Documento padrão', corpo: [indicador(1), resumo, nota], rodape: barra.el };
+  }
+
+  function concluir() {
+    const v = formulario.valores;
+    documentos.unshift({
+      titulo: v.titulo,
+      cliente: rotuloDe('cliente', v.cliente),
+      modelo: rotuloDe('modelo', v.modelo),
+      data: new Date().toLocaleDateString('pt-BR'),
+    });
+    painel.fechar();
+    desenhar();
+  }
+
+  function abrirDocumentoPadrao() {
+    formulario = montarFormulario();
+    abrirPainel(passoDados(), origem);
+  }
+
+  // --- modelos: atalho em Documentos (PA-86) ----------------------------------
+
+  function conteudoDosModelos() {
+    return {
+      titulo: 'Modelos de documento',
+      corpo: [DS.tabela({
+        rotulo: 'Modelos de documento',
+        colunas: [['titulo', 'Título'], ['autor', 'Autor'], ['data', 'Data']],
+        linhas: MODELOS.map((m) => ({ ...m, autor: m.autor || AUTOR_PADRAO })),
+      })],
+    };
+  }
+
+  // --- topo e lista ----------------------------------------------------------
+
+  const atalhoModelos = DS.botao({ variante: 'texto', rotulo: 'Modelos de documento' });
+  atalhoModelos.setAttribute('data-abre-painel', '');
+  atalhoModelos.setAttribute('aria-haspopup', 'dialog');
+  atalhoModelos.addEventListener('click', () => abrirPainel(conteudoDosModelos(), atalhoModelos));
+
+  // Documento abre o seletor de arquivos e Link não foi aberto na varredura: ficam no menu, desligados.
+  const menuAdicionar = DS.menuAcoes({
+    rotulo: 'Adicionar documento',
+    itens: [
+      { rotulo: 'Documento', desabilitado: true },
+      { rotulo: 'Link', desabilitado: true },
+      { rotulo: 'Documento padrão', aoClicar: abrirDocumentoPadrao },
+    ],
+  });
+  origem = menuAdicionar.querySelector('button');
+  document.getElementById('topo').append(atalhoModelos, menuAdicionar);
+
+  function desenhar() {
+    const lista = document.getElementById('lista');
+    if (!documentos.length) {
+      lista.replaceChildren(DS.estadoVazio({
+        titulo: 'Crie, padronize e gerencie seus documentos',
+        texto: 'Use Adicionar documento e escolha Documento padrão para gerar um contrato ou uma procuração a partir dos modelos.',
+      }));
+      return;
+    }
+    lista.replaceChildren(DS.tabela({
+      rotulo: 'Documentos',
+      colunas: [['titulo', 'Título'], ['cliente', 'Cliente'], ['modelo', 'Modelo'], ['data', 'Data']],
+      linhas: documentos,
+    }));
+  }
+
+  desenhar();
+  if (new URLSearchParams(location.search).get('adicionar') === '1') abrirDocumentoPadrao();
+})();
+</script>
 </body>
 </html>
