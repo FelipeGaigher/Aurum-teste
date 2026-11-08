@@ -233,11 +233,13 @@
   --component-button-primary-text: var(--color-action-text);
 
   /* escala do deck: a escala do DS multiplicada para a projeção */
-  --deck-titulo: calc(var(--font-size-title) * 1.8);
-  --deck-titulo-capa: calc(var(--font-size-title) * 2.4);
-  --deck-subtitulo: calc(var(--font-size-title) * 1.1);
-  --deck-destaque: calc(var(--font-size-emphasis) * 1.25);
-  --deck-corpo: calc(var(--font-size-body) * 1.2);
+  --deck-titulo: calc(var(--font-size-title) * 2.2); /* 44px */
+  --deck-titulo-capa: calc(var(--font-size-title) * 2.8); /* 56px */
+  --deck-cifra: calc(var(--font-size-title) * 3); /* 60px */
+  --deck-item: calc(var(--font-size-title) * 1.2); /* 24px */
+  --deck-destaque: var(--deck-item);
+  --deck-corpo: var(--font-size-title); /* 20px */
+  --deck-contexto: var(--font-size-dialog); /* 18px */
   --deck-rotulo: var(--font-size-label);
 }
 
@@ -355,128 +357,6 @@ code { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
   .slide { aspect-ratio: auto; min-height: 0; overflow: visible; break-inside: avoid; break-after: page; }
 }
 
-/* Questão 1: peças próprias do deck, só com tokens do DS */
-.corpo { flex: 1; display: flex; gap: var(--space-6); align-items: flex-start; min-height: 0; }
-.tese { font-size: var(--deck-destaque); color: var(--color-text-muted); max-width: 62cqw; }
-.texto { font-size: var(--deck-corpo); }
-.nota { font-size: var(--font-size-label); color: var(--color-text-muted); }
-h3 { margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); color: var(--color-text-default); line-height: var(--font-leading-tight); }
-.id { white-space: nowrap; }
-.detalhe { display: flex; flex-direction: column; gap: var(--space-3); }
-
-svg { display: block; width: 100%; height: auto; }
-svg text { font-family: var(--font-sans); fill: var(--color-text-default); }
-
-/* abertura */
-.abertura h2 { font-size: var(--deck-titulo-capa); max-width: 70cqw; }
-.abertura .corpo { flex-direction: column; gap: var(--space-4); }
-.abertura .marca-capa { margin-bottom: var(--space-5); }
-.problemas { width: 100%; counter-reset: problema; }
-.problemas > li { counter-increment: problema; display: grid; grid-template-columns: var(--space-6) minmax(0, 1fr) auto; column-gap: var(--space-3); row-gap: var(--space-1); align-items: baseline; }
-.problemas > li::before { content: counter(problema); grid-row: span 2; color: var(--color-action); font-size: var(--deck-destaque); font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; }
-.problemas .titulo { font-size: var(--deck-destaque); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
-.problemas .texto { grid-column: 2 / 4; color: var(--color-text-muted); }
-.painel.prob { gap: var(--space-4); }
-.painel.prob > svg { width: auto; max-width: 100%; height: 13cqw; }
-.painel.prob .nota { margin-top: auto; }
-/* fonte de cada sintoma e faixa de fontes da capa */
-.tag-fonte { margin-left: var(--space-1); vertical-align: middle; color: var(--color-text-muted); }
-.fontes { width: 100%; padding-top: var(--space-3); border-top: var(--border-width) solid var(--color-border-default); font-size: var(--font-size-label); color: var(--color-text-muted); }
-.fontes b { font-weight: var(--font-weight-semibold); color: var(--color-text-default); }
-.passo .tag { white-space: normal; text-align: start; }
-.principio-detalhe { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: var(--space-5); align-items: center; }
-.principio-detalhe .nota { margin-top: var(--space-2); }
-.principio svg { max-height: 100%; }
-.ev { display: flex; gap: var(--space-4); align-items: center; }
-.ev svg { width: auto; height: 13cqw; flex: none; max-width: 60%; }
-.bloco-txt { display: flex; flex-direction: column; gap: var(--space-1); }
-.cifras { display: grid; gap: var(--space-3); }
-.cifra b { display: block; font-size: var(--deck-titulo); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); color: var(--color-action); }
-.cifra span { display: block; font-size: var(--font-size-emphasis); color: var(--color-text-muted); }
-
-/* amostras de cor: evidência do produto atual */
-.amostras { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
-.amostra { height: var(--size-control); border-radius: var(--radius); }
-.hex { margin-top: var(--space-1); font-size: var(--font-size-label); color: var(--color-text-muted); }
-.hex code { display: block; font-size: var(--font-size-emphasis); color: var(--color-text-default); }
-.mesma-tela { color: var(--color-action); }
-
-/* desenhos */
-.desenho .caixa { fill: var(--color-bg-surface); stroke: var(--color-border-strong); stroke-width: 1.5; }
-.desenho .caixa.suave { fill: var(--color-bg-subtle); stroke: var(--color-border-default); }
-.desenho .caixa.tinta { fill: var(--color-action); stroke: none; }
-.desenho .marca { fill: var(--color-bg-surface); stroke: var(--color-action); stroke-width: 3; }
-.desenho .t { fill: var(--color-text-default); font-size: 17px; font-weight: var(--font-weight-medium); }
-.desenho .t.g { font-size: 22px; }
-.desenho .s { fill: var(--color-text-muted); font-size: 14px; }
-.desenho .inv { fill: var(--color-action-text); }
-.desenho .verm, svg .verm { fill: var(--color-action); }
-.desenho .linha { stroke: var(--color-border-strong); stroke-width: 1.5; fill: none; }
-.desenho .linha.fina { stroke: var(--color-border-default); stroke-width: 1; }
-.desenho .barra { fill: var(--color-border-default); }
-.desenho .campo { fill: var(--color-bg-surface); stroke: var(--color-border-default); stroke-width: 1.2; }
-.desenho .cel { fill: var(--color-bg-surface); stroke: var(--color-border-default); stroke-width: 1; }
-.desenho .cel.fora { fill: var(--color-bg-subtle); stroke-dasharray: 4 4; }
-.desenho .evento { fill: var(--color-border-accent); }
-.desenho .semana { font-size: 13px; fill: var(--color-text-muted); text-anchor: middle; }
-.desenho .dobra { stroke: var(--color-action); stroke-width: 3; }
-.desenho .moldura-desenho { fill: var(--color-bg-surface); stroke: var(--color-border-default); stroke-width: 1.5; }
-.desenho .acao { fill: var(--color-action); }
-.desenho .traco-inv { stroke: var(--color-action-text); stroke-width: 2.5; fill: none; }
-.desenho .diferente { font-size: 56px; }
-
-/* princípios */
-.corpo.principios-corpo { display: grid; grid-template-columns: 39fr 53fr; gap: var(--space-6); align-items: start; }
-.coluna { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
-.coluna svg { max-height: 17cqw; }
-.forte { margin: 0; font-size: var(--deck-titulo); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); color: var(--color-action); }
-.lei { margin-top: var(--space-1); font-size: var(--font-size-emphasis); color: var(--color-text-muted); }
-.por-que { font-size: var(--deck-subtitulo); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
-.principios { margin: 0; padding: 0; list-style: none; }
-.principios .detalhe { display: grid; grid-template-columns: 9cqw 1fr; gap: var(--space-4); align-items: center; }
-.principios span { display: block; font-size: var(--deck-corpo); }
-.principios em { display: block; margin-top: var(--space-1); font-style: normal; font-size: var(--font-size-label); color: var(--color-text-muted); }
-.mini text { font-size: 13.5px; }
-.traco { fill: none; stroke: var(--color-border-strong); stroke-width: 1.5; }
-.cheio { fill: var(--color-text-default); }
-.apagado { fill: var(--color-border-default); }
-.alerta { fill: none; stroke: var(--color-action); stroke-width: 2; }
-.guia { stroke: var(--color-action); stroke-width: 2; }
-.tracejado { fill: none; stroke: var(--color-text-muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
-.mini .rotulo-forte { font-weight: var(--font-weight-semibold); }
-.mini .sublinhado { font-weight: var(--font-weight-semibold); text-decoration: underline; }
-.tit-demo { font-size: 26px; font-weight: var(--font-weight-semibold); }
-.linha-demo { font-size: 27px; }
-.chip-forte { fill: var(--color-action); }
-.chip-fraco { fill: none; stroke: var(--color-text-muted); stroke-width: 2; }
-.chip-txt { font-size: 22px; text-anchor: middle; font-weight: var(--font-weight-semibold); }
-.demo-inv { fill: var(--color-action-text); }
-.demo-sutil { fill: var(--color-text-muted); }
-.fundo-demo { fill: var(--color-bg-subtle); }
-
-/* o que validar */
-.validar .corpo { flex-direction: column; gap: var(--space-3); align-items: stretch; }
-.validar .tabela-quadro { width: 100%; }
-.validar .tabela th, .validar .tabela td { text-align: center; }
-.validar .tabela th.esq, .validar .tabela td.esq { text-align: start; }
-.validar .tabela td { font-size: var(--deck-corpo); line-height: var(--font-leading-tight); }
-.validar .hip { display: flex; align-items: baseline; gap: var(--space-2); font-weight: var(--font-weight-medium); }
-.validar .hip i { min-width: var(--space-4); font-style: normal; font-weight: var(--font-weight-semibold); color: var(--color-action); }
-.validar .teste { font-size: var(--font-size-emphasis); }
-.validar tr.grupo td { padding-top: var(--space-3); background-color: var(--color-bg-subtle); }
-.ponto { display: inline-block; width: var(--space-4); height: var(--space-4); border-radius: var(--radius-round); background-color: var(--color-action); vertical-align: middle; }
-.ponto.meio { background: linear-gradient(90deg, var(--color-action) 50%, transparent 50%); border: var(--focus-width) solid var(--color-action); }
-.legenda { display: flex; gap: var(--space-6); align-items: center; font-size: var(--font-size-label); color: var(--color-text-muted); }
-.legenda span { display: inline-flex; align-items: center; gap: var(--space-2); }
-.legenda .ponto { width: var(--space-3); height: var(--space-3); }
-.legenda strong { margin-left: auto; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); color: var(--color-text-default); }
-
-@media (max-width: 720px) {
-  .slide { aspect-ratio: auto; }
-  .corpo, .corpo.principios-corpo, .corpo.par, .corpo.trio { display: flex; flex-direction: column; }
-}
-
-
 /* passos: lista mestre (vertical) ou cards e abas (horizontal) que trocam o painel */
 .corpo.mestre { align-items: stretch; }
 .mestre { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 34fr) minmax(0, 66fr); gap: var(--space-5); }
@@ -519,220 +399,292 @@ svg text { font-family: var(--font-sans); fill: var(--color-text-default); }
   .so-impressao { display: block; }
   .mestre, .mestre-baixo { display: block; }
 }
+
+/* Questão 1: peças próprias do deck, só com tokens do DS */
+.slide { gap: var(--space-5); }
+.slide h2 { font-size: var(--deck-titulo); }
+.pergunta { margin: var(--space-2) 0 0; font-size: var(--deck-contexto); }
+.slide header .item { margin-bottom: var(--space-2); }
+.corpo { flex: 1; display: flex; gap: var(--space-6); align-items: flex-start; min-height: 0; }
+.texto { font-size: var(--deck-corpo); }
+.nota { font-size: var(--font-size-label); color: var(--color-text-muted); }
+.detalhe { display: flex; flex-direction: column; gap: var(--space-3); }
+svg { display: block; width: 100%; height: auto; }
+svg text { font-family: var(--font-sans); fill: var(--color-text-default); }
+svg .verm { fill: var(--color-action); }
+
+/* abertura: os cinco problemas como mapa */
+.abertura h2 { font-size: var(--deck-titulo-capa); max-width: 100%; }
+.abertura .marca-capa { margin-bottom: var(--space-5); }
+.abertura .corpo { align-items: stretch; }
+.problemas { flex: 1; display: flex; flex-direction: column; counter-reset: problema; }
+.problemas > li { flex: 1; counter-increment: problema; display: flex; align-items: center; gap: var(--space-4); padding: 0 var(--space-5); }
+.problemas > li::before { content: counter(problema); min-width: var(--space-6); color: var(--color-action); font-size: var(--deck-item); font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; }
+.problemas .titulo { font-size: var(--deck-item); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.problemas .tag { margin-left: auto; }
+
+/* painel de problema: sintomas com fonte, um número, e por que importa */
+.corpo.mestre, .validar .mestre { display: grid; width: 100%; align-self: stretch; }
+.painel { gap: var(--space-4); padding: var(--space-6); }
+.paineis { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.painel.prob { justify-content: center; gap: var(--space-6); }
+.sintomas { margin: 0; padding: 0; list-style: none; font-size: var(--deck-item); line-height: var(--font-leading-tight); }
+.sintomas > li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); padding: var(--space-4) 0; border-bottom: var(--border-width) solid var(--color-border-default); }
+.sintomas > li:first-child { padding-top: 0; }
+.tag-fonte { color: var(--color-text-muted); }
+.importa { padding-left: var(--space-4); border-left: calc(var(--focus-width) * 2) solid var(--color-action); font-size: var(--deck-item); line-height: var(--font-leading-tight); }
+.importa b { font-weight: var(--font-weight-semibold); }
+.cifra { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-3); font-size: var(--deck-item); color: var(--color-text-muted); }
+.cifra b { font-size: var(--deck-cifra); font-weight: var(--font-weight-semibold); line-height: 1; color: var(--color-action); font-variant-numeric: tabular-nums; }
+
+/* princípios */
+.principio-detalhe { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: var(--space-6); align-items: center; }
+.principio-detalhe .detalhe { gap: var(--space-4); }
+.por-que { font-size: var(--deck-item); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.dia { font-size: var(--deck-corpo); color: var(--color-text-muted); line-height: var(--font-leading-tight); }
+.dia b { color: var(--color-text-default); font-weight: var(--font-weight-semibold); }
+.tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.principio > svg.desfoque { flex: 1; min-height: 0; width: 100%; height: auto; }
+.mini text { font-size: 13.5px; }
+.traco { fill: none; stroke: var(--color-border-strong); stroke-width: 1.5; }
+.cheio { fill: var(--color-text-default); }
+.apagado { fill: var(--color-border-default); }
+.alerta { fill: none; stroke: var(--color-action); stroke-width: 2; }
+.guia { stroke: var(--color-action); stroke-width: 2; }
+.tracejado { fill: none; stroke: var(--color-text-muted); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.mini .rotulo-forte { font-weight: var(--font-weight-semibold); }
+.mini .sublinhado { font-weight: var(--font-weight-semibold); text-decoration: underline; }
+.tit-demo { font-size: 26px; font-weight: var(--font-weight-semibold); }
+.linha-demo { font-size: 27px; }
+.chip-forte { fill: var(--color-action); }
+.chip-fraco { fill: none; stroke: var(--color-text-muted); stroke-width: 2; }
+.chip-txt { font-size: 22px; text-anchor: middle; font-weight: var(--font-weight-semibold); }
+.demo-inv { fill: var(--color-action-text); }
+.demo-sutil { fill: var(--color-text-muted); }
+.fundo-demo { fill: var(--color-bg-subtle); }
+
+/* o que validar */
+.validar .corpo { flex-direction: column; gap: var(--space-4); align-items: stretch; }
+.validar .mestre { width: 100%; }
+.validacao { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-5) var(--space-6); align-items: baseline; margin: 0; }
+.validacao dt { font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-text-muted); }
+.validacao dd { margin: 0; font-size: var(--deck-item); line-height: var(--font-leading-tight); }
+.validacao dd + dd { grid-column: 2; }
+.fontes { padding-top: var(--space-3); border-top: var(--border-width) solid var(--color-border-default); font-size: var(--deck-contexto); color: var(--color-text-muted); }
+.fontes b { font-weight: var(--font-weight-semibold); color: var(--color-text-default); }
+
+@media (max-width: 720px) {
+  .slide { aspect-ratio: auto; }
+  .corpo, .principio-detalhe { display: flex; flex-direction: column; }
+  .lugares { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.passo-titulo { font-size: var(--deck-corpo); }
+.passo-num { min-width: var(--space-6); font-size: var(--deck-corpo); }
+.passo { padding: var(--space-4) var(--space-4); }
+.passo .tag { margin-top: var(--space-2); }
+.passos[aria-orientation="vertical"] > .passo { flex: 1 1 0; max-height: calc(var(--size-header) * 2); align-items: center; }
+.passos[aria-orientation="vertical"] > .passo .passo-num { align-self: center; }
+.validar .painel { justify-content: center; }
+
+/* evidência: print anotado grande, miniaturas que trocam o print */
+:root { --deck-legenda: var(--primitive-font-16); --deck-miniatura: var(--primitive-size-64); }
+.painel.prob { justify-content: flex-start; gap: var(--space-4); padding: var(--space-5); }
+.corpo.mestre:has(.painel.prob) { grid-template-columns: minmax(0, 24fr) minmax(0, 76fr); }
+.prob-grade { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 13fr) minmax(0, 7fr); gap: var(--space-5); }
+.evid { min-height: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.evid-figs { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }
+.evid-fig { grid-area: 1 / 1; min-height: 0; margin: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+.evid-fig[hidden] { display: none; }
+.evid-fig > div { min-height: 0; }
+.evid-fig:not([hidden]) { animation: deck-fade .18s ease; }
+.evid-fig img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; align-self: center; border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius); }
+.evid-fig figcaption { font-size: var(--deck-legenda); line-height: var(--font-leading-tight); color: var(--color-text-muted); }
+.evid-fig figcaption b { color: var(--color-text-default); font-weight: var(--font-weight-semibold); }
+.miniaturas { display: flex; gap: var(--space-2); }
+.miniatura { height: var(--deck-miniatura); width: calc(var(--deck-miniatura) * 1.6); padding: var(--space-1); background-color: var(--color-bg-subtle); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius); cursor: pointer; }
+.miniatura img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.miniatura:hover { border-color: var(--color-border-strong); }
+.miniatura[aria-selected="true"] { border-color: var(--color-action); box-shadow: inset 0 0 0 var(--border-width) var(--color-action); }
+.miniatura:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }
+.prob-texto { min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: var(--space-5); }
+.prob-texto .sintomas, .prob-texto .importa, .prob-texto .cifra { font-size: var(--deck-corpo); }
+.prob-texto .cifra b { font-size: var(--deck-titulo); }
+@media (prefers-reduced-motion: reduce) { .evid-fig:not([hidden]) { animation: none; } }
+@media print {
+  .evid-fig[hidden] { display: grid !important; }
+  .miniaturas { display: none; }
+  .evid-fig img { max-height: 60vh; }
+}
+@media (max-width: 720px) { .prob-grade { display: flex; flex-direction: column; } }
 </style>
 </head>
 <body>
 
-<p class="capa"><strong>Questão 1, documento-fonte dos slides.</strong> Cinco frames de 1920 por 1080, dentro do limite de cinco páginas. O texto completo do diagnóstico está em <code>01-diagnostico.md</code>.</p>
+<p class="capa"><strong>Questão 1.</strong> Cinco slides de 16 por 9, dentro do limite de cinco páginas.</p>
 
 <!-- ============ 1 ============ -->
 <section class="slide abertura" id="q1s1">
   <header>
     <p class="marca-capa"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span></p>
-    <p class="item">Questão 1, item 1 de 3. Os cinco problemas</p>
+    <p class="item">Os cinco problemas</p>
+    <h2>O Astrea sabe o que é prazo. A interface não mostra</h2>
     <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
-    <h2>O Astrea sabe o que é um prazo. A interface ainda não mostra isso</h2>
   </header>
   <div class="corpo">
-    <p class="tese">Os cinco ficam na gestão de atividades. A evidência vem das telas do trial, do inventário de UI, de 407 votos em pedidos e da varredura de 08/11.</p>
     <ol class="problemas lista">
-      <li><span class="titulo">O prazo não domina as telas que existem para ele</span><span class="tag">Hierarquia e densidade</span><span class="texto">A Área de trabalho marca atraso só pela cor da data. A Agenda mostra duas semanas do mês.</span></li>
-      <li><span class="titulo">Sem hierarquia de nomes, a mesma atividade em quatro lugares</span><span class="tag">Arquitetura de informação. Hipótese</span><span class="texto">Tarefa num módulo, atividade no outro, e a mesma atividade em quatro visões.</span></li>
-      <li><span class="titulo">Criar uma atividade interrompe quem cria</span><span class="tag">Usabilidade de fluxo</span><span class="texto">Quatro campos obrigatórios, um popover sobre o modal e um diálogo para a data passada.</span></li>
-      <li><span class="titulo">Três azuis, três cinzas, quatro jeitos de criar</span><span class="tag">Consistência</span><span class="texto">Cada time puxou a biblioteca que tinha à mão. Não existe fonte única.</span></li>
-      <li><span class="titulo">A moldura compete com o trabalho</span><span class="tag">Hierarquia e ruído</span><span class="texto">Selo, botão de contratar e IA em lilás ocupam a moldura de toda tela.</span></li>
+      <li><span class="titulo">O prazo não domina</span><span class="tag">Hierarquia e densidade</span></li>
+      <li><span class="titulo">Dois nomes, quatro lugares</span><span class="tag">Arquitetura de informação, hipótese</span></li>
+      <li><span class="titulo">Criar interrompe</span><span class="tag">Usabilidade de fluxo</span></li>
+      <li><span class="titulo">Três azuis, quatro jeitos</span><span class="tag">Consistência</span></li>
+      <li><span class="titulo">A moldura compete</span><span class="tag">Hierarquia e ruído</span></li>
     </ol>
   </div>
-  <footer class="rodape"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span><span>Atividade prática Astrea · Questão 1 · Felipe Gaigher · 08/11/2026</span><span>1 de 5</span></footer>
+  <footer class="rodape"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span><span>Q1 · Felipe Gaigher · 08/11/2026</span><span class="pagina">1 de 5</span></footer>
 </section>
 
 <!-- ============ 2 ============ -->
 <section class="slide" id="q1s2">
   <header>
-    <p class="item">Questão 1, item 1 de 3. Problemas 1 e 2 de 5</p>
-    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
-    <h2>O prazo some da abertura, e a atividade muda de nome</h2>
+    <p class="item">Problemas 1 e 2</p>
+    <h2>O prazo some da abertura e a atividade muda de nome</h2>
   </header>
   <div class="corpo mestre">
     <div class="passos" role="tablist" aria-orientation="vertical" aria-label="Problemas" data-passos>
-      <button type="button" class="passo" role="tab" id="q1s2-t0" aria-controls="q1s2-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">O prazo não domina as telas que existem para ele</span><span class="tag">Hierarquia e densidade</span></span></button>
-      <button type="button" class="passo" role="tab" id="q1s2-t1" aria-controls="q1s2-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Sem hierarquia de nomes, a mesma atividade em quatro lugares</span><span class="tag">Arquitetura de informação, hipótese</span></span></button>
+      <button type="button" class="passo" role="tab" id="q1s2-t0" aria-controls="q1s2-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">O prazo não domina as telas que existem para ele</span></span></button>
+      <button type="button" class="passo" role="tab" id="q1s2-t1" aria-controls="q1s2-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Sem hierarquia de nomes, a mesma atividade em quatro lugares</span></span></button>
     </div>
     <div class="paineis" aria-live="polite">
       <div class="painel prob" role="tabpanel" id="q1s2-p0" aria-labelledby="q1s2-t0" tabindex="0">
         <p class="so-impressao secao-titulo">Problema 1. Hierarquia e densidade</p>
-      <p class="texto">A Área de trabalho marca atraso só pela cor da data. Não existe seção de atrasadas. A Agenda mostra duas semanas do mês por tela. Em 08/11, ela abriu em “Ontem” e não mostrou as duas tarefas datadas. <span class="tag tag-fonte">Varredura 08/11</span> <span class="tag tag-fonte">Tela</span></p>
-      <div class="ev">
-        <svg class="desenho" viewBox="0 0 460 262" role="img" aria-label="Grade do mês da Agenda. Duas semanas cabem na tela. As outras três ficam abaixo da dobra">
-          <text class="t" x="0" y="18">Agenda, por mês. Telas 19 e 20</text>
-          <text class="semana" x="26" y="44">D</text><text class="semana" x="78" y="44">S</text><text class="semana" x="130" y="44">T</text><text class="semana" x="182" y="44">Q</text><text class="semana" x="234" y="44">Q</text><text class="semana" x="286" y="44">S</text><text class="semana" x="338" y="44">S</text>
-          <rect class="cel" x="0" y="52" width="364" height="80"/>
-          <rect class="cel fora" x="0" y="132" width="364" height="120"/>
-          <path class="linha fina" d="M52 52 V252 M104 52 V252 M156 52 V252 M208 52 V252 M260 52 V252 M312 52 V252 M0 92 H364 M0 172 H364 M0 212 H364"/>
-          <rect class="evento" x="58" y="70" width="36" height="10" rx="2"/>
-          <rect class="evento" x="214" y="70" width="30" height="10" rx="2"/>
-          <rect class="evento" x="110" y="110" width="34" height="10" rx="2"/>
-          <rect class="evento" x="266" y="110" width="38" height="10" rx="2"/>
-          <line class="dobra" x1="0" y1="132" x2="456" y2="132"/>
-          <text class="t verm" x="374" y="124">Dobra</text>
-          <text class="s" x="374" y="80">2 semanas</text>
-          <text class="s" x="374" y="196">Resto do mês</text>
-        </svg>
-        <div class="cifras pilha">
-          <p class="cifra"><b>2 semanas</b><span>por tela de 1920 por 960, na visão por mês.</span></p>
-          <p class="cifra"><b>33%</b><span>dos votos pedem destaque de prazo e de atividades do dia: 136 de 407.</span></p>
+        <div class="prob-grade">
+          <div class="evid">
+            <div class="evid-figs"><figure class="evid-fig" role="tabpanel" id="q1s2-p0-f0" aria-labelledby="q1s2-p0-m0"><img src="prototipo/prints/p1-agenda-mes.png" alt="Agenda do Astrea na visão por mês, com só duas semanas visíveis"><figcaption><b>Agenda, por mês.</b> Menu Agenda, “Por mês”. O contorno mostra o que cabe na tela: duas semanas.</figcaption></figure><figure class="evid-fig" role="tabpanel" id="q1s2-p0-f1" aria-labelledby="q1s2-p0-m1" hidden><img src="prototipo/prints/p1-lembretes.png" alt="Coluna direita da Área de trabalho, com Lembretes cortado no fim da tela"><figcaption><b>Área de trabalho, coluna direita.</b> “Lembretes”, com prazos e audiências, fica abaixo de Estatísticas.</figcaption></figure><figure class="evid-fig" role="tabpanel" id="q1s2-p0-f2" aria-labelledby="q1s2-p0-m2" hidden><img src="prototipo/prints/p1-prioridade.png" alt="Modal Adicionar tarefa com o campo Prioridade em Baixa"><figcaption><b>Modal “Adicionar tarefa”.</b> Agenda, botão de criar. Prioridade já vem em “Baixa”.</figcaption></figure></div>
+            <div class="miniaturas" role="tablist" aria-orientation="horizontal" aria-label="Prints do problema" data-passos><button type="button" class="miniatura" role="tab" id="q1s2-p0-m0" aria-controls="q1s2-p0-f0" aria-selected="true" aria-label="Agenda, por mês"><img src="prototipo/prints/p1-agenda-mes.png" alt=""></button><button type="button" class="miniatura" role="tab" id="q1s2-p0-m1" aria-controls="q1s2-p0-f1" aria-selected="false" aria-label="Área de trabalho, coluna direita"><img src="prototipo/prints/p1-lembretes.png" alt=""></button><button type="button" class="miniatura" role="tab" id="q1s2-p0-m2" aria-controls="q1s2-p0-f2" aria-selected="false" aria-label="Modal “Adicionar tarefa”"><img src="prototipo/prints/p1-prioridade.png" alt=""></button></div>
+          </div>
+          <div class="prob-texto">
+            <p class="cifra"><b>33%</b><span>dos votos pedem destaque de prazo</span><span class="tag tag-fonte">Planilha</span></p>
+            <ul class="sintomas">
+              <li>Atraso marcado só pela cor da data<span class="tag tag-fonte">Varredura 08/11</span></li>
+              <li>Nenhuma seção de atrasadas ao lado de Hoje<span class="tag tag-fonte">Tela</span></li>
+              <li>A Agenda mostra duas semanas do mês<span class="tag tag-fonte">Tela</span></li>
+            </ul>
+            <p class="importa"><b>Por que importa:</b> perder prazo é o risco mais caro do escritório.</p>
+          </div>
         </div>
-      </div>
-      <div class="bloco-txt">
-        <h3>Por que importa</h3>
-        <p class="texto">O escritório depende do Astrea para não perder prazo. É a primeira restrição do briefing. Alertas já mostra “Tarefa atrasada”, mas a tela de abertura não mostra.</p>
-      </div>
-      <p class="nota ref">Visibilidade do estado do sistema. Telas 11, 14, 17 a 20. <span class="id">PA-31</span>, <span class="id">PA-32</span> e <span class="id">PA-47</span>. Varredura de 08/11, desk research.</p>
       </div>
       <div class="painel prob" role="tabpanel" id="q1s2-p1" aria-labelledby="q1s2-t1" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Problema 2. Arquitetura de informação, hipótese</p>
-      <p class="texto">A Área de trabalho e o modal dizem “tarefa”. A Agenda e o botão de criar dizem “atividade”. Nos pedidos, tarefa, prazo, audiência e evento são tipos diferentes. <span class="tag tag-fonte">Tela</span> <span class="tag tag-fonte">Planilha</span></p>
-      <svg class="desenho" viewBox="0 0 820 262" role="img" aria-label="Dois nomes para o mesmo objeto, tarefa e atividade. A mesma atividade aparece na Área de trabalho, na Agenda, em Tarefas sem data e em Alertas">
-        <text class="s" x="0" y="16">Área de trabalho e modal</text>
-        <rect class="caixa" x="0" y="26" width="300" height="56" rx="4"/>
-        <text class="t g" x="150" y="62" text-anchor="middle">Tarefa</text>
-        <text x="410" y="72" text-anchor="middle" class="verm diferente">≠</text>
-        <text class="s" x="520" y="16">Agenda e botão de criar</text>
-        <rect class="caixa" x="520" y="26" width="300" height="56" rx="4"/>
-        <text class="t g" x="670" y="62" text-anchor="middle">Atividade</text>
-        <line class="linha fina" x1="0" y1="112" x2="820" y2="112"/>
-        <text class="s" x="0" y="140">A mesma atividade, em quatro lugares. Tela 18</text>
-        <rect class="caixa tinta" x="0" y="154" width="190" height="56" rx="4"/><text class="t inv" x="95" y="188" text-anchor="middle">Área de trabalho</text>
-        <rect class="caixa" x="210" y="154" width="190" height="56" rx="4"/><text class="t" x="305" y="188" text-anchor="middle">Agenda</text>
-        <rect class="caixa" x="420" y="154" width="190" height="56" rx="4"/><text class="t" x="515" y="188" text-anchor="middle">Tarefas sem data</text>
-        <rect class="caixa" x="630" y="154" width="190" height="56" rx="4"/><text class="t" x="725" y="188" text-anchor="middle">Alertas</text>
-        <text class="s" x="0" y="250">Na ficha do processo, Tarefa e Evento são tipos. Prazo e Audiência só existem como etiqueta.</text>
-      </svg>
-      <div class="bloco-txt">
-        <h3>Por que importa</h3>
-        <p class="texto">Quem busca precisa saber onde a atividade está e como ela se chama. Falta um termo geral com os tipos abaixo dele, e “atividade” pode ser esse termo.</p>
-      </div>
-      <p class="nota ref">Correspondência com o mundo real. Consistência e padrões. Telas 10, 11, 13 e 14. <span class="id">PA-23</span>. O número do processo já copia com 1 clique na lista e na ficha. A linha da atividade não mostra o número.</p>
+        <div class="prob-grade">
+          <div class="evid">
+            <div class="evid-figs"><figure class="evid-fig" role="tabpanel" id="q1s2-p1-f0" aria-labelledby="q1s2-p1-m0"><img src="prototipo/prints/p2-tarefa.png" alt="Área de trabalho vazia, com título e botão usando a palavra tarefa"><figcaption><b>Área de trabalho, sem tarefas.</b> Menu Área de trabalho. O título e o botão dizem “tarefa”.</figcaption></figure><figure class="evid-fig" role="tabpanel" id="q1s2-p1-f1" aria-labelledby="q1s2-p1-m1" hidden><img src="prototipo/prints/p2-atividade.png" alt="Agenda vazia, com texto e botão usando a palavra atividade"><figcaption><b>Agenda, sem atividades.</b> Menu Agenda. Para o mesmo objeto, o botão diz “atividade”.</figcaption></figure></div>
+            <div class="miniaturas" role="tablist" aria-orientation="horizontal" aria-label="Prints do problema" data-passos><button type="button" class="miniatura" role="tab" id="q1s2-p1-m0" aria-controls="q1s2-p1-f0" aria-selected="true" aria-label="Área de trabalho, sem tarefas"><img src="prototipo/prints/p2-tarefa.png" alt=""></button><button type="button" class="miniatura" role="tab" id="q1s2-p1-m1" aria-controls="q1s2-p1-f1" aria-selected="false" aria-label="Agenda, sem atividades"><img src="prototipo/prints/p2-atividade.png" alt=""></button></div>
+          </div>
+          <div class="prob-texto">
+            <ul class="sintomas">
+              <li>“Tarefa” no modal, “atividade” na Agenda<span class="tag tag-fonte">Tela</span></li>
+              <li>A mesma atividade em quatro lugares<span class="tag tag-fonte">Tela</span><span class="tag tag-fonte">Varredura 08/11</span></li>
+              <li>Prazo e audiência existem só como etiqueta<span class="tag tag-fonte">Varredura 08/11</span></li>
+            </ul>
+            <p class="importa"><b>Por que importa:</b> quem busca precisa saber o nome e o lugar.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <footer class="rodape"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span><span>Atividade prática Astrea · Questão 1 · Felipe Gaigher · 08/11/2026</span><span>2 de 5</span></footer>
+  <footer class="rodape"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span><span>Q1 · Felipe Gaigher · 08/11/2026</span><span class="pagina">2 de 5</span></footer>
 </section>
 
 <!-- ============ 3 ============ -->
 <section class="slide" id="q1s3">
   <header>
-    <p class="item">Questão 1, item 1 de 3. Problemas 3, 4 e 5 de 5</p>
-    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
-    <h2>Criar interrompe, nada combina, e a moldura disputa a atenção</h2>
+    <p class="item">Problemas 3, 4 e 5</p>
+    <h2>Criar interrompe, nada combina, e a moldura disputa atenção</h2>
   </header>
   <div class="corpo mestre">
     <div class="passos" role="tablist" aria-orientation="vertical" aria-label="Problemas" data-passos>
-      <button type="button" class="passo" role="tab" id="q1s3-t0" aria-controls="q1s3-p0" aria-selected="true"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Criar uma atividade interrompe quem cria</span><span class="tag">Usabilidade de fluxo</span></span></button>
-      <button type="button" class="passo" role="tab" id="q1s3-t1" aria-controls="q1s3-p1" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Três azuis, três cinzas, quatro jeitos de criar</span><span class="tag">Consistência</span></span></button>
-      <button type="button" class="passo" role="tab" id="q1s3-t2" aria-controls="q1s3-p2" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">A moldura compete com o trabalho</span><span class="tag">Hierarquia e ruído</span></span></button>
+      <button type="button" class="passo" role="tab" id="q1s3-t0" aria-controls="q1s3-p0" aria-selected="true"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Criar uma atividade interrompe quem cria</span></span></button>
+      <button type="button" class="passo" role="tab" id="q1s3-t1" aria-controls="q1s3-p1" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Três azuis, três cinzas, quatro jeitos de criar</span></span></button>
+      <button type="button" class="passo" role="tab" id="q1s3-t2" aria-controls="q1s3-p2" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">A moldura compete com o trabalho</span></span></button>
     </div>
     <div class="paineis" aria-live="polite">
       <div class="painel prob" role="tabpanel" id="q1s3-p0" aria-labelledby="q1s3-t0" tabindex="0">
         <p class="so-impressao secao-titulo">Problema 3. Usabilidade de fluxo</p>
-      <p class="texto">Quatro campos obrigatórios para uma tarefa simples. “Lista de tarefas” é obrigatório e tem um só valor. Incluir pessoa abre um popover, e data passada abre outro diálogo. <span class="tag tag-fonte">Tela</span></p>
-      <svg class="desenho" viewBox="0 0 560 222" role="img" aria-label="Três camadas: o modal Adicionar tarefa com seis campos, quatro obrigatórios; o popover Envolver mais pessoas; e o diálogo Data no passado">
-        <rect class="caixa" x="0" y="0" width="360" height="222" rx="4"/>
-        <text class="t" x="16" y="28">Adicionar tarefa</text>
-        <rect class="campo" x="16" y="42" width="328" height="24" rx="3"/><text class="s" x="24" y="59">Descrição *</text>
-        <rect class="campo" x="16" y="72" width="328" height="24" rx="3"/><text class="s" x="24" y="89">Data</text>
-        <rect class="campo" x="16" y="102" width="328" height="24" rx="3"/><text class="s" x="24" y="119">Lista de tarefas *</text>
-        <rect class="campo" x="16" y="132" width="328" height="24" rx="3"/><text class="s" x="24" y="149">Processo, caso ou atendimento</text>
-        <rect class="campo" x="16" y="162" width="328" height="24" rx="3"/><text class="s" x="24" y="179">Responsável *</text>
-        <rect class="campo" x="16" y="192" width="328" height="24" rx="3"/><text class="s" x="24" y="209">Prioridade *</text>
-        <rect class="caixa" x="236" y="56" width="236" height="72" rx="4"/>
-        <text class="t" x="250" y="82">Envolver mais pessoas</text>
-        <rect class="campo" x="250" y="96" width="208" height="20" rx="3"/>
-        <rect class="marca" x="196" y="140" width="360" height="78" rx="4"/>
-        <text class="t" x="212" y="168">Data no passado</text>
-        <text class="s" x="212" y="194">Você deseja continuar mesmo assim?</text>
-      </svg>
-      <div class="bloco-txt">
-        <h3>Por que importa</h3>
-        <p class="texto">Criar atividade é a ação mais repetida do dia. Atrito pequeno, repetido todo dia, leva a equipe a anotar prazo fora do sistema.</p>
-      </div>
-      <p class="nota ref">Controle e liberdade. Prevenção de erros. Telas 14, 15 e 16. <span class="id">PA-54</span>, <span class="id">PA-57</span> e <span class="id">PA-58</span>.</p>
+        <div class="prob-grade">
+          <div class="evid">
+            <div class="evid-figs"><figure class="evid-fig" role="tabpanel" id="q1s3-p0-f0" aria-labelledby="q1s3-p0-m0"><img src="prototipo/prints/p3-modal.png" alt="Modal Adicionar tarefa com o campo Lista de tarefas marcado"><figcaption><b>Modal “Adicionar tarefa”.</b> Agenda, botão de criar. “Lista de tarefas” é obrigatório, com um só valor.</figcaption></figure><figure class="evid-fig" role="tabpanel" id="q1s3-p0-f1" aria-labelledby="q1s3-p0-m1" hidden><img src="prototipo/prints/p3-popover.png" alt="Popover Envolver mais pessoas aberto sobre o modal"><figcaption><b>Popover “Envolver mais pessoas”.</b> Link abaixo de Responsável. Abre uma segunda camada sobre o modal.</figcaption></figure><figure class="evid-fig" role="tabpanel" id="q1s3-p0-f2" aria-labelledby="q1s3-p0-m2" hidden><img src="prototipo/prints/p3-data-passado.png" alt="Diálogo Data no passado sobre o modal, com Cancelar e Continuar"><figcaption><b>Diálogo “Data no passado”.</b> Ao salvar com data anterior a hoje. Só pergunta se deseja continuar.</figcaption></figure></div>
+            <div class="miniaturas" role="tablist" aria-orientation="horizontal" aria-label="Prints do problema" data-passos><button type="button" class="miniatura" role="tab" id="q1s3-p0-m0" aria-controls="q1s3-p0-f0" aria-selected="true" aria-label="Modal “Adicionar tarefa”"><img src="prototipo/prints/p3-modal.png" alt=""></button><button type="button" class="miniatura" role="tab" id="q1s3-p0-m1" aria-controls="q1s3-p0-f1" aria-selected="false" aria-label="Popover “Envolver mais pessoas”"><img src="prototipo/prints/p3-popover.png" alt=""></button><button type="button" class="miniatura" role="tab" id="q1s3-p0-m2" aria-controls="q1s3-p0-f2" aria-selected="false" aria-label="Diálogo “Data no passado”"><img src="prototipo/prints/p3-data-passado.png" alt=""></button></div>
+          </div>
+          <div class="prob-texto">
+            <p class="cifra"><b>4</b><span>campos obrigatórios numa tarefa simples</span><span class="tag tag-fonte">Tela</span></p>
+            <ul class="sintomas">
+              <li>“Lista de tarefas” é obrigatório, com um só valor<span class="tag tag-fonte">Tela</span></li>
+              <li>Incluir pessoa abre um popover sobre o modal<span class="tag tag-fonte">Tela</span></li>
+              <li>Data passada abre outro diálogo, sem motivo<span class="tag tag-fonte">Tela</span></li>
+            </ul>
+            <p class="importa"><b>Por que importa:</b> atrito diário leva o prazo para fora do sistema.</p>
+          </div>
+        </div>
       </div>
       <div class="painel prob" role="tabpanel" id="q1s3-p1" aria-labelledby="q1s3-t1" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Problema 4. Consistência</p>
-      <p class="texto">Os cinzas vêm do Material, do Bootstrap e do Mantine. Em 08/11, criar apareceu em quatro formas, e voltar em três. O menu lateral não marca o módulo atual. <span class="tag tag-fonte">CSS</span> <span class="tag tag-fonte">Varredura 08/11</span> <span class="tag tag-fonte">Tela</span></p>
-      <div class="bloco-txt">
-        <h3 class="mesma-tela">Três azuis na mesma tela. Tela 11</h3>
-        <div class="amostras">
-          <div><div class="amostra baixa" style="background-color: var(--color-logo)"></div><p class="hex"><code>#008fd5</code>marca</p></div>
-          <div><div class="amostra baixa" style="background:#228be6"></div><p class="hex"><code>#228be6</code>componente</p></div>
-          <div><div class="amostra baixa" style="background:#0255c4"></div><p class="hex"><code>#0255c4</code>campanha</p></div>
+        <div class="prob-grade">
+          <div class="evid">
+            <div class="evid-figs"><figure class="evid-fig" role="tabpanel" id="q1s3-p1-f0" aria-labelledby="q1s3-p1-m0"><img src="prototipo/prints/p4-azuis.png" alt="Área de trabalho com botão da campanha, botão de criar e estatísticas em azul marcados"><figcaption><b>Área de trabalho, tela inteira.</b> Os contornos marcam campanha, criar e estatísticas: link, número e botão no mesmo azul.</figcaption></figure><figure class="evid-fig" role="tabpanel" id="q1s3-p1-f1" aria-labelledby="q1s3-p1-m1" hidden><img src="prototipo/prints/p4-tres-criar.png" alt="Botões Adicionar primeira tarefa, Adicionar atividade e sinal de mais"><figcaption><b>Botões de criar.</b> Área de trabalho e Agenda. Mesma ação, três formas.</figcaption></figure><figure class="evid-fig" role="tabpanel" id="q1s3-p1-f2" aria-labelledby="q1s3-p1-m2" hidden><img src="prototipo/prints/p4-menu.png" alt="Menu lateral com a página Agenda aberta e nenhum item destacado"><figcaption><b>Menu lateral.</b> Com a Agenda aberta, o item não tem destaque.</figcaption></figure></div>
+            <div class="miniaturas" role="tablist" aria-orientation="horizontal" aria-label="Prints do problema" data-passos><button type="button" class="miniatura" role="tab" id="q1s3-p1-m0" aria-controls="q1s3-p1-f0" aria-selected="true" aria-label="Área de trabalho, tela inteira"><img src="prototipo/prints/p4-azuis.png" alt=""></button><button type="button" class="miniatura" role="tab" id="q1s3-p1-m1" aria-controls="q1s3-p1-f1" aria-selected="false" aria-label="Botões de criar"><img src="prototipo/prints/p4-tres-criar.png" alt=""></button><button type="button" class="miniatura" role="tab" id="q1s3-p1-m2" aria-controls="q1s3-p1-f2" aria-selected="false" aria-label="Menu lateral"><img src="prototipo/prints/p4-menu.png" alt=""></button></div>
+          </div>
+          <div class="prob-texto">
+            <ul class="sintomas">
+              <li>Três azuis na mesma tela<span class="tag tag-fonte">CSS</span></li>
+              <li>Cinzas do Material, do Bootstrap e do Mantine<span class="tag tag-fonte">CSS</span></li>
+              <li>Criar em quatro formas, voltar em três<span class="tag tag-fonte">Varredura 08/11</span></li>
+            </ul>
+            <p class="importa"><b>Por que importa:</b> cada divergência é reaprendizado e manutenção.</p>
+          </div>
         </div>
-      </div>
-      <svg class="desenho" viewBox="0 0 560 66" role="img" aria-label="Quatro botões de criar: Adicionar tarefa, Adicionar, um sinal de mais sem rótulo e Adicionar documento com seta">
-        <rect class="caixa tinta" x="0" y="4" width="150" height="40" rx="4"/><text class="t inv" x="75" y="30" text-anchor="middle">Adicionar tarefa</text>
-        <rect class="caixa tinta" x="160" y="4" width="96" height="40" rx="4"/><text class="t inv" x="208" y="30" text-anchor="middle">Adicionar</text>
-        <circle class="caixa tinta" cx="286" cy="24" r="20"/><path d="M277 24 H295 M286 15 V33" class="traco-inv"/>
-        <rect class="caixa tinta" x="318" y="4" width="240" height="40" rx="4"/><text class="t inv" x="332" y="30">Adicionar documento</text><path d="M522 20 L530 29 L538 20" class="traco-inv"/>
-        <text class="s" x="0" y="64">Quatro formas de criar, no comparativo de 08/11</text>
-      </svg>
-      <div class="bloco-txt">
-        <h3>Por que importa</h3>
-        <p class="texto">Cada divergência custa um reaprendizado a quem usa e manutenção ao time. A causa provável é a falta de fonte única.</p>
-      </div>
-      <p class="nota ref">Consistência e padrões. Telas 11, 13, 14, 17 a 20. <span class="id">PA-01</span>. As cores vêm do inventário de 07/11.</p>
       </div>
       <div class="painel prob" role="tabpanel" id="q1s3-p2" aria-labelledby="q1s3-t2" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Problema 5. Hierarquia e ruído</p>
-      <p class="texto">O cabeçalho soma cinco ícones, o selo “1 ano grátis” e o botão “Contratar”. “Conheça as IAs” tem fundo lilás. As capturas de 07/11 mostram uma faixa de campanha com contador. <span class="tag tag-fonte">Tela</span> <span class="tag tag-fonte">Varredura 08/11</span></p>
-      <svg class="desenho" viewBox="0 0 560 222" role="img" aria-label="Desenho da Área de trabalho. No topo, a faixa de campanha vista em 07/11. No cabeçalho, busca, cinco ícones, selo 1 ano grátis e botão Contratar. No menu, Conheça as IAs em destaque">
-        <rect x="1" y="1" width="558" height="220" class="moldura-desenho"/>
-        <rect class="marca" x="2" y="2" width="556" height="28" style="stroke-dasharray: 6 5; stroke-width: 2"/>
-        <text class="s verm" x="12" y="21">Faixa de campanha com contador, captura de 07/11</text>
-        <rect class="barra" x="12" y="44" width="56" height="16" rx="3"/>
-        <rect class="campo" x="80" y="40" width="130" height="24" rx="3"/><text class="s" x="88" y="57">Busca</text>
-        <circle class="barra" cx="228" cy="52" r="8"/><circle class="barra" cx="250" cy="52" r="8"/><circle class="barra" cx="272" cy="52" r="8"/><circle class="barra" cx="294" cy="52" r="8"/><circle class="barra" cx="316" cy="52" r="8"/>
-        <rect class="caixa tinta" x="336" y="38" width="108" height="28" rx="4"/><text class="s inv" x="390" y="57" text-anchor="middle">1 ano grátis</text>
-        <rect class="caixa tinta" x="452" y="38" width="100" height="28" rx="4"/><text class="s inv" x="502" y="57" text-anchor="middle">Contratar</text>
-        <line class="linha fina" x1="0" y1="76" x2="560" y2="76"/>
-        <line class="linha fina" x1="124" y1="76" x2="124" y2="222"/>
-        <rect class="barra" x="12" y="90" width="90" height="10" rx="2"/><rect class="barra" x="12" y="110" width="70" height="10" rx="2"/><rect class="barra" x="12" y="130" width="80" height="10" rx="2"/><rect class="barra" x="12" y="150" width="60" height="10" rx="2"/>
-        <rect class="caixa tinta" x="4" y="174" width="116" height="30" rx="4"/><text class="s inv" x="62" y="194" text-anchor="middle" font-size="13">Conheça as IAs</text>
-        <rect class="caixa suave" x="140" y="90" width="250" height="118" rx="4"/><text class="s" x="152" y="112">Área de trabalho</text>
-        <rect class="caixa suave" x="404" y="90" width="146" height="118" rx="4"/><text class="s" x="414" y="112">Estatísticas</text>
-        <text class="s acao" x="414" y="140">12   4   7</text>
-      </svg>
-      <div class="bloco-txt">
-        <h3>Por que importa</h3>
-        <p class="texto">Quem vive no produto lê esse ruído o dia inteiro. A moldura não tem dono, e o briefing pede a IA no mesmo padrão.</p>
-      </div>
-      <p class="nota ref">Estética e design minimalista. Telas 11 e 13. <span class="id">PA-08</span> a <span class="id">PA-10</span>. Estatísticas são link sem destino na árvore de acessibilidade. Ninguém testou o clique.</p>
+        <div class="prob-grade">
+          <div class="evid">
+            <div class="evid-figs"><figure class="evid-fig" role="tabpanel" id="q1s3-p2-f0" aria-labelledby="q1s3-p2-m0"><img src="prototipo/prints/p5-cabecalho.png" alt="Cabeçalho do Astrea com faixa de campanha, ícone de IA, nuvem, selo e botão Contratar marcados"><figcaption><b>Cabeçalho, em toda tela.</b> Campanha, IA em lilás, nuvem, selo “1 ano grátis” e “Contratar”.</figcaption></figure><figure class="evid-fig" role="tabpanel" id="q1s3-p2-f1" aria-labelledby="q1s3-p2-m1" hidden><img src="prototipo/prints/p5-ia-menu.png" alt="Item Conheça as IAs com fundo lilás no menu lateral"><figcaption><b>Menu lateral, item de IA.</b> “Conheça as IAs” é o único item com cor e fundo próprios.</figcaption></figure></div>
+            <div class="miniaturas" role="tablist" aria-orientation="horizontal" aria-label="Prints do problema" data-passos><button type="button" class="miniatura" role="tab" id="q1s3-p2-m0" aria-controls="q1s3-p2-f0" aria-selected="true" aria-label="Cabeçalho, em toda tela"><img src="prototipo/prints/p5-cabecalho.png" alt=""></button><button type="button" class="miniatura" role="tab" id="q1s3-p2-m1" aria-controls="q1s3-p2-f1" aria-selected="false" aria-label="Menu lateral, item de IA"><img src="prototipo/prints/p5-ia-menu.png" alt=""></button></div>
+          </div>
+          <div class="prob-texto">
+            <ul class="sintomas">
+              <li>Selo “1 ano grátis” e “Contratar” no cabeçalho<span class="tag tag-fonte">Tela</span><span class="tag tag-fonte">Varredura 08/11</span></li>
+              <li>“Conheça as IAs” em lilás, fora do padrão<span class="tag tag-fonte">Tela</span></li>
+              <li>Faixa de campanha com contador, vista em 07/11<span class="tag tag-fonte">Tela</span></li>
+            </ul>
+            <p class="importa"><b>Por que importa:</b> quem vive no produto lê esse ruído o dia todo.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <footer class="rodape"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span><span>Atividade prática Astrea · Questão 1 · Felipe Gaigher · 08/11/2026</span><span>3 de 5</span></footer>
+  <footer class="rodape"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span><span>Q1 · Felipe Gaigher · 08/11/2026</span><span class="pagina">3 de 5</span></footer>
 </section>
 
 <!-- ============ 4 ============ -->
 <section class="slide" id="q1s4">
   <header>
-    <p class="item">Questão 1, item 2 de 3. Princípios de design</p>
+    <p class="item">Princípios de design</p>
+    <h2>Cada princípio vira um teste na revisão</h2>
     <p class="pergunta">Quais princípios de design devem guiar o redesign?</p>
-    <h2>Seis princípios decidem o redesign</h2>
   </header>
   <div class="corpo mestre">
     <div class="passos" role="tablist" aria-orientation="vertical" aria-label="Princípios de design" data-passos>
-      <button type="button" class="passo" role="tab" id="q1s4-t0" aria-controls="q1s4-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">O prazo primeiro</span><span class="passo-sub">Figura e fundo. Visibilidade do estado do sistema.</span></span></button>
-      <button type="button" class="passo" role="tab" id="q1s4-t1" aria-controls="q1s4-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Uma palavra, um lugar</span><span class="passo-sub">Região comum. Correspondência com o mundo real.</span></span></button>
-      <button type="button" class="passo" role="tab" id="q1s4-t2" aria-controls="q1s4-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">A moldura é a âncora</span><span class="passo-sub">Proximidade. Consistência e padrões.</span></span></button>
-      <button type="button" class="passo" role="tab" id="q1s4-t3" aria-controls="q1s4-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Todo erro tem saída</span><span class="passo-sub">Proximidade. Ajuda para corrigir erros.</span></span></button>
-      <button type="button" class="passo" role="tab" id="q1s4-t4" aria-controls="q1s4-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">Densidade para quem consulta o dia todo</span><span class="passo-sub">Continuidade. Flexibilidade e eficiência.</span></span></button>
-      <button type="button" class="passo" role="tab" id="q1s4-t5" aria-controls="q1s4-p5" aria-selected="false"><span class="passo-num">6</span><span class="passo-texto"><span class="passo-titulo">Mesmo padrão para tudo, inclusive a IA</span><span class="passo-sub">Similaridade. Controle e liberdade.</span></span></button>
+      <button type="button" class="passo" role="tab" id="q1s4-t0" aria-controls="q1s4-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">O prazo primeiro</span></span></button>
+      <button type="button" class="passo" role="tab" id="q1s4-t1" aria-controls="q1s4-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Uma palavra, um lugar</span></span></button>
+      <button type="button" class="passo" role="tab" id="q1s4-t2" aria-controls="q1s4-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">A moldura é a âncora</span></span></button>
+      <button type="button" class="passo" role="tab" id="q1s4-t3" aria-controls="q1s4-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Todo erro tem saída</span></span></button>
+      <button type="button" class="passo" role="tab" id="q1s4-t4" aria-controls="q1s4-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">Densidade para quem consulta o dia todo</span></span></button>
+      <button type="button" class="passo" role="tab" id="q1s4-t5" aria-controls="q1s4-p5" aria-selected="false"><span class="passo-num">6</span><span class="passo-texto"><span class="passo-titulo">Mesmo padrão para tudo, inclusive a IA</span></span></button>
     </div>
     <div class="paineis" aria-live="polite">
       <div class="painel principio" role="tabpanel" id="q1s4-p0" aria-labelledby="q1s4-t0" tabindex="0">
         <p class="so-impressao secao-titulo">O prazo primeiro</p>
-        <svg viewBox="0 0 800 560" role="img" aria-label="Teste de desfoque. Uma lista de atividades aparece nítida e depois desfocada. Desfocada, só os prazos vencido e de hoje continuam visíveis">
+        <svg class="desfoque" viewBox="0 0 800 560" role="img" aria-label="Teste de desfoque. Uma lista de atividades aparece nítida e depois desfocada. Desfocada, só os prazos vencido e de hoje continuam visíveis">
         <defs>
           <filter id="desfoque" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="8"/></filter>
           <g id="lista">
@@ -749,62 +701,101 @@ svg text { font-family: var(--font-sans); fill: var(--color-text-default); }
         <use href="#lista" x="415" y="56" filter="url(#desfoque)"/>
       </svg>
         <p class="por-que">Se o prazo some no desfoque, a tela volta.</p>
-        <p class="nota">O protótipo navegável aplica os seis princípios em 17 páginas, com a mesma moldura e as mesmas peças do design system.</p>
+        <p class="tags"><span class="tag">Figura e fundo</span><span class="tag">Visibilidade do estado do sistema</span></p>
       </div>
       <div class="painel principio" role="tabpanel" id="q1s4-p1" aria-labelledby="q1s4-t1" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Uma palavra, um lugar</p>
-        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="traco" x="1" y="1" width="178" height="88" rx="4"/><text class="rotulo-forte" x="12" y="22">Atividade</text><rect class="traco" x="12" y="32" width="72" height="22" rx="3"/><text x="48" y="48" text-anchor="middle">tarefa</text><rect class="alerta" x="96" y="32" width="72" height="22" rx="3"/><text class="verm" x="132" y="48" text-anchor="middle">prazo</text><rect class="traco" x="12" y="60" width="72" height="22" rx="3"/><text x="48" y="76" text-anchor="middle">audiência</text><rect class="traco" x="96" y="60" width="72" height="22" rx="3"/><text x="132" y="76" text-anchor="middle">evento</text></svg><div><p class="texto">Atividade é o termo geral, e o resto são tipos.</p><p class="nota">Região comum. Correspondência com o mundo real.</p></div></div>
+        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="traco" x="1" y="1" width="178" height="88" rx="4"/><text class="rotulo-forte" x="12" y="22">Atividade</text><rect class="traco" x="12" y="32" width="72" height="22" rx="3"/><text x="48" y="48" text-anchor="middle">tarefa</text><rect class="alerta" x="96" y="32" width="72" height="22" rx="3"/><text class="verm" x="132" y="48" text-anchor="middle">prazo</text><rect class="traco" x="12" y="60" width="72" height="22" rx="3"/><text x="48" y="76" text-anchor="middle">audiência</text><rect class="traco" x="96" y="60" width="72" height="22" rx="3"/><text x="132" y="76" text-anchor="middle">evento</text></svg>
+          <div class="detalhe"><p class="por-que">Atividade é o termo geral, e o resto são tipos.</p><p class="dia"><b>Na revisão:</b> rótulo novo passa pelo glossário do design system.</p><p class="tags"><span class="tag">Região comum</span><span class="tag">Correspondência com o mundo real</span></p></div></div>
       </div>
       <div class="painel principio" role="tabpanel" id="q1s4-p2" aria-labelledby="q1s4-t2" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">A moldura é a âncora</p>
-        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="cheio" x="1" y="1" width="178" height="16"/><rect class="cheio" x="1" y="17" width="34" height="72"/><rect class="traco" x="1" y="1" width="178" height="88"/><rect class="apagado" x="44" y="26" width="60" height="54"/><rect class="tracejado" x="112" y="26" width="58" height="54"/></svg><div><p class="texto">Tela nova e legada na mesma casa.</p><p class="nota">Proximidade. Consistência e padrões.</p></div></div>
+        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="cheio" x="1" y="1" width="178" height="16"/><rect class="cheio" x="1" y="17" width="34" height="72"/><rect class="traco" x="1" y="1" width="178" height="88"/><rect class="apagado" x="44" y="26" width="60" height="54"/><rect class="tracejado" x="112" y="26" width="58" height="54"/></svg>
+          <div class="detalhe"><p class="por-que">Tela nova e legada na mesma casa.</p><p class="dia"><b>Na revisão:</b> a moldura é componente único, e squad não a redesenha.</p><p class="tags"><span class="tag">Proximidade</span><span class="tag">Consistência e padrões</span></p></div></div>
       </div>
       <div class="painel principio" role="tabpanel" id="q1s4-p3" aria-labelledby="q1s4-t3" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Todo erro tem saída</p>
-        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="alerta" x="1" y="8" width="178" height="32" rx="3"/><text x="12" y="29">01/10/2026</text><text class="verm" x="1" y="60">A data já passou.</text><text class="sublinhado" x="1" y="82">Salvar como concluída</text></svg><div><p class="texto">O aviso fica junto do campo e diz como voltar.</p><p class="nota">Proximidade. Ajuda para corrigir erros.</p></div></div>
+        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="alerta" x="1" y="8" width="178" height="32" rx="3"/><text x="12" y="29">01/10/2026</text><text class="verm" x="1" y="60">A data já passou.</text><text class="sublinhado" x="1" y="82">Salvar como concluída</text></svg>
+          <div class="detalhe"><p class="por-que">O aviso fica junto do campo e diz como voltar.</p><p class="dia"><b>Na revisão:</b> o handoff lista cada estado de erro e a saída dele.</p><p class="tags"><span class="tag">Proximidade</span><span class="tag">Ajuda para corrigir erros</span></p></div></div>
       </div>
       <div class="painel principio" role="tabpanel" id="q1s4-p4" aria-labelledby="q1s4-t4" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Densidade para quem consulta o dia todo</p>
-        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><g class="apagado"><rect x="28" y="4" width="62" height="9"/><rect x="104" y="4" width="46" height="9"/><rect x="28" y="20" width="62" height="9"/><rect x="104" y="20" width="60" height="9"/><rect x="28" y="36" width="62" height="9"/><rect x="104" y="36" width="38" height="9"/><rect x="28" y="52" width="62" height="9"/><rect x="104" y="52" width="52" height="9"/><rect x="28" y="68" width="62" height="9"/><rect x="104" y="68" width="44" height="9"/></g><g class="cheio"><rect x="4" y="4" width="14" height="9"/><rect x="4" y="20" width="14" height="9"/><rect x="4" y="36" width="14" height="9"/><rect x="4" y="52" width="14" height="9"/><rect x="4" y="68" width="14" height="9"/></g><line class="guia" x1="97" y1="0" x2="97" y2="90"/></svg><div><p class="texto">Compacto por padrão, e o mês cabe na tela.</p><p class="nota">Continuidade. Flexibilidade e eficiência.</p></div></div>
+        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><g class="apagado"><rect x="28" y="4" width="62" height="9"/><rect x="104" y="4" width="46" height="9"/><rect x="28" y="20" width="62" height="9"/><rect x="104" y="20" width="60" height="9"/><rect x="28" y="36" width="62" height="9"/><rect x="104" y="36" width="38" height="9"/><rect x="28" y="52" width="62" height="9"/><rect x="104" y="52" width="52" height="9"/><rect x="28" y="68" width="62" height="9"/><rect x="104" y="68" width="44" height="9"/></g><g class="cheio"><rect x="4" y="4" width="14" height="9"/><rect x="4" y="20" width="14" height="9"/><rect x="4" y="36" width="14" height="9"/><rect x="4" y="52" width="14" height="9"/><rect x="4" y="68" width="14" height="9"/></g><line class="guia" x1="97" y1="0" x2="97" y2="90"/></svg>
+          <div class="detalhe"><p class="por-que">Compacto por padrão, e o mês cabe na tela.</p><p class="dia"><b>Na revisão:</b> protótipo com volume real de atividades, não com três linhas.</p><p class="tags"><span class="tag">Continuidade</span><span class="tag">Flexibilidade e eficiência</span></p></div></div>
       </div>
       <div class="painel principio" role="tabpanel" id="q1s4-p5" aria-labelledby="q1s4-t5" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Mesmo padrão para tudo, inclusive a IA</p>
-        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="traco" x="1" y="28" width="54" height="34" rx="3"/><text x="28" y="50" text-anchor="middle">Filtrar</text><rect class="alerta" x="63" y="28" width="54" height="34" rx="3"/><text class="verm" x="90" y="50" text-anchor="middle">IA</text><rect class="traco" x="125" y="28" width="54" height="34" rx="3"/><text x="152" y="50" text-anchor="middle">Salvar</text></svg><div><p class="texto">A IA entra como componente, com confirmar e desfazer.</p><p class="nota">Similaridade. Controle e liberdade.</p></div></div>
+        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="traco" x="1" y="28" width="54" height="34" rx="3"/><text x="28" y="50" text-anchor="middle">Filtrar</text><rect class="alerta" x="63" y="28" width="54" height="34" rx="3"/><text class="verm" x="90" y="50" text-anchor="middle">IA</text><rect class="traco" x="125" y="28" width="54" height="34" rx="3"/><text x="152" y="50" text-anchor="middle">Salvar</text></svg>
+          <div class="detalhe"><p class="por-que">A IA entra como componente, com confirmar e desfazer.</p><p class="dia"><b>Na revisão:</b> recurso de IA usa o mesmo kit e a mesma revisão.</p><p class="tags"><span class="tag">Similaridade</span><span class="tag">Controle e liberdade</span></p></div></div>
       </div>
     </div>
   </div>
-  <footer class="rodape"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span><span>Atividade prática Astrea · Questão 1 · Felipe Gaigher · 08/11/2026</span><span>4 de 5</span></footer>
+  <footer class="rodape"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span><span>Q1 · Felipe Gaigher · 08/11/2026</span><span class="pagina">4 de 5</span></footer>
 </section>
 
 <!-- ============ 5 ============ -->
 <section class="slide validar" id="q1s5">
   <header>
-    <p class="item">Questão 1, item 3 de 3. O que validar</p>
-    <p class="pergunta">O que validar antes de seguir, e como?</p>
+    <p class="item">O que validar</p>
     <h2>Caro de corrigir se confirma antes. O resto segue por token</h2>
   </header>
   <div class="corpo">
-    <div class="tabela-quadro"><table class="tabela">
-      <colgroup><col style="width:34%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col></colgroup>
-      <thead><tr><th class="esq" scope="col">Hipótese</th><th scope="col">Pedido</th><th scope="col">Chamado</th><th scope="col">Analytics</th><th scope="col">Entrevista</th><th class="esq teste" scope="col">Método e métrica do primeiro teste</th></tr></thead>
-      <tbody>
-        <tr class="grupo"><td colspan="6">Confirmar antes de seguir</td></tr>
-        <tr><td class="esq"><div class="hip"><i>1</i>A Área de trabalho esconde o que atrasou</div></td><td><span class="ponto meio" role="img" aria-label="A planilha responde em parte"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Analytics: contas com tarefa atrasada fora da lista inicial</td></tr>
-        <tr><td class="esq"><div class="hip"><i>1</i>A tarefa some porque a Agenda abre fora de hoje</div></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td></td><td class="esq teste">Trial: tarefa com data de hoje e filtro em “Todas”</td></tr>
-        <tr><td class="esq"><div class="hip"><i>2</i>“Atividade” serve como termo geral</div></td><td><span class="ponto meio" role="img" aria-label="A planilha responde em parte"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Teste de cinco segundos na Agenda: acerto do termo</td></tr>
-        <tr><td class="esq"><div class="hip"><i>3</i>O modal de criar tem abandono</div></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td class="esq teste">Funil do modal: aberto, preenchido, salvo</td></tr>
-        <tr><td class="esq"><div class="hip"><i>5</i>O ruído da moldura custa atenção</div></td><td></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td class="esq teste">Marketing: faixa fixa ou sazonal. “Contratar” contra CSAT</td></tr>
-        <tr><td class="esq"><div class="hip"><i>5</i>Os números de Estatísticas levam a algum lugar</div></td><td></td><td></td><td><span class="ponto" role="img" aria-label="Cruzar"></span></td><td></td><td class="esq teste">Trial: destino do clique. Analytics: cliques por conta</td></tr>
-        <tr class="grupo corte"><td colspan="6">Segue para a Questão 2: o inventário já prova</td></tr>
-        <tr><td class="esq"><div class="hip"><i>4</i>A inconsistência custa reaprendizado</div></td><td></td><td></td><td></td><td></td><td class="esq teste">Backlog: bugs visuais abertos e tempo de handoff</td></tr>
-      </tbody>
-    </table></div>
-    <p class="nota">Desk research já feita: a varredura de 08/11 leu 12 módulos e a moldura em produção. O comparativo contou cliques de 48 tarefas. Clique mede esforço; sucesso só entrevista e analytics confirmam.</p>
-    <p class="legenda"><span><i class="ponto"></i>Fonte a cruzar</span><span><i class="ponto meio"></i>A planilha responde em parte</span><strong>Duas fontes de tipos diferentes na mesma direção confirmam.</strong></p>
-    <p class="fontes"><b>Fontes:</b> planilha de pedidos (407 votos) · 97 pontos de atenção nas telas · CSS do produto (646 variáveis, 609 do Nectar) · varredura de 08/11</p>
+    <div class="mestre">
+      <div class="passos" role="tablist" aria-orientation="vertical" aria-label="Hipóteses" data-passos>
+        <button type="button" class="passo" role="tab" id="q1s5-t0" aria-controls="q1s5-p0" aria-selected="true"><span class="passo-num">P1</span><span class="passo-texto"><span class="passo-titulo">Atraso escondido na abertura</span></span></button>
+        <button type="button" class="passo" role="tab" id="q1s5-t1" aria-controls="q1s5-p1" aria-selected="false"><span class="passo-num">P2</span><span class="passo-texto"><span class="passo-titulo">“Atividade” como termo geral</span></span></button>
+        <button type="button" class="passo" role="tab" id="q1s5-t2" aria-controls="q1s5-p2" aria-selected="false"><span class="passo-num">P3</span><span class="passo-texto"><span class="passo-titulo">Abandono no modal de criar</span></span></button>
+        <button type="button" class="passo" role="tab" id="q1s5-t3" aria-controls="q1s5-p3" aria-selected="false"><span class="passo-num">P5</span><span class="passo-texto"><span class="passo-titulo">Ruído da moldura custa atenção</span></span></button>
+        <button type="button" class="passo" role="tab" id="q1s5-t4" aria-controls="q1s5-p4" aria-selected="false"><span class="passo-num">P4</span><span class="passo-texto"><span class="passo-titulo">Inconsistência custa reaprendizado</span><span class="tag tag-acao">Segue na Q2</span></span></button>
+      </div>
+      <div class="paineis" aria-live="polite">
+        <div class="painel" role="tabpanel" id="q1s5-p0" aria-labelledby="q1s5-t0" tabindex="0">
+          <p class="so-impressao secao-titulo">P1. A Área de trabalho esconde o atraso</p>
+          <dl class="validacao">
+            <dt>A planilha</dt><dd>Responde em parte: 33% pedem destaque.</dd>
+            <dt>Primeiro teste</dt><dd>Analytics: contas com atraso fora da lista inicial.</dd><dd>Trial: tarefa de hoje com filtro em “Todas”.</dd>
+            <dt>Cruzar, duas confirmam</dt><dd class="tags"><span class="tag">Pedido</span><span class="tag">Chamado</span><span class="tag">Analytics</span><span class="tag">Entrevista</span></dd>
+          </dl>
+        </div>
+        <div class="painel" role="tabpanel" id="q1s5-p1" aria-labelledby="q1s5-t1" tabindex="0" hidden>
+          <p class="so-impressao secao-titulo">P2. “Atividade” serve como termo geral</p>
+          <dl class="validacao">
+            <dt>A planilha</dt><dd>Em parte: trata os tipos como coisas diferentes.</dd>
+            <dt>Primeiro teste</dt><dd>Cinco segundos na Agenda: acerto do termo.</dd>
+            <dt>Cruzar, duas confirmam</dt><dd class="tags"><span class="tag">Pedido</span><span class="tag">Chamado</span><span class="tag">Entrevista</span></dd>
+          </dl>
+        </div>
+        <div class="painel" role="tabpanel" id="q1s5-p2" aria-labelledby="q1s5-t2" tabindex="0" hidden>
+          <p class="so-impressao secao-titulo">P3. O modal de criar tem abandono</p>
+          <dl class="validacao">
+            <dt>A planilha</dt><dd>Não responde.</dd>
+            <dt>Primeiro teste</dt><dd>Funil do modal: aberto, preenchido, salvo.</dd>
+            <dt>Cruzar, duas confirmam</dt><dd class="tags"><span class="tag">Chamado</span><span class="tag">Analytics</span></dd>
+          </dl>
+        </div>
+        <div class="painel" role="tabpanel" id="q1s5-p3" aria-labelledby="q1s5-t3" tabindex="0" hidden>
+          <p class="so-impressao secao-titulo">P5. O ruído da moldura custa atenção</p>
+          <dl class="validacao">
+            <dt>A planilha</dt><dd>Não responde.</dd>
+            <dt>Primeiro teste</dt><dd>Marketing: faixa fixa ou sazonal. “Contratar” contra CSAT.</dd><dd>Trial: destino do clique em Estatísticas.</dd>
+            <dt>Cruzar, duas confirmam</dt><dd class="tags"><span class="tag">Analytics</span><span class="tag">Entrevista</span></dd>
+          </dl>
+        </div>
+        <div class="painel" role="tabpanel" id="q1s5-p4" aria-labelledby="q1s5-t4" tabindex="0" hidden>
+          <p class="so-impressao secao-titulo">P4. A inconsistência custa reaprendizado</p>
+          <dl class="validacao">
+            <dt>A planilha</dt><dd>Quase nada: o tema Design tem 3 votos.</dd>
+            <dt>Primeiro teste</dt><dd>Backlog: bugs visuais abertos e tempo de handoff.</dd>
+            <dt>Cruzar, duas confirmam</dt><dd class="tags"><span class="tag">Inventário</span><span class="tag">Backlog</span></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+    <p class="fontes"><b>Fontes:</b> 407 votos · 97 pontos de atenção · 646 variáveis CSS · varredura 08/11</p>
   </div>
-  <footer class="rodape"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span><span>Atividade prática Astrea · Questão 1 · Felipe Gaigher · 08/11/2026</span><span>5 de 5</span></footer>
+  <footer class="rodape"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span><span>Q1 · Felipe Gaigher · 08/11/2026</span><span class="pagina">Detalhe: <code>01-diagnostico.md</code> · 5 de 5</span></footer>
 </section>
+
 
 <script>
 /* Passos do deck: lista ou abas que trocam o painel. Clique, setas, Home e End.
