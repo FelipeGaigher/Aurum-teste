@@ -111,18 +111,24 @@
   }
 
   /* Cards: cada grupo é um container. Atrasadas ocupa a largura toda e fica acima de Hoje (PA-32). */
-  [data-area-principal][data-visao="cards"] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); align-items: start; gap: var(--space-4); margin-bottom: var(--space-6); }
-  [data-visao="cards"] .secao { margin: 0; padding: var(--space-4); background-color: var(--color-bg-subtle); border-radius: var(--radius-card); }
-  [data-visao="cards"] .secao[data-secao="atrasadas"], [data-visao="cards"] .secao[data-secao="concluidas"] { grid-column: 1 / -1; }
-  [data-visao="cards"] .secao[data-secao="atrasadas"] { background-color: var(--color-bg-danger); }
-  [data-visao="cards"] .secao[data-secao="atrasadas"] h2, [data-visao="cards"] .secao-nota { color: var(--color-text-default); }
-  [data-visao="cards"] .secao-cabeca { padding: 0 0 var(--space-3); border-bottom: 0; }
+  [data-area-principal]:is([data-visao="cards"], [data-visao="kanban"]) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); align-items: start; gap: var(--space-4); margin-bottom: var(--space-6); }
+  :is([data-visao="cards"], [data-visao="kanban"]) .secao { margin: 0; padding: var(--space-4); background-color: var(--color-bg-subtle); border-radius: var(--radius-card); }
+  :is([data-visao="cards"], [data-visao="kanban"]) .secao[data-secao="atrasadas"], :is([data-visao="cards"], [data-visao="kanban"]) .secao[data-secao="concluidas"] { grid-column: 1 / -1; }
+  :is([data-visao="cards"], [data-visao="kanban"]) .secao[data-secao="atrasadas"] { background-color: var(--color-bg-danger); }
+  :is([data-visao="cards"], [data-visao="kanban"]) .secao[data-secao="atrasadas"] h2, :is([data-visao="cards"], [data-visao="kanban"]) .secao-nota { color: var(--color-text-default); }
+  :is([data-visao="cards"], [data-visao="kanban"]) .secao-cabeca { padding: 0 0 var(--space-3); border-bottom: 0; }
   .cards-atividade { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--size-column)), 1fr)); gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+  /* Kanban: as mesmas seções, lado a lado como colunas (pedido de Felipe, 08/11). */
+  [data-area-principal][data-visao="kanban"] { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); align-items: stretch; }
+  [data-visao="kanban"] .secao[data-secao="atrasadas"], [data-visao="kanban"] .secao[data-secao="concluidas"] { grid-column: auto; }
+  [data-visao="kanban"] .secao { min-height: 60vh; }
+  [data-visao="kanban"] .cards-atividade { grid-template-columns: minmax(0, 1fr); }
+  @media (max-width: 1100px) { [data-area-principal][data-visao="kanban"] { grid-template-columns: minmax(0, 1fr); } [data-visao="kanban"] .secao { min-height: 0; } }
   .cards-atividade > li { display: flex; min-width: 0; }
   .cards-atividade .card-atividade { width: 100%; }
   .card-acoes { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: auto; padding-top: var(--space-1); }
   @media (max-width: 900px) {
-    [data-area-principal][data-visao="cards"] { grid-template-columns: minmax(0, 1fr); }
+    [data-area-principal]:is([data-visao="cards"], [data-visao="kanban"]) { grid-template-columns: minmax(0, 1fr); }
   }
 </style>
 </head>
@@ -168,7 +174,7 @@
   const CHAVE_FILTRO = 'astrea-filtro-area';
   // Cards abre por padrão: cada grupo vira um container, com as ações à vista.
   const CHAVE_VISAO = 'astrea-area-visao';
-  const VISOES = [['cards', 'Cards'], ['lista', 'Lista']];
+  const VISOES = [['cards', 'Cards'], ['lista', 'Lista'], ['kanban', 'Kanban']];
   // O usuário logado da moldura. Minhas e Delegadas comparam o responsável com ele (PA-35).
   const EU = 'Marina Couto';
   const OUTRAS_PESSOAS = window.DADOS.RESPONSAVEIS.filter((nome) => nome !== EU).sort();
@@ -396,9 +402,9 @@
       return daqui.length;
     }
     const ul = document.createElement('ul');
-    ul.className = visao === 'cards' ? 'cards-atividade' : 'lista-atividades';
+    ul.className = visao === 'lista' ? 'lista-atividades' : 'cards-atividade';
     ul.setAttribute('aria-labelledby', `titulo-${secao.chave}`);
-    ul.append(...daqui.map(visao === 'cards' ? card : linha));
+    ul.append(...daqui.map(visao === 'lista' ? linha : card));
     corpo.replaceChildren(ul);
     return daqui.length;
   }
