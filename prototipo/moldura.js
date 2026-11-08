@@ -59,8 +59,10 @@
     { rotulo: 'Processo busca automática', destino: 'processos.html' },
     { rotulo: 'Caso', destino: 'processos.html' },
     { rotulo: 'Atendimento', destino: 'atendimentos.html' },
-    { rotulo: 'Tarefa', destino: 'agenda.html' },
-    { rotulo: 'Evento', destino: 'agenda.html' },
+    // Tarefa e Evento abrem o painel de criar atividade na própria página. Sem
+    // componentes.js, o link leva à Agenda, que abre o painel pelo parâmetro criar.
+    { rotulo: 'Tarefa', destino: 'agenda.html?criar=tarefa', criar: 'tarefa' },
+    { rotulo: 'Evento', destino: 'agenda.html?criar=evento', criar: 'evento' },
     { rotulo: 'Contato', destino: 'contatos.html?adicionar=1' },
   ];
   const ITENS_ADICIONAR_UPGRADE = [
@@ -184,6 +186,18 @@
     document.addEventListener('click', (e) => {
       if (aberto() && !botao.contains(e.target) && !lista.contains(e.target)) fechar(false);
     });
+    return { fechar };
+  }
+
+  // O painel nasce de componentes.js; a moldura só o chama, e o foco volta ao Adicionar.
+  function ligarCriarAtividade(botao, lista, menu) {
+    lista.addEventListener('click', (e) => {
+      const item = e.target.closest('[data-criar]');
+      if (!item || !window.DS || !window.DS.painelCriarAtividade) return;
+      e.preventDefault();
+      menu.fechar(false);
+      window.DS.painelCriarAtividade({ tipo: item.dataset.criar }).abrir(botao);
+    });
   }
 
   // --- HTML ------------------------------------------------------------------
@@ -197,7 +211,8 @@
       return `<button type="button" role="menuitem" aria-disabled="true">${item.rotulo}</button>`;
     }
     const atual = item.destino === pagina ? ' aria-current="page"' : '';
-    return `<a role="menuitem" href="${item.destino}"${atual}>${item.rotulo}</a>`;
+    const criar = item.criar ? ` data-criar="${item.criar}" aria-haspopup="dialog"` : '';
+    return `<a role="menuitem" href="${item.destino}"${atual}${criar}>${item.rotulo}</a>`;
   }
 
   function htmlListaSuspensa(id, rotulo, itens, pagina, upgrade) {
@@ -337,11 +352,13 @@
     document.querySelector('.corpo').insertAdjacentHTML('afterbegin', htmlMenuLateral(pagina));
     ligarTema();
     ligarRecolher();
-    ligarMenu(document.getElementById('abrir-adicionar'), document.getElementById('menu-adicionar'));
+    const adicionar = document.getElementById('abrir-adicionar');
+    const listaAdicionar = document.getElementById('menu-adicionar');
+    ligarCriarAtividade(adicionar, listaAdicionar, ligarMenu(adicionar, listaAdicionar));
     ligarMenu(document.getElementById('abrir-usuario'), document.getElementById('menu-usuario'));
   }
 
-  window.Moldura = { MENU, montar, htmlItemMenu, htmlTrilha };
+  window.Moldura = { MENU, USUARIO, montar, htmlItemMenu, htmlTrilha };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', montar);
   else montar();

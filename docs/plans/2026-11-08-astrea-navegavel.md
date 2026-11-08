@@ -1305,7 +1305,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Produces: `DS.painelCriarAtividade({ tipo }) -> { abrir(origem) }`.
 - Produces: `[data-acao="criar-atividade"]`, `[data-acao="fechar-painel"]`, `[data-campo="data"]` e `[data-aviso="data-passada"]`.
 
-- [ ] **Step 1: Confirmar o estado vermelho**
+- [x] **Step 1: Confirmar o estado vermelho**
 
 ```bash
 node scripts/verificar-app.js --rf RF-10
@@ -1313,7 +1313,7 @@ node scripts/verificar-app.js --rf RF-10
 
 Esperado: `RF-10 FALHOU`.
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 - Os tipos são tarefa, prazo, audiência e evento.
 - Campos na ordem do Astrea. Lista de tarefas vem preenchida (PA-54).
@@ -1326,7 +1326,7 @@ Esperado: `RF-10 FALHOU`.
 
 Esperado: uma camada visível em qualquer caminho do formulário.
 
-- [ ] **Step 3: Executar e confirmar que passa**
+- [x] **Step 3: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/agenda.html prototipo/componentes.js prototipo/moldura.js
@@ -1335,7 +1335,7 @@ node scripts/verificar-app.js --rf RF-07,RF-10,RF-12 --paginas agenda.html
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 4: Entregar**
+- [x] **Step 4: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 

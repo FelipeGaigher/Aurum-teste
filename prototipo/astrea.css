@@ -1140,7 +1140,9 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 }
 .chave[aria-checked="true"] .chave-trilho { background-color: var(--color-action); }
 .chave[aria-checked="true"] .chave-botao { transform: translateX(calc(var(--component-switch-width) - var(--component-switch-height))); }
-.chave:hover:not(:disabled) .chave-trilho, .chave.is-hover .chave-trilho { background-color: var(--color-text-muted); }
+/* Hover desligado: o trilho anda metade do caminho até o texto. No claro escurece, no escuro clareia,
+   e nunca coincide com o default, que é a borda forte. */
+.chave:hover:not(:disabled) .chave-trilho, .chave.is-hover .chave-trilho { background-color: color-mix(in srgb, var(--color-border-strong), var(--color-text-default)); }
 .chave[aria-checked="true"]:hover:not(:disabled) .chave-trilho, .chave[aria-checked="true"].is-hover .chave-trilho { background-color: var(--color-action-hover); }
 .chave:active:not(:disabled) .chave-trilho, .chave.is-active .chave-trilho { background-color: var(--color-text-default); }
 .chave:disabled .chave-trilho { background-color: var(--color-bg-hover); }
@@ -1307,8 +1309,10 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .chip-prazo-vencido svg.icone { color: var(--color-text-danger); }
 .chip-prazo-hoje { background-color: var(--color-bg-warning); border-color: var(--color-text-warning); }
 .chip-prazo-hoje svg.icone { color: var(--color-text-warning); }
-.chip-prazo-proximo svg.icone, .chip-prazo-concluido svg.icone { color: var(--color-text-muted); }
-.chip-prazo-concluido { font-weight: var(--font-weight-regular); }
+.chip-prazo-proximo svg.icone { color: var(--color-text-muted); }
+/* Concluída: o texto diz "Concluída", a borda e a marca em verde reforçam, e o fundo sai do cinza do próximo */
+.chip-prazo-concluido { background-color: var(--color-bg-surface); border-color: var(--color-text-success); font-weight: var(--font-weight-regular); }
+.chip-prazo-concluido svg.icone { color: var(--color-text-success); }
 
 .chip-filtro { background-color: var(--color-bg-surface); color: var(--color-text-default); cursor: pointer; }
 .chip-filtro svg.icone { display: none; width: var(--font-size-emphasis); height: var(--font-size-emphasis); }
@@ -1515,6 +1519,11 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .painel-lateral-corpo { display: grid; align-content: start; justify-items: start; gap: var(--space-4); min-width: 0; padding: var(--space-5); overflow-y: auto; }
 .painel-lateral-rodape { padding: var(--space-3) var(--space-5); border-top: var(--border-width) solid var(--color-border-default); }
 .painel-lateral-rodape > .barra-acoes { position: static; padding: 0; background: none; border: 0; }
+
+/* criar atividade: os campos do tipo escolhido, e a confirmação de saída no lugar do rodapé (PA-59) */
+.criar-atividade-campos { display: grid; justify-items: start; gap: var(--space-4); justify-self: stretch; min-width: 0; }
+.criar-atividade-saida { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-4); }
+.criar-atividade-pergunta { margin: 0; font-weight: var(--font-weight-medium); }
 
 /* barra de ações: fixa no fim do formulário, com o estado da ação à esquerda (PA-30) */
 .barra-acoes {

@@ -24,6 +24,7 @@
     margin-bottom: var(--space-3);
   }
   .agenda-navegar { display: flex; align-items: center; gap: var(--space-2); }
+  .agenda-criar { margin-left: auto; }
   .agenda-periodo {
     margin: 0;
     font-size: var(--font-size-emphasis);
@@ -159,6 +160,7 @@
       <div class="visoes" role="tablist" aria-label="Visão da agenda" id="visoes"></div>
       <div class="agenda-navegar" id="agenda-navegar"></div>
       <h2 class="agenda-periodo" id="agenda-periodo" aria-live="polite"></h2>
+      <div class="agenda-criar" id="agenda-criar"></div>
     </div>
     <div class="agenda">
       <section class="grade-agenda" id="grade-agenda" role="tabpanel" aria-labelledby="visao-dia"></section>
@@ -183,7 +185,8 @@
   const LIMITE_DO_MES = 2;
   const HORAS = Array.from({ length: 11 }, (_, i) => 8 + i);
 
-  const vazio = new URLSearchParams(location.search).get('estado') === 'vazio';
+  const parametros = new URLSearchParams(location.search);
+  const vazio = parametros.get('estado') === 'vazio';
   const hoje = semHora(new Date());
 
   // PA-49: abre sempre em Hoje, na visão por dia, sem ler a última sessão.
@@ -204,10 +207,12 @@
     return el;
   }
 
-  const ATIVIDADES = (vazio ? [] : window.DADOS.ATIVIDADES).map((a) => {
+  function naAgenda(a) {
     const concluida = a.status === 'concluido';
     return { ...a, data: somarDias(hoje, a.prazoEmDias), concluida, ...DS.descreverPrazo(a.prazoEmDias, concluida) };
-  });
+  }
+
+  const ATIVIDADES = (vazio ? [] : window.DADOS.ATIVIDADES).map(naAgenda);
 
   function doDia(d) { return ATIVIDADES.filter((a) => mesmoDia(a.data, d)); }
 
@@ -348,7 +353,7 @@
     const aviso = DS.estadoVazio({
       titulo: 'Nenhuma atividade na agenda',
       texto: 'Prazos, audiências, tarefas e eventos aparecem nesta grade, no dia em que vencem. '
-        + 'Para criar a primeira, use Adicionar, no cabeçalho, e escolha Tarefa ou Evento.',
+        + 'Para criar a primeira, use Criar atividade, acima da grade.',
     });
     aviso.classList.add('agenda-vazio');
     return aviso;
@@ -429,11 +434,40 @@
     grade.dataset.visaoAtual = estado.visao;
     document.getElementById('agenda-periodo').textContent = rotuloDoPeriodo(estado.visao, estado.data);
     const pecas = DESENHO[estado.visao](estado.data);
-    grade.replaceChildren(...(vazio ? [avisoVazio()] : []), ...pecas);
+    grade.replaceChildren(...(ATIVIDADES.length ? [] : [avisoVazio()]), ...pecas);
   }
+
+  // --- criar atividade -----------------------------------------------------
+
+  // O botão abre o painel direto: um clique, uma camada (PA-27).
+  const botaoCriar = DS.botao({ variante: 'primario', iconeEsquerda: 'mais', rotulo: 'Criar atividade' });
+  botaoCriar.dataset.acao = 'criar-atividade';
+  botaoCriar.setAttribute('data-abre-painel', '');
+  botaoCriar.setAttribute('aria-haspopup', 'dialog');
+  botaoCriar.addEventListener('click', () => DS.painelCriarAtividade({ tipo: 'tarefa' }).abrir(botaoCriar));
+  document.getElementById('agenda-criar').append(botaoCriar);
+
+  // A atividade salva entra na grade, e a grade vai ao dia dela: o resultado aparece junto da ação.
+  const UM_DIA_MS = 24 * 60 * 60 * 1000;
+  document.addEventListener('atividade-criada', ({ detail }) => {
+    const [ano, mes, dia] = detail.data.split('-').map(Number);
+    const data = new Date(ano, mes - 1, dia);
+    ATIVIDADES.push(naAgenda({
+      id: `nova-${ATIVIDADES.length + 1}`, titulo: detail.titulo, tipo: detail.tipo,
+      processo: detail.processo, responsavel: detail.responsavel,
+      prazoEmDias: Math.round((data - hoje) / UM_DIA_MS), status: detail.concluida ? 'concluido' : 'a-fazer',
+    }));
+    estado.data = data;
+    desenhar();
+    prioridades();
+  });
 
   desenhar();
   prioridades();
+
+  // Link do menu Adicionar aberto sem componentes.js na página de origem.
+  const tipoDaUrl = parametros.get('criar');
+  if (tipoDaUrl && TIPOS[tipoDaUrl]) DS.painelCriarAtividade({ tipo: tipoDaUrl }).abrir(botaoCriar);
 })();
 </script>
 </body>

@@ -348,7 +348,7 @@
     entrada.addEventListener('input', atualizarLimpar);
     limpar.addEventListener('click', esvaziar);
     entrada.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && entrada.value) { e.stopPropagation(); esvaziar(); }
+      if (e.key === 'Escape' && entrada.value) { e.preventDefault(); e.stopPropagation(); esvaziar(); }
       if (e.key === 'Enter') { e.preventDefault(); if (props.aoBuscar) props.aoBuscar(entrada.value); }
     });
     atualizarLimpar();
@@ -733,8 +733,10 @@
       definirAberto(disponiveis.hidden);
       if (!disponiveis.hidden) focarProxima(0);
     });
+    // preventDefault: o Esc fecha só a lista, nunca o painel em volta.
     disponiveis.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
+      e.preventDefault();
       e.stopPropagation();
       definirAberto(false);
       mais.focus();
@@ -1405,7 +1407,7 @@
   // PA-34: vencido, hoje e próximos se distinguem pelo texto, e a cor reforça.
   function descreverPrazo(dias, concluida = false) {
     exigir(Number.isInteger(dias), 'descreverPrazo', 'dias é um inteiro');
-    if (concluida) return { estadoPrazo: 'concluido', rotulo: `${dias < 0 ? 'Venceu' : 'Vence'} em ${dataDoPrazo(dias)}` };
+    if (concluida) return { estadoPrazo: 'concluido', rotulo: `Concluída · prazo ${dataDoPrazo(dias)}` };
     if (dias < 0) return { estadoPrazo: 'vencido', rotulo: `Vencido há ${-dias} ${dias === -1 ? 'dia' : 'dias'}` };
     if (dias === 0) return { estadoPrazo: 'hoje', rotulo: 'Vence hoje' };
     return { estadoPrazo: 'proximo', rotulo: `Vence em ${dataDoPrazo(dias)}` };
@@ -1889,15 +1891,17 @@
   }
 
   // PA-27: uma camada só. Conteúdo novo troca dentro do painel com trocar(), sem abrir outra.
+  // antesDeFechar: o X, o Esc e o Cancelar passam por ele; devolver false mantém o painel aberto.
+  // fechar() fecha sempre, para quem já decidiu, como o Salvar.
   function painelLateral(props = {}) {
-    const { aoFechar } = props;
+    const { aoFechar, antesDeFechar } = props;
     const el = criar('dialog', 'painel-lateral');
     el.setAttribute('role', 'dialog');
     el.setAttribute('aria-modal', 'true');
     const tituloEl = criar('h2', 'painel-lateral-titulo');
     tituloEl.id = novoId('painel-titulo');
     el.setAttribute('aria-labelledby', tituloEl.id);
-    const fecharEl = botaoFechar('Fechar painel', () => fechar());
+    const fecharEl = botaoFechar('Fechar painel', () => pedirFechar());
     fecharEl.dataset.acao = 'fechar-painel';
     const topo = criar('div', 'painel-lateral-topo');
     topo.append(tituloEl, fecharEl);
@@ -1906,7 +1910,7 @@
     el.append(topo, corpoEl, rodapeEl);
 
     let origem = null;
-    const controle = { el, abrir, fechar, trocar };
+    const controle = { el, abrir, fechar, pedirFechar, trocar };
 
     function focarInicio() {
       (corpoEl.querySelector(FOCAVEIS) || fecharEl).focus();
@@ -1935,7 +1939,22 @@
       if (el.open) el.close();
     }
 
-    // Esc fecha pelo próprio dialog; o close devolve o foco a quem abriu.
+    function pedirFechar() {
+      if (!antesDeFechar || antesDeFechar() !== false) fechar();
+    }
+
+    // O Esc passa por pedirFechar. Peça interna que trata o próprio Esc chama preventDefault,
+    // e o painel fica aberto. O cancel cobre o Esc que chega ao dialog sem passar pelo keydown.
+    el.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      e.preventDefault();
+      pedirFechar();
+    });
+    el.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      pedirFechar();
+    });
+    // O close devolve o foco a quem abriu.
     el.addEventListener('close', () => {
       soltarCamada(controle);
       if (origem && origem.isConnected) origem.focus();
@@ -1944,6 +1963,158 @@
     });
     trocar(props);
     return controle;
+  }
+
+  // --- criar atividade -------------------------------------------------------
+
+  const PRIORIDADES = [['baixa', 'Baixa'], ['media', 'Média'], ['alta', 'Alta']];
+  const LISTAS_DE_TAREFAS = [['escritorio', 'Tarefas do escritório']];
+  // A ordem segue o Astrea: o modal de tarefa (tela 14) e o de evento (varredura, seção 2).
+  // Prazo e audiência usam a ordem da tarefa, sem a lista; audiência ganha o local.
+  const CAMPOS_DO_TIPO = {
+    tarefa: ['descricao', 'data', 'avisoData', 'lista', 'processo', 'pessoas', 'prioridade'],
+    prazo: ['descricao', 'data', 'avisoData', 'processo', 'pessoas', 'prioridade'],
+    audiencia: ['descricao', 'data', 'avisoData', 'local', 'processo', 'pessoas', 'prioridade'],
+    evento: ['titulo', 'data', 'avisoData', 'ate', 'diaInteiro', 'local', 'pessoas', 'observacoes', 'processo'],
+  };
+
+  function opcoesDePessoas(responsavel, pessoas) {
+    const nomes = [...new Set([responsavel, ...pessoas].filter(Boolean))];
+    exigir(nomes.length, 'painelCriarAtividade', 'precisa de ao menos uma pessoa');
+    return nomes.map((nome) => [nome, nome]);
+  }
+
+  function camposDaAtividade({ responsavel, pessoas, aoMudarData, aoSalvarConcluida }) {
+    // PA-57: a data passada avisa no próprio painel, sem segundo diálogo.
+    const avisoData = faixaAviso({
+      tipo: 'aviso',
+      mensagem: 'Esta data já passou. A atividade entra na agenda nesse dia.',
+      acao: { rotulo: 'Salvar como concluída', aoClicar: aoSalvarConcluida },
+    });
+    avisoData.dataset.aviso = 'data-passada';
+    avisoData.hidden = true;
+    return {
+      // PA-56 fica no Backlog: a descrição segue como o único texto da tarefa.
+      descricao: areaTexto({ rotulo: 'Descrição', obrigatorio: true, largura: 'total' }),
+      titulo: campo({ rotulo: 'Título do evento', obrigatorio: true, largura: 'total' }),
+      data: data({ rotulo: 'Data', obrigatorio: true, campo: 'data', valor: paraIso(new Date()), aoMudar: aoMudarData }),
+      avisoData,
+      ate: data({ rotulo: 'Até', campo: 'data-fim' }),
+      diaInteiro: caixa({ rotulo: 'Dia inteiro' }),
+      // PA-54: a lista tem um valor só, e ele já vem escolhido.
+      lista: seletor({ rotulo: 'Lista de tarefas', obrigatorio: true, opcoes: LISTAS_DE_TAREFAS, valor: 'escritorio' }),
+      local: campo({ rotulo: 'Endereço ou local', largura: 'total' }),
+      processo: busca({ rotulo: 'Processo, caso ou atendimento', placeholder: 'Número do processo ou nome do cliente', largura: 'total' }),
+      // PA-58: responsável e envolvidos no mesmo campo, sem popover.
+      pessoas: seletorPessoas({
+        rotulo: 'Responsável e envolvidos', obrigatorio: true,
+        opcoes: opcoesDePessoas(responsavel, pessoas), valor: responsavel ? [responsavel] : [],
+      }),
+      // PA-55 aguarda dado: a prioridade segue nascendo Baixa.
+      prioridade: seletor({ rotulo: 'Prioridade', obrigatorio: true, opcoes: PRIORIDADES, valor: 'baixa' }),
+      observacoes: areaTexto({ rotulo: 'Observações', largura: 'total' }),
+    };
+  }
+
+  // A foto do formulário: valor de máquina e texto digitado de cada campo.
+  function fotoDosCampos(campos) {
+    return Object.values(campos).map((el) => [el.dataset.valor ?? '',
+      ...[...el.querySelectorAll('input, textarea')].map((entrada) => entrada.value)].join('|')).join('\n');
+  }
+
+  function confirmacaoDeSaida(aoVoltar, aoSair) {
+    const el = criar('div', 'criar-atividade-saida');
+    el.setAttribute('role', 'group');
+    const pergunta = criar('p', 'criar-atividade-pergunta', 'Sair sem salvar? O que você preencheu se perde.');
+    pergunta.id = novoId('saida');
+    el.setAttribute('aria-labelledby', pergunta.id);
+    const voltar = botao({ variante: 'secundario', rotulo: 'Continuar editando' });
+    voltar.addEventListener('click', aoVoltar);
+    const sair = botao({ variante: 'destrutivo', rotulo: 'Sair sem salvar' });
+    sair.addEventListener('click', aoSair);
+    el.append(pergunta, grupoBotoes([voltar, sair]));
+    el.hidden = true;
+    return { el, voltar };
+  }
+
+  // PA-27, PA-59 e PA-60: um painel só para os quatro tipos. Formulário vazio fecha
+  // direto; com dado, a confirmação de saída troca o rodapé, sem outra camada.
+  // Salvar dispara "atividade-criada" no document, com a atividade em detail.
+  function montarCriarAtividade({ tipo: tipoInicial, responsavel, pessoas }) {
+    let tipo = tipoInicial;
+    let painel = null;
+    const campos = camposDaAtividade({
+      responsavel, pessoas,
+      aoMudarData: (iso) => { campos.avisoData.hidden = !iso || iso >= paraIso(new Date()); },
+      aoSalvarConcluida: () => salvar(true),
+    });
+    const formulario = criar('div', 'criar-atividade-campos');
+    const tipoEl = radio({
+      rotulo: 'Tipo', opcoes: Object.entries(TIPOS_DE_ATIVIDADE), valor: tipo,
+      aoEscolher: (novo) => { tipo = novo; desenhar(); },
+    });
+    const barra = barraAcoes({
+      rotulo: 'Ações da atividade',
+      acoes: [
+        { variante: 'texto', rotulo: 'Cancelar', aoClicar: () => painel.pedirFechar() },
+        { variante: 'primario', rotulo: 'Salvar', aoClicar: () => salvar(false) },
+      ],
+    });
+    const saida = confirmacaoDeSaida(() => mostrarSaida(false), () => painel.fechar());
+
+    function desenhar() {
+      formulario.replaceChildren(...CAMPOS_DO_TIPO[tipo].map((chave) => campos[chave]));
+    }
+
+    function mostrarSaida(mostrar) {
+      saida.el.hidden = !mostrar;
+      barra.el.hidden = mostrar;
+      (mostrar ? saida.voltar : barra.el.querySelector('button')).focus();
+    }
+
+    function salvar(concluida) {
+      const texto = campos[tipo === 'evento' ? 'titulo' : 'descricao'];
+      const valores = { titulo: texto.dataset.valor.trim(), data: campos.data.dataset.valor };
+      const faltam = [!valores.titulo && texto, !valores.data && campos.data].filter(Boolean);
+      if (faltam.length) {
+        barra.definirSituacao('erro', 'Preencha os campos obrigatórios marcados com *.');
+        faltam[0].querySelector('input, textarea').focus();
+        return;
+      }
+      const [primeira] = campos.pessoas.dataset.valor.split(',').filter(Boolean);
+      document.dispatchEvent(new CustomEvent('atividade-criada', {
+        detail: {
+          tipo, ...valores, concluida, responsavel: primeira || '',
+          processo: campos.processo.dataset.valor.trim(), prioridade: campos.prioridade.dataset.valor,
+        },
+      }));
+      painel.fechar();
+    }
+
+    desenhar();
+    const inicial = fotoDosCampos(campos);
+    painel = painelLateral({
+      titulo: 'Nova atividade',
+      corpo: [tipoEl, formulario],
+      rodape: [barra.el, saida.el],
+      antesDeFechar: () => {
+        if (fotoDosCampos(campos) === inicial) return true;
+        mostrarSaida(true);
+        return false;
+      },
+      aoFechar: () => painel.el.remove(),
+    });
+    return painel;
+  }
+
+  // Cada abertura monta um formulário novo. pessoas: os nomes que o seletor oferece;
+  // o responsável padrão é o usuário da moldura.
+  function painelCriarAtividade(props = {}) {
+    const { tipo = 'tarefa', pessoas = (window.DADOS && window.DADOS.RESPONSAVEIS) || [] } = props;
+    const { responsavel = window.Moldura && window.Moldura.USUARIO } = props;
+    exigir(CAMPOS_DO_TIPO[tipo], 'painelCriarAtividade', `tipo desconhecido "${tipo}"`);
+    exigir(Array.isArray(pessoas), 'painelCriarAtividade', 'pessoas é uma lista de nomes');
+    return { abrir: (origem) => montarCriarAtividade({ tipo, responsavel, pessoas }).abrir(origem) };
   }
 
   // PA-30: o resultado da ação aparece na barra, junto do botão. Toast só para o que está fora da tela.
@@ -2065,6 +2236,6 @@
     campo, areaTexto, busca, seletor, seletorMultiplo, seletorPessoas, data, periodo, caixa, radio, chave,
     toast, faixaAviso, dialogo, tooltip, progresso, skeleton, estadoVazio, upsell,
     descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade, cardAtividade, cardContato, paginacao,
-    abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper,
+    abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper, painelCriarAtividade,
   };
 })();
