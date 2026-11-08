@@ -342,9 +342,9 @@
     const adicionar = DS.botao({ variante: 'primario', iconeEsquerda: 'mais', rotulo: 'Adicionar contato' });
     adicionar.addEventListener('click', () => { location.href = 'contatos.html?adicionar=1'; });
 
-    const topo = criar('div', 'contatos-topo');
-    topo.append(adicionar);
-    main.append(topo, barra.el);
+    // Botão principal na linha dos filtros, à direita (pedido de Felipe, 08/11).
+    barra.el.querySelector('.barra-filtros-fim').append(adicionar);
+    main.append(barra.el);
 
     if (CONTATOS.length > MINIMO_DO_ALFABETO) main.append(alfabeto(estado, desenhar));
     main.append(resultado);
