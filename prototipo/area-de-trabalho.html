@@ -26,7 +26,8 @@
   .area-aviso { margin-bottom: var(--space-4); }
 
   /* PA-32: três seções em ordem fixa. O cabeçalho repete o tom do chip, e o texto diz o estado. */
-  .secao { margin-bottom: var(--space-6); scroll-margin-top: calc(var(--component-header-height) + var(--space-3)); }
+  /* Item e subitens no mesmo contêiner: faixa branca em cima, corpo cinza um degrau acima da página. */
+  .secao { margin-bottom: var(--space-6); scroll-margin-top: calc(var(--component-header-height) + var(--space-3)); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); overflow: hidden; }
   /* Cabeçalho da seção: faixa que abre e fecha, como os grupos do Importação. A tag diz o status. */
   .secao-cabeca { margin: 0; font: inherit; }
   .secao-faixa {
@@ -36,16 +37,18 @@
     width: 100%;
     min-height: var(--component-control-height);
     padding: var(--space-2) var(--space-3);
-    background-color: var(--color-bg-subtle);
-    border: var(--border-width) solid var(--color-border-default);
-    border-radius: var(--radius);
+    background-color: var(--color-bg-surface);
+    border: 0;
+    border-bottom: var(--border-width) solid var(--color-border-default);
+    border-radius: 0;
     color: var(--color-text-default);
     font: inherit;
     text-align: start;
     cursor: pointer;
   }
-  .secao-faixa:hover { background-color: var(--color-bg-hover); border-color: var(--color-action); }
-  .secao-faixa:focus-visible { outline: var(--focus-width) solid var(--color-action); outline-offset: var(--space-1); }
+  .secao-faixa:hover { background-color: var(--color-bg-hover); }
+  .secao-faixa:focus-visible { outline: var(--focus-width) solid var(--color-action); outline-offset: calc(-1 * var(--focus-width)); }
+  .secao-faixa[aria-expanded="false"] { border-bottom: 0; }
   .secao-faixa > svg { flex: 0 0 auto; color: var(--color-text-muted); transition: transform 150ms; }
   .secao-faixa[aria-expanded="false"] > svg { transform: rotate(-90deg); }
   .secao-titulo {
@@ -56,11 +59,9 @@
     text-transform: uppercase;
   }
   .secao-nota { font-size: var(--font-size-label); }
-  .secao-corpo { margin-top: var(--space-3); }
-  /* Três tons: página, faixa da seção e, na Lista, as linhas num contêiner branco. */
-  [data-visao="lista"] .secao-corpo { background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); overflow: hidden; }
+  .secao-corpo { background-color: var(--color-bg-subtle); }
+  :is([data-visao="cards"], [data-visao="kanban"]) .secao-corpo { padding: var(--space-3); }
   [data-visao="lista"] .lista-atividades > .linha-atividade:last-child { border-bottom: 0; }
-  [data-visao="kanban"] .secao-faixa { background-color: var(--color-bg-surface); }
   .secao .estado-vazio { padding: var(--space-4) var(--space-3); }
 
   /* Filtros e alternância na mesma linha: a barra do DS tem largura total, aqui ela divide a linha. */
@@ -104,7 +105,7 @@
   [data-area-principal][data-visao="cards"] { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); margin-bottom: var(--space-4); }
   [data-visao="cards"] .secao { margin: 0; }
   [data-area-principal][data-visao="kanban"] { display: grid; align-items: start; gap: var(--space-4); margin-bottom: var(--space-4); }
-  [data-visao="kanban"] .secao { margin: 0; padding: var(--space-3); background-color: var(--color-bg-subtle); border-radius: var(--radius-card); }
+  [data-visao="kanban"] .secao { margin: 0; }
   [data-visao="kanban"] .secao-faixa > svg { display: none; }
   .cards-atividade { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--size-column)), 1fr)); gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
   /* Kanban: as mesmas seções, lado a lado como colunas (pedido de Felipe, 08/11). */
@@ -123,7 +124,7 @@
   /* Detalhe ao lado da lista (pedido de Felipe, 08/11): a linha e o card escolhem a atividade. */
   .linha-atividade[data-selecionavel], .card-atividade[data-selecionavel] { cursor: pointer; }
   .linha-atividade[data-selecionavel]:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
-  .linha-atividade.is-selecionado { background-color: var(--color-bg-subtle); box-shadow: inset calc(var(--focus-width) + var(--border-width)) 0 0 var(--color-action); }
+  .linha-atividade.is-selecionado { background-color: var(--color-bg-hover); box-shadow: inset calc(var(--focus-width) + var(--border-width)) 0 0 var(--color-action); }
   .painel-detalhe-rodape a.botao { text-decoration: none; }
   .detalhe-processo { display: inline-flex; align-items: center; gap: var(--space-1); }
 </style>
