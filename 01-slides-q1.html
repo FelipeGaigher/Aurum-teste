@@ -27,6 +27,7 @@
   .pergunta::before { content: "“"; } .pergunta::after { content: "”"; }
   h2 { font-family: var(--serif); font-weight: 400; font-size: 2.917cqw; line-height: 1.1; margin: 0; max-width: 80cqw; letter-spacing: -0.005em; }
   .corpo { flex: 1; display: flex; gap: 3.5cqw; align-items: flex-start; min-height: 0; }
+  .corpo.tres { gap: 2.2cqw; }
   .col { display: flex; flex-direction: column; gap: 0.9cqw; min-width: 0; flex: 1; }
   .rodape { display: flex; justify-content: space-between; font-size: 0.729cqw; color: var(--muted); }
   p { margin: 0; line-height: 1.45; }
@@ -42,13 +43,20 @@
   td:last-child, th:last-child { padding-right: 0; }
   td:first-child { font-weight: 500; white-space: nowrap; }
   td.muted { color: var(--muted); }
+  table.denso { table-layout: fixed; }
+  table.denso td { padding: 0.42cqw 1cqw 0.42cqw 0; }
+  table.denso td:last-child { padding-right: 0; }
+  table.denso td:first-child { white-space: normal; }
   figure { margin: 0; display: grid; gap: 0.4cqw; }
   figure img { width: 100%; height: auto; max-height: 17cqw; object-fit: cover; object-position: top left; border: 1px solid var(--line); border-radius: var(--radius); display: block; }
   figcaption { font-size: 0.75cqw; color: var(--muted); line-height: 1.35; }
   .tese { font-family: var(--serif); font-size: 1.563cqw; line-height: 1.2; }
   .causa { border-left: 2px solid var(--line-strong); padding-left: 0.8cqw; font-size: 0.885cqw; line-height: 1.4; display: grid; gap: 0.3cqw; }
   .causa b { font-weight: 500; }
-  @media (max-width: 720px) { .slide { aspect-ratio: auto; } .corpo { flex-direction: column; } }
+  .blocos { display: grid; grid-template-columns: 1fr 1.25fr 0.85fr; gap: 2.2cqw; }
+  .blocos > div { display: grid; gap: 0.25cqw; align-content: start; }
+  .blocos p { font-size: 0.9375cqw; line-height: 1.35; }
+  @media (max-width: 720px) { .slide { aspect-ratio: auto; } .corpo { flex-direction: column; } .blocos { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -66,12 +74,12 @@
   </header>
   <div class="corpo">
     <div class="col" style="flex: 1.15;">
-      <p class="texto">Percorri o trial com foco na gestão de atividades: Área de trabalho, Agenda e a criação de atividade. Cada tela está registrada com fato e hipótese, e cada cor foi medida no print. Os cinco problemas abaixo são os que mais custam a quem vive de prazo.</p>
+      <p class="texto">Percorri o trial com foco na gestão de atividades: Área de trabalho, Agenda e a criação de atividade. Cada tela está registrada com fato e hipótese, e cada cor foi medida no print. A planilha soma 80 pedidos e 407 votos sobre a Área de trabalho. Os cinco problemas abaixo são os que mais custam a quem vive de prazo.</p>
       <table>
         <thead><tr><th>Nº</th><th>Problema</th><th>Tipo</th><th>Telas</th></tr></thead>
         <tbody>
-          <tr><td>P1</td><td>O prazo não domina a tela que existe para ele</td><td class="muted">Hierarquia e densidade</td><td class="muted">14, 17 a 20</td></tr>
-          <tr><td>P2</td><td>Dois nomes e três lugares para a mesma atividade</td><td class="muted">Arquitetura de informação</td><td class="muted">10, 11, 13, 14</td></tr>
+          <tr><td>P1</td><td>O prazo não domina as telas que existem para ele</td><td class="muted">Hierarquia e densidade</td><td class="muted">11, 14, 17 a 20</td></tr>
+          <tr><td>P2</td><td>Sem hierarquia de nomes, a mesma atividade em quatro lugares</td><td class="muted">Arquitetura de informação, hipótese</td><td class="muted">10, 11, 13, 14</td></tr>
           <tr><td>P3</td><td>Criar uma atividade interrompe quem cria</td><td class="muted">Usabilidade de fluxo</td><td class="muted">14, 15, 16</td></tr>
           <tr><td>P4</td><td>Três azuis, três cinzas, três jeitos de criar</td><td class="muted">Consistência</td><td class="muted">11, 13, 14, 17 a 20</td></tr>
           <tr><td>P5</td><td>A moldura compete com o trabalho</td><td class="muted">Hierarquia e ruído</td><td class="muted">11, 13</td></tr>
@@ -91,29 +99,34 @@
 <section class="slide" id="q1s2">
   <header>
     <p class="item">Questão 1, item 1 de 3. Diagnóstico, problemas 1 e 2</p>
-    <h2>O prazo se esconde, e a atividade tem dois nomes</h2>
+    <h2>O prazo se esconde, e a atividade se espalha</h2>
   </header>
   <div class="corpo">
     <div class="col">
-      <h3><span class="num">P1</span>O prazo não domina a tela que existe para ele</h3>
+      <h3><span class="num">P1</span>O prazo não domina as telas que existem para ele</h3>
       <h4>Sintoma</h4>
       <ul class="bul">
-        <li>A grade mensal mostra duas semanas por tela de 1920 por 960.</li>
-        <li>A tarefa criada não apareceu em nenhuma das quatro visões.</li>
+        <li>136 de 407 votos (33%) pedem destaque de prazo, audiência, data limite e atividades do dia. ASTP-I-639 tem 43 votos.</li>
+        <li>A Área de trabalho abre em uma lista e esconde tarefa atrasada de outra lista (PA-31).</li>
+        <li>Prazo vencido não tem seção própria. Falta "Atrasadas" ao lado de "Hoje" (PA-32).</li>
+        <li>A grade mensal da Agenda mostra duas semanas por tela de 1920 por 960.</li>
+        <li>A tarefa criada não apareceu em nenhuma das quatro visões. Causa em aberto: filtro ou data retroativa.</li>
         <li>No modal, prioridade é um seletor com "Baixa" por padrão. A data não distingue prazo fatal de data comum.</li>
       </ul>
-      <div class="causa"><b>Causa provável.</b> A Agenda foi desenhada como calendário genérico, com densidade de agenda pessoal. O prazo processual não ganhou lugar próprio na hierarquia.<b>Por que importa.</b> O escritório depende do Astrea para não perder prazo. É a primeira restrição do briefing.</div>
+      <div class="causa"><b>Ressalva.</b> Alertas já mostra "Tarefa atrasada". O dado existe no produto. O problema é a tela de abertura não o mostrar.<b>Causa provável.</b> A Agenda foi desenhada como calendário genérico, e a Área de trabalho abre por lista, não por urgência. O prazo processual não ganhou lugar próprio na hierarquia.<b>Por que importa.</b> O escritório depende do Astrea para não perder prazo. É a primeira restrição do briefing.</div>
       <figure><img src="evidencias/12-modal-adicionar-tarefa.png" alt="Modal Adicionar tarefa do Astrea, com campo de data comum e prioridade Baixa por padrão"><figcaption>Tela 14. Data comum e prioridade "Baixa". O prazo fatal não tem campo.</figcaption></figure>
     </div>
     <div class="col">
-      <h3><span class="num">P2</span>Dois nomes e três lugares para a mesma atividade</h3>
-      <h4>Sintoma</h4>
+      <h3><span class="num">P2</span>Sem hierarquia de nomes, a mesma atividade em quatro lugares</h3>
+      <h4>Sintoma. Hipótese a validar no slide 5</h4>
       <ul class="bul">
+        <li>Nos pedidos, tarefa, prazo, audiência e evento aparecem como tipos diferentes (ASTP-I-639, ASTS-I-702).</li>
+        <li>O produto não organiza esses tipos. A ficha do processo pede "Tipo de atividade" com Tarefa ou Evento. Prazo e Audiência existem só como etiqueta.</li>
         <li>"Tarefa" na Área de trabalho e no modal. "Atividade" na Agenda e no botão.</li>
+        <li>A mesma atividade aparece em quatro lugares: Área de trabalho, Agenda, lista lateral "Tarefas sem data" e Alertas.</li>
         <li>O onboarding promete "quadros Kanban". O item "Gestão kanban" existe no código, oculto por flag de plano.</li>
-        <li>A mesma atividade vive em Área de trabalho, Agenda e na lista lateral "Tarefas sem data".</li>
       </ul>
-      <div class="causa"><b>Causa provável.</b> Módulos de times e épocas diferentes, cada um com vocabulário e visão próprios. É o briefing visto de dentro.<b>Por que importa.</b> Dois nomes dobram o custo de aprender e o volume de chamado de suporte.</div>
+      <div class="causa"><b>Causa provável.</b> Módulos de times e épocas diferentes, cada um com vocabulário e visão próprios. Falta um termo geral com os tipos abaixo dele. "Atividade" pode ser esse termo.<b>Por que importa.</b> Quem busca uma atividade precisa saber onde ela está e como ela se chama. O custo em chamado de suporte ainda não foi medido.</div>
       <figure><img src="evidencias/11-agenda-vazia.png" alt="Agenda vazia do Astrea com botão Adicionar atividade, enquanto a Área de trabalho usa a palavra tarefa"><figcaption>Tela 13. Aqui é "atividade". Na tela 11, "tarefa". Mesmo objeto.</figcaption></figure>
     </div>
   </div>
@@ -123,10 +136,10 @@
 <!-- ============ 3 ============ -->
 <section class="slide" id="q1s3">
   <header>
-    <p class="item">Questão 1, item 1 de 3. Diagnóstico, problemas 3 e 4</p>
-    <h2>Criar atividade interrompe, e cada tela tem a própria paleta</h2>
+    <p class="item">Questão 1, item 1 de 3. Diagnóstico, problemas 3, 4 e 5</p>
+    <h2>Criar interrompe, a paleta varia, a moldura compete</h2>
   </header>
-  <div class="corpo">
+  <div class="corpo tres">
     <div class="col">
       <h3><span class="num">P3</span>Criar uma atividade interrompe quem cria</h3>
       <h4>Sintoma</h4>
@@ -135,22 +148,37 @@
         <li>"Envolver mais pessoas" abre um popover dentro do modal.</li>
         <li>Data no passado só pergunta "deseja continuar?", sem motivo nem opção de salvar como concluída.</li>
       </ul>
-      <div class="causa"><b>Causa provável.</b> O formulário acumulou campos e atalhos sem um dono do fluxo inteiro. Cada campo faz sentido sozinho. Juntos, viram atrito.<b>Por que importa.</b> É a ação mais repetida do dia. Atrito pequeno, trinta vezes, vira prazo anotado fora do sistema.</div>
+      <div class="causa"><b>Causa provável.</b> O formulário acumulou campos e atalhos sem um dono do fluxo inteiro. Cada campo faz sentido sozinho. Juntos, viram atrito.<b>Por que importa.</b> É a ação mais repetida do dia. Atrito pequeno, repetido todo dia, vira prazo anotado fora do sistema.</div>
       <figure><img src="evidencias/14-modal-envolver-pessoas.png" alt="Popover Envolver mais pessoas aberto sobre o modal Adicionar tarefa"><figcaption>Tela 16. Popover sobre modal: camada sobre camada para escolher uma pessoa.</figcaption></figure>
     </div>
     <div class="col">
       <h3><span class="num">P4</span>Três azuis, três cinzas, três jeitos de criar</h3>
       <h4>Sintoma, medido no print</h4>
-      <table>
+      <table class="denso">
+        <colgroup><col style="width: 18%"><col></colgroup>
         <tbody>
           <tr><td>Azuis</td><td>Marca <code>#008fd5</code>, componente <code>#228be6</code>, campanha <code>#0255c4</code>. Mesma tela</td></tr>
           <tr><td>Cinzas</td><td><code>#202124</code> do Material, <code>#6c757d</code> do Bootstrap, <code>#dee2e6</code> do Mantine</td></tr>
           <tr><td>Criar</td><td>"Adicionar primeira tarefa" em caixa alta, "Adicionar atividade" com seta de menu, e um "+" redondo na Agenda</td></tr>
           <tr><td>Seletores</td><td>Nativo do navegador no widget, customizado no modal</td></tr>
           <tr><td>Azul</td><td>A mesma cor para link, para número de estatística e para botão</td></tr>
+          <tr><td>Menu</td><td>Sem estado ativo. O fundo cinza é só hover (PA-01)</td></tr>
         </tbody>
       </table>
       <div class="causa"><b>Causa provável.</b> Não existe fonte única. Cada time puxou a biblioteca que tinha à mão. É a terceira restrição do briefing, com hex.<b>Por que importa.</b> Cada divergência é reaprendizado para quem usa e manutenção para quem constrói. Quando tudo é azul, nada parece clicável.</div>
+    </div>
+    <div class="col">
+      <h3><span class="num">P5</span>A moldura compete com o trabalho</h3>
+      <h4>Sintoma</h4>
+      <ul class="bul">
+        <li>Faixa de campanha com contador regressivo no topo do produto logado, em toda tela.</li>
+        <li>Três chamadas comerciais no cabeçalho: selo "1 ano grátis", botão verde "Contratar" e a faixa.</li>
+        <li>"Conheça as IAs" com cor própria e fundo lilás no menu. A IA nasce fora do padrão.</li>
+        <li>Estatísticas da coluna direita em azul de link, sem ação por trás.</li>
+        <li>A nuvem do cabeçalho significa "Resultados de buscas". Um especialista leu como salvar (PA-05).</li>
+      </ul>
+      <div class="causa"><b>Causa provável.</b> A moldura não tem dono de produto. Marketing e IA entram nela sem passar por um padrão.<b>Por que importa.</b> Quem vive no produto lê esse ruído o dia inteiro. E o briefing pede que a IA nasça no mesmo padrão do resto.</div>
+      <figure><img src="evidencias/10-area-de-trabalho-vazia-2.png" alt="Área de trabalho do Astrea com faixa de campanha, selo, botão Contratar e item de IA em roxo"><figcaption>Tela 11. Faixa, selo, botão verde e IA em roxo, tudo na moldura que o usuário vê o dia inteiro.</figcaption></figure>
     </div>
   </div>
   <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>3 de 5</span></footer>
@@ -159,37 +187,25 @@
 <!-- ============ 4 ============ -->
 <section class="slide" id="q1s4">
   <header>
-    <p class="item">Questão 1, item 1 de 3, problema 5. Item 2 de 3, princípios</p>
+    <p class="item">Questão 1, item 2 de 3. Princípios</p>
     <p class="pergunta">Quais foram os principais princípios que guiariam a sua proposta de redesign do Astrea.</p>
-    <h2>A moldura compete com o trabalho. E seis princípios para resolver tudo isso</h2>
+    <h2>Seis princípios para resolver os cinco problemas</h2>
   </header>
   <div class="corpo">
-    <div class="col" style="flex: 0.85;">
-      <h3><span class="num">P5</span>A moldura compete com o trabalho</h3>
-      <h4>Sintoma</h4>
-      <ul class="bul">
-        <li>Faixa de campanha com contador regressivo no topo do produto logado, em toda tela.</li>
-        <li>Três chamadas comerciais no cabeçalho: selo "1 ano grátis", botão verde "Contratar" e a faixa.</li>
-        <li>"Conheça as IAs" com cor própria e fundo lilás no menu. A IA nasce fora do padrão.</li>
-        <li>Estatísticas da coluna direita em azul de link, sem ação por trás.</li>
-      </ul>
-      <div class="causa"><b>Causa provável.</b> A moldura não tem dono de produto. Marketing e IA entram nela sem passar por um padrão.<b>Por que importa.</b> Quem vive no produto o dia inteiro lê o ruído trinta vezes. E o briefing pede que a IA nasça no mesmo padrão do resto.</div>
-      <figure><img src="evidencias/10-area-de-trabalho-vazia-2.png" alt="Área de trabalho do Astrea com faixa de campanha, selo, botão Contratar e item de IA em roxo"><figcaption>Tela 11. Faixa, selo, botão verde e IA em roxo, tudo na moldura que o usuário vê o dia inteiro.</figcaption></figure>
-    </div>
-    <div class="col" style="flex: 1.15;">
-      <h4>Princípios de design</h4>
-      <table>
-        <thead><tr><th>Princípio</th><th>O que ele decide</th></tr></thead>
+    <div class="col">
+      <table class="denso">
+        <colgroup><col style="width: 13%"><col style="width: 25%"><col style="width: 11%"><col style="width: 15%"><col style="width: 17%"><col></colgroup>
+        <thead><tr><th>Princípio</th><th>O que ele decide</th><th>Heurística de Nielsen</th><th>Gestalt: como o olho agrupa</th><th>Exemplo real no Astrea</th><th>No dia a dia de UX/UI</th></tr></thead>
         <tbody>
-          <tr><td>O prazo primeiro</td><td>O dado que não pode falhar é o mais visível em toda tela de atividade. Cor e texto, nunca só cor</td></tr>
-          <tr><td>Uma palavra, um lugar</td><td>Um nome para cada objeto e um caminho para cada ação. Atividade, com tipos. O Kanban prometido aparece no menu, em todo plano</td></tr>
-          <tr><td>A moldura é a âncora</td><td>Cabeçalho, menu e ações no mesmo lugar em tela nova e legada. O conteúdo migra, a casa fica</td></tr>
-          <tr><td>Todo erro tem saída</td><td>Nenhum botão morre em silêncio. Cada estado de erro diz o que houve e como voltar</td></tr>
-          <tr><td>Densidade de quem olha trinta vezes por dia</td><td>Compacto por padrão, respirado por escolha. Tabela quando se compara, card quando se age</td></tr>
-          <tr><td>Mesmo padrão para tudo, inclusive a IA</td><td>A IA entra como componente do sistema, com confirmar e desfazer. Sem paleta nem ícone à parte</td></tr>
+          <tr><td>O prazo primeiro</td><td>O dado que não pode falhar é o mais visível em toda tela de atividade. Cor e texto, nunca só cor</td><td>Visibilidade do estado do sistema</td><td>Figura e fundo: o prazo é figura</td><td>Prazos e audiências em "Lembretes", abaixo das estatísticas (PA-33)</td><td>Teste de desfoque em toda revisão. Se o prazo some, a tela volta</td></tr>
+          <tr><td>Uma palavra, um lugar</td><td>Um nome para cada objeto e um caminho para cada ação. Atividade como termo geral, com tipos. O Kanban prometido aparece no menu, em todo plano</td><td>Correspondência com o mundo real</td><td>Região comum: os tipos no mesmo bloco</td><td>O prazo se espalha em quatro visões e um painel truncado (PA-48)</td><td>Glossário no design system. Rótulo novo passa por ele antes do handoff</td></tr>
+          <tr><td>A moldura é a âncora</td><td>Cabeçalho, menu e ações no mesmo lugar em tela nova e legada. O conteúdo migra, a casa fica</td><td>Consistência e padrões</td><td>Proximidade: controles afins juntos</td><td>A busca fica no centro do cabeçalho, longe das ações (PA-03)</td><td>Moldura é componente único no Figma e no código. Squad não redesenha</td></tr>
+          <tr><td>Todo erro tem saída</td><td>Nenhum botão morre em silêncio. Cada estado de erro diz o que houve e como voltar</td><td>Ajuda para corrigir erros</td><td>Proximidade: o aviso junto do campo</td><td>Data no passado abre um segundo diálogo (PA-57)</td><td>Handoff lista cada estado de erro e a saída dele</td></tr>
+          <tr><td>Densidade para quem consulta o dia todo</td><td>Compacto por padrão, respirado por escolha. Tabela quando se compara, card quando se age</td><td>Flexibilidade e eficiência</td><td>Continuidade: a grade alinhada guia o olho</td><td>O mês mostra duas semanas por tela (PA-47)</td><td>Protótipo com volume real de atividades, não com três linhas</td></tr>
+          <tr><td>Mesmo padrão para tudo, inclusive a IA</td><td>A IA entra como componente do sistema, com confirmar e desfazer. Sem paleta nem ícone à parte</td><td>Consistência e padrões. Controle e liberdade</td><td>Similaridade: mesma função, mesma aparência</td><td>IA em roxo, com paleta própria (PA-10)</td><td>Recurso de IA usa o mesmo kit e a mesma revisão do design system</td></tr>
         </tbody>
       </table>
-      <p class="nota">Cada princípio aparece em pelo menos uma linha do contrato da tela da Questão 3. É a ponte entre o diagnóstico e o que vai para a tela.</p>
+      <p class="nota">Gestalt é agrupamento perceptivo, a base da hierarquia visual. Cada princípio aparece em pelo menos uma linha do contrato da tela da Questão 3.</p>
     </div>
   </div>
   <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>4 de 5</span></footer>
@@ -204,18 +220,24 @@
   </header>
   <div class="corpo">
     <div class="col">
-      <table>
-        <thead><tr><th>Hipótese</th><th>Como confirmar</th><th>Fonte</th></tr></thead>
+      <table class="denso">
+        <colgroup><col style="width: 21%"><col style="width: 24%"><col style="width: 42%"><col></colgroup>
+        <thead><tr><th>Hipótese</th><th>A planilha já responde</th><th>Como confirmar</th><th>Fontes a cruzar</th></tr></thead>
         <tbody>
-          <tr><td>P1. A densidade baixa atrapalha o planejamento do mês</td><td>Analytics: qual visão da Agenda é mais usada e por quanto tempo. Cinco entrevistas com quem controla prazo no escritório</td><td class="muted">Analytics do produto, pesquisa</td></tr>
-          <tr><td>P1. A tarefa não aparecer é bug, não filtro</td><td>Repetir o teste com data de hoje e filtro em "Todas". Abrir chamado se persistir</td><td class="muted">Teste próprio, suporte</td></tr>
-          <tr><td>P2. "Tarefa" e "atividade" confundem</td><td>Chamados com "onde está" ou "não achei". Teste de cinco segundos com a tela da Agenda</td><td class="muted">Suporte, pesquisa</td></tr>
-          <tr><td>P3. O modal de criar tem abandono</td><td>Funil do modal: aberto, preenchido, salvo. Tempo até salvar. Quantas atividades nascem com data passada e por quê</td><td class="muted">Analytics, suporte</td></tr>
-          <tr><td>P4. A inconsistência custa reaprendizado</td><td>Que existe, o inventário já prova. O custo se mede em bugs visuais abertos e tempo de handoff</td><td class="muted">Backlog, time de design</td></tr>
-          <tr><td>P5. O ruído da moldura custa atenção</td><td>Cliques na faixa e no X dela por usuário ativo. Perguntar ao marketing a conversão da faixa dentro do produto, contra o custo em CSAT</td><td class="muted">Analytics de marketing, CSAT</td></tr>
+          <tr><td>P1. A Área de trabalho esconde o que atrasou</td><td>Em parte. 136 de 407 votos (33%) pedem destaque. Não diz se Alertas já resolve</td><td>Contas com tarefa atrasada fora da lista inicial. Quem abre Alertas antes da Área de trabalho. Cinco entrevistas com quem controla prazo</td><td class="muted">Pedido, analytics, entrevista</td></tr>
+          <tr><td>P1. A densidade baixa atrapalha o planejamento do mês</td><td>Não. A planilha cobre só a Área de trabalho</td><td>Qual visão da Agenda é mais usada e por quanto tempo. As mesmas entrevistas</td><td class="muted">Analytics, entrevista</td></tr>
+          <tr><td>P1. A tarefa salva sumiu por filtro ou data, não por bug</td><td>Não</td><td>Repetir o teste com data de hoje e filtro em "Todas". Abrir chamado se persistir</td><td class="muted">Teste no trial, chamado</td></tr>
+          <tr><td>P2. Falta hierarquia de nomes, e "atividade" serve como termo geral</td><td>Em parte. Os títulos tratam tarefa, prazo, audiência e evento como coisas diferentes. Não medem confusão</td><td>Chamados com "onde está" ou "não achei". Termos que o cliente usa. Teste de cinco segundos com a tela da Agenda</td><td class="muted">Pedido, chamado, entrevista</td></tr>
+          <tr><td>P3. O modal de criar tem abandono</td><td>Não. Nenhum tema trata do formulário de criar</td><td>Funil do modal: aberto, preenchido, salvo. Tempo até salvar. Quantas atividades nascem com data passada e por quê</td><td class="muted">Analytics, chamado</td></tr>
+          <tr><td>P4. A inconsistência custa reaprendizado</td><td>Quase nada. O tema Design tem 3 votos</td><td>Que existe, o inventário já prova. O custo se mede em bugs visuais abertos e tempo de handoff</td><td class="muted">Inventário, backlog, time de design</td></tr>
+          <tr><td>P5. O ruído da moldura custa atenção</td><td>Não. Nenhum tema trata da moldura</td><td>Com o marketing: conversão de "Contratar", de "1 ano grátis" e da faixa, contra o custo em CSAT. Cliques na faixa e no X dela por usuário ativo. Teste do ícone de nuvem</td><td class="muted">Analytics de marketing, CSAT, entrevista</td></tr>
         </tbody>
       </table>
-      <p class="texto" style="margin-top: 0.4cqw;">A regra de corte: hipótese que custa caro corrigir se confirma antes. Hipótese que se corrige por token segue direto para o plano da Questão 2, porque desfazer custa um commit.</p>
+      <div class="blocos">
+        <div><h4>Limites da planilha</h4><p>Cobre só a Área de trabalho. Vem de quem escolheu pedir, é autosseleção. Parte dos pedidos é antiga: confira cada um no produto atual. Voto mostra pedido, não uso.</p></div>
+        <div><h4>Como analisar, por hipótese</h4><p>Pedido diz o que o cliente pede. Chamado diz onde ele trava. Analytics diz o que ele faz. Entrevista diz por quê. Duas fontes de tipos diferentes na mesma direção confirmam. Se divergem, a entrevista explica antes da decisão.</p></div>
+        <div><h4>Regra de corte</h4><p>Hipótese que custa caro corrigir se confirma antes. Hipótese que se corrige por token segue para a Questão 2, porque desfazer custa um commit.</p></div>
+      </div>
     </div>
   </div>
   <footer class="rodape"><span>Astrea. Diagnóstico e direção de design. Questão 1</span><span>5 de 5</span></footer>

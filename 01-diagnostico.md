@@ -1,8 +1,9 @@
 # Q1 — Diagnóstico e direção de design
 
 Documento-fonte dos 5 slides da Q1. O texto aqui é o que a gente itera; o
-Figma recebe a versão fechada. A evidência mora em `01-telas-observadas.md`
-e em `01-inventario-ui.md`, e os prints em `evidencias/`.
+Figma recebe a versão fechada. A evidência mora em `01-telas-observadas.md`,
+`01-inventario-ui.md`, `01-pontos-de-atencao.md`, `01-pedidos-clientes.md` e
+`01-varredura-modulos.md`. Os prints ficam em `evidencias/`.
 
 Legenda:
 
@@ -12,6 +13,9 @@ Legenda:
 > decisão: os cinco problemas ficam na gestão de atividades. Cadastro,
 > onboarding e Contatos saem da Q1 e vivem no backlog, para a Parte B.
 > Decisão de Felipe em 07/11, que reverteu o default anterior.
+
+> decisão: P5 passa para o slide 3. Os princípios ganham o slide 4 inteiro.
+> Cada um agora traz heurística, lei de Gestalt, exemplo e uso diário.
 
 ---
 
@@ -25,60 +29,76 @@ mostra isso.**
 
 | Nº | Problema | Tipo | Telas |
 |---|---|---|---|
-| P1 | O prazo não domina a tela que existe para ele | Hierarquia e densidade | 14, 17 a 20 |
-| P2 | Dois nomes e três lugares para a mesma atividade | Arquitetura de informação | 10, 11, 13, 14 |
+| P1 | O prazo não domina as telas que existem para ele | Hierarquia e densidade | 11, 14, 17 a 20 |
+| P2 | Sem hierarquia de nomes, a mesma atividade em quatro lugares | Arquitetura de informação, hipótese | 10, 11, 13, 14 |
 | P3 | Criar uma atividade interrompe quem cria | Usabilidade de fluxo | 14, 15, 16 |
 | P4 | Três azuis, três cinzas, três jeitos de criar | Consistência | 11, 13, 14, 17 a 20 |
 | P5 | A moldura compete com o trabalho | Hierarquia e ruído | 11, 13 |
 
-Separar sintoma de causa é o que a banca pede. Cada slide de problema traz
-o sintoma visto, a causa provável e o porquê de importar.
+Separar sintoma de causa é o que a banca pede. Cada problema traz o sintoma
+visto, a causa provável e o porquê de importar.
 
 ---
 
 ## Slide 2 — P1 e P2
 
-### P1. O prazo não domina a tela que existe para ele
+### P1. O prazo não domina as telas que existem para ele
 
 Sintoma:
 
+- 136 de 407 votos (33%) pedem destaque de prazo, audiência, data limite e
+  atividades do dia. ASTP-I-639 tem 43 votos.
+- A Área de trabalho abre em uma lista e esconde tarefa atrasada de outra
+  lista. PA-31.
+- Prazo vencido não tem seção própria. Falta "Atrasadas" ao lado de "Hoje".
+  PA-32.
 - A grade mensal da Agenda mostra duas semanas por tela de 1920 por 960.
   Quem planeja o mês não vê o mês. Telas 19 e 20.
 - A tarefa criada não apareceu em nenhuma das quatro visões. Tela 17 a 20.
+  A causa continua em aberto: filtro ou data retroativa. PA-50.
 - No modal, a prioridade é um seletor com "Baixa" por padrão. A data não
   distingue prazo fatal de data comum. Tela 14.
 
+Ressalva: Alertas já mostra "Tarefa atrasada". O dado existe no produto. O
+problema é a tela de abertura não o mostrar.
+
 Causa provável: a Agenda foi desenhada como calendário genérico, com a
-densidade de um calendário pessoal. O objeto do escritório é o prazo
-processual, e ele não ganhou lugar próprio na hierarquia.
+densidade de um calendário pessoal. A Área de trabalho abre por lista, não
+por urgência. O objeto do escritório é o prazo processual, e ele não ganhou
+lugar próprio na hierarquia.
 
 Por que importa: o escritório depende do Astrea para não perder prazo. É a
 primeira restrição do briefing. Um prazo que não salta aos olhos é o risco
 mais caro que a interface pode carregar.
 
-### P2. Dois nomes e três lugares para a mesma atividade
+### P2. Sem hierarquia de nomes, a mesma atividade em quatro lugares
+
+Hipótese a validar. O slide 5 diz como.
 
 Sintoma:
 
-- O produto chama de "tarefa" na Área de trabalho e no modal, e de
-  "atividade" na Agenda e no botão. Telas 11, 13 e 14.
+- Nos pedidos, tarefa, prazo, audiência e evento aparecem como tipos
+  diferentes. ASTP-I-639, ASTS-I-702.
+- O produto não organiza esses tipos. A ficha do processo pede "Tipo de
+  atividade" com Tarefa ou Evento. Prazo e Audiência existem só como etiqueta.
+- "Tarefa" na Área de trabalho e no modal, "Atividade" na Agenda e no botão.
+  Telas 11, 13 e 14.
+- A mesma atividade aparece em quatro lugares: Área de trabalho, Agenda,
+  lista lateral "Tarefas sem data" e Alertas. Tela 18 e varredura, seção 5.
 - O onboarding promete "quadros Kanban". O item de menu "Gestão kanban"
   existe no código, oculto por flag de plano. A rota redireciona para a
   Área de trabalho. Telas 06 e 11, e `01-inventario-css-astrea.md`.
-- A mesma atividade vive em Área de trabalho, Agenda e lista lateral de
-  "Tarefas sem data". Tela 18.
 
 Causa provável: módulos construídos por times diferentes em épocas
-diferentes, cada um com o próprio vocabulário e a própria visão. É o que o
-briefing descreve, visto de dentro.
+diferentes, cada um com o próprio vocabulário e a própria visão. Falta um
+termo geral com os tipos abaixo dele. "Atividade" pode ser esse termo. PA-23.
 
-Por que importa: quem procura uma atividade precisa saber onde ela está e
-como ela se chama. Dois nomes dobram o custo de aprender e o volume de
-chamado de suporte.
+Por que importa: quem busca uma atividade precisa saber onde ela está e
+como ela se chama. O custo em chamado de suporte ainda não foi medido.
 
 ---
 
-## Slide 3 — P3 e P4
+## Slide 3 — P3, P4 e P5
 
 ### P3. Criar uma atividade interrompe quem cria
 
@@ -95,8 +115,8 @@ sem um dono do fluxo inteiro. Cada campo faz sentido sozinho. Juntos,
 viram atrito.
 
 Por que importa: criar atividade é a ação mais repetida do dia. Atrito
-pequeno vezes trinta vezes ao dia vira o motivo de a equipe anotar prazo
-fora do sistema.
+pequeno, repetido todo dia, vira o motivo de a equipe anotar prazo fora do
+sistema.
 
 ### P4. Três azuis, três cinzas, três jeitos de criar
 
@@ -112,6 +132,7 @@ Sintoma, medido no inventário:
 - Seletor nativo do navegador no widget, customizado no modal. Telas 11
   e 14.
 - A mesma cor azul para link, número de estatística e botão. Tela 11.
+- O menu lateral não tem estado ativo. O fundo cinza é só hover. PA-01.
 
 Causa provável: não existe fonte única. Cada time puxou a biblioteca que
 tinha à mão. É a terceira restrição do briefing, com hex.
@@ -119,10 +140,6 @@ tinha à mão. É a terceira restrição do briefing, com hex.
 Por que importa: cada divergência é um reaprendizado pequeno para o
 usuário e um custo de manutenção para o time. Quando tudo é azul, nada
 parece clicável.
-
----
-
-## Slide 4 — P5 e os princípios
 
 ### P5. A moldura compete com o trabalho
 
@@ -136,25 +153,32 @@ Sintoma:
   do padrão. Telas 11 e 13.
 - Estatísticas da coluna direita em azul de link, sem ação por trás.
   Tela 11.
+- A nuvem do cabeçalho significa "Resultados de buscas". Um especialista
+  leu como salvar. PA-05.
 
 Causa provável: a moldura não tem dono de produto. Marketing e IA entram
 nela sem passar por um padrão.
 
-Por que importa: quem vive no produto o dia inteiro lê o ruído trinta
-vezes. E o briefing pede que a IA nasça no mesmo padrão do resto.
+Por que importa: quem vive no produto lê esse ruído o dia inteiro. E o
+briefing pede que a IA nasça no mesmo padrão do resto.
 
-### Princípios de design
+---
+
+## Slide 4 — Princípios de design
 
 Pergunta da banca: "quais princípios guiariam a sua proposta de redesign".
 
-| Princípio | O que ele decide |
-|---|---|
-| O prazo primeiro | O dado que não pode falhar é o mais visível em toda tela de atividade. Cor e texto, nunca só cor |
-| Uma palavra, um lugar | Um nome para cada objeto e um caminho para cada ação. Atividade, com tipos. O Kanban prometido aparece no menu, em todo plano |
-| A moldura é a âncora | Cabeçalho, menu e ações no mesmo lugar em tela nova e legada. O conteúdo migra, a casa fica |
-| Todo erro tem saída | Nenhum botão morre em silêncio. Cada estado de erro diz o que houve e como voltar |
-| Densidade de quem olha trinta vezes por dia | Compacto por padrão, com modo respirado por escolha. Tabela quando se compara, card quando se age |
-| Mesmo padrão para tudo, inclusive a IA | A IA entra como componente do sistema, com confirmar e desfazer. Sem paleta nem ícone à parte |
+| Princípio | O que ele decide | Nielsen | Gestalt | Exemplo no Astrea | No dia a dia |
+|---|---|---|---|---|---|
+| O prazo primeiro | O dado que não pode falhar é o mais visível em toda tela de atividade. Cor e texto, nunca só cor | Visibilidade do estado do sistema | Figura e fundo: o prazo é figura | Prazos e audiências em "Lembretes", abaixo das estatísticas. PA-33 | Teste de desfoque em toda revisão. Se o prazo some, a tela volta |
+| Uma palavra, um lugar | Um nome para cada objeto e um caminho para cada ação. Atividade como termo geral, com tipos. O Kanban prometido aparece no menu, em todo plano | Correspondência com o mundo real | Região comum: os tipos no mesmo bloco | O prazo se espalha em quatro visões e um painel truncado. PA-48 | Glossário no design system. Rótulo novo passa por ele antes do handoff |
+| A moldura é a âncora | Cabeçalho, menu e ações no mesmo lugar em tela nova e legada. O conteúdo migra, a casa fica | Consistência e padrões | Proximidade: controles afins juntos | A busca fica no centro do cabeçalho, longe das ações. PA-03 | Moldura é componente único no Figma e no código. Squad não redesenha |
+| Todo erro tem saída | Nenhum botão morre em silêncio. Cada estado de erro diz o que houve e como voltar | Ajuda para corrigir erros | Proximidade: o aviso junto do campo | Data no passado abre um segundo diálogo. PA-57 | Handoff lista cada estado de erro e a saída dele |
+| Densidade para quem consulta o dia todo | Compacto por padrão, com modo respirado por escolha. Tabela quando se compara, card quando se age | Flexibilidade e eficiência | Continuidade: a grade alinhada guia o olho | O mês mostra duas semanas por tela. PA-47 | Protótipo com volume real de atividades, não com três linhas |
+| Mesmo padrão para tudo, inclusive a IA | A IA entra como componente do sistema, com confirmar e desfazer. Sem paleta nem ícone à parte | Consistência e padrões. Controle e liberdade | Similaridade: mesma função, mesma aparência | IA em roxo, com paleta própria. PA-10 | Recurso de IA usa o mesmo kit e a mesma revisão do design system |
+
+Gestalt aqui é agrupamento perceptivo, a base da hierarquia visual. Cor é um
+recurso entre outros.
 
 Os princípios são a ponte para a Q2 e a Q3. Cada um aparece em pelo menos
 uma linha do contrato da tela em `03-tela.md`.
@@ -166,14 +190,34 @@ uma linha do contrato da tela em `03-tela.md`.
 Pergunta da banca: "quais hipóteses você confirmaria antes de seguir, e
 como".
 
-| Hipótese | Como confirmar | Fonte |
-|---|---|---|
-| P1: a densidade baixa da Agenda atrapalha o planejamento do mês | Analytics: qual visão da Agenda é mais usada e por quanto tempo. Cinco entrevistas com quem controla prazo no escritório | Analytics do produto, pesquisa |
-| P1: a tarefa não aparecer é bug, não filtro | Repetir o teste com data de hoje e filtro em "Todas". Abrir chamado se persistir | Teste próprio, suporte |
-| P2: "tarefa" e "atividade" confundem | Chamados de suporte com "onde está" ou "não achei". Teste de cinco segundos com a tela da Agenda | Suporte, pesquisa |
-| P3: o modal de criar tem abandono | Funil do modal: aberto, preenchido, salvo. Tempo até salvar. Quantas atividades nascem com data passada e por quê | Analytics, suporte |
-| P4: a inconsistência custa reaprendizado | Não precisa de usuário para provar que existe: o inventário já prova. Medir o custo por bugs visuais abertos e por tempo de handoff | Backlog, time de design |
-| P5: o ruído da moldura custa atenção | Cliques na faixa e no X dela por usuário ativo. Conversão da faixa dentro do produto contra o custo em CSAT, com o marketing | Analytics de marketing, CSAT |
+| Hipótese | A planilha já responde | Como confirmar | Fontes a cruzar |
+|---|---|---|---|
+| P1: a Área de trabalho esconde o que atrasou | Em parte. 136 de 407 votos (33%) pedem destaque. Não diz se Alertas já resolve | Contas com tarefa atrasada fora da lista inicial. Quem abre Alertas antes da Área de trabalho. Cinco entrevistas com quem controla prazo | Pedido, analytics, entrevista |
+| P1: a densidade baixa atrapalha o planejamento do mês | Não. A planilha cobre só a Área de trabalho | Qual visão da Agenda é mais usada e por quanto tempo. As mesmas entrevistas | Analytics, entrevista |
+| P1: a tarefa salva sumiu por filtro ou data, não por bug | Não | Repetir o teste com data de hoje e filtro em "Todas". Abrir chamado se persistir | Teste no trial, chamado |
+| P2: falta hierarquia de nomes, e "atividade" serve como termo geral | Em parte. Os títulos tratam tarefa, prazo, audiência e evento como coisas diferentes. Não medem confusão | Chamados com "onde está" ou "não achei". Termos que o cliente usa. Teste de cinco segundos com a tela da Agenda | Pedido, chamado, entrevista |
+| P3: o modal de criar tem abandono | Não. Nenhum tema trata do formulário de criar | Funil do modal: aberto, preenchido, salvo. Tempo até salvar. Quantas atividades nascem com data passada e por quê | Analytics, chamado |
+| P4: a inconsistência custa reaprendizado | Quase nada. O tema Design tem 3 votos | Que existe, o inventário já prova. O custo se mede em bugs visuais abertos e tempo de handoff | Inventário, backlog, time de design |
+| P5: o ruído da moldura custa atenção | Não. Nenhum tema trata da moldura | Com o marketing: conversão de "Contratar", de "1 ano grátis" e da faixa, contra o custo em CSAT. Cliques na faixa e no X dela por usuário ativo. Teste do ícone de nuvem | Analytics de marketing, CSAT, entrevista |
+
+Limites da planilha:
+
+- Cobre só a Área de trabalho.
+- Vem de quem escolheu pedir. É autosseleção.
+- Parte dos pedidos é antiga. Confira cada um no produto atual.
+- Voto mostra pedido, não uso.
+
+Como analisar: uma linha por hipótese, com quatro fontes.
+
+| Fonte | O que ela diz |
+|---|---|
+| Pedido | O que o cliente pede |
+| Chamado de suporte | Onde o cliente trava |
+| Analytics | O que o cliente faz |
+| Entrevista | Por que ele faz |
+
+Duas fontes de tipos diferentes na mesma direção confirmam a hipótese. Se
+elas divergem, a entrevista explica antes da decisão.
 
 A regra: hipótese que custa caro corrigir se confirma antes. Hipótese que
 se corrige por token segue direto para o plano da Q2.
