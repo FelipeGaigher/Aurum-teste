@@ -4,3 +4,5 @@ Thumbs.db
 .playwright-mcp/
 prototipo/kanban-aprovado.html
 evidencias/varredura/
+__pycache__/
+node_modules/
