@@ -101,7 +101,12 @@
   /* PA-67 e M10: linhas de campos com larguras por token, alinhadas à margem do título. */
   .cadastro { display: grid; gap: var(--space-4); margin-bottom: var(--space-5); }
   .form-secao { display: grid; gap: var(--space-4); }
-  .form-linha { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4); }
+  /* Formulário em grade regular: três colunas iguais, campos preenchem a célula, mesmo respiro entre linhas (pedido de Felipe, 08/11). */
+  .form-linha { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4) var(--space-5); margin-bottom: var(--space-5); }
+  .form-linha > .campo, .form-linha > .campo-raiz, .form-linha > [class*='campo'] { width: 100%; max-width: none; min-width: 0; }
+  .form-linha > :only-child { grid-column: 1 / 3; }
+  @media (max-width: 1100px) { .form-linha { grid-template-columns: repeat(2, minmax(0, 1fr)); } .form-linha > :only-child { grid-column: 1 / -1; } }
+  @media (max-width: 700px) { .form-linha { grid-template-columns: minmax(0, 1fr); } }
   .etiquetas-linha { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); min-height: var(--component-control-height); }
   .etiquetas-opcoes { display: flex; flex-wrap: wrap; gap: var(--space-1); }
 
@@ -625,7 +630,7 @@
     });
 
     // PA-67 e M10: as larguras saem dos tokens p, m, g e total; o bloco começa na margem do título.
-    const nome = DS.campo({ rotulo: 'Nome', obrigatorio: true, largura: 'g', placeholder: 'Digite o nome' });
+    const nome = DS.campo({ rotulo: 'Nome', obrigatorio: true, largura: 'g', placeholder: 'Ex.: Felipe Gaigher' });
     const pessoais = secaoDeCampos(
       linhaDeCampos(nome),
       linhaDeCampos(
