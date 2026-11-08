@@ -3,7 +3,7 @@
 Parágrafo pedido no enunciado. Fonte: `04-processo.md`.
 
 Usei o Claude Code como par de trabalho durante toda a atividade. O MCP
-do Figma ficou ligado enquanto a cota permitiu. A IA não escreveu a estratégia.
+do Figma ficou ligado enquanto a cota permitiu. Quando a cota do MCP acabou, os decks viraram PNG pelo Playwright e entraram no Figma pelo Claude in Chrome. A IA não escreveu a estratégia.
 Ela recebeu as minhas decisões em conversa e as transformou em
 documento-fonte, que eu iterei linha a linha. Do mesmo documento saíram os
 slides da Questão 2, o diagnóstico da Questão 1 e este texto. Na Questão

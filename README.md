@@ -2,6 +2,7 @@
 
 Documentos-fonte da atividade prática. Cada questão tem um arquivo.
 
+- `index.html` — o documento único de entrega, com os links do Figma, do protótipo e do repositório
 - `00-briefing.md` — o enunciado
 - `01-telas-observadas.md` — registro bruto das telas do Astrea, com prints em `evidencias/`
 - `01-inventario-ui.md` — cores, componentes e vocabulário da interface atual

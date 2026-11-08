@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atividade prática, UX/UI Designer Especialista, Astrea</title>
+<style>
+  :root {
+    --paper: #ffffff; --surface: #eef1f6; --ink: #1b2a4a; --text: #1b2a4a; --muted: #5b6478; --inverse: #ffffff;
+    --line: #c9cfda; --line-strong: #1b2a4a; --stamp: #b3261e; --page: #f3f4f7; --radius: 4px;
+    --serif: "Fraunces", "Source Serif 4", Georgia, "Times New Roman", serif;
+    --sans: "Geist", "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) { body:not(:has(#tema:checked)) { --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0; --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0; --stamp: #e0665c; --page: #0a0f1c; } }
+  @media (prefers-color-scheme: light) { body:has(#tema:checked) { --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0; --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0; --stamp: #e0665c; --page: #0a0f1c; } }
+  @media (prefers-color-scheme: no-preference) { body:has(#tema:checked) { --paper: #101828; --surface: #182238; --ink: #dce3f0; --text: #dce3f0; --muted: #93a0b8; --inverse: #101828; --line: #2a3752; --line-strong: #dce3f0; --stamp: #e0665c; --page: #0a0f1c; } }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--paper); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.6; padding: 0 16px 64px; }
+  .tema { position: fixed; top: 12px; right: 16px; z-index: 2; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 10px; cursor: pointer; }
+  .tema input { accent-color: var(--stamp); margin: 0; }
+  main { max-width: 760px; margin: 0 auto; }
+  header { padding: 64px 0 24px; border-bottom: 1px solid var(--line-strong); }
+  .sup { font-size: 14px; color: var(--muted); margin: 0 0 8px; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: 2.25rem; line-height: 1.12; letter-spacing: -0.005em; margin: 0 0 16px; }
+  .autor { margin: 0; font-size: 15px; color: var(--muted); }
+  .autor strong { color: var(--text); font-weight: 500; }
+  section { padding: 40px 0 8px; }
+  h2 { font-family: var(--serif); font-weight: 400; font-size: 1.625rem; line-height: 1.2; margin: 0 0 12px; }
+  h3 { font-size: 1rem; font-weight: 500; margin: 24px 0 4px; }
+  p { margin: 0 0 12px; }
+  a { color: var(--text); text-decoration: underline; text-decoration-color: var(--stamp); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  a:hover { text-decoration-thickness: 2px; }
+  a:focus-visible, .tema:has(input:focus-visible) { outline: 2px solid var(--stamp); outline-offset: 2px; }
+  ul, ol { margin: 0 0 12px; padding-left: 1.2em; display: grid; gap: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.45; margin: 8px 0 12px; }
+  th { text-align: left; font-weight: 500; font-size: 13px; color: var(--muted); padding: 0 12px 6px 0; border-bottom: 1px solid var(--line-strong); }
+  td { padding: 10px 12px 10px 0; vertical-align: top; border-bottom: 1px solid var(--line); }
+  td:first-child { font-weight: 500; white-space: nowrap; }
+  td:last-child, th:last-child { padding-right: 0; }
+  .decisao { border-left: 2px solid var(--stamp); padding-left: 14px; margin: 12px 0; }
+  .ia { background: var(--surface); border-radius: var(--radius); padding: 16px 16px 4px; }
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+  @media (max-width: 600px) {
+    h1 { font-size: 1.75rem; }
+    thead { position: absolute; left: -9999px; }
+    table, tbody, tr, td { display: block; width: 100%; }
+    tr { border-bottom: 1px solid var(--line); padding: 10px 0; }
+    td { border: 0; padding: 2px 0; }
+    td:first-child { white-space: normal; }
+  }
+</style>
+</head>
+<body>
+
+<label class="tema" for="tema"><input type="checkbox" id="tema"> Trocar tema</label>
+
+<main>
+<header>
+  <p class="sup">Atividade prática, UX/UI Designer Especialista</p>
+  <h1>Astrea, Aurum</h1>
+  <p class="autor"><strong>Felipe Gaigher</strong> · 8 de novembro de 2026</p>
+</header>
+
+<section>
+  <h2>Como ler</h2>
+  <p>Os três decks estão no <a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/">arquivo do Figma</a>, um por página. O protótipo do Kanban abre no navegador. As fontes e o processo estão no repositório. A leitura leva cerca de quatro minutos.</p>
+</section>
+
+<section>
+  <h2>O que entregar, e onde</h2>
+  <table>
+    <thead><tr><th>Item</th><th>O que a banca pediu</th><th>O que foi entregue</th><th>Link</th></tr></thead>
+    <tbody>
+      <tr><td>Questão 1</td><td>Cinco problemas, princípios e o que verificar. Até 5 páginas.</td><td>5 páginas no Figma.</td><td><a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-12">Página Questão 1</a></td></tr>
+      <tr><td>Questão 2</td><td>Design system e plano incremental. Até 6 páginas.</td><td>6 páginas, mais uma de IA.</td><td><a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-20">Página Questão 2</a></td></tr>
+      <tr><td>Questão 3</td><td>Uma tela em alta fidelidade e até 3 páginas.</td><td>1 tela, 3 páginas e um protótipo navegável.</td><td><a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-25">Página Questão 3</a></td></tr>
+      <tr><td>Parágrafo de IA</td><td>Ferramentas, etapas e o que foi feito com o resultado.</td><td>Um parágrafo, no fim deste documento.</td><td><a href="#ia">Uso de IA</a></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Questão 1: o Astrea sabe o que é um prazo, mas a interface ainda não mostra isso</h2>
+  <p>Cinco problemas de experiência na gestão de atividades, cada um com evidência das telas do produto e o motivo de importar.</p>
+  <ol>
+    <li>O prazo não domina a tela que existe para ele.</li>
+    <li>Dois nomes e três lugares para a mesma atividade.</li>
+    <li>Criar uma atividade interrompe quem cria.</li>
+    <li>Três azuis, três cinzas, três jeitos de criar.</li>
+    <li>A moldura compete com o trabalho.</li>
+  </ol>
+  <p>A página fecha com seis princípios de design e com o que verificar antes de seguir. <a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-12">Abrir a Questão 1 no Figma</a>.</p>
+</section>
+
+<section>
+  <h2>Questão 2: um design system que nasce do roadmap dos squads</h2>
+  <p>Seis decisões, uma por página.</p>
+  <ol>
+    <li>Tokens semânticos primeiro, componentes depois.</li>
+    <li>Uma fonte só: o Figma lê a fonte, ele não é a fonte.</li>
+    <li>Governança com papéis claros: quem decide, quem contribui, quem veta.</li>
+    <li>A moldura fica fixa primeiro, o conteúdo migra depois.</li>
+    <li>A contribuição dos quatro designers sai do roadmap, não de tarefa extra.</li>
+    <li>Três riscos, com mitigação e as métricas que provam o avanço.</li>
+  </ol>
+  <p>A sétima página é o parágrafo de IA. <a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-20">Abrir a Questão 2 no Figma</a>.</p>
+</section>
+
+<section>
+  <h2>Questão 3: o Kanban da Gestão de atividades</h2>
+  <p>A tela é o Kanban que o onboarding do Astrea promete, dentro da moldura que o escritório já conhece. Cinco componentes nasceram dela:</p>
+  <ul>
+    <li>card de atividade;</li>
+    <li>chip de prazo;</li>
+    <li>seletor de responsável;</li>
+    <li>filtro;</li>
+    <li>estado vazio.</li>
+  </ul>
+  <h3>A decisão difícil</h3>
+  <div class="decisao">
+    <p>O card de um Kanban comum abre pelo título. O nosso abre pelo prazo. Isso contraria o hábito de quem vem do Trello. Escolhi assim porque o escritório não perde uma tarefa por não saber o nome dela, e sim por não ver a data. O custo é uma estranheza na primeira semana. Para reduzi-lo, o título fica na segunda linha, e o prazo leva texto e cor, nunca só cor.</p>
+  </div>
+  <p>O protótipo tem tema escuro, é responsivo e abre com o plano de 12 meses do redesign dentro do próprio Kanban, como uma sprint real.</p>
+  <ul>
+    <li><a href="https://www.figma.com/design/pV95zDdtjirM8i3pDcOcuG/Aurum---Teste-Especialista-UI-UX?node-id=17-25">Página da Questão 3 no Figma</a></li>
+    <li><a href="https://felipegaigher.github.io/Aurum-teste/prototipo/kanban.html">Protótipo navegável do Kanban</a></li>
+    <li><a href="https://felipegaigher.github.io/Aurum-teste/03-componentes.html">Página de componentes, com estados e tokens</a></li>
+  </ul>
+</section>
+
+<section id="ia">
+  <h2>Uso de IA</h2>
+  <div class="ia">
+    <p>Usei o Claude Code como par de trabalho durante toda a atividade. O MCP do Figma ficou ligado enquanto a cota permitiu. Quando a cota do MCP acabou, os decks viraram PNG pelo Playwright e entraram no Figma pelo Claude in Chrome. A IA não escreveu a estratégia. Ela recebeu as minhas decisões em conversa e as transformou em documento-fonte, que eu iterei linha a linha. Do mesmo documento saíram os slides da Questão 2, o diagnóstico da Questão 1 e este texto. Na Questão 3, a IA executou um plano de cinco tasks com subagentes. Outro agente revisou cada task antes do commit. O resultado é o protótipo navegável do Kanban. Duas skills minhas guardaram o padrão. Uma de português técnico lintou cada frase. Uma contra a cara de IA barrou o grid de cards iguais. Barrou também a paleta creme que o modelo propôs primeiro. A direção visual, os cinco problemas e o trade-off foram decisões minhas. O kit de skills e agentes do slide 3 da Questão 2 é o modelo que usei aqui. Regra escrita uma vez, no repositório, lida por toda ferramenta que gera tela.</p>
+  </div>
+</section>
+
+<footer>
+  <p>Repositório: <a href="https://github.com/FelipeGaigher/Aurum-teste">github.com/FelipeGaigher/Aurum-teste</a>. Os arquivos de texto e HTML do repositório são a fonte. O Figma e o protótipo são a entrega.</p>
+</footer>
+</main>
+
+</body>
+</html>

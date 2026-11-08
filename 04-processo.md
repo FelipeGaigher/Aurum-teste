@@ -160,3 +160,35 @@ com data. O que foi entregue fica no commit, não aqui.
 - O aviso dentro do produto entrou no piloto. Os líderes entraram no
   discovery, acordando o tempo. Os agentes gerador e de handoff entraram
   na entrega de Code Connect. O relatório trimestral ganhou a sprint 6.
+
+## 2026-11-08
+
+### Os decks entraram no Figma pelo Chrome
+
+- A cota do MCP do Figma seguia esgotada no dia seguinte. O caminho foi o
+  Claude in Chrome, com o arquivo do Figma aberto na aba.
+- O Figma na web não tem campo de arquivo no DOM. O diálogo nativo de
+  "Place image" não dá para operar. A saída foi criar um campo de arquivo
+  na página e preencher pela extensão. Depois, um evento de drop sintético
+  no canvas, com os mesmos arquivos. O Figma aceitou e criou as imagens.
+- Baixar os PNG de um servidor local falhou de dentro da página. O
+  navegador barra a rede local a partir de site público. Por isso os
+  bytes entram pela extensão, nunca pela rede.
+- Os cinco slides da Questão 1 viraram um frame com auto layout vertical.
+  Os sete da Questão 2 entraram abaixo dos seis frames nativos de ontem,
+  numa linha. A banca vê os dois, e a escolha de apagar os nativos é de
+  Felipe.
+- O plano Starter limita o arquivo a três páginas. A Questão 3 ficou na
+  página Extra, renomeada para "Questão 3 e extras", à direita dos prints
+  do cadastro bloqueado.
+
+### O documento único de entrega
+
+- O enunciado pede um link só. O `index.html` da raiz é esse link, servido
+  pelo GitHub Pages. Ele aponta para cada frame do Figma, para o protótipo
+  e para o repositório, e traz o parágrafo de IA.
+- Um subagente escreveu o documento a partir dos arquivos-fonte, no visual
+  dos decks. Os links do Figma entraram depois, com o id de cada frame.
+- Pendências para o link funcionar: enviar os commits ao GitHub e ligar o
+  Pages na branch main. O compartilhamento do Figma ainda está restrito ao
+  time, e precisa virar "qualquer pessoa com o link pode ver".
