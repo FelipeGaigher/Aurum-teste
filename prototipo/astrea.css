@@ -262,6 +262,13 @@
   --component-button-primary-bg: var(--color-action);
   --component-button-primary-bg-hover: var(--color-action-hover);
   --component-button-primary-text: var(--color-action-text);
+  --component-button-primary-bg-active: color-mix(in srgb, var(--color-action-hover) 85%, var(--color-text-default));
+  --component-button-danger-bg: var(--color-text-danger);
+  --component-button-danger-bg-hover: color-mix(in srgb, var(--color-text-danger) 85%, var(--color-text-default));
+  --component-button-danger-bg-active: color-mix(in srgb, var(--color-text-danger) 70%, var(--color-text-default));
+  --component-button-danger-text: var(--color-action-text);
+  --component-button-small-height: var(--size-icon-button);
+  --component-code-font: ui-monospace, Consolas, monospace;
   --component-dialog-bg: var(--color-bg-surface);
   --component-dialog-width: var(--size-dialog);
   --component-dialog-detail-width: var(--size-dialog-detail);
@@ -285,7 +292,7 @@ body {
   line-height: var(--font-leading-base);
 }
 
-:focus-visible {
+:focus-visible, .is-foco {
   outline: var(--focus-width) solid var(--color-focus);
   outline-offset: var(--focus-width);
 }
@@ -708,4 +715,192 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
   .usuario-nome { display: none; }
   .acoes { gap: var(--space-2); }
   #conteudo { padding: var(--space-4) var(--space-3) var(--space-5); }
+}
+
+/* botão: uma peça, cinco variantes (PA-18). As classes .is-* forçam o estado na página do design system. */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--component-control-height);
+  padding: 0 var(--space-4);
+  background: none;
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius);
+  color: var(--color-text-default);
+  font-size: var(--font-size-button);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.botao-pequeno { height: var(--component-button-small-height); padding: 0 var(--space-3); }
+
+.botao-primario, .botao-destrutivo {
+  padding: 0 var(--space-5);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-tracking-caps);
+  text-transform: uppercase;
+}
+.botao-primario.botao-pequeno, .botao-destrutivo.botao-pequeno { padding: 0 var(--space-3); }
+.botao-primario {
+  background-color: var(--component-button-primary-bg);
+  border-color: var(--component-button-primary-bg);
+  color: var(--component-button-primary-text);
+}
+.botao-primario:hover, .botao-primario.is-hover {
+  background-color: var(--component-button-primary-bg-hover);
+  border-color: var(--component-button-primary-bg-hover);
+}
+.botao-primario:active, .botao-primario.is-active {
+  background-color: var(--component-button-primary-bg-active);
+  border-color: var(--component-button-primary-bg-active);
+}
+
+.botao-destrutivo {
+  background-color: var(--component-button-danger-bg);
+  border-color: var(--component-button-danger-bg);
+  color: var(--component-button-danger-text);
+}
+.botao-destrutivo:hover, .botao-destrutivo.is-hover {
+  background-color: var(--component-button-danger-bg-hover);
+  border-color: var(--component-button-danger-bg-hover);
+}
+.botao-destrutivo:active, .botao-destrutivo.is-active {
+  background-color: var(--component-button-danger-bg-active);
+  border-color: var(--component-button-danger-bg-active);
+}
+
+.botao-secundario { background-color: var(--component-control-bg); border-color: var(--component-control-border); }
+.botao-secundario:hover, .botao-secundario.is-hover { background-color: var(--color-bg-subtle); }
+.botao-secundario:active, .botao-secundario.is-active { background-color: var(--color-bg-hover); border-color: var(--color-text-default); }
+
+/* O hover usa o fundo sutil: a cor de ação sobre o fundo de hover fica abaixo de 4,5:1 no tema claro. */
+.botao-texto { padding: 0 var(--space-3); color: var(--color-action); }
+.botao-texto:hover, .botao-texto.is-hover { background-color: var(--color-bg-subtle); }
+.botao-texto:active, .botao-texto.is-active { background-color: var(--color-bg-hover); color: var(--color-action-hover); }
+
+.botao-icone { width: var(--component-control-height); padding: 0; color: var(--color-text-muted); }
+.botao-icone.botao-pequeno { width: var(--component-button-small-height); padding: 0; }
+.botao-icone:hover, .botao-icone.is-hover { background-color: var(--color-bg-hover); color: var(--color-text-default); }
+.botao-icone:active, .botao-icone.is-active { background-color: var(--color-bg-hover); border-color: var(--color-border-strong); color: var(--color-text-default); }
+
+.botao:disabled {
+  background-color: var(--color-bg-subtle);
+  border-color: var(--color-border-default);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+.botao-texto:disabled, .botao-icone:disabled { background: none; border-color: transparent; }
+
+.botao[aria-busy="true"] { cursor: progress; }
+.botao-giro { animation: botao-girar 800ms linear infinite; }
+@keyframes botao-girar { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .botao-giro { animation: none; } }
+
+.grupo-botoes { display: inline-flex; flex-wrap: wrap; gap: var(--space-2); }
+
+/* menu de ações: a lista é a .menu-suspenso da moldura */
+.menu-acoes { position: relative; display: inline-block; }
+.menu-acoes .menu-suspenso { left: 0; right: auto; }
+.menu-acoes .menu-suspenso.is-direita { left: auto; right: 0; }
+.menu-acoes.is-estatico .menu-suspenso { position: static; }
+.menu-suspenso button.is-destrutivo { color: var(--color-text-danger); }
+.menu-suspenso button.is-destrutivo:hover { background-color: var(--color-bg-danger); color: var(--color-text-default); }
+
+/* design system: a página */
+.ds-grupo { display: grid; gap: var(--space-5); margin-bottom: var(--space-7); }
+.ds-grupo > header { display: grid; gap: var(--space-1); }
+.ds-grupo h2 {
+  margin: 0;
+  font-size: var(--font-size-dialog);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+}
+.ds-grupo > header p { max-width: 70ch; margin: 0; color: var(--color-text-muted); }
+
+.ds-peca {
+  display: grid;
+  grid-template-columns: var(--size-sidebar) minmax(0, 1fr);
+  gap: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: var(--border-width) solid var(--color-border-default);
+}
+.ds-peca-titulo { display: grid; align-content: start; gap: var(--space-1); }
+.ds-peca h3 {
+  margin: 0;
+  font-size: var(--font-size-emphasis);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--font-leading-tight);
+}
+.ds-peca-titulo p { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
+.ds-peca-conteudo { display: grid; gap: var(--space-4); min-width: 0; }
+
+.ds-props { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-1) var(--space-4); margin: 0; }
+.ds-props dt, .ds-props dd { margin: 0; }
+.ds-props dd { color: var(--color-text-muted); }
+
+.ds-peca code, .ds-props code {
+  font-family: var(--component-code-font);
+  font-size: var(--font-size-label);
+  overflow-wrap: anywhere;
+}
+
+.ds-tokens { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.ds-token {
+  display: grid;
+  grid-template-columns: var(--space-7) minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-chip);
+}
+.ds-tokens-largos .ds-token { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr); }
+.ds-token-valor { color: var(--color-text-muted); }
+
+.ds-cor { display: block; width: var(--space-7); height: var(--size-chip); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius); }
+.ds-espaco { display: block; height: var(--space-2); background-color: var(--color-border-strong); }
+.ds-forma { display: block; width: var(--size-control); height: var(--size-control); background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-strong); }
+.ds-sombra { border-color: var(--color-border-default); }
+.ds-linha { display: flex; align-items: center; padding: 0 var(--space-3); border-bottom: var(--border-width) solid var(--color-border-default); }
+
+.ds-icones { display: flex; flex-wrap: wrap; gap: var(--space-5); }
+.ds-icone { display: grid; justify-items: center; gap: var(--space-1); color: var(--color-text-muted); font-size: var(--font-size-label); }
+.ds-icone svg { color: var(--color-text-default); }
+
+.ds-temas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+/* O painel sobrepõe os --color-* no próprio estilo. Os tokens de componente valem na raiz, por isso são religados aqui. */
+.ds-tema-painel {
+  --component-button-primary-bg: var(--color-action);
+  --component-button-primary-bg-hover: var(--color-action-hover);
+  --component-button-primary-bg-active: color-mix(in srgb, var(--color-action-hover) 85%, var(--color-text-default));
+  --component-button-primary-text: var(--color-action-text);
+  --component-control-bg: var(--color-bg-surface);
+  --component-control-border: var(--color-border-strong);
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background-color: var(--color-bg-surface);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  color: var(--color-text-default);
+}
+.ds-tema-painel h4 { margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.ds-tema-painel p { margin: 0; color: var(--color-text-muted); }
+
+.ds-estados { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4) var(--space-5); }
+.ds-estado { display: grid; justify-items: start; gap: var(--space-1); }
+.ds-estado-nome { color: var(--color-text-muted); font-size: var(--font-size-label); }
+.ds-ausentes { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; color: var(--color-text-muted); font-size: var(--font-size-label); }
+.ds-ausentes b { color: var(--color-text-default); font-weight: var(--font-weight-medium); }
+
+@media (max-width: 1024px) {
+  .ds-peca { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
+}
+@media (max-width: 700px) {
+  .ds-temas { grid-template-columns: minmax(0, 1fr); }
+  .ds-token { grid-template-columns: var(--space-7) minmax(0, 1fr); }
+  .ds-tokens-largos .ds-token { grid-template-columns: minmax(0, 1fr); }
+  .ds-token-valor { grid-column: 2; }
+  .ds-tokens-largos .ds-token-valor { grid-column: auto; }
 }

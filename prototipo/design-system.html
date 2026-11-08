@@ -6,12 +6,318 @@
 <title>Design system, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
 </head>
 <body data-pagina="design-system.html" data-titulo="Design system">
 <div class="corpo">
   <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
+    <section class="ds-grupo" id="fundamentos" aria-labelledby="titulo-fundamentos">
+      <header>
+        <h2 id="titulo-fundamentos">Fundamentos</h2>
+        <p>Os valores que toda peça consome. A tela usa o token semântico, nunca o primitivo. O valor ao lado do nome é lido da folha e acompanha o tema.</p>
+      </header>
+    </section>
+
+    <section class="ds-grupo" id="acoes" aria-labelledby="titulo-acoes">
+      <header>
+        <h2 id="titulo-acoes">Ações</h2>
+        <p>Uma peça de botão com cinco variantes (PA-18) e uma ação primária por tela. Cada peça mostra os estados que existem para ela e declara o motivo das ausências.</p>
+      </header>
+      <dl class="ds-props">
+        <dt><code>variante</code></dt><dd><code>primario</code>, <code>secundario</code>, <code>texto</code>, <code>icone</code>, <code>destrutivo</code></dd>
+        <dt><code>tamanho</code></dt><dd><code>medio</code>, <code>pequeno</code></dd>
+        <dt><code>iconeEsquerda</code></dt><dd>nome do ícone; obrigatório na variante <code>icone</code></dd>
+        <dt><code>iconeDireita</code></dt><dd>nome do ícone</dd>
+        <dt><code>rotulo</code></dt><dd>texto do botão; na variante <code>icone</code>, vira o nome acessível e a dica</dd>
+        <dt><code>carregando</code></dt><dd>troca o ícone pelo giro e bloqueia o clique, sem tirar o foco</dd>
+      </dl>
+    </section>
   </main>
 </div>
+<script>
+(function () {
+  const { botao, grupoBotoes, menuAcoes, icone, ICONES } = window.DS;
+
+  function h(tag, atributos, ...filhos) {
+    const el = document.createElement(tag);
+    Object.entries(atributos || {}).forEach(([nome, valor]) => el.setAttribute(nome, valor));
+    el.append(...filhos);
+    return el;
+  }
+
+  // --- fundamentos -----------------------------------------------------------
+
+  function fundamento(id, titulo, nota, ...conteudo) {
+    return h('section', { class: 'ds-peca', 'data-ds': id },
+      h('div', { class: 'ds-peca-titulo' }, h('h3', null, titulo), h('p', null, nota)),
+      h('div', { class: 'ds-peca-conteudo' }, ...conteudo));
+  }
+
+  function linhaToken(nome, amostra) {
+    return h('li', { class: 'ds-token' }, amostra || h('span'), h('code', null, nome),
+      h('code', { class: 'ds-token-valor', 'data-token': nome }));
+  }
+
+  function listaTokens(linhas, largos) {
+    return h('ul', { class: largos ? 'ds-tokens ds-tokens-largos' : 'ds-tokens' }, ...linhas);
+  }
+
+  const CORES = ['--color-bg-page', '--color-bg-surface', '--color-bg-subtle', '--color-bg-hover',
+    '--color-text-default', '--color-text-muted', '--color-text-danger', '--color-text-warning',
+    '--color-text-success', '--color-bg-danger', '--color-bg-warning', '--color-logo',
+    '--color-border-default', '--color-border-strong', '--color-action', '--color-action-hover',
+    '--color-action-text', '--color-focus', '--color-scrim'];
+
+  const AMOSTRA_TEXTO = 'Manifestar sobre o laudo pericial';
+
+  function amostraDeTexto(propriedade, nome) {
+    return h('span', { style: `${propriedade}: var(${nome})` }, AMOSTRA_TEXTO);
+  }
+
+  function pecaCor() {
+    const linhas = CORES.map((nome) => linhaToken(nome, h('span', { class: 'ds-cor', style: `background-color: var(${nome})` })));
+    return fundamento('cor', 'Cor', 'Um azul de ação e uma escala de cinza, por token (PA-16, PA-17).', listaTokens(linhas));
+  }
+
+  function pecaTipografia() {
+    const tamanhos = ['--font-size-logo', '--font-size-title', '--font-size-dialog', '--font-size-emphasis',
+      '--font-size-body', '--font-size-button', '--font-size-label']
+      .map((nome) => linhaToken(nome, amostraDeTexto('font-size', nome)));
+    const pesos = ['--font-weight-regular', '--font-weight-medium', '--font-weight-semibold']
+      .map((nome) => linhaToken(nome, amostraDeTexto('font-weight', nome)));
+    const outros = ['--font-sans', '--font-leading-tight', '--font-leading-base', '--font-tracking-caps']
+      .map((nome) => linhaToken(nome));
+    return fundamento('tipografia', 'Tipografia', 'Tamanho, peso e cor separam os níveis. O rótulo recua, o dado manda.',
+      listaTokens([...tamanhos, ...pesos, ...outros], true));
+  }
+
+  function pecaEspaco() {
+    const linhas = [1, 2, 3, 4, 5, 6, 7].map((n) => linhaToken(`--space-${n}`,
+      h('span', { class: 'ds-espaco', style: `width: var(--space-${n})` })));
+    return fundamento('espaco', 'Espaço', 'Uma escala só. O espaço entre grupos é maior que o espaço dentro do grupo.', listaTokens(linhas));
+  }
+
+  function pecaRaio() {
+    const linhas = ['--radius', '--radius-card', '--radius-dialog', '--radius-round'].map((nome) =>
+      linhaToken(nome, h('span', { class: 'ds-forma', style: `border-radius: var(${nome})` })));
+    return fundamento('raio', 'Raio', 'O mesmo raio em botão, campo e card. O diálogo sobe um degrau, e o redondo é só do avatar.', listaTokens(linhas));
+  }
+
+  function pecaSombra() {
+    const linhas = [linhaToken('--shadow-card', h('span', { class: 'ds-forma ds-sombra', style: 'box-shadow: var(--shadow-card)' }))];
+    return fundamento('sombra', 'Sombra', 'Um degrau de elevação, para card e lista suspensa.', listaTokens(linhas));
+  }
+
+  function pecaFoco() {
+    const exemplo = botao({ variante: 'secundario', rotulo: 'Salvar filtro' });
+    exemplo.classList.add('is-foco');
+    return fundamento('foco', 'Foco', 'Um token de foco em todo controle (PA-22), sem exceção por tema.',
+      h('div', null, exemplo), listaTokens([linhaToken('--color-focus'), linhaToken('--focus-width')]));
+  }
+
+  function pecaIcones() {
+    const icones = ICONES.map((nome) => h('span', { class: 'ds-icone' }, icone(nome), nome));
+    const tamanhos = ['--size-icon', '--size-icon-field', '--size-icon-nav'].map((nome) => linhaToken(nome));
+    return fundamento('icones', 'Ícones', 'Traço de linha na cor do texto, sem caixa em volta.',
+      h('div', { class: 'ds-icones' }, ...icones), listaTokens(tamanhos));
+  }
+
+  function pecaDensidade() {
+    const linhas = ['--density-row', '--density-row-compact'].map((nome) =>
+      linhaToken(nome, h('div', { class: 'ds-linha', style: `height: var(${nome})` }, AMOSTRA_TEXTO)));
+    return fundamento('densidade', 'Densidade', 'A altura da linha muda; o texto e o espaço horizontal ficam.', listaTokens(linhas, true));
+  }
+
+  const TOKENS_DO_TEMA = [...CORES, '--shadow-card'];
+  const RESUMO_DO_TEMA = ['--color-bg-surface', '--color-text-default', '--color-action', '--color-border-default'];
+
+  // Lê o tema pedido sem repetir os valores da folha. A troca e a volta acontecem
+  // antes da próxima pintura, e nada aparece na tela.
+  function valoresDoTema(tema) {
+    const raiz = document.documentElement;
+    const antes = raiz.dataset.tema;
+    raiz.dataset.tema = tema;
+    const estilo = getComputedStyle(raiz);
+    const valores = Object.fromEntries(TOKENS_DO_TEMA.map((nome) => [nome, estilo.getPropertyValue(nome).trim()]));
+    if (antes) raiz.dataset.tema = antes;
+    else delete raiz.dataset.tema;
+    return valores;
+  }
+
+  function painelDoTema(titulo, tema) {
+    const valores = valoresDoTema(tema);
+    const painel = h('div', { class: 'ds-tema-painel' },
+      h('h4', null, titulo),
+      h('p', null, AMOSTRA_TEXTO),
+      grupoBotoes([{ variante: 'primario', rotulo: 'Adicionar atividade' }, { variante: 'secundario', rotulo: 'Cancelar' }]),
+      h('ul', { class: 'ds-tokens' }, ...RESUMO_DO_TEMA.map((nome) => h('li', { class: 'ds-token' },
+        h('span', { class: 'ds-cor', style: `background-color: var(${nome})` }),
+        h('code', null, nome), h('code', { class: 'ds-token-valor' }, valores[nome])))));
+    TOKENS_DO_TEMA.forEach((nome) => painel.style.setProperty(nome, valores[nome]));
+    return painel;
+  }
+
+  function pecaTema() {
+    return fundamento('tema', 'Tema claro e escuro', 'Segue o sistema, e a chave do cabeçalho salva a escolha. Os dois valores existem para cada token de cor.',
+      h('div', { class: 'ds-temas' }, painelDoTema('Claro', 'claro'), painelDoTema('Escuro', 'escuro')));
+  }
+
+  function atualizarValores() {
+    const estilo = getComputedStyle(document.documentElement);
+    document.querySelectorAll('[data-token]').forEach((el) => {
+      el.textContent = estilo.getPropertyValue(el.dataset.token).trim();
+    });
+  }
+
+  // --- ações -----------------------------------------------------------------
+
+  const NOME_DO_ESTADO = {
+    default: 'Padrão', hover: 'Hover', active: 'Ativo', foco: 'Foco',
+    disabled: 'Desabilitado', erro: 'Erro', carregando: 'Carregando', vazio: 'Vazio',
+  };
+
+  function comClasse(el, classe) {
+    el.classList.add(classe);
+    return el;
+  }
+
+  function desabilitado(el) {
+    el.disabled = true;
+    return el;
+  }
+
+  // estados: lista de [estado, elemento]. Variações: lista de [rótulo, elemento], sem data-estado.
+  function pecaComEstados({ id, titulo, nota, estados, ausentes, variacoes }) {
+    const celula = (nome, el, atributos) => h('div', { class: 'ds-estado', ...atributos },
+      h('span', { class: 'ds-estado-nome' }, nome), el);
+    const blocos = [h('div', { class: 'ds-estados' },
+      ...estados.map(([estado, el]) => celula(NOME_DO_ESTADO[estado], el, { 'data-estado': estado })))];
+    if (variacoes) blocos.push(h('div', { class: 'ds-estados' }, ...variacoes.map(([nome, el]) => celula(nome, el))));
+    blocos.push(h('ul', { class: 'ds-ausentes' }, ...Object.entries(ausentes).map(([estado, motivo]) =>
+      h('li', { 'data-ausente': estado }, h('b', null, NOME_DO_ESTADO[estado]), `: ${motivo}`))));
+    return fundamento(id, titulo, nota, ...blocos);
+  }
+
+  const AUSENTES_DO_BOTAO = {
+    erro: 'o botão não guarda valor. O erro da ação aparece no campo ou em toast.',
+    vazio: 'o botão sempre tem rótulo. Sem ação disponível, ele sai da tela.',
+  };
+
+  function pecaBotao(id, titulo, nota, props, variacoes) {
+    return pecaComEstados({
+      id, titulo, nota, variacoes,
+      ausentes: AUSENTES_DO_BOTAO,
+      estados: [
+        ['default', botao(props)],
+        ['hover', comClasse(botao(props), 'is-hover')],
+        ['active', comClasse(botao(props), 'is-active')],
+        ['foco', comClasse(botao(props), 'is-foco')],
+        ['disabled', desabilitado(botao(props))],
+        ['carregando', botao({ ...props, carregando: true })],
+      ],
+    });
+  }
+
+  const SALVAR_OU_CANCELAR = [{ variante: 'primario', rotulo: 'Salvar' }, { variante: 'secundario', rotulo: 'Cancelar' }];
+
+  function nomeado(el, nome) {
+    el.setAttribute('aria-label', nome);
+    return el;
+  }
+
+  function pecaGrupo() {
+    const grupo = (itens) => nomeado(grupoBotoes(itens), 'Salvar ou cancelar');
+    const salvando = grupo([{ variante: 'primario', rotulo: 'Salvar', carregando: true }, desabilitado(botao({ variante: 'secundario', rotulo: 'Cancelar' }))]);
+    return pecaComEstados({
+      id: 'grupo-botoes', titulo: 'Grupo de botões', nota: 'Ações da mesma decisão, com uma primária e o Cancelar ao lado.',
+      estados: [
+        ['default', grupo(SALVAR_OU_CANCELAR)],
+        ['disabled', grupo([desabilitado(botao({ variante: 'primario', rotulo: 'Salvar' })), desabilitado(botao({ variante: 'secundario', rotulo: 'Cancelar' }))])],
+        ['carregando', salvando],
+      ],
+      ausentes: {
+        hover: 'o grupo não tem hover próprio. Cada botão reage sozinho.',
+        active: 'o grupo não tem estado ativo próprio. Cada botão reage sozinho.',
+        foco: 'o foco fica em cada botão, nunca no grupo.',
+        erro: 'o grupo não guarda valor. O erro aparece no campo ou em toast.',
+        vazio: 'grupo sem botão não é desenhado.',
+      },
+    });
+  }
+
+  const ITENS_DO_MENU = [
+    { rotulo: 'Editar' },
+    { rotulo: 'Copiar número' },
+    { rotulo: 'Arquivar' },
+    { rotulo: 'Excluir', destrutivo: true },
+  ];
+
+  function menuDemo() {
+    return menuAcoes({ rotulo: 'Mais ações', itens: ITENS_DO_MENU });
+  }
+
+  function menuComGatilho(transformar) {
+    const menu = menuDemo();
+    transformar(menu.querySelector('.botao'));
+    return menu;
+  }
+
+  // Lista aberta no fluxo da página. As opções ficam fora do Tab, porque o Tab fecharia o exemplo.
+  function menuAberto() {
+    const menu = menuDemo();
+    menu.classList.add('is-estatico');
+    menu.querySelector('.botao').setAttribute('aria-expanded', 'true');
+    menu.querySelector('[role="menu"]').hidden = false;
+    menu.querySelectorAll('[role="menuitem"]').forEach((item) => { item.tabIndex = -1; });
+    return menu;
+  }
+
+  function pecaMenu() {
+    return pecaComEstados({
+      id: 'menu-acoes', titulo: 'Menu de ações', nota: 'As ações destrutivas ficam em grupo próprio, no fim da lista.',
+      estados: [
+        ['default', menuDemo()],
+        ['hover', menuComGatilho((b) => b.classList.add('is-hover'))],
+        ['active', menuAberto()],
+        ['foco', menuComGatilho((b) => b.classList.add('is-foco'))],
+        ['disabled', menuComGatilho((b) => { b.disabled = true; })],
+      ],
+      ausentes: {
+        erro: 'o menu só dispara a ação. O erro aparece em toast ou na faixa de aviso.',
+        carregando: 'a lista é local e abre sem espera.',
+        vazio: 'sem ação disponível, o gatilho sai da tela.',
+      },
+    });
+  }
+
+  // --- montagem --------------------------------------------------------------
+
+  document.getElementById('fundamentos').append(pecaCor(), pecaTipografia(), pecaEspaco(), pecaRaio(),
+    pecaSombra(), pecaFoco(), pecaIcones(), pecaDensidade(), pecaTema());
+
+  document.getElementById('acoes').append(
+    pecaBotao('botao-primario', 'Botão primário', 'A ação que a tela existe para fazer. Uma por tela.',
+      { variante: 'primario', rotulo: 'Adicionar atividade' },
+      [
+        ['Pequeno', botao({ variante: 'primario', tamanho: 'pequeno', rotulo: 'Adicionar' })],
+        ['Ícone à esquerda', botao({ variante: 'primario', iconeEsquerda: 'mais', rotulo: 'Adicionar' })],
+        ['Ícone à direita', botao({ variante: 'primario', iconeDireita: 'seta', rotulo: 'Adicionar' })],
+      ]),
+    pecaBotao('botao-secundario', 'Botão secundário', 'Alternativa legítima. "Cancelar" é sempre secundário ou texto, nunca link (PA-19).',
+      { variante: 'secundario', rotulo: 'Cancelar' }),
+    pecaBotao('botao-texto', 'Botão de texto', 'Ação de apoio, ainda um botão. Serve ao "Cancelar" em linha.',
+      { variante: 'texto', rotulo: 'Cancelar' }),
+    pecaBotao('botao-icone', 'Botão de ícone', 'Só ícone, com nome acessível e dica vindos do rótulo.',
+      { variante: 'icone', iconeEsquerda: 'copiar', rotulo: 'Copiar número' }),
+    pecaBotao('botao-destrutivo', 'Botão destrutivo', 'Confirma a ação sem volta. O gatilho que abre a confirmação fica no menu de ações, em texto vermelho.',
+      { variante: 'destrutivo', rotulo: 'Excluir atividade' }),
+    pecaGrupo(),
+    pecaMenu());
+
+  atualizarValores();
+  new MutationObserver(atualizarValores).observe(document.documentElement, { attributes: true, attributeFilter: ['data-tema'] });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', atualizarValores);
+})();
+</script>
 </body>
 </html>

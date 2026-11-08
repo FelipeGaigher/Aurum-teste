@@ -818,7 +818,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Produces: `window.DS.grupoBotoes(itens) -> HTMLElement` e `window.DS.menuAcoes({ rotulo, itens }) -> HTMLElement`.
 - Produces: a marcação `[data-ds="<id>"]`, `[data-estado="<estado>"]` e `[data-ausente="<estado>"]` da página.
 
-- [ ] **Step 1: Confirmar o estado vermelho**
+- [x] **Step 1: Confirmar o estado vermelho**
 
 ```bash
 node scripts/verificar-app.js --rf RF-06 --grupos fundamentos,acoes
@@ -826,7 +826,7 @@ node scripts/verificar-app.js --rf RF-06 --grupos fundamentos,acoes
 
 Esperado: `RF-06 FALHOU`.
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 - Crie `window.DS` em `componentes.js`, sem dependência da moldura.
 - Inclua `componentes.js` depois de `moldura.js` na página do design system.
@@ -839,7 +839,7 @@ Esperado: `RF-06 FALHOU`.
 
 Esperado: seções `Fundamentos` e `Ações` completas em `design-system.html`.
 
-- [ ] **Step 3: Executar e confirmar que passa**
+- [x] **Step 3: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/astrea.css prototipo/componentes.js prototipo/design-system.html
@@ -848,7 +848,7 @@ node scripts/verificar-app.js --rf RF-06 --grupos fundamentos,acoes
 
 Esperado: `verificar: 0 erro(s)` e `RF-06 ok`.
 
-- [ ] **Step 4: Entregar**
+- [x] **Step 4: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
