@@ -81,7 +81,9 @@
   .secao-nota { color: var(--color-text-muted); font-size: var(--font-size-label); }
   .secao .estado-vazio { padding: var(--space-4) var(--space-3); }
 
-  .area-direita { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+  /* Filtros e alternância na mesma linha: a barra do DS tem largura total, aqui ela divide a linha. */
+  .area-topo .barra-filtros { flex: 1 1 auto; width: auto; }
+  .area-direita { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin-left: auto; min-height: var(--component-control-height); }
   /* Alternância de formato, a mesma de Contatos. */
   .formato {
     display: inline-flex;
@@ -133,6 +135,7 @@
       <div class="area-direita">
         <p class="area-data" id="area-data"></p>
         <div class="formato" id="formato" role="radiogroup" aria-label="Formato da lista"></div>
+        <button type="button" id="criar-atividade" class="botao botao-primario" data-acao="criar-atividade" data-abre-painel aria-haspopup="dialog">Adicionar atividade</button>
       </div>
     </div>
 
@@ -442,6 +445,24 @@
 
   const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
   document.getElementById('area-data').textContent = hoje.charAt(0).toUpperCase() + hoje.slice(1);
+
+  // Criar atividade na própria tela: o botão primário abre o painel único (PA-24, Task 13),
+  // e a atividade salva entra na seção do prazo dela. O resultado aparece junto da ação.
+  const botaoCriar = document.getElementById('criar-atividade');
+  botaoCriar.addEventListener('click', () => DS.painelCriarAtividade({ tipo: 'tarefa' }).abrir(botaoCriar));
+  const UM_DIA_MS = 24 * 60 * 60 * 1000;
+  document.addEventListener('atividade-criada', ({ detail }) => {
+    const [ano, mes, dia] = detail.data.split('-').map(Number);
+    const agora = new Date();
+    const meiaNoite = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+    const prazoEmDias = Math.round((new Date(ano, mes - 1, dia) - meiaNoite) / UM_DIA_MS);
+    atividades.push({
+      id: `nova-${atividades.length + 1}`, titulo: detail.titulo, tipo: detail.tipo,
+      processo: detail.processo || '', responsavel: detail.responsavel || EU,
+      prazoEmDias, status: detail.concluida ? 'concluido' : 'a-fazer',
+    });
+    desenhar();
+  });
   montarFiltros();
   montarFormato();
   desenhar();

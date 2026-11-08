@@ -250,7 +250,7 @@
   --component-column-drop-bg: var(--color-bg-hover);
   --component-column-drop-border: var(--color-text-muted);
   --component-control-bg: var(--color-bg-surface);
-  --component-control-border: var(--color-border-strong);
+  --component-control-border: var(--color-border-default);
   --component-control-height: var(--size-control);
   --component-seletor-list-bg: var(--color-bg-page);
   --component-seletor-list-border: var(--color-border-default);
@@ -856,6 +856,7 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .campo-g { width: var(--component-field-width-g); }
 .campo-total { width: var(--component-field-width-total); }
 .campo-rotulo {
+  color: var(--color-text-muted);
   font-size: var(--font-size-label);
   font-weight: var(--font-weight-medium);
   line-height: var(--font-leading-tight);
@@ -906,7 +907,8 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .campo-controle:has(> .campo-acao) .campo-entrada { padding-right: calc(var(--component-button-small-height) + var(--space-2)); }
 
 /* seletor: botão com lista própria, no lugar do select nativo (PA-20) */
-.seletor-gatilho { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); text-align: start; cursor: pointer; }
+.seletor-gatilho { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding-right: var(--space-2); text-align: start; cursor: pointer; transition: border-color 150ms, background-color 150ms; }
+.seletor-gatilho:hover:not(:disabled), .seletor-gatilho.is-hover { background-color: var(--color-bg-subtle); }
 .seletor-gatilho:disabled { cursor: not-allowed; }
 .seletor-gatilho:active:not(:disabled), .seletor-gatilho.is-active { border-color: var(--color-action); }
 .seletor-gatilho[aria-busy="true"] { cursor: progress; }
@@ -1659,7 +1661,7 @@ button.stepper-ir:hover .stepper-nome, button.stepper-ir.is-hover .stepper-nome 
   --component-button-primary-bg-active: color-mix(in srgb, var(--color-action-hover) 85%, var(--color-text-default));
   --component-button-primary-text: var(--color-action-text);
   --component-control-bg: var(--color-bg-surface);
-  --component-control-border: var(--color-border-strong);
+  --component-control-border: var(--color-border-default);
   display: grid;
   gap: var(--space-3);
   padding: var(--space-4);

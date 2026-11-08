@@ -257,7 +257,7 @@
   --component-column-drop-bg: var(--color-bg-hover);
   --component-column-drop-border: var(--color-text-muted);
   --component-control-bg: var(--color-bg-surface);
-  --component-control-border: var(--color-border-strong);
+  --component-control-border: var(--color-border-default);
   --component-control-height: var(--size-control);
   --component-seletor-list-bg: var(--color-bg-page);
   --component-seletor-list-border: var(--color-border-default);
@@ -946,6 +946,16 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
   gap: var(--space-4);
   margin-bottom: var(--space-5);
 }
+/* Botão principal à direita, alinhado com os filtros (pedido de Felipe, 08/11). Só CSS: o main não muda (RF-02). */
+#conteudo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--space-4);
+  align-content: start;
+}
+#conteudo > #ferramentas { grid-column: 1; grid-row: 1; }
+#conteudo > .titulo-pagina { grid-column: 2; grid-row: 1; align-self: end; margin: 0 0 var(--space-5); }
+#conteudo > :not(#ferramentas):not(.titulo-pagina) { grid-column: 1 / -1; min-width: 0; }
 .filtros[hidden] { display: none; }
 .filtros {
   display: flex;
@@ -1277,6 +1287,9 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 /* Celular: menu só com ícones, cabeçalho enxuto, uma coluna por tela com a próxima aparecendo na borda.
    O usuário fica sem o nome, para o menu dele continuar ao alcance. */
 @media (max-width: 700px) {
+  #conteudo { grid-template-columns: minmax(0, 1fr); }
+  #conteudo > .titulo-pagina { grid-column: 1; grid-row: 1; margin-bottom: var(--space-3); }
+  #conteudo > #ferramentas { grid-row: 2; }
   .cabecalho {
     grid-template-columns: var(--component-sidebar-collapsed-width) minmax(0, 1fr) auto;
     column-gap: var(--space-3);

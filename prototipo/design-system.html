@@ -8,10 +8,81 @@
 <script src="moldura.js"></script>
 <script src="componentes.js"></script>
 <script src="dados.js"></script>
+<style>
+/* navegação da página: grupos e peças, fixa enquanto o conteúdo rola */
+.ds-layout {
+  --ds-nav-largura: calc(var(--size-sidebar) + var(--space-5));
+  --ds-nav-topo: calc(var(--component-header-height) + var(--space-5));
+  display: grid;
+  grid-template-columns: var(--ds-nav-largura) minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+.ds-pecas { min-width: 0; }
+.ds-nav {
+  position: sticky;
+  top: var(--ds-nav-topo);
+  max-height: calc(100vh - var(--ds-nav-topo) - var(--space-5));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: var(--space-2);
+  border-right: var(--border-width) solid var(--color-border-default);
+}
+.ds-nav ul { margin: 0; padding: 0; list-style: none; }
+.ds-nav-grupo + .ds-nav-grupo { margin-top: var(--space-3); }
+.ds-nav a {
+  display: flex;
+  align-items: center;
+  min-height: var(--size-option);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius);
+  color: var(--color-text-default);
+  font-size: var(--font-size-body);
+  line-height: var(--font-leading-tight);
+  text-decoration: none;
+}
+.ds-nav a:focus-visible { outline-offset: calc(-1 * var(--focus-width)); }
+.ds-nav a.ds-nav-titulo {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-tracking-caps);
+  text-transform: uppercase;
+}
+.ds-nav a:hover { background-color: var(--color-bg-hover); }
+.ds-nav a[aria-current="location"] {
+  background-color: var(--component-menu-item-active-bg);
+  color: var(--component-menu-item-active-text);
+  font-weight: var(--font-weight-medium);
+}
+
+@media (max-width: 1023px) {
+  html { scroll-padding-top: calc(var(--component-header-height) + var(--size-option) + var(--space-5)); }
+  .ds-layout { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+  .ds-nav {
+    top: var(--component-header-height);
+    z-index: 1;
+    display: flex;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: var(--space-2) 0;
+    border-right: 0;
+    border-bottom: var(--border-width) solid var(--color-border-default);
+    background-color: var(--color-bg-page);
+  }
+  .ds-nav-grupo, .ds-nav-grupo ul { display: flex; flex: none; align-items: center; }
+  .ds-nav-grupo + .ds-nav-grupo { margin-top: 0; margin-left: var(--space-3); }
+  .ds-nav a { white-space: nowrap; }
+}
+</style>
 </head>
 <body data-pagina="design-system.html" data-titulo="Design system">
 <div class="corpo">
   <main id="conteudo">
+  <div class="ds-layout">
+    <nav class="ds-nav" aria-label="Componentes do design system"></nav>
+    <div class="ds-pecas">
     <section class="ds-grupo" id="fundamentos" aria-labelledby="titulo-fundamentos">
       <header>
         <h2 id="titulo-fundamentos">Fundamentos</h2>
@@ -94,6 +165,8 @@
         <dt><code>recolhido</code></dt><dd>só o ícone, centrado; o selo vai para o canto do ícone</dd>
       </dl>
     </section>
+    </div>
+  </div>
   </main>
 </div>
 <script>
@@ -1409,6 +1482,49 @@
     pecaMenuLateral('sidebar-recolhida', 'Sidebar recolhida', 'Só o ícone. O nome continua como nome acessível e vira dica. A escolha persiste entre páginas.', true),
     pecaAbas(), pecaTrilha(), pecaBarraFiltros(), pecaPainelLateral(), pecaBarraAcoes(), pecaStepper());
 
+  // --- navegação da página ---------------------------------------------------
+
+  // Um item por grupo e um por peça. O id da peça leva prefixo para não colidir com o id que uma peça gera.
+  function montarNavegacao() {
+    const nav = document.querySelector('.ds-nav');
+    const alvos = [];
+    // observado: o elemento que, na faixa de leitura, torna o item atual. No grupo é o cabeçalho, não a seção inteira.
+    const link = (alvo, rotulo, observado, classe) => {
+      const a = h('a', { href: `#${alvo.id}`, ...(classe && { class: classe }) }, rotulo);
+      alvos.push([observado, a]);
+      return a;
+    };
+    document.querySelectorAll('.ds-grupo').forEach((grupo) => {
+      const titulo = link(grupo, grupo.querySelector('h2').textContent, grupo.querySelector(':scope > header'), 'ds-nav-titulo');
+      const pecas = [...grupo.querySelectorAll(':scope > .ds-peca')].map((peca) => {
+        if (!peca.id) peca.id = `peca-${peca.dataset.ds}`;
+        return h('li', null, link(peca, peca.querySelector('.ds-peca-titulo h3').textContent, peca));
+      });
+      nav.append(h('div', { class: 'ds-nav-grupo' }, titulo, h('ul', null, ...pecas)));
+    });
+
+    const marcar = (a) => {
+      if (!a || a.getAttribute('aria-current') === 'location') return;
+      nav.querySelectorAll('[aria-current]').forEach((el) => el.removeAttribute('aria-current'));
+      a.setAttribute('aria-current', 'location');
+      const n = nav.getBoundingClientRect();
+      const r = a.getBoundingClientRect();
+      if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 2;
+      if (r.left < n.left || r.right > n.right) nav.scrollLeft += r.left - n.left - n.width / 2;
+    };
+    nav.addEventListener('click', (e) => marcar(e.target.closest('a')));
+
+    const visiveis = new Set();
+    const topo = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    const observador = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => (e.isIntersecting ? visiveis.add(e.target) : visiveis.delete(e.target)));
+      const atual = alvos.find(([el]) => visiveis.has(el));
+      if (atual) marcar(atual[1]);
+    }, { rootMargin: `-${Math.round(topo)}px 0px -60% 0px` });
+    alvos.forEach(([el]) => observador.observe(el));
+  }
+
+  montarNavegacao();
   atualizarValores();
   new MutationObserver(atualizarValores).observe(document.documentElement, { attributes: true, attributeFilter: ['data-tema'] });
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', atualizarValores);
