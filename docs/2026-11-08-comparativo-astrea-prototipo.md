@@ -7,11 +7,12 @@ A evidência do protótipo cita arquivo e linha. A do Astrea cita a tela e a rot
 
 Convenção de clique: parte da tela aberta, na visão padrão, sem item selecionado. Digitar não conta.
 
-Resumo honesto em três linhas:
+Resumo honesto em quatro linhas:
 
 - O protótipo ganha em filtro, visão, painel ao lado, seção de prazo e consistência de volta e de criação.
-- O Astrea já copia o número com 1 clique em Processos e na ficha. O ganho do protótipo nesse ponto é só na Área de trabalho.
-- Em quatro caminhos o protótipo perdeu cliques para o Astrea. A seção "O que ainda falta" lista cada um.
+- O Astrea já copia o número com 1 clique em Processos e na ficha. Ali o protótipo agora é igual, não melhor.
+- A varredura achou quatro caminhos em que o protótipo perdia cliques. As correções da noite de 08/11 fecharam os quatro.
+- Seguem abertos a prévia de documento e o painel em tela estreita. A seção "O que ainda falta" lista cada um.
 
 ## 1. Informação essencial acima da dobra
 
@@ -27,25 +28,25 @@ Resumo honesto em três linhas:
 
 | O que o usuário quer fazer | Astrea hoje (cliques, onde) | Protótipo (cliques, onde) | O que melhorou | Evidência |
 |---|---|---|---|---|
-| Copiar a partir da Área de trabalho | 2. Abrir a tarefa e clicar no número do modal | 1. Botão de copiar ao lado do número, na linha e no card | Um clique a menos, sem modal | `componentes.js:1536-1557`, `1595`, `1627` |
-| Copiar a partir da lista de processos | 1. O número na linha copia ao clicar, com tooltip "Copiar" | 2. Selecionar a linha e copiar no painel. A tabela não copia | Piorou: um clique a mais | `processos.html:393-402`, `456-461` |
-| Copiar na ficha do processo | 1. Número do cabeçalho e "Copiar" no bloco de dados | 1. Cabeçalho, "Dados do processo" e card do grau | Igual | `processos.html:754`, `906`, `953` |
-| Copiar a partir de um alerta | 2. "Visualizar tarefa" e o número no modal | 2. Selecionar o alerta e copiar no painel. O card não copia | Igual | `alertas.html:229-245` |
-| Copiar a partir de atendimento ou documento | Não verificado no Astrea | 1 no card. Na tabela não há botão | Copiar só no modo cards | `atendimentos.html:417-430`, `documentos.html:433-448` |
+| Copiar a partir da Área de trabalho | 2. Abrir a tarefa e clicar no número do modal | 1. Botão de copiar ao lado do número, na linha e no card, em Lista, Cards e Kanban | Um clique a menos, sem modal | `componentes.js:1536-1557`, `1604-1605`, `1636-1637` |
+| Copiar a partir da lista de processos | 1. O número na linha copia ao clicar, com tooltip "Copiar" | 1. Botão de copiar ao lado do número, na coluna Número | Igual. A varredura achou a regressão, e a correção a fechou | `processos.html:312-315`, `414` |
+| Copiar na ficha do processo | 1. Número do cabeçalho e "Copiar" no bloco de dados | 1. Cabeçalho, "Dados do processo" e card do grau | Igual | `processos.html:770`, `922`, `969` |
+| Copiar a partir de um alerta | 2. "Visualizar tarefa" e o número no modal | 2. Selecionar o alerta e copiar no painel. O card não copia | Igual | `alertas.html:230-245`, `271` |
+| Copiar a partir de atendimento ou documento | Não verificado no Astrea | 1 na tabela e no card | Copiar nos dois modos | `atendimentos.html:236-240`, `395`, `436`; `documentos.html:441-452`, `476` |
 | Saber que copiou | Tooltip "Copiar" antes do clique | Tooltip troca para "Número copiado" e anuncia em `role="status"` | Confirmação visível e acessível | `componentes.js:1539-1556` |
 
-O Astrea já tem o padrão de copiar ao clicar. O protótipo leva o número para a linha da atividade, onde ele faltava.
+O Astrea já tem o padrão de copiar ao clicar. O protótipo iguala esse padrão nas tabelas e leva o número para a linha da atividade.
 
 ## 3. Ir da atividade ao processo
 
 | O que o usuário quer fazer | Astrea hoje (cliques, onde) | Protótipo (cliques, onde) | O que melhorou | Evidência |
 |---|---|---|---|---|
-| Abrir o processo de uma tarefa atrasada | 1. Link do título do processo na linha | 1. "Abrir processo" no card ou no hover da linha | Igual em cliques. O rótulo diz a ação | `area-de-trabalho.html:288-291` |
-| Abrir o processo de uma tarefa no prazo | 1. Mesmo link na linha | 2. Selecionar e clicar "Abrir processo" no painel | Piorou: o número é texto, e o link só vale para atrasada | `area-de-trabalho.html:404-430` |
-| Abrir o processo na visão Kanban | Não existe visão Kanban | Sem caminho. Não há painel nem link | Lacuna nova | `area-de-trabalho.html:615` |
-| Abrir o processo a partir de um alerta | 2. "Visualizar tarefa" e o link no modal | 3. "Abrir atividade" leva à Área de trabalho sem a atividade aberta | Piorou: um clique a mais e perda do contexto | `alertas.html:249` |
-| Abrir o processo a partir de um atendimento | 1. Link do processo no item da lista | 2 pelo painel, 1 pela ficha. A tabela mostra o número sem link | Piorou na lista | `atendimentos.html:379-420`, `500-505`, `733` |
-| Abrir o processo a partir da Agenda | Não verificado: a Agenda da conta mostrou zero atividades | Sem caminho em nenhuma visão | Lacuna | `agenda.html:276-298` |
+| Abrir o processo de uma tarefa atrasada | 1. Link do título do processo na linha | 1. O número leva à ficha. "Abrir processo" fica no card e no hover da linha | Igual em cliques. O rótulo diz a ação | `area-de-trabalho.html:295-297`, `524`; `componentes.js:1560-1567` |
+| Abrir o processo de uma tarefa no prazo | 1. Mesmo link na linha | 1. O número é link na linha e no card | Igual | `area-de-trabalho.html:524`, `537`; `componentes.js:1604`, `1636` |
+| Abrir o processo na visão Kanban | Não existe visão Kanban | 1. O número do card é link. O card abre o painel de detalhe ao lado | Visão nova, com o mesmo caminho da Lista | `area-de-trabalho.html:533-553`, `579` |
+| Abrir o processo a partir de um alerta | 2. "Visualizar tarefa" e o link no modal | 1. "Abrir processo" no card e no painel. "Abrir atividade" abre a Área de trabalho com a atividade escolhida | Um clique a menos, sem modal | `alertas.html:257-263`, `370`; `area-de-trabalho.html:621-634` |
+| Abrir o processo a partir de um atendimento | 1. Link do processo no item da lista | 1. Link na tabela, no painel e na ficha, com copiar ao lado | Igual | `atendimentos.html:236-240`, `395`, `517` |
+| Abrir o processo a partir da Agenda | Não verificado: a Agenda da conta mostrou zero atividades | 1 pelo número nas visões em linha. Na Semana e no Mês, 2: o item abre o detalhe, e o detalhe traz "Abrir processo" | Caminho em todas as visões | `agenda.html:372-377`, `398-407`, `681-696` |
 
 ## 4. Documentos no contexto
 
@@ -67,7 +68,7 @@ O Astrea já tem o padrão de copiar ao clicar. O protótipo leva o número para
 | Trocar a visão de contatos, atendimentos e documentos | Só tabela ou lista | 1. Tabela ou Cards | Leitura por card com número e responsável | `contatos.html:253-283`, `atendimentos.html:588` |
 | Filtrar processos | Seta de filtro avançado, busca, etiqueta e "Ativos" | Busca, Tipo e "Filtro avançado · N" em painel, com chips removíveis | Filtro ativo fica visível e removível | `processos.html:500-602` |
 | Ver todos os contatos | A lista abre filtrada em "Tipo: Cliente" | A lista abre em Todos | Nada fica escondido na abertura | `contatos.html:312-318` |
-| Filtrar a Agenda | "Minhas atribuições", "Todas as atividades", etiqueta e lupa | Só busca por título, número ou responsável | Piorou: sem filtro de pessoa e de tipo | `agenda.html:216-271` |
+| Filtrar a Agenda | "Minhas atribuições", "Todas as atividades", etiqueta e lupa | 2 por filtro. Responsável e Tipo, lembrados ao voltar, mais a busca por título, número ou responsável | Igual em pessoa e tipo. Falta o filtro de etiqueta | `agenda.html:333-363`, `844-852` |
 | Ver o dia na Agenda | Abriu em "Ontem". As duas tarefas da conta não apareceram | Abre sempre em Hoje, com "Prioridades por prazo" ao lado | Abertura previsível e prazo ao lado da grade | `agenda.html:206-226`, `477-499` |
 
 ## 6. Voltar
@@ -84,7 +85,7 @@ O Astrea já tem o padrão de copiar ao clicar. O protótipo leva o número para
 |---|---|---|---|---|
 | Ver o detalhe de uma tarefa | 1. Modal sobre a lista, que cobre a lista | 1. Painel ao lado, redimensionável, com anterior, próximo e esconder | A lista continua visível. Navega entre itens sem fechar | `componentes.js:1880-1950`; `area-de-trabalho.html:441-513` |
 | Ver o detalhe de contato, atendimento ou processo | 1. Página nova | 1. Painel ao lado. "Abrir ficha" leva à página | Leitura rápida sem trocar de tela | `contatos.html:472-520`, `atendimentos.html:607-668`, `processos.html:633-686` |
-| Usar o painel em tela estreita | Não se aplica | Até 1100 px o painel some. Na Área de trabalho não há alternativa | Lacuna em notebook pequeno | `astrea.css:1812` |
+| Usar o painel em tela estreita | Não se aplica | Até 1100 px o painel some. Na Área de trabalho não há alternativa | Lacuna em notebook pequeno | `astrea.css:1818` |
 
 ## 8. Criar sem sair da tela
 
@@ -92,7 +93,7 @@ O Astrea já tem o padrão de copiar ao clicar. O protótipo leva o número para
 |---|---|---|---|---|
 | Criar atividade na Área de trabalho | 1. "Adicionar tarefa" abre modal sobre a lista | 1. "Adicionar atividade" abre painel lateral de uma camada | Tipo explícito, lista pré-preenchida, aviso de data passada no painel | `componentes.js:2493-2645` |
 | Criar atividade na ficha do processo | 2. "+" e "Tarefa", ou "Adicionar" em Próximas atividades | 2. "Adicionar" e confirmar no painel. O processo vem implícito | Igual em cliques | `processos.html:824-859` |
-| Criar atividade pela lista de processos ou pelo atendimento | Pelo atendimento: 1 no "+" de Tarefas e eventos | 1, mas o painel global abre com o campo Processo vazio | Piorou: o usuário redigita o processo | `processos.html:462-465`; `atendimentos.html:819`; `componentes.js:2519` |
+| Criar atividade pela lista de processos ou pelo atendimento | Pelo atendimento: 1 no "+" de Tarefas e eventos | 1. O painel global abre com o campo Processo preenchido | Igual em cliques, sem redigitar o processo | `processos.html:481`; `atendimentos.html:833`; `componentes.js:2643-2649` |
 | Criar atendimento | Não verificado: o formulário não foi aberto | 1. Painel lateral, sem sair da lista | Contexto mantido | `atendimentos.html:232-337` |
 | Criar contato | 1. Página inteira | 1. Página inteira com barra de ações fixa | Igual no fluxo. Só a barra muda | `contatos.html:954-1006` |
 | Criar etiqueta no cadastro | Não verificado | Painel lateral, com a etiqueta já selecionada ao voltar | Sem trocar de tela | `contatos.html:866` |
@@ -104,28 +105,36 @@ O Astrea já tem o padrão de copiar ao clicar. O protótipo leva o número para
 |---|---|---|---|---|
 | Saber que há pendência | Badge vermelho no item Alertas do menu | Sino com contagem na navbar | O sinal fica no lugar que o usuário procura | `moldura.js:217-250` |
 | Ler as pendências sem sair da tela | Não existe. Alertas é página própria | 1. Painel à direita, com filtro por módulo e grupos Para fazer e Avisos | Leitura sem trocar de tela | `componentes.js:2323-2387` |
-| Ir da notificação ao processo | Alerta: 2 cliques via modal da tarefa | Sem caminho direto. O item leva à lista ou à Área de trabalho, sem id | Piorou: o destino é genérico | `dados.js:107-121`, `154` |
+| Ir da notificação ao processo | Alerta: 2 cliques via modal da tarefa | 1. O item leva ao registro com id: ficha do processo, ficha do contato ou atividade escolhida | Um clique a menos, sem modal | `dados.js:104-112`, `119-131`, `164` |
 | Tratar o alerta | Visualizar, Concluir, Reagendar e Descartar | Visualizar, Concluir, Reagendar com três prazos e Descartar com confirmação | "Desfazer" depois de agir | `alertas.html:117-155`, `339-355` |
 | Marcar como lido | Descartar alerta, um por um | "Marcar avisos como lidos" em lote. Não há leitura individual | Lote ganho, individual ausente | `componentes.js:2386` |
 
 ## O que ainda falta
 
-Onde o protótipo não melhorou ou piorou, com a correção proposta:
+Onde o protótipo ainda não melhorou, com a correção proposta:
 
-1. Atividade no prazo: o título do processo deixou de ser link. Proposta: o número leva à ficha, e o botão ao lado copia.
-2. Alertas: "Abrir atividade" leva à Área de trabalho sem a atividade. Proposta: abrir a ficha do processo ou selecionar a atividade.
-3. Notificações: nenhum destino abre a ficha do processo. Proposta: o item leva ao registro com id.
-4. Lista de processos: a tabela perdeu o copiar com 1 clique, que o Astrea já tem. Proposta: botão de copiar na coluna Número.
-5. Lista de atendimentos: o processo virou texto. Proposta: link na coluna Processo.
-6. Agenda: perdeu os filtros de pessoa e de tipo. Itens de Semana e Mês não abrem nada. Não há caminho ao processo.
-7. Painel global de nova atividade: não traz o processo de onde foi aberto.
-8. Documentos: o protótipo não abre arquivo nem mostra prévia. A ficha do processo mostra sempre o estado vazio.
-9. Kanban da Área de trabalho: sem painel e sem link ao processo.
-10. Tela até 1100 px: o painel ao lado some, e a Área de trabalho fica sem detalhe.
-11. Busca global: o campo existe, mas não busca. O Astrea busca contato, processo e tarefa.
-12. Copiar só aparece no modo cards em Atendimentos, Documentos e Contatos. A tabela não copia.
+1. Documentos: o protótipo não abre arquivo nem mostra prévia. "Baixar" só avisa (`documentos.html:390-391`). Proposta: prévia no painel ao lado.
+2. Ficha do processo: o bloco Documentos mostra sempre o estado vazio (`processos.html:928-932`). Proposta: listar os documentos de `dados.js` ligados ao número.
+3. Tela até 1100 px: o painel ao lado some, e a Área de trabalho fica sem detalhe (`astrea.css:1818`). Proposta: o painel abre por cima, como em Alertas.
+4. Agenda: não há filtro de etiqueta, que o Astrea tem.
+5. Dívida de código: Processos, Atendimentos, Documentos e Agenda mantêm cópia local do botão de copiar. O DS já exporta `botaoCopiar` (`componentes.js:2773`). Proposta: trocar as cópias pela peça do DS.
 
 Ficaram sem verificação no Astrea a lista de Documentos com itens e os formulários de processo e de atendimento. O destino dos links de Estatísticas também.
+
+## Correções depois da varredura, 08/11 à noite
+
+A lista anterior tinha 12 itens. Dez fecharam, e os números abaixo seguem essa lista.
+
+- 1 e 9. Na Área de trabalho, o número leva à ficha em Lista, Cards e Kanban, com copiar ao lado. O Kanban ganhou o painel de detalhe.
+- 2. Em Alertas, "Abrir atividade" abre a Área de trabalho com a atividade escolhida. O card ganhou "Abrir processo".
+- 3. As notificações levam ao registro com id, por `urlDoProcesso`, `urlDaAtividade` e `urlDoContato`.
+- 4, 5 e 12. A tabela de Processos copia o número com 1 clique. Atendimentos e Documentos mostram o processo como link, com copiar.
+- 6. A Agenda ganhou os filtros Responsável e Tipo. Todo item abre o detalhe ao lado, com "Abrir processo".
+- 7. `DS.painelCriarAtividade` aceita `processo`. Processos e Atendimentos passam o número.
+- 11. A busca do cabeçalho leva a `buscas.html?q=`, e a página filtra processo, contato e atividade (`moldura.js:252-263`, `buscas.html:41-77`).
+- DS: `botaoCopiar` saiu exportado. No painel estreito, rótulo e valor empilham por `@container` (`astrea.css:1793`).
+
+Os itens 8 e 10 seguem abertos e voltaram como 1 a 3 da lista acima.
 
 ## Ligação com as questões
 
@@ -135,7 +144,7 @@ Os cinco problemas vêm de `01-diagnostico.md`. Os achados abaixo vêm da varred
 |---|---|---|
 | P1. O prazo não domina as telas que existem para ele | A Área de trabalho só marca atraso pela cor da data. A Agenda abriu em "Ontem" e não mostrou as duas tarefas da conta. Alertas já sabe que a tarefa está atrasada | 1, 5 |
 | P2. Sem hierarquia de nomes, a mesma atividade em quatro lugares | A mesma tarefa aparece na Área de trabalho, no modal, em Alertas e na ficha do processo. O botão diz "Adicionar tarefa" num lugar e "Tarefa" ou "Evento" em outro | 3, 8 |
-| P3. Criar uma atividade interrompe quem cria | Criar tarefa abre modal que cobre a lista. Contato e processo abrem página inteira. O protótipo resolve a atividade em painel, mas ainda não liga o processo de origem | 8 |
+| P3. Criar uma atividade interrompe quem cria | Criar tarefa abre modal que cobre a lista. Contato e processo abrem página inteira. O protótipo resolve a atividade em painel, com o processo de origem preenchido | 8 |
 | P4. Três azuis, três cinzas, três jeitos de criar | Criar aparece como "Adicionar tarefa", "Adicionar", "+" sem rótulo e "Adicionar documento" com seta. Voltar aparece em três formas. A lista de processos tem quatro ícones sem rótulo | 6, 8 |
 | P5. A moldura compete com o trabalho | O cabeçalho tem cinco ícones, selo "1 ano grátis" e "Contratar". "Conheça as IAs" tem fundo lilás. Não há sino: o único sinal de pendência é o badge do menu | 9 |
 

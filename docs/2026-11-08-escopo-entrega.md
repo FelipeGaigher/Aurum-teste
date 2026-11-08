@@ -174,3 +174,20 @@ Felipe seguiu a revisão ao vivo e pediu estes itens.
 - Limite das notificações: o Kanban tem cabeçalho próprio e ainda não mostra o sino.
 - Publicação: `main` subiu até `1e09261` às 18h40, com 55 commits. A rodada das notificações (`888faa8`) ficou local até o próximo "sobe".
 - Em andamento: varredura do Astrea em produção, só de leitura, e comparativo Astrea × protótipo por fluxo. Eles sustentam as respostas das questões.
+
+### Quarta rodada, 08/11 entre 19h30 e 21h
+
+A varredura e o comparativo fecharam. As correções saíram das regressões que o comparativo apontou.
+
+- Varredura do Astrea em produção, só de leitura: `docs/2026-11-08-varredura-astrea.md`.
+- Comparativo por fluxo, com cliques e evidência: `docs/2026-11-08-comparativo-astrea-prototipo.md`.
+- Área de trabalho: o número leva à ficha em Lista, Cards e Kanban, com copiar ao lado. O Kanban ganhou o painel de detalhe.
+- Alertas: "Abrir atividade" abre a atividade escolhida, e o card ganhou "Abrir processo".
+- Notificações: cada item leva ao registro com id.
+- Tabelas: Processos copia o número com 1 clique. Atendimentos e Documentos mostram o processo como link, com copiar.
+- Agenda: filtros Responsável e Tipo, e detalhe do item ao lado com "Abrir processo".
+- Nova atividade: o painel traz o processo de onde foi aberto.
+- Busca do cabeçalho: leva a Resultados de buscas e filtra pelo termo.
+- DS: `botaoCopiar` exportado. No painel estreito, rótulo e valor empilham.
+- Menu lateral: Alertas saiu do menu. As notificações do cabeçalho assumem, e a página fica sob Área de trabalho.
+- Seguem abertos: prévia de documento, documentos na ficha do processo e painel em tela até 1100px.
