@@ -25,7 +25,13 @@ function servir() {
   const servidor = await servir();
   let codigo = 0;
   try {
-    const browser = await chromium.launch({ channel: 'chrome', headless: true });
+    // CANAL=chromium usa o navegador do Playwright; o Chrome instalado caiu com "Target crashed" em 08/11.
+    const canal = process.env.CANAL || 'chrome';
+    const browser = await chromium.launch({
+      channel: canal === 'chromium' ? undefined : canal,
+      headless: true,
+      args: ['--disable-gpu', '--disable-dev-shm-usage', '--js-flags=--max-old-space-size=4096'],
+    });
     const page = await browser.newPage({ viewport: { width: largura, height: 900 } });
     await page.goto(`http://localhost:${PORTA}/${pagina}`, { waitUntil: 'networkidle' });
     const resposta = await page.context().request.get('https://mcp.figma.com/mcp/html-to-design/capture.js');
