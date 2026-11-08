@@ -80,6 +80,20 @@
         <dt><code>densidade</code></dt><dd><code>padrao</code> ou <code>compacta</code>, por token de densidade</dd>
       </dl>
     </section>
+
+    <section class="ds-grupo" id="navegacao" aria-labelledby="titulo-navegacao">
+      <header>
+        <h2 id="titulo-navegacao">Navegação</h2>
+        <p>A moldura muda uma vez e depois fica fixa. Navbar e menu aparecem aqui em miniatura, com as classes da moldura real. O painel lateral é a única camada da tela (PA-27), e o resultado de salvar fica na barra de ações, junto do botão (PA-30). As propriedades abaixo são do item do menu.</p>
+      </header>
+      <dl class="ds-props">
+        <dt><code>icone</code></dt><dd>nome do ícone do módulo, na cor do texto secundário</dd>
+        <dt><code>rotulo</code></dt><dd>nome do módulo como no Astrea; recolhido, vira a dica e segue como nome acessível</dd>
+        <dt><code>selo</code></dt><dd><code>{ rotulo, descricao }</code>; a descrição é obrigatória e vira texto lido (PA-29)</dd>
+        <dt><code>ativo</code></dt><dd>o item do módulo aberto, com <code>aria-current="page"</code> e fundo próprio; a miniatura força a aparência com <code>.is-atual</code>, porque a página tem um item atual só</dd>
+        <dt><code>recolhido</code></dt><dd>só o ícone, centrado; o selo vai para o canto do ícone</dd>
+      </dl>
+    </section>
   </main>
 </div>
 <script>
@@ -87,7 +101,7 @@
   const { botao, grupoBotoes, menuAcoes, icone, ICONES, campo, areaTexto, busca, seletor, seletorMultiplo,
     seletorPessoas, data, periodo, caixa, radio, chave, toast, faixaAviso, dialogo, tooltip, progresso, skeleton,
     estadoVazio, upsell, descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade,
-    cardAtividade, cardContato, paginacao } = window.DS;
+    cardAtividade, cardContato, paginacao, abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper } = window.DS;
   const { ATIVIDADES, CONTATOS } = window.DADOS;
 
   function h(tag, atributos, ...filhos) {
@@ -1039,6 +1053,324 @@
     });
   }
 
+  // --- navegação -------------------------------------------------------------
+
+  const SO_A_MOLDURA = 'a moldura é uma só, e cada controle dela mostra os estados da própria peça.';
+  const MENU_LOCAL = 'o menu é local e abre sem espera.';
+
+  function deHtml(html) {
+    const modelo = document.createElement('template');
+    modelo.innerHTML = html;
+    return modelo.content.firstElementChild;
+  }
+
+  // A cópia da navbar real, inerte: as mesmas classes, sem id repetido e fora do Tab.
+  function miniaturaDaNavbar() {
+    window.Moldura.montar();
+    const copia = document.querySelector('.cabecalho').cloneNode(true);
+    copia.classList.add('is-miniatura');
+    copia.inert = true;
+    copia.querySelectorAll('[id], [for], [aria-controls], [aria-labelledby]').forEach((el) =>
+      ['id', 'for', 'aria-controls', 'aria-labelledby'].forEach((nome) => el.removeAttribute(nome)));
+    return h('div', { class: 'ds-navbar' }, copia);
+  }
+
+  function pecaNavbar() {
+    return pecaComEstados({
+      id: 'navbar', titulo: 'Navbar', nota: 'Marca e recolher na coluna do menu, título e trilha no meio, busca e atalhos à direita (M15). Cada atalho tem dica (PA-04), e o bloqueado mostra o cadeado antes do clique (PA-07).',
+      estados: [['default', miniaturaDaNavbar()]],
+      ausentes: {
+        hover: SO_A_MOLDURA, active: SO_A_MOLDURA, foco: SO_A_MOLDURA,
+        disabled: 'a navbar não desabilita. O atalho bloqueado pelo plano é um botão com cadeado.',
+        erro: 'a navbar não guarda valor. A busca sem resultado mostra o estado vazio na página.',
+        carregando: 'a moldura nasce com a página e não espera dado.',
+        vazio: 'a navbar sempre tem a marca, a busca e o usuário.',
+      },
+    });
+  }
+
+  const MODULOS_DA_MINIATURA = ['area-de-trabalho.html', 'agenda.html', 'contatos.html', 'publicacoes.html'];
+  const SELO_DE_PUBLICACOES = { rotulo: '3', descricao: 'publicações não lidas' };
+
+  // forcar: { pagina: classe } aplica o estado no item. O primeiro item é sempre o ativo.
+  function miniaturaDoMenu({ recolhido = false, forcar = {}, selo = false } = {}) {
+    const { MENU, htmlItemMenu } = window.Moldura;
+    const itens = MODULOS_DA_MINIATURA.map((pagina, indice) => {
+      const item = MENU.find((i) => i.pagina === pagina);
+      const comSelo = selo && pagina === 'publicacoes.html' ? { selo: SELO_DE_PUBLICACOES } : {};
+      const link = deHtml(htmlItemMenu({ ...item, ...comSelo, recolhido }));
+      if (indice === 0) link.classList.add('is-atual');
+      if (forcar[pagina]) link.classList.add(forcar[pagina]);
+      return h('li', null, link);
+    });
+    return h('div', { class: recolhido ? 'ds-menu is-recolhida' : 'ds-menu' }, h('ul', null, ...itens));
+  }
+
+  function pecaMenuLateral(id, titulo, nota, recolhido) {
+    return pecaComEstados({
+      id, titulo, nota,
+      estados: [
+        ['default', miniaturaDoMenu({ recolhido })],
+        ['hover', miniaturaDoMenu({ recolhido, forcar: { 'agenda.html': 'is-hover' } })],
+        ['foco', miniaturaDoMenu({ recolhido, forcar: { 'contatos.html': 'is-foco' } })],
+      ],
+      ausentes: {
+        active: 'o clique abre a página na hora. O item do módulo aberto é o ativo, mostrado no padrão.',
+        disabled: 'módulo fora do plano abre a página com o upsell, nunca um item desligado (PA-13).',
+        erro: 'o menu não guarda valor.',
+        carregando: MENU_LOCAL,
+        vazio: 'o menu sempre tem os módulos do Astrea.',
+      },
+      variacoes: [['Com selo', miniaturaDoMenu({ recolhido, selo: true })]],
+    });
+  }
+
+  const PASSOS_DA_BUSCA = ['Tipo de busca', 'Dados do processo', 'Confirmação'];
+
+  function abasDemo(transformar) {
+    const texto = (frase) => h('p', null, frase);
+    const raiz = abas({
+      rotulo: 'Buscas',
+      itens: [
+        { chave: 'individuais', rotulo: 'Buscas individuais', conteudo: texto('Processos encontrados pelo número ou pelo nome da parte.') },
+        { chave: 'lote', rotulo: 'Buscas em lote', conteudo: texto('Vários números de uma vez, a partir de uma lista.') },
+        { chave: 'vinculos', rotulo: 'Vínculos', conteudo: texto('Processos ligados a um contato da carteira.') },
+      ],
+    });
+    if (transformar) transformar(raiz.querySelectorAll('[role="tab"]'));
+    return raiz;
+  }
+
+  function pecaAbas() {
+    const desligada = abas({
+      rotulo: 'Buscas',
+      itens: [
+        { chave: 'individuais', rotulo: 'Buscas individuais', conteudo: h('p', null, 'Processos encontrados pelo número ou pelo nome da parte.') },
+        { chave: 'lote', rotulo: 'Buscas em lote', desabilitado: true },
+        { chave: 'vinculos', rotulo: 'Vínculos' },
+      ],
+    });
+    return pecaComEstados({
+      id: 'abas', titulo: 'Abas', nota: 'Troca a vista do mesmo registro. Um ponto de Tab na aba marcada, as setas trocam, Home e End vão às pontas. O botão de criar mantém o mesmo texto em todas as abas (PA-25).',
+      estados: [
+        ['default', abasDemo()],
+        ['hover', abasDemo((todas) => todas[1].classList.add('is-hover'))],
+        ['active', abasDemo((todas) => todas[1].classList.add('is-active'))],
+        ['foco', abasDemo((todas) => todas[0].classList.add('is-foco'))],
+        ['disabled', desligada],
+      ],
+      ausentes: {
+        erro: 'a aba só troca a vista. O erro fica no conteúdo dela.',
+        carregando: 'a aba troca na hora. O conteúdo que espera mostra o esqueleto.',
+        vazio: 'aba sem registro mostra o estado vazio dentro do painel, e a aba continua.',
+      },
+    });
+  }
+
+  const PROCESSOS = { rotulo: 'Processos e casos', pagina: 'processos.html' };
+
+  function trilhaDemo(niveis, titulo, classe) {
+    const raiz = trilha({ itens: niveis });
+    if (classe) comClasse(raiz.querySelector('a'), classe);
+    return h('div', { class: 'ds-trilha' }, raiz, h('span', { class: 'ds-trilha-titulo' }, titulo));
+  }
+
+  function pecaTrilha() {
+    return pecaComEstados({
+      id: 'trilha', titulo: 'Trilha', nota: 'Do segundo nível em diante, acima do título (M14, M16). Mostra os níveis acima; a página atual é o título. A do cabeçalho sai da mesma função.',
+      estados: [
+        ['default', trilhaDemo([PROCESSOS], 'Buscas')],
+        ['hover', trilhaDemo([PROCESSOS], 'Buscas', 'is-hover')],
+        ['foco', trilhaDemo([PROCESSOS], 'Buscas', 'is-foco')],
+      ],
+      ausentes: {
+        active: 'o clique navega na hora.',
+        disabled: 'todo nível acima da página é alcançável.',
+        erro: 'a trilha não guarda valor.',
+        carregando: 'a trilha nasce com a página.',
+        vazio: 'página de primeiro nível não mostra trilha. O item ativo do menu já diz onde se está.',
+      },
+      variacoes: [['Dois níveis', trilhaDemo([PROCESSOS, { rotulo: 'Buscas', pagina: 'buscas.html' }], 'Buscas em lote')]],
+    });
+  }
+
+  function filtrosDemo(situacao) {
+    const itens = [
+      busca({ rotulo: 'Buscar atividade', placeholder: 'Título ou processo', valor: situacao.ativos ? 'contestação' : '' }),
+      seletor({ rotulo: 'Tipo', opcoes: TIPOS, valor: situacao.ativos ? 'prazo' : '' }),
+      chipFiltro({ rotulo: 'Minhas' }),
+    ];
+    const barra = barraFiltros({ rotulo: 'Filtros das atividades', itens, aoLimpar: () => barra.atualizar({ resultado: '38 atividades' }), ...situacao });
+    return barra.el;
+  }
+
+  function pecaBarraFiltros() {
+    return pecaComEstados({
+      id: 'barra-filtros', titulo: 'Barra de filtros', nota: 'Os filtros à esquerda, o resultado e o limpar à direita. O resultado é lido quando muda, e o limpar só aparece com filtro ativo.',
+      estados: [
+        ['default', filtrosDemo({ ativos: 2, resultado: '4 atividades' })],
+        ['carregando', filtrosDemo({ ativos: 2, carregando: true })],
+        ['vazio', filtrosDemo({ ativos: 0, resultado: '38 atividades' })],
+      ],
+      ausentes: {
+        hover: 'a barra não reage ao cursor. Cada filtro reage sozinho.',
+        active: 'a barra não reage ao clique. Cada filtro reage sozinho.',
+        foco: 'o foco fica em cada filtro, nunca na barra.',
+        disabled: 'cada filtro desabilita sozinho, com o estado dele.',
+        erro: 'filtro não falha. Sem resultado, a lista mostra o estado vazio.',
+      },
+    });
+  }
+
+  const ACOES_DO_PAINEL = [{ variante: 'secundario', rotulo: 'Cancelar' }, { variante: 'primario', rotulo: 'Salvar' }];
+
+  function conteudoDoContato(painel) {
+    const voltar = { variante: 'secundario', rotulo: 'Voltar', aoClicar: () => painel.trocar(conteudoDoContato(painel)) };
+    const novaEtiqueta = botao({ variante: 'texto', iconeEsquerda: 'mais', rotulo: 'Nova etiqueta' });
+    novaEtiqueta.addEventListener('click', () => painel.trocar({
+      titulo: 'Nova etiqueta',
+      corpo: [campo({ rotulo: 'Nome da etiqueta', obrigatorio: true })],
+      rodape: barraAcoes({ rotulo: 'Ações da etiqueta', acoes: [voltar, { variante: 'primario', rotulo: 'Criar', aoClicar: voltar.aoClicar }] }).el,
+    }));
+    return {
+      titulo: 'Adicionar contato',
+      corpo: [campo({ rotulo: 'Nome', obrigatorio: true }), seletor({ rotulo: 'Etiqueta', opcoes: [['', 'Sem etiqueta'], ['cliente', 'Cliente'], ['parte', 'Parte contrária']] }), novaEtiqueta],
+      rodape: barraAcoes({ rotulo: 'Ações do contato', acoes: ACOES_DO_PAINEL.map((acao) => ({ ...acao, aoClicar: () => painel.fechar() })) }).el,
+    };
+  }
+
+  function gatilhoDoPainel() {
+    const painel = painelLateral({ titulo: 'Adicionar contato', corpo: [h('p')] });
+    painel.trocar(conteudoDoContato(painel));
+    const gatilho = botao({ variante: 'secundario', rotulo: 'Abrir o painel' });
+    gatilho.setAttribute('data-abre-painel', '');
+    gatilho.setAttribute('aria-haspopup', 'dialog');
+    gatilho.addEventListener('click', () => {
+      painel.trocar(conteudoDoContato(painel));
+      painel.abrir(gatilho);
+    });
+    return gatilho;
+  }
+
+  // A amostra fica no fluxo da página: sem role="dialog", para não contar como camada aberta.
+  function amostraDoPainel(corpo, transformar) {
+    const rodape = barraAcoes({ rotulo: 'Ações do contato', acoes: ACOES_DO_PAINEL }).el;
+    const amostra = painelLateral({ titulo: 'Adicionar contato', corpo, rodape }).el;
+    amostra.setAttribute('open', '');
+    amostra.setAttribute('role', 'group');
+    amostra.setAttribute('aria-label', 'Amostra do painel lateral');
+    ['aria-modal', 'aria-labelledby'].forEach((nome) => amostra.removeAttribute(nome));
+    amostra.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+    amostra.classList.add('is-estatico');
+    if (transformar) transformar(amostra);
+    return amostra;
+  }
+
+  function pecaPainelLateral() {
+    const nome = () => campo({ rotulo: 'Nome', obrigatorio: true, valor: 'Rafael Antunes' });
+    return pecaComEstados({
+      id: 'painel-lateral', titulo: 'Painel lateral', nota: 'Criar e editar sem sair da página. É a única camada: a nova etiqueta troca o conteúdo dentro dele, sem segundo modal (PA-27). Esc fecha e o foco volta a quem abriu.',
+      estados: [
+        ['default', amostraDoPainel([nome()])],
+        ['foco', amostraDoPainel([nome()], (a) => comClasse(a.querySelector('[data-acao="fechar-painel"]'), 'is-foco'))],
+        ['erro', amostraDoPainel([faixaAviso({ tipo: 'erro', mensagem: 'Não foi possível carregar as etiquetas.', acao: { rotulo: 'Tentar de novo' } }), nome()])],
+        ['carregando', amostraDoPainel([skeleton({ rotulo: 'Carregando o contato' })])],
+      ],
+      ausentes: {
+        hover: 'o painel não reage ao cursor. Os controles dele reagem sozinhos.',
+        active: 'o painel não reage ao clique. Os controles dele reagem sozinhos.',
+        disabled: 'não existe painel desabilitado. Sem permissão, ele não abre.',
+        vazio: 'a peça exige título e corpo.',
+      },
+      variacoes: [['Aberto de verdade', gatilhoDoPainel()]],
+    });
+  }
+
+  const ACOES_DO_FORMULARIO = [{ variante: 'secundario', rotulo: 'Cancelar' }, { variante: 'primario', rotulo: 'Salvar' }];
+  const TEMPO_DE_SALVAR_MS = 900;
+
+  function barraDemo(situacao, mensagem, acoes) {
+    return barraAcoes({ rotulo: 'Ações do contato', acoes: acoes || ACOES_DO_FORMULARIO, situacao, mensagem }).el;
+  }
+
+  // Um formulário que rola, com a barra presa ao fim. Salvar mostra salvando e depois salvo.
+  function formularioDemo() {
+    let barra;
+    const salvar = {
+      variante: 'primario', rotulo: 'Salvar',
+      aoClicar: () => {
+        barra.definirSituacao('salvando');
+        setTimeout(() => barra.definirSituacao('salvo', 'Salvo agora'), TEMPO_DE_SALVAR_MS);
+      },
+    };
+    barra = barraAcoes({ rotulo: 'Ações do contato', acoes: [ACOES_DO_FORMULARIO[0], salvar] });
+    const campos = [
+      campo({ rotulo: 'Nome', obrigatorio: true, valor: 'Rafael Antunes' }),
+      campo({ rotulo: 'E-mail', tipo: 'email', valor: 'rafael.antunes@exemplo.com.br' }),
+      campo({ rotulo: 'Telefone', tipo: 'tel', valor: '(48) 3333-0101' }),
+      areaTexto({ rotulo: 'Observações', valor: TEXTO_DE_LEITURA }),
+    ];
+    return h('div', { class: 'ds-formulario' }, ...campos, barra.el);
+  }
+
+  function pecaBarraAcoes() {
+    return pecaComEstados({
+      id: 'barra-acoes', titulo: 'Barra de ações', nota: 'Fixa no fim do formulário: o estado à esquerda, as ações à direita. Salvando, salvo e erro aparecem na própria barra, junto do botão (PA-30). O botão bloqueado diz o motivo em texto.',
+      estados: [
+        ['default', formularioDemo()],
+        ['disabled', barraDemo('padrao', '', [ACOES_DO_FORMULARIO[0], { variante: 'primario', rotulo: 'Salvar', bloqueio: 'Preencha o nome para salvar.' }])],
+        ['erro', barraDemo('erro', 'Não foi possível salvar. Confira a conexão e tente de novo.')],
+        ['carregando', barraDemo('salvando')],
+      ],
+      ausentes: {
+        hover: 'a barra não reage ao cursor. Cada botão reage sozinho.',
+        active: 'a barra não reage ao clique. Cada botão reage sozinho.',
+        foco: 'o foco fica em cada botão, nunca na barra.',
+        vazio: 'barra sem ação não é desenhada.',
+      },
+      variacoes: [['Salvo', barraDemo('salvo', 'Salvo às 14:32')]],
+    });
+  }
+
+  function stepperDemo(props, transformar) {
+    const raiz = stepper({ rotulo: 'Busca automática', passos: PASSOS_DA_BUSCA, atual: 1, aoIr: () => {}, ...props });
+    if (transformar) transformar(raiz);
+    return raiz;
+  }
+
+  // O stepper vivo volta ao passo clicado.
+  function stepperVivo(atual) {
+    const raiz = stepper({ rotulo: 'Busca automática', passos: PASSOS_DA_BUSCA, atual, aoIr: (indice) => {
+      const novo = stepperVivo(indice);
+      raiz.replaceWith(novo);
+      novo.querySelector('[aria-current="step"]').scrollIntoView({ block: 'nearest' });
+    } });
+    return raiz;
+  }
+
+  function pecaStepper() {
+    const noBotao = (classe) => (raiz) => comClasse(raiz.querySelector('button.stepper-ir'), classe);
+    return pecaComEstados({
+      id: 'stepper', titulo: 'Stepper', nota: 'A peça única para passo a passo e progresso de formulário (PA-28). Diz o passo em texto, e o passo feito volta pelo clique.',
+      estados: [
+        ['default', stepperVivo(2)],
+        ['hover', stepperDemo({}, noBotao('is-hover'))],
+        ['foco', stepperDemo({}, noBotao('is-foco'))],
+        ['erro', stepperDemo({ erro: 1 })],
+      ],
+      ausentes: {
+        active: 'o clique volta ao passo na hora.',
+        disabled: 'o passo seguinte não é botão. O caminho segue em ordem.',
+        carregando: 'a troca de passo é local. A espera de salvar fica na barra de ações.',
+        vazio: 'a peça exige ao menos dois passos.',
+      },
+      variacoes: [
+        ['Concluído', stepper({ rotulo: 'Busca automática', passos: PASSOS_DA_BUSCA, atual: PASSOS_DA_BUSCA.length })],
+        ['Sem voltar', stepper({ rotulo: 'Busca automática', passos: PASSOS_DA_BUSCA, atual: 1 })],
+      ],
+    });
+  }
+
   // --- montagem --------------------------------------------------------------
 
   document.getElementById('fundamentos').append(pecaCor(), pecaTipografia(), pecaEspaco(), pecaRaio(),
@@ -1071,6 +1403,11 @@
 
   document.getElementById('dados').append(pecaTag(), pecaChipFiltro(), pecaChipPrazo(), pecaSelo(), pecaAvatar(),
     pecaTabela(), pecaLinha(), pecaCard(), pecaContato(), pecaPaginacao());
+
+  document.getElementById('navegacao').append(pecaNavbar(),
+    pecaMenuLateral('sidebar-expandida', 'Sidebar expandida', 'Ícone e nome de cada módulo. O item do módulo aberto tem fundo próprio e texto de ação, não só cor.', false),
+    pecaMenuLateral('sidebar-recolhida', 'Sidebar recolhida', 'Só o ícone. O nome continua como nome acessível e vira dica. A escolha persiste entre páginas.', true),
+    pecaAbas(), pecaTrilha(), pecaBarraFiltros(), pecaPainelLateral(), pecaBarraAcoes(), pecaStepper());
 
   atualizarValores();
   new MutationObserver(atualizarValores).observe(document.documentElement, { attributes: true, attributeFilter: ['data-tema'] });

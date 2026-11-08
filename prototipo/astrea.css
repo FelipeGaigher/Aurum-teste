@@ -298,6 +298,9 @@
   --component-row-mark: var(--color-border-strong);
   --component-card-contato-min: var(--size-column);
   --component-upsell-width: var(--size-dialog-wide);
+  --component-panel-width: var(--size-dialog-wide);
+  --component-step-mark-size: var(--size-logo);
+  --component-step-link-width: var(--space-5);
 }
 /* fim dos componentes */
 *, *::before, *::after { box-sizing: border-box; }
@@ -511,7 +514,9 @@ body[data-menu="recolhido"] .menu-grupo { position: absolute; width: 1px; height
   border: 0;
   border-top: var(--border-width) solid var(--color-border-default);
 }
-.menu-lateral a {
+/* item do menu: a mesma classe na moldura e na miniatura do design system. As classes .is-* forçam o estado na miniatura. */
+.item-menu {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-4);
@@ -523,14 +528,15 @@ body[data-menu="recolhido"] .menu-grupo { position: absolute; width: 1px; height
   line-height: var(--font-leading-tight);
   text-decoration: none;
 }
-.menu-lateral a svg { color: var(--color-text-muted); }
-.menu-lateral a:hover { background-color: var(--color-bg-hover); }
-.menu-lateral a[aria-current="page"] {
+.item-menu svg { color: var(--color-text-muted); }
+.item-menu:hover, .item-menu.is-hover { background-color: var(--color-bg-hover); }
+.item-menu[aria-current="page"], .item-menu.is-atual {
   background-color: var(--component-menu-item-active-bg);
   color: var(--component-menu-item-active-text);
   font-weight: var(--font-weight-semibold);
 }
-.menu-lateral a[aria-current="page"] svg { color: currentColor; }
+.item-menu[aria-current="page"] svg, .item-menu.is-atual svg { color: currentColor; }
+.item-menu .selo { margin-left: auto; }
 
 /* recolher a sidebar: botão quadrado ao lado da marca, no cabeçalho */
 .recolher {
@@ -558,8 +564,16 @@ body[data-menu="recolhido"] .marca:hover .logo,
 body[data-menu="recolhido"] .marca:has(.recolher:focus-visible) .logo { opacity: 0; }
 .recolher, .logo { transition: opacity 150ms; }
 body[data-menu="recolhido"] .menu-lateral { padding-left: var(--space-2); padding-right: var(--space-2); }
-body[data-menu="recolhido"] .menu-lateral a { justify-content: center; padding: 0; }
-body[data-menu="recolhido"] .menu-lateral .rotulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+body[data-menu="recolhido"] .menu-lateral .item-menu, .item-menu.is-recolhido { justify-content: center; padding: 0; }
+body[data-menu="recolhido"] .menu-lateral .rotulo, .item-menu.is-recolhido .rotulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* recolhido, o selo vai para o canto do ícone e continua com o texto */
+body[data-menu="recolhido"] .menu-lateral .item-menu .selo, .item-menu.is-recolhido .selo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-height: 0;
+  padding: 0 var(--space-1);
+}
 body[data-menu="recolhido"] .recolher svg { transform: rotate(180deg); }
 body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 @media (prefers-reduced-motion: reduce) { .recolher, .logo, .recolher svg, .seletor svg { transition: none; } }
@@ -609,8 +623,10 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   font-size: var(--font-size-label);
   line-height: var(--font-leading-tight);
 }
-.trilha a { color: inherit; }
-.trilha a:hover { color: var(--color-text-default); }
+.trilha ol { display: flex; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
+.trilha li + li::before { content: "/" / ""; padding: 0 var(--space-1); }
+.trilha a { border-radius: var(--radius); color: inherit; }
+.trilha a:hover, .trilha a.is-hover { color: var(--color-text-default); }
 
 .atalhos li, .usuario-area { position: relative; }
 
@@ -1432,6 +1448,139 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
   }
 }
 
+/* navegação: abas. Um ponto de Tab na aba marcada, as setas trocam. */
+.abas { display: grid; gap: var(--space-4); min-width: 0; }
+.abas-lista { display: flex; flex-wrap: wrap; gap: var(--space-1); border-bottom: var(--border-width) solid var(--color-border-default); }
+.aba {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--component-control-height);
+  padding: 0 var(--space-3);
+  background: none;
+  border: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+  white-space: nowrap;
+  cursor: pointer;
+}
+/* O hover troca o texto para o padrão: o cinza sobre o fundo sutil fica abaixo de 4,5:1. */
+.aba:hover:not(:disabled), .aba.is-hover { background-color: var(--color-bg-subtle); color: var(--color-text-default); }
+.aba:active:not(:disabled), .aba.is-active { background-color: var(--color-bg-subtle); color: var(--color-text-default); box-shadow: inset 0 calc(-1 * var(--focus-width)) 0 var(--color-border-strong); }
+.aba[aria-selected="true"] { color: var(--color-action); font-weight: var(--font-weight-semibold); box-shadow: inset 0 calc(-1 * var(--focus-width)) 0 var(--color-action); }
+.aba:disabled { cursor: not-allowed; }
+.abas-painel { min-width: 0; border-radius: var(--radius); }
+
+/* barra de filtros: os filtros à esquerda, o resultado e o limpar à direita */
+.barra-filtros { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-3) var(--space-4); width: 100%; }
+.barra-filtros-itens { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-3); min-width: 0; }
+.barra-filtros-fim { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); min-height: var(--component-control-height); margin-left: auto; }
+.barra-filtros-resultado { display: inline-flex; align-items: center; gap: var(--space-1); margin: 0; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+
+/* painel lateral: a camada única (PA-27). Conteúdo novo troca dentro dele. */
+.painel-lateral {
+  width: var(--component-panel-width);
+  max-width: 100vw;
+  height: 100%;
+  max-height: none;
+  margin: 0 0 0 auto;
+  padding: 0;
+  background-color: var(--component-dialog-bg);
+  border: 0;
+  border-left: var(--border-width) solid var(--color-border-default);
+  box-shadow: var(--component-dialog-shadow);
+  color: var(--color-text-default);
+}
+.painel-lateral[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+.painel-lateral::backdrop { background-color: var(--component-dialog-backdrop); }
+.painel-lateral.is-estatico {
+  position: static;
+  width: var(--component-panel-width);
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--component-dialog-radius);
+}
+.painel-lateral-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-width) solid var(--color-border-default);
+}
+.painel-lateral-titulo { margin: 0; font-size: var(--font-size-dialog); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); }
+.painel-lateral-corpo { display: grid; align-content: start; justify-items: start; gap: var(--space-4); min-width: 0; padding: var(--space-5); overflow-y: auto; }
+.painel-lateral-rodape { padding: var(--space-3) var(--space-5); border-top: var(--border-width) solid var(--color-border-default); }
+.painel-lateral-rodape > .barra-acoes { position: static; padding: 0; background: none; border: 0; }
+
+/* barra de ações: fixa no fim do formulário, com o estado da ação à esquerda (PA-30) */
+.barra-acoes {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-surface);
+  border-top: var(--border-width) solid var(--color-border-default);
+}
+.barra-acoes-situacao { display: grid; gap: var(--space-1); min-width: 0; }
+.barra-acoes-status { display: flex; align-items: center; gap: var(--space-2); margin: 0; color: var(--color-text-muted); overflow-wrap: anywhere; }
+.barra-acoes-erro { color: var(--color-text-danger); }
+.barra-acoes-status:empty { display: none; }
+.barra-acoes[data-situacao="salvo"] .barra-acoes-status svg.icone { color: var(--color-text-success); }
+.barra-acoes-fim { display: grid; justify-items: end; gap: var(--space-1); margin-left: auto; }
+.barra-acoes-motivo { margin: 0; color: var(--color-text-danger); font-size: var(--font-size-label); line-height: var(--font-leading-tight); }
+.barra-acoes[data-situacao="salvando"] .botao { cursor: progress; }
+
+/* stepper: a peça única para passos e progresso de formulário (PA-28) */
+.stepper { display: grid; gap: var(--space-2); }
+.stepper-leitura { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); line-height: var(--font-leading-tight); }
+.stepper-lista { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.stepper-passo { display: flex; align-items: center; gap: var(--space-2); }
+.stepper-passo + .stepper-passo::before { content: ""; width: var(--component-step-link-width); border-top: var(--border-width) solid var(--color-border-strong); }
+.stepper-ir {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--component-target-min);
+  padding: 0 var(--space-1);
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  color: inherit;
+  font: inherit;
+}
+button.stepper-ir { cursor: pointer; }
+button.stepper-ir:hover, button.stepper-ir.is-hover { background-color: var(--color-bg-hover); }
+button.stepper-ir:hover .stepper-nome, button.stepper-ir.is-hover .stepper-nome { text-decoration: underline; }
+.stepper-marca {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--component-step-mark-size);
+  height: var(--component-step-mark-size);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-round);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.stepper-marca svg.icone { width: var(--font-size-emphasis); height: var(--font-size-emphasis); }
+.stepper-atual .stepper-marca { background-color: var(--color-action); border-color: var(--color-action); color: var(--color-action-text); }
+.stepper-atual .stepper-nome { font-weight: var(--font-weight-semibold); }
+.stepper-feito .stepper-marca { border-color: var(--color-action); color: var(--color-action); }
+.stepper-pendente { color: var(--color-text-muted); }
+.stepper-erro .stepper-marca { border-color: var(--color-text-danger); color: var(--color-text-danger); }
+.stepper-erro .stepper-nome { color: var(--color-text-danger); font-weight: var(--font-weight-semibold); }
+
 /* design system: a página */
 .ds-grupo { display: grid; gap: var(--space-5); margin-bottom: var(--space-7); }
 .ds-grupo > header { display: grid; gap: var(--space-1); }
@@ -1513,7 +1662,28 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 
 .ds-estados { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4) var(--space-5); }
 .ds-estado { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: var(--space-1); min-width: 0; max-width: 100%; }
-.ds-estado:has(.campo-total, .faixa-aviso, .tabela-quadro, .lista-atividades, .skeleton-linha) { flex: 1 1 100%; }
+.ds-estado:has(.campo-total, .faixa-aviso, .tabela-quadro, .lista-atividades, .skeleton-linha, .ds-navbar, .barra-filtros, .barra-acoes) { flex: 1 1 100%; }
+
+/* miniaturas da moldura: a navbar é a cópia inerte da real; o menu usa .item-menu */
+.ds-navbar { width: 100%; overflow: hidden; border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); }
+.cabecalho.is-miniatura { position: relative; z-index: 0; }
+.ds-menu { width: var(--size-sidebar); padding: var(--space-2); background-color: var(--component-sidebar-bg); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); }
+.ds-menu.is-recolhida { width: var(--size-sidebar-recolhida); }
+.ds-menu ul { display: grid; margin: 0; padding: 0; list-style: none; }
+.ds-trilha { display: grid; gap: var(--space-1); }
+.ds-trilha-titulo { font-size: var(--font-size-title); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); }
+/* formulário que rola, para mostrar a barra de ações presa ao fim */
+.ds-formulario {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  max-height: var(--size-column);
+  padding: var(--space-4) var(--space-4) 0;
+  overflow-y: auto;
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+}
+.ds-formulario > .barra-acoes { margin: 0 calc(-1 * var(--space-4)); width: auto; }
 /* a dica aberta à força ocupa o espaço abaixo do alvo, sem cobrir a célula seguinte */
 .ds-estado:has(.tooltip.is-aberta) { padding-bottom: var(--space-6); }
 .ds-estado-nome { color: var(--color-text-muted); font-size: var(--font-size-label); }

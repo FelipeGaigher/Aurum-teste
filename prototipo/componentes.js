@@ -1,5 +1,6 @@
-// Componentes do design system. Não depende da moldura: uma tela pode usar as
-// peças sem o cabeçalho e o menu. Entrada fora do contrato vira erro nomeado.
+// Componentes do design system. Só a trilha depende da moldura, para sair da
+// mesma função que monta a do cabeçalho; as outras peças valem sem cabeçalho e
+// sem menu. Entrada fora do contrato vira erro nomeado.
 (function () {
   const ICONES = {
     mais: '<path d="M12 5v14M5 12h14"/>',
@@ -1762,10 +1763,308 @@
     return raiz;
   }
 
+  // --- navegação -------------------------------------------------------------
+
+  const FOCAVEIS = 'button:not(:disabled), [href], input:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
+
+  function validarAbas({ rotulo, itens, valor }) {
+    exigir(rotulo, 'abas', 'rotulo é obrigatório');
+    exigir(Array.isArray(itens) && itens.length > 1, 'abas', 'itens precisa de ao menos duas abas');
+    exigir(itens.every((i) => i.chave && i.rotulo), 'abas', 'cada aba tem chave e rotulo');
+    const inicial = valor === undefined ? (itens.find((i) => !i.desabilitado) || {}).chave : valor;
+    exigir(itens.some((i) => i.chave === inicial && !i.desabilitado), 'abas', `valor desconhecido ou desabilitado "${inicial}"`);
+    return inicial;
+  }
+
+  function parDeAba(base, item, indice) {
+    const aba = criarBotao('aba');
+    aba.id = `${base}-aba-${indice}`;
+    aba.setAttribute('role', 'tab');
+    aba.disabled = Boolean(item.desabilitado);
+    aba.textContent = item.rotulo;
+    const painel = criar('div', 'abas-painel');
+    painel.id = `${base}-painel-${indice}`;
+    painel.setAttribute('role', 'tabpanel');
+    painel.setAttribute('aria-labelledby', aba.id);
+    painel.tabIndex = 0;
+    aba.setAttribute('aria-controls', painel.id);
+    if (item.conteudo) painel.append(...[].concat(item.conteudo));
+    return { chave: item.chave, aba, painel };
+  }
+
+  // Padrão ARIA de abas, com ativação automática: a seta já mostra o painel.
+  function abas(props = {}) {
+    let atual = validarAbas(props);
+    const raiz = criar('div', 'abas');
+    const lista = criar('div', 'abas-lista');
+    lista.setAttribute('role', 'tablist');
+    lista.setAttribute('aria-label', props.rotulo);
+    const base = novoId('abas');
+    const pares = props.itens.map((item, indice) => parDeAba(base, item, indice));
+
+    function aplicar() {
+      pares.forEach(({ chave, aba, painel }) => {
+        const marcada = chave === atual;
+        aba.setAttribute('aria-selected', String(marcada));
+        aba.tabIndex = marcada ? 0 : -1;
+        painel.hidden = !marcada;
+      });
+      raiz.dataset.valor = atual;
+    }
+
+    function escolher(par, focar) {
+      const mudou = par.chave !== atual;
+      atual = par.chave;
+      aplicar();
+      if (focar) par.aba.focus();
+      if (mudou && props.aoMudar) props.aoMudar(atual);
+    }
+
+    lista.addEventListener('keydown', (e) => {
+      const livres = pares.filter((p) => !p.aba.disabled);
+      const posicao = livres.findIndex((p) => p.aba === e.target);
+      const destino = { ArrowRight: posicao + 1, ArrowLeft: posicao - 1, Home: 0, End: livres.length - 1 }[e.key];
+      if (posicao < 0 || destino === undefined) return;
+      e.preventDefault();
+      escolher(livres[(destino + livres.length) % livres.length], true);
+    });
+    pares.forEach((par) => par.aba.addEventListener('click', () => escolher(par, false)));
+    lista.append(...pares.map((p) => p.aba));
+    raiz.append(lista, ...pares.map((p) => p.painel));
+    aplicar();
+    return raiz;
+  }
+
+  // A trilha do cabeçalho e esta peça saem da mesma função, em moldura.js.
+  function trilha(props = {}) {
+    const { itens } = props;
+    exigir(window.Moldura, 'trilha', 'exige moldura.js carregado antes de componentes.js');
+    exigir(Array.isArray(itens) && itens.length, 'trilha', 'itens precisa de ao menos um nível acima da página');
+    exigir(itens.every((i) => i.rotulo && i.pagina), 'trilha', 'cada nível tem rotulo e pagina');
+    const modelo = document.createElement('template');
+    modelo.innerHTML = window.Moldura.htmlTrilha(itens);
+    return modelo.content.firstElementChild;
+  }
+
+  function elementos(peca, valor, nome) {
+    const lista = valor === undefined || valor === null ? [] : [].concat(valor);
+    exigir(lista.every((el) => el instanceof Node), peca, `${nome} aceita só elementos montados`);
+    return lista;
+  }
+
+  // itens: as peças de filtro já montadas. O resultado é lido pelo leitor de tela quando muda.
+  function barraFiltros(props = {}) {
+    const { rotulo, itens, aoLimpar } = props;
+    exigir(rotulo, 'barraFiltros', 'rotulo é obrigatório');
+    const filtros = elementos('barraFiltros', itens, 'itens');
+    exigir(filtros.length, 'barraFiltros', 'itens precisa de ao menos um filtro');
+
+    const el = criar('div', 'barra-filtros');
+    el.setAttribute('role', 'group');
+    el.setAttribute('aria-label', rotulo);
+    const grupo = criar('div', 'barra-filtros-itens');
+    grupo.append(...filtros);
+    const resultado = criar('p', 'barra-filtros-resultado');
+    resultado.setAttribute('role', 'status');
+    const fim = criar('div', 'barra-filtros-fim');
+    fim.append(resultado);
+    const limpar = aoLimpar ? botao({ variante: 'texto', rotulo: 'Limpar filtros' }) : null;
+    if (limpar) {
+      limpar.addEventListener('click', aoLimpar);
+      fim.append(limpar);
+    }
+    el.append(grupo, fim);
+
+    function atualizar({ resultado: texto = '', ativos = 0, carregando = false } = {}) {
+      exigir(Number.isInteger(ativos) && ativos >= 0, 'barraFiltros', 'ativos é um inteiro a partir de zero');
+      resultado.replaceChildren(...(carregando ? [svg(GIRO, 'icone botao-giro'), 'Atualizando a lista'] : [texto]));
+      el.toggleAttribute('aria-busy', carregando);
+      if (limpar) {
+        limpar.hidden = ativos === 0;
+        limpar.textContent = ativos > 1 ? `Limpar ${ativos} filtros` : 'Limpar filtro';
+      }
+    }
+    atualizar(props);
+    return { el, atualizar };
+  }
+
+  // PA-27: uma camada só. Conteúdo novo troca dentro do painel com trocar(), sem abrir outra.
+  function painelLateral(props = {}) {
+    const { aoFechar } = props;
+    const el = criar('dialog', 'painel-lateral');
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    const tituloEl = criar('h2', 'painel-lateral-titulo');
+    tituloEl.id = novoId('painel-titulo');
+    el.setAttribute('aria-labelledby', tituloEl.id);
+    const fecharEl = botaoFechar('Fechar painel', () => fechar());
+    fecharEl.dataset.acao = 'fechar-painel';
+    const topo = criar('div', 'painel-lateral-topo');
+    topo.append(tituloEl, fecharEl);
+    const corpoEl = criar('div', 'painel-lateral-corpo');
+    const rodapeEl = criar('div', 'painel-lateral-rodape');
+    el.append(topo, corpoEl, rodapeEl);
+
+    let origem = null;
+    const controle = { el, abrir, fechar, trocar };
+
+    function focarInicio() {
+      (corpoEl.querySelector(FOCAVEIS) || fecharEl).focus();
+    }
+
+    function trocar({ titulo, corpo, rodape } = {}) {
+      exigir(titulo, 'painelLateral', 'titulo é obrigatório');
+      const conteudo = elementos('painelLateral', corpo, 'corpo');
+      exigir(conteudo.length, 'painelLateral', 'corpo é obrigatório');
+      tituloEl.textContent = titulo;
+      corpoEl.replaceChildren(...conteudo);
+      rodapeEl.replaceChildren(...elementos('painelLateral', rodape, 'rodape'));
+      rodapeEl.hidden = !rodapeEl.childElementCount;
+      if (el.open) focarInicio();
+    }
+
+    function abrir(de) {
+      ocuparCamada('painelLateral', controle);
+      origem = de || document.activeElement;
+      if (!el.isConnected) document.body.append(el);
+      el.showModal();
+      focarInicio();
+    }
+
+    function fechar() {
+      if (el.open) el.close();
+    }
+
+    // Esc fecha pelo próprio dialog; o close devolve o foco a quem abriu.
+    el.addEventListener('close', () => {
+      soltarCamada(controle);
+      if (origem && origem.isConnected) origem.focus();
+      origem = null;
+      if (aoFechar) aoFechar();
+    });
+    trocar(props);
+    return controle;
+  }
+
+  // PA-30: o resultado da ação aparece na barra, junto do botão. Toast só para o que está fora da tela.
+  const SITUACOES_DA_BARRA = {
+    padrao: { icone: null, texto: '' },
+    salvando: { icone: 'giro', texto: 'Salvando…' },
+    salvo: { icone: 'marca', texto: 'Salvo' },
+    erro: { icone: 'alerta', texto: 'Não foi possível salvar.' },
+  };
+
+  function botaoDaBarra(acao, ocupada) {
+    const el = botao(acao);
+    if (acao.bloqueio) {
+      el.disabled = true;
+      const motivo = criar('p', 'barra-acoes-motivo', acao.bloqueio);
+      motivo.id = novoId('motivo');
+      el.setAttribute('aria-describedby', motivo.id);
+      return { el, motivo };
+    }
+    el.addEventListener('click', () => { if (!ocupada() && acao.aoClicar) acao.aoClicar(); });
+    return { el, motivo: null };
+  }
+
+  // acoes: as props de DS.botao, com aoClicar e bloqueio (o motivo, em texto, de o botão estar desligado).
+  function barraAcoes(props = {}) {
+    const { rotulo, acoes, situacao = 'padrao', mensagem } = props;
+    exigir(rotulo, 'barraAcoes', 'rotulo é obrigatório');
+    exigir(Array.isArray(acoes) && acoes.length, 'barraAcoes', 'acoes precisa de ao menos uma ação');
+
+    const el = criar('div', 'barra-acoes');
+    el.setAttribute('role', 'group');
+    el.setAttribute('aria-label', rotulo);
+    const status = criar('p', 'barra-acoes-status');
+    status.setAttribute('role', 'status');
+    const alerta = criar('p', 'barra-acoes-status barra-acoes-erro');
+    alerta.setAttribute('role', 'alert');
+    const lugar = criar('div', 'barra-acoes-situacao');
+    lugar.append(status, alerta);
+
+    let atual = situacao;
+    const pares = acoes.map((acao) => botaoDaBarra(acao, () => atual === 'salvando'));
+    const fim = criar('div', 'barra-acoes-fim');
+    fim.append(grupoBotoes(pares.map((p) => p.el)), ...pares.filter((p) => p.motivo).map((p) => p.motivo));
+    el.append(lugar, fim);
+
+    function definirSituacao(nova, texto) {
+      const meta = SITUACOES_DA_BARRA[nova];
+      exigir(meta, 'barraAcoes', `situação desconhecida "${nova}"`);
+      atual = nova;
+      el.dataset.situacao = nova;
+      const frase = texto || meta.texto;
+      let marca = null;
+      if (meta.icone) marca = meta.icone === 'giro' ? svg(GIRO, 'icone botao-giro') : icone(meta.icone);
+      const conteudo = frase ? [marca, frase].filter(Boolean) : [];
+      status.replaceChildren(...(nova === 'erro' ? [] : conteudo));
+      alerta.replaceChildren(...(nova === 'erro' ? conteudo : []));
+      pares.forEach(({ el: b, motivo }) => {
+        if (motivo) return;
+        if (nova === 'salvando') b.setAttribute('aria-disabled', 'true');
+        else b.removeAttribute('aria-disabled');
+      });
+    }
+    definirSituacao(situacao, mensagem);
+    return { el, definirSituacao };
+  }
+
+  function validarStepper({ rotulo, passos, atual, erro }) {
+    exigir(rotulo, 'stepper', 'rotulo é obrigatório');
+    exigir(Array.isArray(passos) && passos.length > 1 && passos.every(Boolean), 'stepper', 'passos precisa de ao menos dois rótulos');
+    exigir(Number.isInteger(atual) && atual >= 0 && atual <= passos.length, 'stepper', `atual fora de 0 a ${passos.length}`);
+    exigir(erro === undefined || (Number.isInteger(erro) && erro >= 0 && erro < passos.length), 'stepper', 'erro é o índice de um passo');
+  }
+
+  const LEITURA_DO_PASSO = { feito: ', concluído', erro: ', com erro', atual: ', passo atual', pendente: '' };
+
+  function passoDoStepper(texto, indice, { atual, erro, aoIr }) {
+    let situacao = 'pendente';
+    if (indice === erro) situacao = 'erro';
+    else if (indice < atual) situacao = 'feito';
+    else if (indice === atual) situacao = 'atual';
+
+    const item = criar('li', `stepper-passo stepper-${situacao}`);
+    if (indice === atual) item.setAttribute('aria-current', 'step');
+    const marca = criar('span', 'stepper-marca');
+    marca.setAttribute('aria-hidden', 'true');
+    if (situacao === 'feito') marca.append(icone('marca'));
+    else if (situacao === 'erro') marca.append(icone('alerta'));
+    else marca.textContent = String(indice + 1);
+    const partes = [marca, criar('span', 'stepper-nome', texto)];
+    if (LEITURA_DO_PASSO[situacao]) partes.push(criar('span', 'visualmente-oculto', LEITURA_DO_PASSO[situacao]));
+
+    // Só o passo feito volta. O passo seguinte não é botão: o caminho segue em ordem.
+    const voltavel = aoIr && indice < atual;
+    const alvo = voltavel ? criarBotao('stepper-ir') : criar('span', 'stepper-ir');
+    alvo.append(...partes);
+    if (voltavel) alvo.addEventListener('click', () => aoIr(indice));
+    item.append(alvo);
+    return item;
+  }
+
+  // PA-28: a peça única para passo a passo e progresso de formulário. atual igual ao total é o fim.
+  function stepper(props = {}) {
+    const opcoes = { atual: 0, ...props };
+    validarStepper(opcoes);
+    const { rotulo, passos, atual } = opcoes;
+    const raiz = criar('div', 'stepper');
+    raiz.setAttribute('role', 'group');
+    raiz.setAttribute('aria-label', rotulo);
+    const leitura = atual === passos.length ? 'Todos os passos concluídos' : `Passo ${atual + 1} de ${passos.length}`;
+    const lista = criar('ol', 'stepper-lista');
+    lista.append(...passos.map((texto, indice) => passoDoStepper(texto, indice, opcoes)));
+    raiz.append(criar('p', 'stepper-leitura', leitura), lista);
+    raiz.dataset.valor = String(atual);
+    return raiz;
+  }
+
   window.DS = {
     ICONES: Object.keys(ICONES), icone, botao, grupoBotoes, menuAcoes,
     campo, areaTexto, busca, seletor, seletorMultiplo, seletorPessoas, data, periodo, caixa, radio, chave,
     toast, faixaAviso, dialogo, tooltip, progresso, skeleton, estadoVazio, upsell,
     descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade, cardAtividade, cardContato, paginacao,
+    abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper,
   };
 })();

@@ -1002,7 +1002,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Produces: a classe `.barra-acoes`, fixa no fim do formulário.
 - Produces: o atributo `data-abre-painel`, obrigatório em todo gatilho de painel lateral. RF-12 lê esse atributo.
 
-- [ ] **Step 1: Confirmar o estado vermelho**
+- [x] **Step 1: Confirmar o estado vermelho**
 
 ```bash
 node scripts/verificar-app.js --rf RF-06
@@ -1010,7 +1010,7 @@ node scripts/verificar-app.js --rf RF-06
 
 Esperado: `RF-06 FALHOU`, no grupo `navegacao`.
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 - Navbar e sidebar aparecem como miniatura, com a mesma classe da moldura.
 - Item do menu documenta `icone`, `rotulo`, `selo`, `ativo` e `recolhido`.
@@ -1020,7 +1020,7 @@ Esperado: `RF-06 FALHOU`, no grupo `navegacao`.
 
 Esperado: a página do design system completa, nos seis grupos.
 
-- [ ] **Step 3: Executar e confirmar que passa**
+- [x] **Step 3: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/astrea.css prototipo/componentes.js prototipo/design-system.html
@@ -1029,7 +1029,7 @@ node scripts/verificar-app.js --rf RF-06,RF-07,RF-12,RF-15 --paginas design-syst
 
 Esperado: `verificar: 0 erro(s)` e os quatro RF com `ok`.
 
-- [ ] **Step 4: Entregar**
+- [x] **Step 4: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 

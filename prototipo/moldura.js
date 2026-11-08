@@ -213,10 +213,22 @@
       </div>`;
   }
 
-  function htmlTrilha(pagina) {
+  const ENTIDADES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+  function escapar(texto) {
+    return String(texto).replace(/[&<>"']/g, (c) => ENTIDADES[c]);
+  }
+
+  // Os níveis acima da página, do mais alto ao mais próximo. A página atual é o título.
+  // DS.trilha usa esta mesma função.
+  function htmlTrilha(niveis) {
+    const itens = niveis.map((n) => `<li><a href="${escapar(n.pagina)}">${escapar(n.rotulo)}</a></li>`);
+    return `<nav class="trilha" aria-label="Trilha"><ol>${itens.join('')}</ol></nav>`;
+  }
+
+  function htmlTrilhaDaPagina(pagina) {
     const modulo = MENU.find((i) => i.pagina === MODULO_DA_PAGINA[pagina]);
-    if (!modulo) return '';
-    return `<nav class="trilha" aria-label="Trilha"><a href="${modulo.pagina}">${modulo.rotulo}</a></nav>`;
+    return modulo ? htmlTrilha([modulo]) : '';
   }
 
   function htmlCabecalho(pagina) {
@@ -235,7 +247,7 @@
   </div>
 
   <div class="titulo-cabecalho">
-    ${htmlTrilha(pagina)}
+    ${htmlTrilhaDaPagina(pagina)}
     <h1></h1>
   </div>
 
@@ -279,11 +291,22 @@
 </header>`;
   }
 
+  // Item do menu. O design system monta a miniatura com esta mesma função.
+  // selo: { rotulo, descricao }; selo sem explicação não entra (PA-29).
+  function htmlItemMenu({ pagina, icone, rotulo, selo, ativo = false, recolhido = false }) {
+    if (!ICONES[icone]) throw new Error(`Moldura.htmlItemMenu: ícone desconhecido "${icone}"`);
+    if (selo && !(selo.rotulo && selo.descricao)) throw new Error('Moldura.htmlItemMenu: selo exige rotulo e descricao (PA-29)');
+    const atual = ativo ? ' aria-current="page"' : '';
+    const dica = recolhido ? ` title="${escapar(rotulo)}"` : '';
+    const marca = selo
+      ? `<span class="selo" title="${escapar(selo.descricao)}">${escapar(selo.rotulo)}<span class="visualmente-oculto">: ${escapar(selo.descricao)}</span></span>`
+      : '';
+    return `<a class="item-menu${recolhido ? ' is-recolhido' : ''}" href="${escapar(pagina)}"${atual}${dica}>`
+      + `${svg(icone)}<span class="rotulo">${escapar(rotulo)}</span>${marca}</a>`;
+  }
+
   function htmlLista(itens, ativa, atributos) {
-    const linhas = itens.map((item) => {
-      const atual = item.pagina === ativa ? ' aria-current="page"' : '';
-      return `<li><a href="${item.pagina}"${atual}>${svg(item.icone)}<span class="rotulo">${item.rotulo}</span></a></li>`;
-    });
+    const linhas = itens.map((item) => `<li>${htmlItemMenu({ ...item, ativo: item.pagina === ativa })}</li>`);
     return `<ul ${atributos}>${linhas.join('')}</ul>`;
   }
 
@@ -318,7 +341,7 @@
     ligarMenu(document.getElementById('abrir-usuario'), document.getElementById('menu-usuario'));
   }
 
-  window.Moldura = { MENU, montar };
+  window.Moldura = { MENU, montar, htmlItemMenu, htmlTrilha };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', montar);
   else montar();
