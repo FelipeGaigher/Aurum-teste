@@ -226,3 +226,15 @@ com data. O que foi entregue fica no commit, não aqui.
   paint". O deck foi refeito no molde da Questão 2. Um problema por
   slide, texto à esquerda e evidência desenhada à direita. Dois números
   do brief saíram por não existirem nas fontes.
+- À noite, as capturas do protótipo no Figma estavam todas em "Segoe UI",
+  fonte que o Figma não tem. O Chrome da captura não tinha Museo Sans nem
+  Open Sans, e caía na terceira opção da pilha. O script de captura
+  passou a carregar Open Sans e Roboto Mono só na hora da captura. As
+  treze telas foram capturadas de novo, sem fonte ausente.
+- O conversor do Figma separa um rótulo em negrito do texto que o segue
+  em dois nós. Quando o texto quebra linha, os dois se sobrepõem. Nos
+  Questionários, os rótulos "Ressalva" e "Causa provável" viraram bloco,
+  na linha de cima, e a captura ficou limpa.
+- A Área de trabalho da Questão 3 entrou no Figma em Lista, com o painel
+  aberto, igual ao slide. Esse estado vive no armazenamento do navegador.
+  O script de captura passou a aceitá-lo por variável de ambiente.
