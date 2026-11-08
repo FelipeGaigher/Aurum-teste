@@ -19,7 +19,7 @@
   .agenda-barra {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-end;
     gap: var(--space-2) var(--space-4);
     margin-bottom: var(--space-3);
   }
@@ -50,8 +50,12 @@
   .visao[aria-selected="true"] { border-bottom-color: var(--color-action); color: var(--color-action); font-weight: var(--font-weight-semibold); }
 
   /* A grade ocupa a altura que sobra na tela e rola por dentro; o JS mede --grade-altura (pedido de Felipe, 08/11). */
-  .grade-agenda { min-width: 0; height: var(--grade-altura, auto); overflow: auto; }
+  /* position: relative prende o texto visualmente oculto das linhas na rolagem da grade; sem ele, a lista estica a página. */
+  .grade-agenda { position: relative; min-width: 0; height: var(--grade-altura, auto); overflow: auto; }
   .agenda-vazio { margin-bottom: var(--space-3); }
+  /* Busca: a contagem fica entre a barra e a grade, e some quando não há busca. */
+  .agenda-contagem { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
+  .agenda-contagem:not(:empty) { margin-bottom: var(--space-2); }
 
   /* mês e semana: sete colunas, domingo a sábado */
   .mes-semana, .mes-dias, .semana-dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
@@ -78,8 +82,28 @@
     border-right: var(--border-width) solid var(--color-border-default);
     border-bottom: var(--border-width) solid var(--color-border-default);
   }
-  .semana-dias { border-top: var(--border-width) solid var(--color-border-default); }
-  .semana-dias .dia { min-height: calc(var(--grade-altura, 640px) - var(--density-row-compact) - 2 * var(--border-width)); padding: var(--space-2); }
+  /* Semana: rótulos de hora à esquerda e sete dias. A cabeça dos dias e o "Dia todo"
+     ficam presos no topo da grade enquanto as horas rolam (pedido de Felipe, 08/11). */
+  .semana-topo, .semana-horas { display: grid; grid-template-columns: calc(var(--size-control) * 2) minmax(0, 1fr); }
+  .semana-topo {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--color-bg-page);
+    border-top: var(--border-width) solid var(--color-border-default);
+  }
+  .semana-canto {
+    padding: calc(var(--space-2) + var(--size-chip) + var(--space-1)) var(--space-2) 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-label);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .semana-dias .dia { min-height: calc(var(--density-row-compact) * 2); padding: var(--space-2); }
+  .semana-dias .itens-dia { max-height: calc(var(--density-row-compact) * 3); overflow-y: auto; }
+  .semana-colunas { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-left: var(--border-width) solid var(--color-border-default); }
+  .semana-colunas .horas { border-right: var(--border-width) solid var(--color-border-default); }
+  .horas.semana-rotulos li { justify-content: flex-end; padding: var(--space-1) var(--space-2) 0 0; }
   .dia-numero {
     display: inline-grid;
     place-items: center;
@@ -173,8 +197,10 @@
       <div class="visoes" role="tablist" aria-label="Visão da agenda" id="visoes"></div>
       <div class="agenda-navegar" id="agenda-navegar"></div>
       <h2 class="agenda-periodo" id="agenda-periodo" aria-live="polite"></h2>
+      <div class="agenda-buscar" id="agenda-buscar"></div>
       <div class="agenda-criar" id="agenda-criar"></div>
     </div>
+    <p class="agenda-contagem" id="agenda-contagem" role="status"></p>
     <div class="agenda">
       <section class="grade-agenda" id="grade-agenda" tabindex="-1" role="tabpanel" aria-labelledby="visao-dia"></section>
       <aside class="prioridades" aria-labelledby="prioridades-titulo">
@@ -227,7 +253,23 @@
 
   const ATIVIDADES = (vazio ? [] : window.DADOS.ATIVIDADES).map(naAgenda);
 
-  function doDia(d) { return ATIVIDADES.filter((a) => mesmoDia(a.data, d)); }
+  // Busca por título, número do processo ou responsável, sem acento e sem maiúscula
+  // (Felipe: "vai que sabe o código do processo ou o nome da pessoa").
+  const busca = { termo: '' };
+  function normalizar(t) { return String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim(); }
+  function soDigitos(t) { return String(t || '').replace(/\D/g, ''); }
+  function buscando() { return normalizar(busca.termo) !== ''; }
+  function casa(a) {
+    const termo = normalizar(busca.termo);
+    if (!termo) return true;
+    if ([a.titulo, a.processo, a.responsavel].some((c) => normalizar(c).includes(termo))) return true;
+    // Número digitado sem pontos ou com pontuação diferente: compara só os dígitos.
+    const digitos = soDigitos(termo);
+    return /^[\d\s.\-/]+$/.test(termo) && digitos !== '' && soDigitos(a.processo).includes(digitos);
+  }
+  function visiveis() { return ATIVIDADES.filter(casa); }
+
+  function doDia(d) { return visiveis().filter((a) => mesmoDia(a.data, d)); }
 
   // --- peças das visões ----------------------------------------------------
 
@@ -305,10 +347,24 @@
     return [cabecaDaSemana(), dias];
   }
 
+  // Clicar numa hora abre o painel de criar atividade já no dia da coluna (pedido de Felipe, 08/11).
+  function botaoDeHora(h, d, texto, rotulo) {
+    const li = criar('li');
+    const botao = criar('button', 'hora-botao', texto);
+    botao.type = 'button';
+    botao.setAttribute('aria-label', `Criar atividade às ${doisDigitos(h)}:00 ${rotulo}`);
+    botao.setAttribute('data-abre-painel', '');
+    botao.dataset.hora = `${iso(d)}T${doisDigitos(h)}:00`;
+    botao.addEventListener('click', () => DS.painelCriarAtividade({ tipo: 'evento', data: iso(d) }).abrir(botao));
+    li.append(botao);
+    return li;
+  }
+
   function visaoSemana(ref) {
     const inicio = inicioDaSemana(ref);
     const dias = criar('ul', 'semana-dias');
-    dias.setAttribute('aria-label', 'Dias da semana');
+    dias.setAttribute('aria-label', 'Dias da semana, atividades do dia todo');
+    const colunas = criar('div', 'semana-colunas');
     for (let i = 0; i < 7; i++) {
       const d = somarDias(inicio, i);
       const li = celula(d);
@@ -318,8 +374,21 @@
       const itens = doDia(d);
       if (itens.length) li.append(itensDoDia(itens));
       dias.append(li);
+
+      const nome = d.toLocaleDateString('pt-BR', { weekday: 'long' });
+      const horas = criar('ul', 'horas');
+      horas.setAttribute('aria-label', `Horas de ${nome}, ${curta(d)}`);
+      horas.append(...HORAS.map((h) => botaoDeHora(h, d, '', `de ${nome}, ${curta(d)}`)));
+      colunas.append(horas);
     }
-    return [dias];
+    const topo = criar('div', 'semana-topo');
+    topo.append(criar('div', 'semana-canto', 'Dia todo'), dias);
+    const rotulos = criar('ol', 'horas semana-rotulos');
+    rotulos.setAttribute('aria-hidden', 'true');
+    rotulos.append(...HORAS.map((h) => criar('li', null, `${doisDigitos(h)}:00`)));
+    const corpo = criar('div', 'semana-horas');
+    corpo.append(rotulos, colunas);
+    return [topo, corpo];
   }
 
   function visaoDia(ref) {
@@ -329,18 +398,7 @@
     todo.append(itens.length ? listaDeLinhas(itens) : criar('p', 'dia-sem-item', 'Nenhuma atividade neste dia.'));
     const horas = criar('ul', 'horas');
     horas.setAttribute('aria-label', 'Horas do dia');
-    // Clicar numa hora abre o painel de criar atividade já no dia da grade (pedido de Felipe, 08/11).
-    const isoDoDia = `${estado.data.getFullYear()}-${doisDigitos(estado.data.getMonth() + 1)}-${doisDigitos(estado.data.getDate())}`;
-    horas.append(...HORAS.map((h) => {
-      const li = criar('li');
-      const botao = criar('button', 'hora-botao', `${doisDigitos(h)}:00`);
-      botao.type = 'button';
-      botao.setAttribute('aria-label', `Criar atividade às ${doisDigitos(h)}:00 deste dia`);
-      botao.setAttribute('data-abre-painel', '');
-      botao.addEventListener('click', () => DS.painelCriarAtividade({ tipo: 'evento', data: isoDoDia }).abrir(botao));
-      li.append(botao);
-      return li;
-    }));
+    horas.append(...HORAS.map((h) => botaoDeHora(h, ref, `${doisDigitos(h)}:00`, 'deste dia')));
     return [todo, horas];
   }
 
@@ -356,7 +414,7 @@
       bloco.append(criar('h3', null, inicial(titulo) + (mesmoDia(d, hoje) ? ', hoje' : '')), listaDeLinhas(itens));
       blocos.push(bloco);
     }
-    if (!blocos.length && !vazio) blocos.push(criar('p', 'dia-sem-item', 'Nenhuma atividade neste mês.'));
+    if (!blocos.length && !vazio && !buscando()) blocos.push(criar('p', 'dia-sem-item', 'Nenhuma atividade neste mês.'));
     return blocos;
   }
 
@@ -383,13 +441,46 @@
     return aviso;
   }
 
+  // --- busca: contagem e vazio do período ----------------------------------
+
+  const NO_PERIODO = { dia: 'neste dia', semana: 'nesta semana', lista: 'neste mês', mes: 'neste mês' };
+
+  function limitesDoPeriodo(visao, ref) {
+    if (visao === 'dia') return [ref, ref];
+    if (visao === 'semana') { const inicio = inicioDaSemana(ref); return [inicio, somarDias(inicio, 6)]; }
+    return [new Date(ref.getFullYear(), ref.getMonth(), 1), new Date(ref.getFullYear(), ref.getMonth() + 1, 0)];
+  }
+
+  function achadosNoPeriodo() {
+    const [inicio, fim] = limitesDoPeriodo(estado.visao, estado.data);
+    return visiveis().filter((a) => a.data >= inicio && a.data <= fim).length;
+  }
+
+  function contagem(n) {
+    return `${n} ${n === 1 ? 'atividade encontrada' : 'atividades encontradas'} ${NO_PERIODO[estado.visao]}`;
+  }
+
+  function avisoBusca() {
+    const total = visiveis().length;
+    const aviso = DS.estadoVazio({
+      titulo: `Nenhuma atividade para “${busca.termo.trim()}” ${NO_PERIODO[estado.visao]}`,
+      texto: total
+        ? `Há ${total} em outros períodos. Use as setas de período ou troque de visão.`
+        : 'A busca olha o título, o número do processo e o nome do responsável. Confira o que foi digitado ou limpe a busca.',
+    });
+    aviso.classList.add('agenda-vazio');
+    return aviso;
+  }
+
   // --- prioridades ---------------------------------------------------------
 
   function prioridades() {
     const destino = document.getElementById('prioridades-lista');
-    const abertas = ATIVIDADES.filter((a) => !a.concluida).sort((a, b) => a.prazoEmDias - b.prazoEmDias);
+    const abertas = visiveis().filter((a) => !a.concluida).sort((a, b) => a.prazoEmDias - b.prazoEmDias);
     if (!abertas.length) {
-      destino.replaceChildren(DS.estadoVazio({ titulo: 'Nenhum prazo em aberto', texto: 'Quando houver atividade a vencer, ela entra aqui pela ordem do prazo.' }));
+      destino.replaceChildren(buscando() && ATIVIDADES.length
+        ? DS.estadoVazio({ titulo: `Nenhum prazo em aberto para “${busca.termo.trim()}”`, texto: 'Limpe a busca para ver todas as prioridades.' })
+        : DS.estadoVazio({ titulo: 'Nenhum prazo em aberto', texto: 'Quando houver atividade a vencer, ela entra aqui pela ordem do prazo.' }));
       return;
     }
     const ol = criar('ol');
@@ -477,9 +568,19 @@
     grade.dataset.visaoAtual = estado.visao;
     document.getElementById('agenda-periodo').textContent = rotuloDoPeriodo(estado.visao, estado.data);
     const pecas = DESENHO[estado.visao](estado.data);
-    grade.replaceChildren(...(ATIVIDADES.length ? [] : [avisoVazio()]), ...pecas);
+    const achados = buscando() && ATIVIDADES.length ? achadosNoPeriodo() : null;
+    document.getElementById('agenda-contagem').textContent = achados === null ? '' : contagem(achados);
+    const avisos = !ATIVIDADES.length ? [avisoVazio()] : achados === 0 ? [avisoBusca()] : [];
+    grade.replaceChildren(...avisos, ...pecas);
     ajustarAltura();
   }
+
+  document.getElementById('agenda-buscar').append(DS.busca({
+    rotulo: 'Buscar na agenda',
+    placeholder: 'Título, processo ou responsável',
+    largura: 'm',
+    aoMudar: (valor) => { busca.termo = valor; desenhar(); prioridades(); },
+  }));
 
   // --- criar atividade -----------------------------------------------------
 
