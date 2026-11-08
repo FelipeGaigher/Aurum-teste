@@ -5,9 +5,11 @@
   --primitive-blue-900: #1d6bb7; /* --primary900 */
   --primitive-blue-1000: #17558f; /* derivado do --primary900, um degrau abaixo, para hover */
   --primitive-gray-0: #ffffff; /* branco da pagina */
+  --primitive-gray-50: #f8f9fa; /* fundo da página: um passo abaixo do branco dos painéis */
   --primitive-gray-100: #f1f3f4; /* --gray100 */
   --primitive-gray-300: #dee2e6; /* --gray300 */
   --primitive-gray-500: #6c757d; /* --gray500 */
+  --primitive-gray-600: #5c6670; /* texto apagado com AA sobre o fundo gray-50 */
   --primitive-gray-900: #202124; /* --gray900 */
   --primitive-danger-500: #e70202; /* --danger */
   --primitive-warning-1000: #8a6900; /* derivado do --warning900, que nao passa no AA */
@@ -91,12 +93,12 @@
 :root {
   color-scheme: light;
 
-  --color-bg-page: var(--primitive-gray-0);
+  --color-bg-page: var(--primitive-gray-50);
   --color-bg-surface: var(--primitive-gray-0);
   --color-bg-subtle: var(--primitive-gray-100);
   --color-bg-hover: var(--primitive-gray-300);
   --color-text-default: var(--primitive-gray-900);
-  --color-text-muted: var(--primitive-gray-500);
+  --color-text-muted: var(--primitive-gray-600);
   --color-text-danger: var(--primitive-danger-500);
   --color-text-warning: var(--primitive-warning-1000);
   --color-text-success: var(--primitive-success-900);
