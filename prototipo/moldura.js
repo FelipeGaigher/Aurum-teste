@@ -46,7 +46,7 @@
     { rotulo: 'Financeiro', pagina: 'financeiro.html', icone: 'moeda' },
     { rotulo: 'Documentos', pagina: 'documentos.html', icone: 'clipe' },
     { rotulo: 'Indicadores', pagina: 'indicadores.html', icone: 'grafico' },
-    { rotulo: 'Alertas', pagina: 'alertas.html', icone: 'sino', contagem: () => (window.DADOS && window.DADOS.contarAlertas ? window.DADOS.contarAlertas() : 0) },
+    { rotulo: 'Alertas', pagina: 'alertas.html', icone: 'sino' },
     { rotulo: 'Suporte', pagina: 'suporte.html', icone: 'ajuda' },
     { rotulo: 'Conheça as IAs', pagina: 'ias.html', icone: 'chip' },
   ];
@@ -203,6 +203,50 @@
     });
   }
 
+  // --- notificações ----------------------------------------------------------
+
+  // O sino conta as não lidas de dados.js. Página que não carrega dados.js recebe o arquivo aqui.
+  function garantirDados(pronto) {
+    if (window.DADOS && window.DADOS.notificacoes) { pronto(); return; }
+    const script = document.createElement('script');
+    script.src = 'dados.js';
+    script.addEventListener('load', pronto);
+    document.head.append(script);
+  }
+
+  function atualizarSino(botao) {
+    const total = window.DADOS && window.DADOS.contarNaoLidas ? window.DADOS.contarNaoLidas() : 0;
+    const marca = botao.querySelector('.atalho-contagem');
+    marca.textContent = String(total);
+    marca.hidden = total === 0;
+    botao.setAttribute('aria-label', total ? `Notificações, ${total} ${total === 1 ? 'não lida' : 'não lidas'}` : 'Notificações');
+  }
+
+  // O painel nasce de componentes.js a cada abertura, com as notificações do momento.
+  // Sem componentes.js, o sino leva à página de Alertas.
+  function ligarNotificacoes(botao) {
+    garantirDados(() => atualizarSino(botao));
+    botao.addEventListener('click', () => {
+      if (!window.DS || !window.DS.painelNotificacoes) { window.location.href = 'alertas.html'; return; }
+      const itens = window.DADOS && window.DADOS.notificacoes ? window.DADOS.notificacoes() : [];
+      const marcar = (ids) => {
+        if (window.DADOS && window.DADOS.marcarLidas) window.DADOS.marcarLidas(ids);
+        atualizarSino(botao);
+      };
+      const painel = window.DS.painelNotificacoes({
+        itens,
+        aoAbrir: (item) => marcar([item.id]),
+        aoMarcarLidos: marcar,
+      });
+      painel.el.addEventListener('close', () => {
+        botao.setAttribute('aria-expanded', 'false');
+        painel.el.remove();
+      });
+      painel.abrir(botao);
+      if (painel.el.open) botao.setAttribute('aria-expanded', 'true');
+    });
+  }
+
   // --- HTML ------------------------------------------------------------------
 
   function svg(nome, classe) {
@@ -297,6 +341,10 @@
         <button type="button" class="atalho" id="alternar-tema" aria-pressed="false" aria-label="Usar tema escuro">${svg('lua')}</button>
         <span class="dica" role="tooltip">Usar tema escuro</span>
       </li>
+      <li>
+        <button type="button" class="atalho atalho-sino" id="abrir-notificacoes" data-abre-painel aria-haspopup="dialog" aria-expanded="false" aria-label="Notificações">${svg('sino')}<span class="atalho-contagem" aria-hidden="true" hidden></span></button>
+        <span class="dica" role="tooltip">Notificações</span>
+      </li>
     </ul>
 
     <div class="usuario-area">
@@ -312,8 +360,7 @@
 
   // Item do menu. O design system monta a miniatura com esta mesma função.
   // selo: { rotulo, descricao }; selo sem explicação não entra (PA-29).
-  // contagem: função que devolve o número de itens pendentes; zero não desenha nada.
-  function htmlItemMenu({ pagina, icone, rotulo, selo, contagem, ativo = false, recolhido = false }) {
+  function htmlItemMenu({ pagina, icone, rotulo, selo, ativo = false, recolhido = false }) {
     if (!ICONES[icone]) throw new Error(`Moldura.htmlItemMenu: ícone desconhecido "${icone}"`);
     if (selo && !(selo.rotulo && selo.descricao)) throw new Error('Moldura.htmlItemMenu: selo exige rotulo e descricao (PA-29)');
     const atual = ativo ? ' aria-current="page"' : '';
@@ -321,12 +368,8 @@
     const marca = selo
       ? `<span class="selo" title="${escapar(selo.descricao)}">${escapar(selo.rotulo)}<span class="visualmente-oculto">: ${escapar(selo.descricao)}</span></span>`
       : '';
-    const pendentes = typeof contagem === 'function' ? contagem() : 0;
-    const numero = pendentes > 0
-      ? `<span class="contagem">${pendentes}<span class="visualmente-oculto"> ${pendentes === 1 ? 'pendente' : 'pendentes'}</span></span>`
-      : '';
-    return `<a class="item-menu${recolhido ? ' is-recolhido' : ''}${pendentes > 0 ? ' has-pendentes' : ''}" href="${escapar(pagina)}"${atual}${dica}>`
-      + `${svg(icone)}<span class="rotulo">${escapar(rotulo)}</span>${marca}${numero}</a>`;
+    return `<a class="item-menu${recolhido ? ' is-recolhido' : ''}" href="${escapar(pagina)}"${atual}${dica}>`
+      + `${svg(icone)}<span class="rotulo">${escapar(rotulo)}</span>${marca}</a>`;
   }
 
   function htmlLista(itens, ativa, atributos) {
@@ -365,6 +408,7 @@
     const listaAdicionar = document.getElementById('menu-adicionar');
     ligarCriarAtividade(adicionar, listaAdicionar, ligarMenu(adicionar, listaAdicionar));
     ligarMenu(document.getElementById('abrir-usuario'), document.getElementById('menu-usuario'));
+    ligarNotificacoes(document.getElementById('abrir-notificacoes'));
   }
 
   window.Moldura = { MENU, USUARIO, montar, htmlItemMenu, htmlTrilha };

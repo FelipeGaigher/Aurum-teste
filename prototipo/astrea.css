@@ -580,10 +580,6 @@ body[data-menu="recolhido"] .menu-grupo { position: absolute; width: 1px; height
 }
 .item-menu[aria-current="page"] svg, .item-menu.is-atual svg { color: currentColor; }
 .item-menu .selo { margin-left: auto; }
-.item-menu .contagem { display: inline-flex; align-items: center; justify-content: center; margin-left: auto; min-width: calc(var(--space-4) + var(--space-1)); height: calc(var(--space-4) + var(--space-1)); padding: 0 var(--space-1); border-radius: var(--radius-pill); background-color: var(--color-text-danger); color: var(--color-action-text); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; line-height: 1; }
-/* item com pendência: traço vermelho no início, visível também com o menu recolhido */
-.item-menu.has-pendentes { box-shadow: inset calc(var(--border-width) * 3) 0 0 0 var(--color-text-danger); }
-body[data-menu="recolhido"] .item-menu .contagem { position: absolute; top: var(--space-1); right: var(--space-1); margin-left: 0; min-width: var(--space-4); height: var(--space-4); padding: 0 var(--space-1); }
 .item-menu .rotulo { white-space: nowrap; }
 
 /* recolher a sidebar: botão quadrado ao lado da marca, no cabeçalho */
@@ -698,6 +694,29 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 }
 .atalho:hover ~ .dica,
 .atalho:focus-visible ~ .dica { visibility: visible; }
+
+/* sino: a contagem de não lidas fica no canto do ícone e some no zero */
+.atalho-sino { position: relative; }
+.atalho-contagem {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: calc(var(--space-4) + var(--space-1));
+  height: calc(var(--space-4) + var(--space-1));
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-text-danger);
+  color: var(--color-action-text);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  transform: translate(25%, -25%);
+}
+.atalho-contagem[hidden] { display: none; }
 
 /* recurso bloqueado no plano: o selo avisa antes do clique (PA-07) */
 .atalho[aria-disabled="true"] { position: relative; cursor: not-allowed; }
@@ -1669,6 +1688,71 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .painel-lateral-corpo { display: grid; align-content: start; justify-items: start; gap: var(--space-4); min-width: 0; padding: var(--space-5); overflow-y: auto; }
 .painel-lateral-rodape { padding: var(--space-3) var(--space-5); border-top: var(--border-width) solid var(--color-border-default); }
 .painel-lateral-rodape > .barra-acoes { position: static; padding: 0; background: none; border: 0; }
+
+/* painel de notificações: o painel lateral na largura do diálogo, com corpo próprio */
+.painel-lateral.painel-notificacoes { width: var(--component-dialog-width); }
+.painel-notificacoes .painel-lateral-corpo { justify-items: stretch; gap: 0; padding: 0; }
+.notificacoes { display: grid; min-width: 0; }
+.notificacoes-filtros {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-5);
+  background-color: var(--component-dialog-bg);
+  border-bottom: var(--border-width) solid var(--color-border-default);
+}
+.notificacoes-filtro { min-height: var(--size-icon-button); min-width: var(--size-icon-button); justify-content: center; }
+.notificacoes-filtro svg.icone { display: block; width: var(--size-icon); height: var(--size-icon); color: var(--color-text-muted); }
+.notificacoes-filtro[aria-pressed="true"] svg.icone { color: currentColor; }
+.notificacoes-lista { display: grid; gap: var(--space-4); padding: var(--space-4) var(--space-3) var(--space-5); }
+.notificacoes-lista > .estado-vazio { padding: var(--space-6) var(--space-2); }
+.notificacoes-grupo { display: grid; justify-items: start; gap: var(--space-1); }
+.notificacoes-grupo-titulo {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0 var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-tracking-caps);
+  text-transform: uppercase;
+}
+.notificacoes-grupo-contagem { font-variant-numeric: tabular-nums; }
+.notificacoes-itens { justify-self: stretch; margin: 0; padding: 0; list-style: none; }
+.notificacao {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  color: var(--color-text-default);
+  text-decoration: none;
+}
+.notificacao:hover { background-color: var(--color-bg-hover); }
+.notificacao > svg.icone { margin-top: calc(var(--space-1) / 2); }
+.notificacao-vencido > svg.icone { color: var(--color-text-danger); }
+.notificacao-hoje > svg.icone { color: var(--color-text-warning); }
+.notificacao-aviso > svg.icone { color: var(--color-action); }
+.notificacao-texto { display: grid; gap: calc(var(--space-1) / 2); min-width: 0; }
+.notificacao-titulo { font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); overflow-wrap: anywhere; }
+.notificacao-contexto { color: var(--color-text-muted); font-size: var(--font-size-label); line-height: var(--font-leading-tight); overflow-wrap: anywhere; }
+.notificacao-agora {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-tracking-caps);
+  text-transform: uppercase;
+}
+.notificacao.is-lida .notificacao-titulo { color: var(--color-text-muted); font-weight: var(--font-weight-regular); }
+.notificacao.is-lida > svg.icone { color: var(--color-text-muted); }
+.notificacoes-rodape { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.notificacoes-ver-todos { border-radius: var(--radius); color: var(--color-action); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); }
+.notificacoes-ver-todos:hover { color: var(--color-action-hover); }
 
 /* painel de detalhe: o cartão do item escolhido no fluxo, ao lado da lista. Empurra a lista, nunca a cobre. */
 .lista-e-detalhe { display: flex; align-items: flex-start; min-width: 0; }

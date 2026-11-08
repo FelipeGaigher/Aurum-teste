@@ -24,6 +24,11 @@
     email: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
     pessoa: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
     cadeado: '<rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+    sino: '<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/>',
+    lista: '<path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/>',
+    pasta: '<path d="M3 6h6l2 2h10v11H3z"/>',
+    jornal: '<path d="M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7"/>',
+    conexao: '<path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0zM12 16v5"/>',
   };
   const GIRO = '<circle cx="12" cy="12" r="9" stroke-dasharray="42 15"/>';
 
@@ -2299,6 +2304,186 @@
     return controle;
   }
 
+  // --- notificações ----------------------------------------------------------
+
+  // O filtro "Tudo" e um chip por módulo. Só o chip ativo mostra o rótulo; os outros, o ícone com aria-label.
+  const FILTROS_DE_NOTIFICACAO = [
+    { chave: 'tudo', rotulo: 'Tudo', icone: 'sino' },
+    { chave: 'atividades', rotulo: 'Atividades', icone: 'lista' },
+    { chave: 'agenda', rotulo: 'Agenda', icone: 'calendario' },
+    { chave: 'processos', rotulo: 'Processos', icone: 'pasta' },
+    { chave: 'publicacoes', rotulo: 'Publicações', icone: 'jornal' },
+    { chave: 'portal', rotulo: 'Portal do cliente', icone: 'pessoa' },
+    { chave: 'integracao', rotulo: 'Integração', icone: 'conexao' },
+  ];
+  const GRUPOS_DE_NOTIFICACAO = [['para-fazer', 'Para fazer'], ['aviso', 'Avisos']];
+  const VISIVEIS_POR_GRUPO = 5;
+  const CHAVE_DO_FILTRO = 'astrea-notificacoes-filtro';
+
+  function lerFiltro() {
+    try {
+      const salvo = sessionStorage.getItem(CHAVE_DO_FILTRO);
+      return FILTROS_DE_NOTIFICACAO.some((f) => f.chave === salvo) ? salvo : 'tudo';
+    } catch (e) { return 'tudo'; }
+  }
+
+  function gravarFiltro(valor) {
+    try { sessionStorage.setItem(CHAVE_DO_FILTRO, valor); } catch (e) { /* sem armazenamento */ }
+  }
+
+  function validarNotificacao(n) {
+    exigir(n && n.id && n.titulo && n.contexto && n.destino, 'painelNotificacoes', 'cada item tem id, titulo, contexto e destino');
+    exigir(GRUPOS_DE_NOTIFICACAO.some(([g]) => g === n.grupo), 'painelNotificacoes', `grupo desconhecido "${n.grupo}"`);
+    exigir(FILTROS_DE_NOTIFICACAO.some((f) => f.chave === n.modulo && f.chave !== 'tudo'), 'painelNotificacoes',
+      `modulo desconhecido "${n.modulo}"`);
+  }
+
+  function iconeDaNotificacao(n) {
+    if (n.grupo === 'aviso') return ['info', 'aviso'];
+    return n.prazo === 'hoje' ? ['relogio', 'hoje'] : ['alerta', 'vencido'];
+  }
+
+  function ehDeHoje(iso) {
+    const hoje = new Date();
+    const dois = (v) => String(v).padStart(2, '0');
+    return String(iso || '').slice(0, 10) === `${hoje.getFullYear()}-${dois(hoje.getMonth() + 1)}-${dois(hoje.getDate())}`;
+  }
+
+  // Item inteiro é um link para o destino: o clique marca lido antes de navegar.
+  function itemDeNotificacao(n, aoAbrir) {
+    const [nomeDoIcone, tom] = iconeDaNotificacao(n);
+    const el = criar('a', `notificacao notificacao-${tom}${n.lida ? ' is-lida' : ''}`);
+    el.href = n.destino;
+    el.dataset.notificacao = n.id;
+    const texto = criar('span', 'notificacao-texto');
+    texto.append(criar('span', 'notificacao-titulo', n.titulo), criar('span', 'notificacao-contexto', n.contexto));
+    el.append(icone(nomeDoIcone), texto);
+    if (ehDeHoje(n.em)) el.append(criar('span', 'notificacao-agora', 'Agora'));
+    if (n.lida) el.append(criar('span', 'visualmente-oculto', ', lida'));
+    el.addEventListener('click', () => aoAbrir(n));
+    return el;
+  }
+
+  // PA-27: reaproveita o painel lateral, a camada única. Se outra camada estiver aberta, o sino a fecha antes.
+  // itens: [{ id, grupo, modulo, titulo, contexto, em, destino, prazo?, lida? }]. filtro: o chip inicial;
+  // sem ele, o da sessão.
+  // aoAbrir(item): o item clicado, já marcado lido. aoMarcarLidos(ids): os avisos marcados pelo rodapé.
+  function painelNotificacoes(props = {}) {
+    const { itens = [], filtro = lerFiltro(), aoAbrir, aoMarcarLidos } = props;
+    exigir(Array.isArray(itens), 'painelNotificacoes', 'itens é uma lista');
+    exigir(FILTROS_DE_NOTIFICACAO.some((f) => f.chave === filtro), 'painelNotificacoes', `filtro desconhecido "${filtro}"`);
+    itens.forEach(validarNotificacao);
+    const estado = { itens: itens.map((n) => ({ ...n })), filtro, abertos: new Set() };
+
+    const filtros = criar('div', 'notificacoes-filtros');
+    filtros.setAttribute('role', 'group');
+    filtros.setAttribute('aria-label', 'Filtrar por módulo');
+    const lista = criar('div', 'notificacoes-lista');
+    const corpo = criar('div', 'notificacoes');
+    corpo.append(filtros, lista);
+
+    const marcarAvisos = botao({ variante: 'texto', tamanho: 'pequeno', iconeEsquerda: 'marca', rotulo: 'Marcar avisos como lidos' });
+    marcarAvisos.dataset.acao = 'marcar-avisos';
+    const verTodos = criar('a', 'notificacoes-ver-todos', 'Ver todos em Alertas');
+    verTodos.href = 'alertas.html';
+    const rodape = criar('div', 'notificacoes-rodape');
+    rodape.append(marcarAvisos, verTodos);
+
+    const painel = painelLateral({ titulo: 'Notificações', corpo, rodape });
+    painel.el.classList.add('painel-notificacoes');
+    const tituloEl = painel.el.querySelector('.painel-lateral-titulo');
+
+    function desenharFiltros() {
+      filtros.replaceChildren(...FILTROS_DE_NOTIFICACAO.map((f) => {
+        const ativo = f.chave === estado.filtro;
+        const el = criarBotao('chip-filtro notificacoes-filtro');
+        el.dataset.filtro = f.chave;
+        el.setAttribute('aria-pressed', String(ativo));
+        el.setAttribute('aria-label', f.rotulo);
+        if (!ativo) el.title = f.rotulo;
+        el.append(icone(f.icone));
+        if (ativo) el.append(criar('span', null, f.rotulo));
+        el.addEventListener('click', () => {
+          estado.filtro = f.chave;
+          gravarFiltro(f.chave);
+          desenhar();
+          filtros.querySelector(`[data-filtro="${f.chave}"]`).focus();
+        });
+        return el;
+      }));
+    }
+
+    function abrirItem(n) {
+      const alvo = estado.itens.find((i) => i.id === n.id);
+      alvo.lida = true;
+      if (aoAbrir) aoAbrir(alvo);
+    }
+
+    function desenharGrupo(chave, rotulo, doGrupo) {
+      const secao = criar('section', 'notificacoes-grupo');
+      const titulo = criar('h3', 'notificacoes-grupo-titulo');
+      titulo.id = novoId('notificacoes-grupo');
+      titulo.append(criar('span', null, rotulo), criar('span', 'notificacoes-grupo-contagem', String(doGrupo.length)));
+      secao.setAttribute('aria-labelledby', titulo.id);
+      const aberto = estado.abertos.has(chave);
+      const visiveis = aberto ? doGrupo : doGrupo.slice(0, VISIVEIS_POR_GRUPO);
+      const ul = criar('ul', 'notificacoes-itens');
+      ul.append(...visiveis.map((n) => {
+        const li = criar('li');
+        li.append(itemDeNotificacao(n, abrirItem));
+        return li;
+      }));
+      secao.append(titulo, ul);
+      const resto = doGrupo.length - visiveis.length;
+      if (resto > 0) {
+        const mais = botao({ variante: 'texto', tamanho: 'pequeno', rotulo: `Ver mais ${resto}`, iconeDireita: 'direita' });
+        mais.dataset.acao = 'ver-mais';
+        mais.addEventListener('click', () => {
+          estado.abertos.add(chave);
+          desenhar();
+          const primeiroNovo = lista.querySelector(`[data-notificacao="${doGrupo[VISIVEIS_POR_GRUPO].id}"]`);
+          if (primeiroNovo) primeiroNovo.focus();
+        });
+        secao.append(mais);
+      }
+      return secao;
+    }
+
+    function desenhar() {
+      desenharFiltros();
+      const filtrados = estado.itens.filter((n) => estado.filtro === 'tudo' || n.modulo === estado.filtro);
+      const grupos = GRUPOS_DE_NOTIFICACAO.map(([chave, rotulo]) => [chave, rotulo, filtrados.filter((n) => n.grupo === chave)])
+        .filter(([, , doGrupo]) => doGrupo.length);
+      lista.replaceChildren(...(grupos.length
+        ? grupos.map(([chave, rotulo, doGrupo]) => desenharGrupo(chave, rotulo, doGrupo))
+        : [estadoVazio({ titulo: 'Nada para você agora.' })]));
+      const naoLidas = estado.itens.filter((n) => !n.lida).length;
+      tituloEl.textContent = naoLidas ? `Notificações · ${naoLidas}` : 'Notificações';
+      marcarAvisos.disabled = !estado.itens.some((n) => n.grupo === 'aviso' && !n.lida);
+    }
+
+    marcarAvisos.addEventListener('click', () => {
+      const ids = estado.itens.filter((n) => n.grupo === 'aviso' && !n.lida).map((n) => n.id);
+      ids.forEach((id) => { estado.itens.find((n) => n.id === id).lida = true; });
+      desenhar();
+      verTodos.focus();
+      if (aoMarcarLidos) aoMarcarLidos(ids);
+    });
+
+    function abrir(gatilho) {
+      if (camada && camada !== painel) {
+        if (camada.pedirFechar) camada.pedirFechar();
+        else camada.fechar();
+        if (camada) return;
+      }
+      desenhar();
+      painel.abrir(gatilho);
+    }
+
+    desenhar();
+    return { el: painel.el, abrir, fechar: painel.fechar };
+  }
+
   // --- criar atividade -------------------------------------------------------
 
   const PRIORIDADES = [['baixa', 'Baixa'], ['media', 'Média'], ['alta', 'Alta']];
@@ -2571,7 +2756,7 @@
     campo, areaTexto, busca, seletor, seletorMultiplo, seletorPessoas, data, periodo, caixa, radio, chave,
     toast, faixaAviso, dialogo, tooltip, progresso, skeleton, estadoVazio, upsell,
     descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade, cardAtividade, cardContato, cardRegistro, paginacao,
-    abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper, painelCriarAtividade,
+    abas, trilha, barraFiltros, painelLateral, painelNotificacoes, barraAcoes, stepper, painelCriarAtividade,
     painelDetalhe, divisorRedimensionavel,
   };
 })();

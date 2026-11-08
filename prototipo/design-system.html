@@ -193,7 +193,7 @@
   const { botao, grupoBotoes, menuAcoes, icone, ICONES, campo, areaTexto, busca, seletor, seletorMultiplo,
     seletorPessoas, data, periodo, caixa, radio, chave, toast, faixaAviso, dialogo, tooltip, progresso, skeleton,
     estadoVazio, upsell, descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade,
-    cardAtividade, cardContato, cardRegistro, paginacao, abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper,
+    cardAtividade, cardContato, cardRegistro, paginacao, abas, trilha, barraFiltros, painelLateral, painelNotificacoes, barraAcoes, stepper,
     painelDetalhe, divisorRedimensionavel } = window.DS;
   const { ATIVIDADES, CONTATOS } = window.DADOS;
 
@@ -1229,14 +1229,14 @@
     const copia = document.querySelector('.cabecalho').cloneNode(true);
     copia.classList.add('is-miniatura');
     copia.inert = true;
-    copia.querySelectorAll('[id], [for], [aria-controls], [aria-labelledby]').forEach((el) =>
-      ['id', 'for', 'aria-controls', 'aria-labelledby'].forEach((nome) => el.removeAttribute(nome)));
+    copia.querySelectorAll('[id], [for], [aria-controls], [aria-labelledby], [data-abre-painel]').forEach((el) =>
+      ['id', 'for', 'aria-controls', 'aria-labelledby', 'data-abre-painel'].forEach((nome) => el.removeAttribute(nome)));
     return h('div', { class: 'ds-navbar' }, copia);
   }
 
   function pecaNavbar() {
     return pecaComEstados({
-      id: 'navbar', titulo: 'Navbar', nota: 'Marca e recolher na coluna do menu, título e trilha no meio, busca e atalhos à direita (M15). Cada atalho tem dica (PA-04), e o bloqueado mostra o cadeado antes do clique (PA-07).',
+      id: 'navbar', titulo: 'Navbar', nota: 'Marca e recolher na coluna do menu, título e trilha no meio, busca e atalhos à direita (M15). Cada atalho tem dica (PA-04), e o bloqueado mostra o cadeado antes do clique (PA-07). O sino, à esquerda do usuário, conta as notificações não lidas e abre o painel de notificações; no zero, a contagem some.',
       estados: [['default', miniaturaDaNavbar()]],
       ausentes: {
         hover: SO_A_MOLDURA, active: SO_A_MOLDURA, foco: SO_A_MOLDURA,
@@ -1442,6 +1442,65 @@
         vazio: 'a peça exige título e corpo.',
       },
       variacoes: [['Aberto de verdade', gatilhoDoPainel()]],
+    });
+  }
+
+  // Notificações de amostra: os dados do sino, sem ler nem gravar o que a pessoa já leu.
+  function notificacoesDeAmostra(lidas = false) {
+    return window.DADOS.notificacoes().map((n) => ({ ...n, lida: lidas }));
+  }
+
+  function amostraDeNotificacoes(props) {
+    const amostra = painelNotificacoes(props).el;
+    amostra.setAttribute('open', '');
+    amostra.setAttribute('role', 'group');
+    amostra.setAttribute('aria-label', 'Amostra do painel de notificações');
+    ['aria-modal', 'aria-labelledby'].forEach((nome) => amostra.removeAttribute(nome));
+    amostra.querySelectorAll('[aria-labelledby]').forEach((el) => el.removeAttribute('aria-labelledby'));
+    amostra.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+    amostra.classList.add('is-estatico');
+    return amostra;
+  }
+
+  function gatilhoDasNotificacoes() {
+    const gatilho = botao({ variante: 'secundario', iconeEsquerda: 'sino', rotulo: 'Abrir as notificações' });
+    gatilho.setAttribute('data-abre-painel', '');
+    gatilho.setAttribute('aria-haspopup', 'dialog');
+    gatilho.addEventListener('click', () => {
+      const painel = painelNotificacoes({ itens: notificacoesDeAmostra(), filtro: 'tudo' });
+      painel.el.addEventListener('close', () => painel.el.remove());
+      painel.abrir(gatilho);
+    });
+    return gatilho;
+  }
+
+  function pecaPainelNotificacoes() {
+    return pecaComEstados({
+      id: 'painel-notificacoes', titulo: 'Painel de notificações',
+      nota: 'Abre pelo sino da navbar. É o painel lateral na largura do diálogo, a mesma camada única (PA-27): se outra estiver aberta, o sino a fecha antes. Para fazer nasce das atividades vencidas e de hoje; Avisos, dos módulos. Clicar marca lido e navega. Esc, o X e o fundo fecham, e o foco volta ao sino.',
+      estados: [
+        ['default', amostraDeNotificacoes({ itens: notificacoesDeAmostra(), filtro: 'tudo' })],
+        ['vazio', amostraDeNotificacoes({ itens: [], filtro: 'tudo' })],
+      ],
+      ausentes: {
+        hover: 'o painel não reage ao cursor. Cada item ganha o fundo de hover sozinho.',
+        active: 'o painel não reage ao clique. O item clicado navega na hora.',
+        foco: 'o foco fica nos chips e nos itens, cada um com o anel de foco global.',
+        disabled: 'não existe painel desabilitado. Sem aviso a marcar, só o botão do rodapé desliga.',
+        erro: 'as notificações saem de dados.js, sem rede no protótipo. Falha de integração vira um aviso dentro da lista.',
+        carregando: 'as notificações saem de dados.js e chegam prontas na abertura.',
+      },
+      variacoes: [
+        ['Filtrado em Processos', amostraDeNotificacoes({ itens: notificacoesDeAmostra(), filtro: 'processos' })],
+        ['Todas lidas', amostraDeNotificacoes({ itens: notificacoesDeAmostra(true), filtro: 'tudo' })],
+        ['Aberto de verdade', gatilhoDasNotificacoes()],
+      ],
+      props: [
+        ['itens', '{ id, grupo, modulo, titulo, contexto, em, destino, prazo?, lida? }; grupo é para-fazer ou aviso, prazo é vencido ou hoje'],
+        ['filtro', 'o chip inicial: tudo ou um módulo; sem ele, o da sessão'],
+        ['aoAbrir', 'recebe o item clicado, já lido, antes de navegar para o destino'],
+        ['aoMarcarLidos', 'recebe os ids dos avisos que o rodapé marcou'],
+      ],
     });
   }
 
@@ -1679,7 +1738,7 @@
   document.getElementById('navegacao').append(pecaNavbar(),
     pecaMenuLateral('sidebar-expandida', 'Sidebar expandida', 'Ícone e nome de cada módulo. O item do módulo aberto tem fundo próprio e texto de ação, não só cor.', false),
     pecaMenuLateral('sidebar-recolhida', 'Sidebar recolhida', 'Só o ícone. O nome continua como nome acessível e vira dica. A escolha persiste entre páginas.', true),
-    pecaAbas(), pecaTrilha(), pecaBarraFiltros(), pecaPainelLateral(), pecaBarraAcoes(), pecaStepper(),
+    pecaAbas(), pecaTrilha(), pecaBarraFiltros(), pecaPainelLateral(), pecaPainelNotificacoes(), pecaBarraAcoes(), pecaStepper(),
     pecaPainelDetalhe(), pecaDivisor());
 
   // --- navegação da página ---------------------------------------------------

@@ -102,6 +102,69 @@ const contarAlertas = () => ATIVIDADES.filter(emAlerta).length;
 
 window.DADOS = { ATIVIDADES, CONTATOS, PROCESSOS, RESPONSAVEIS, RESUMOS_DE_CASO, emAlerta, contarAlertas };
 
+// Avisos fictícios do sino, do mais novo para o mais antigo. Números e nomes saem de NUMEROS e CLIENTES.
+// modulo: processos, publicacoes, portal, integracao ou agenda. em: ISO local.
+const NOTIFICACOES = [
+  { id: 'n1', grupo: 'aviso', modulo: 'processos', titulo: `Novo andamento · ${NUMEROS[0]}`,
+    contexto: `Processos · ${CLIENTES[0]} · despacho publicado`, em: '2026-11-08T08:40', destino: 'processos.html' },
+  { id: 'n2', grupo: 'aviso', modulo: 'publicacoes', titulo: `Publicação capturada no DJE · ${CLIENTES[0]}`,
+    contexto: 'Publicações · 1ª Vara Cível de Porto Lírio · intimação', em: '2026-11-08T07:55', destino: 'publicacoes.html' },
+  { id: 'n3', grupo: 'aviso', modulo: 'agenda', titulo: 'Audiência de conciliação em 2 horas',
+    contexto: `Agenda · ${NUMEROS[1]} · ${CLIENTES[1]}`, em: '2026-11-08T07:00', destino: 'agenda.html' },
+  { id: 'n4', grupo: 'aviso', modulo: 'portal', titulo: 'Cliente visualizou a procuração no Portal',
+    contexto: `Portal do cliente · ${CLIENTES[3]} · procuração ad judicia`, em: '2026-11-07T18:20', destino: 'documentos.html' },
+  { id: 'n5', grupo: 'aviso', modulo: 'integracao', titulo: 'Falha de conexão com o tribunal · TJSC',
+    contexto: 'Integração · captura de andamentos parada desde 06/11', em: '2026-11-06T22:10', destino: 'administracao.html' },
+  { id: 'n6', grupo: 'aviso', modulo: 'publicacoes', titulo: `Publicação capturada no DJE · ${CLIENTES[5]}`,
+    contexto: 'Publicações · 1ª Vara Cível de Serra Alta · despacho', em: '2026-11-05T09:30', destino: 'publicacoes.html' },
+  { id: 'n7', grupo: 'aviso', modulo: 'processos', titulo: `Novo andamento · ${NUMEROS[6]}`,
+    contexto: `Processos · ${CLIENTES[6]} · sentença publicada`, em: '2026-11-04T16:00', destino: 'processos.html' },
+];
+
+const CHAVE_LIDAS = 'astrea-notificacoes-lidas';
+
+function lerLidas() {
+  try {
+    const lista = JSON.parse(localStorage.getItem(CHAVE_LIDAS) || '[]');
+    return new Set(Array.isArray(lista) ? lista : []);
+  } catch (e) { return new Set(); }
+}
+
+function marcarLidas(ids) {
+  const lidas = lerLidas();
+  ids.forEach((id) => lidas.add(id));
+  try { localStorage.setItem(CHAVE_LIDAS, JSON.stringify([...lidas])); } catch (e) { /* sem armazenamento */ }
+}
+
+function isoDoDia(dias) {
+  const d = new Date();
+  d.setDate(d.getDate() + dias);
+  const dois = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${dois(d.getMonth() + 1)}-${dois(d.getDate())}`;
+}
+
+// Para fazer: atividade aberta vencida ou de hoje. prazo: vencido ou hoje.
+function paraFazer() {
+  return ATIVIDADES.filter((a) => a.status !== 'concluido' && a.prazoEmDias <= 0).map((a) => {
+    const prazo = a.prazoEmDias < 0 ? 'vencido' : 'hoje';
+    return {
+      id: `pf-${a.id}`, grupo: 'para-fazer', modulo: 'atividades', prazo,
+      titulo: `${prazo === 'vencido' ? 'Prazo vencido' : 'Vence hoje'} · ${a.titulo}`,
+      contexto: `Área de trabalho · ${a.processo} · ${a.responsavel}`,
+      em: isoDoDia(a.prazoEmDias), destino: 'area-de-trabalho.html',
+    };
+  });
+}
+
+function notificacoes() {
+  const lidas = lerLidas();
+  return [...paraFazer(), ...NOTIFICACOES].map((n) => ({ ...n, lida: lidas.has(n.id) }));
+}
+
+const contarNaoLidas = () => notificacoes().filter((n) => !n.lida).length;
+
+Object.assign(window.DADOS, { NOTIFICACOES, notificacoes, contarNaoLidas, marcarLidas });
+
 // Ficha do processo: parte contrária, advogado dela e valores, na ordem de NUMEROS.
 // Nomes, foros e escritórios inventados. Link no tribunal é só texto.
 const PARTES_CONTRARIAS = [
