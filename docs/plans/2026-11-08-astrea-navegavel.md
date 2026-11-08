@@ -1113,7 +1113,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 ---
 
-> nota: Felipe pediu em 08/11, 12h55, que o quadro mostre o cenário do redesign
+> nota: pedido de Felipe em 08/11, 12h55: o quadro mostra o cenário do redesign
 > com as fases da Q2. A Task 9b, com brief manual em `.sancho/`, trocou `FASES`,
 > `HISTORIAS` e `CARDS`. A base do RF-02 passou de `a150985` para `e7ee407`.
 > Reversível.
@@ -1199,7 +1199,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Produces: `[data-filtro="situacao"]`, um `DS.seletor` com o valor em `data-valor`.
 - Produces: `[data-acao="copiar-numero"]` e a chave `astrea-filtro-area` no `localStorage`.
 
-- [ ] **Step 1: Implementar**
+- [x] **Step 1: Implementar**
 
 - Barra de filtros com minhas, delegadas, período e situação (PA-35, PA-36).
 - Grave a escolha em `astrea-filtro-area` e restaure ao abrir a página (PA-37).
@@ -1208,7 +1208,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 Esperado: filtrar reduz as linhas das três seções.
 
-- [ ] **Step 2: Executar e confirmar que passa**
+- [x] **Step 2: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/area-de-trabalho.html
@@ -1217,7 +1217,7 @@ node scripts/verificar-app.js --rf RF-07,RF-08,RF-12,RF-15 --paginas area-de-tra
 
 Esperado: `verificar: 0 erro(s)` e os quatro RF com `ok`.
 
-- [ ] **Step 3: Entregar**
+- [x] **Step 3: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 

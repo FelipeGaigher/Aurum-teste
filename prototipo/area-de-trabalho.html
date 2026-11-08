@@ -18,6 +18,8 @@
     gap: var(--space-3) var(--space-4);
     margin-bottom: var(--space-4);
   }
+  /* PA-35 a PA-37: cada filtro tem rótulo fixo, e a escolha volta ao abrir a página. */
+  .barra-filtros { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-3); min-width: 0; }
   .area-data { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
 
   /* PA-39: estatísticas viram uma linha de leitura. Cada número leva à seção que ele conta. */
@@ -84,7 +86,7 @@
 <div class="corpo">
   <main id="conteudo">
     <div class="area-topo">
-      <div id="seletor-lista"></div>
+      <div class="barra-filtros" id="filtros" role="group" aria-label="Filtros da área de trabalho"></div>
       <p class="area-data" id="area-data"></p>
     </div>
 
@@ -105,29 +107,76 @@
         <div class="secao-cabeca"><h2 id="titulo-proximos">Próximos</h2><span class="secao-nota"></span></div>
         <div class="secao-corpo"></div>
       </section>
+      <section class="secao" id="secao-concluidas" data-secao="concluidas" aria-labelledby="titulo-concluidas" hidden>
+        <div class="secao-cabeca"><h2 id="titulo-concluidas">Concluídas</h2><span class="secao-nota"></span></div>
+        <div class="secao-corpo"></div>
+      </section>
     </div>
   </main>
 </div>
 
 <script>
 (function () {
-  // PA-31: a tela abre em todas as listas. A escolha de lista fica gravada no navegador.
+  // PA-37: a escolha dos filtros fica gravada no navegador e volta ao abrir a página.
   const CHAVE_FILTRO = 'astrea-filtro-area';
-  const LISTAS = [['todas', 'Todas as listas'], ['tarefas', 'Lista de tarefas']];
-  // A lista guarda tarefa e prazo. Audiência e evento vêm da Agenda e entram em "Todas as listas" (PA-53).
-  const TIPOS_DA_LISTA = { todas: null, tarefas: ['tarefa', 'prazo'] };
+  // O usuário logado da moldura. Minhas e Delegadas comparam o responsável com ele (PA-35).
+  const EU = 'Marina Couto';
+  const OUTRAS_PESSOAS = window.DADOS.RESPONSAVEIS.filter((nome) => nome !== EU).sort();
+
+  // Cada filtro: opções [chave, rótulo] e o teste da atividade. A primeira opção é o padrão.
+  // PA-31: a tela abre em todas as listas. A lista guarda tarefa e prazo; audiência e
+  // evento vêm da Agenda e entram em "Todas as listas" (PA-53).
+  // O período nunca esconde o atrasado: "até" conta do passado até o limite (P1).
+  const FILTROS = {
+    lista: {
+      rotulo: 'Lista',
+      opcoes: [['todas', 'Todas as listas'], ['tarefas', 'Lista de tarefas']],
+      aceita: (valor, a) => valor === 'todas' || ['tarefa', 'prazo'].includes(a.tipo),
+    },
+    responsavel: {
+      rotulo: 'Responsável',
+      opcoes: [['todos', 'Todas as pessoas'], ['minhas', 'Minhas'], ['delegadas', 'Delegadas'],
+        ...OUTRAS_PESSOAS.map((nome) => [nome, nome])],
+      aceita: (valor, a) => ({ todos: true, minhas: a.responsavel === EU, delegadas: a.responsavel !== EU })[valor]
+        ?? a.responsavel === valor,
+    },
+    periodo: {
+      rotulo: 'Período',
+      opcoes: [['todos', 'Qualquer prazo'], ['hoje', 'Até hoje'], ['7', 'Até 7 dias'], ['30', 'Até 30 dias']],
+      aceita: (valor, a) => valor === 'todos' || a.prazoEmDias <= (valor === 'hoje' ? 0 : Number(valor)),
+    },
+    situacao: {
+      rotulo: 'Situação',
+      opcoes: [['abertas', 'Abertas'], ['concluidas', 'Concluídas'], ['todas', 'Abertas e concluídas']],
+    },
+  };
+  const PADRAO = Object.fromEntries(Object.entries(FILTROS).map(([chave, f]) => [chave, f.opcoes[0][0]]));
+
+  const concluida = (a) => a.status === 'concluido';
+  // PA-32: três seções em ordem fixa para o que está aberto. A concluída tem seção própria (PA-36).
   const SECOES = [
-    { chave: 'atrasadas', pertence: (a) => a.prazoEmDias < 0, vazio: 'Nenhuma atividade atrasada.' },
-    { chave: 'hoje', pertence: (a) => a.prazoEmDias === 0, vazio: 'Nada vence hoje.' },
-    { chave: 'proximos', pertence: (a) => a.prazoEmDias > 0, vazio: 'Nenhuma atividade nos próximos dias.' },
+    { chave: 'atrasadas', pertence: (a) => !concluida(a) && a.prazoEmDias < 0, vazio: 'Nenhuma atividade atrasada.' },
+    { chave: 'hoje', pertence: (a) => !concluida(a) && a.prazoEmDias === 0, vazio: 'Nada vence hoje.' },
+    { chave: 'proximos', pertence: (a) => !concluida(a) && a.prazoEmDias > 0, vazio: 'Nenhuma atividade nos próximos dias.' },
+    { chave: 'concluidas', pertence: concluida, vazio: 'Nenhuma atividade concluída.' },
   ];
+  const SECOES_DA_SITUACAO = {
+    abertas: ['atrasadas', 'hoje', 'proximos'],
+    concluidas: ['concluidas'],
+    todas: ['atrasadas', 'hoje', 'proximos', 'concluidas'],
+  };
 
   const atividades = window.DADOS.ATIVIDADES.map((a) => ({ ...a }));
-  const filtro = { lista: 'todas', ...lerFiltro() };
-  if (!TIPOS_DA_LISTA.hasOwnProperty(filtro.lista)) filtro.lista = 'todas';
+  const filtro = lerFiltro();
 
+  // Valor gravado fora das opções volta ao padrão: a opção pode ter saído da conta.
   function lerFiltro() {
-    try { return JSON.parse(localStorage.getItem(CHAVE_FILTRO)) || {}; } catch (e) { return {}; }
+    let salvo = {};
+    try { salvo = JSON.parse(localStorage.getItem(CHAVE_FILTRO)) || {}; } catch (e) { salvo = {}; }
+    return Object.fromEntries(Object.entries(FILTROS).map(([chave, f]) => {
+      const valido = f.opcoes.some(([opcao]) => opcao === salvo[chave]);
+      return [chave, valido ? salvo[chave] : PADRAO[chave]];
+    }));
   }
 
   function gravarFiltro() {
@@ -135,9 +184,9 @@
   }
 
   const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
-  const abertas = () => atividades.filter((a) => a.status !== 'concluido');
-  const naLista = (a) => !TIPOS_DA_LISTA[filtro.lista] || TIPOS_DA_LISTA[filtro.lista].includes(a.tipo);
-  const visiveis = () => abertas().filter(naLista);
+  const filtrado = () => Object.keys(FILTROS).some((chave) => filtro[chave] !== PADRAO[chave]);
+  // A situação escolhe as seções; os outros filtros escolhem as linhas.
+  const passa = (a) => ['lista', 'responsavel', 'periodo'].every((chave) => FILTROS[chave].aceita(filtro[chave], a));
 
   // --- ações da linha: o resultado fica na própria tela, com desfazer -----------
 
@@ -164,6 +213,10 @@
   }
 
   function acoesDe(atividade) {
+    if (concluida(atividade)) {
+      return [{ rotulo: 'Reabrir', icone: 'editar',
+        aoClicar: () => alterar(atividade, { status: 'a-fazer' }, `"${atividade.titulo}" reaberta.`) }];
+    }
     return [
       { rotulo: 'Concluir', icone: 'marca',
         aoClicar: () => alterar(atividade, { status: 'concluido' }, `"${atividade.titulo}" concluída.`) },
@@ -173,10 +226,32 @@
     ];
   }
 
+  // --- filtros -----------------------------------------------------------------
+
+  function limparFiltros() {
+    Object.assign(filtro, PADRAO);
+    gravarFiltro();
+    montarFiltros();
+    desenhar();
+    document.querySelector('#filtros button').focus();
+  }
+
+  function montarFiltros() {
+    const seletores = Object.entries(FILTROS).map(([chave, f]) => {
+      const el = DS.seletor({
+        rotulo: f.rotulo, opcoes: f.opcoes, valor: filtro[chave], largura: 'p',
+        aoEscolher: (valor) => { filtro[chave] = valor; gravarFiltro(); desenhar(); },
+      });
+      el.dataset.filtro = chave;
+      return el;
+    });
+    document.getElementById('filtros').replaceChildren(...seletores);
+  }
+
   // --- desenho -----------------------------------------------------------------
 
   function linha(a) {
-    const prazo = DS.descreverPrazo(a.prazoEmDias, a.status === 'concluido');
+    const prazo = DS.descreverPrazo(a.prazoEmDias, concluida(a));
     const el = DS.linhaAtividade({
       titulo: a.titulo, tipo: a.tipo, estadoPrazo: prazo.estadoPrazo, prazo: prazo.rotulo,
       processo: a.processo, responsavel: a.responsavel, acoes: acoesDe(a),
@@ -185,13 +260,23 @@
     return el;
   }
 
-  function desenharSecao(secao, lista) {
+  // Vazio por filtro troca a ação: "Limpar filtros" (03-tela, estado vazio).
+  function vazio(secao) {
+    if (!filtrado()) return DS.estadoVazio({ titulo: secao.vazio });
+    return DS.estadoVazio({
+      titulo: secao.vazio, texto: 'Os filtros escondem o que houver aqui.',
+      acao: { rotulo: 'Limpar filtros', variante: 'secundario', aoClicar: limparFiltros },
+    });
+  }
+
+  function desenharSecao(secao, lista, visivel) {
     const raiz = document.querySelector(`[data-secao="${secao.chave}"]`);
     const daqui = lista.filter(secao.pertence).sort((x, y) => x.prazoEmDias - y.prazoEmDias);
+    raiz.hidden = !visivel;
     raiz.querySelector('.secao-nota').textContent = plural(daqui.length, 'atividade', 'atividades');
     const corpo = raiz.querySelector('.secao-corpo');
     if (!daqui.length) {
-      corpo.replaceChildren(DS.estadoVazio({ titulo: secao.vazio }));
+      corpo.replaceChildren(vazio(secao));
       return daqui.length;
     }
     const ul = document.createElement('ul');
@@ -218,35 +303,30 @@
     return li;
   }
 
-  function desenharLeitura(contagem, lista) {
-    const concluidas = atividades.filter((a) => a.status === 'concluido' && naLista(a)).length;
-    const processos = new Set(lista.map((a) => a.processo)).size;
+  // A leitura segue os filtros de linha. O número só vira link quando a seção dele está na tela.
+  function desenharLeitura(contagem, lista, visiveis) {
+    const destino = (chave) => (visiveis.includes(chave) ? `#secao-${chave}` : null);
+    const processos = new Set(lista.filter((a) => !concluida(a)).map((a) => a.processo)).size;
     document.getElementById('leitura').replaceChildren(
-      itemDeLeitura(contagem.atrasadas, contagem.atrasadas === 1 ? 'atrasada' : 'atrasadas', '#secao-atrasadas', contagem.atrasadas > 0),
-      itemDeLeitura(contagem.hoje, contagem.hoje === 1 ? 'vence hoje' : 'vencem hoje', '#secao-hoje'),
-      itemDeLeitura(contagem.proximos, 'nos próximos dias', '#secao-proximos'),
+      itemDeLeitura(contagem.atrasadas, contagem.atrasadas === 1 ? 'atrasada' : 'atrasadas', destino('atrasadas'), contagem.atrasadas > 0),
+      itemDeLeitura(contagem.hoje, contagem.hoje === 1 ? 'vence hoje' : 'vencem hoje', destino('hoje')),
+      itemDeLeitura(contagem.proximos, 'nos próximos dias', destino('proximos')),
       itemDeLeitura(processos, processos === 1 ? 'processo com atividade aberta' : 'processos com atividade aberta'),
-      itemDeLeitura(concluidas, concluidas === 1 ? 'concluída' : 'concluídas'),
+      itemDeLeitura(contagem.concluidas, contagem.concluidas === 1 ? 'concluída' : 'concluídas', destino('concluidas')),
     );
   }
 
   function desenhar() {
-    const lista = visiveis();
+    const lista = atividades.filter(passa);
+    const visiveis = SECOES_DA_SITUACAO[filtro.situacao];
     const contagem = {};
-    SECOES.forEach((secao) => { contagem[secao.chave] = desenharSecao(secao, lista); });
-    desenharLeitura(contagem, lista);
+    SECOES.forEach((secao) => { contagem[secao.chave] = desenharSecao(secao, lista, visiveis.includes(secao.chave)); });
+    desenharLeitura(contagem, lista, visiveis);
   }
 
-  function montarTopo() {
-    document.getElementById('seletor-lista').replaceWith(DS.seletor({
-      rotulo: 'Lista', opcoes: LISTAS, valor: filtro.lista,
-      aoEscolher: (valor) => { filtro.lista = valor; gravarFiltro(); desenhar(); },
-    }));
-    const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
-    document.getElementById('area-data').textContent = hoje.charAt(0).toUpperCase() + hoje.slice(1);
-  }
-
-  montarTopo();
+  const hoje = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('area-data').textContent = hoje.charAt(0).toUpperCase() + hoje.slice(1);
+  montarFiltros();
   desenhar();
 })();
 </script>
