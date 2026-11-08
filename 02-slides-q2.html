@@ -5,158 +5,476 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Q2: design system e redesign incremental do Astrea</title>
 <style>
-  :root {
-    --paper: #ffffff;
-    --surface: #eef1f6;
-    --ink: #1b2a4a;
-    --text: #1b2a4a;
-    --muted: #5b6478;
-    --inverse: #ffffff;
-    --line: #c9cfda;
-    --line-strong: #1b2a4a;
-    --stamp: #b3261e;
-    --page: #f3f4f7;
-    --radius: 4px;
-    --serif: "Fraunces", "Source Serif 4", Georgia, "Times New Roman", serif;
-    --sans: "Geist", "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  }
-  /* Tema escuro: segue o sistema; a chave inverte o que o sistema disser. */
+/* primitivos */
+:root {
+  /* Espelham as variaveis do CSS do Astrea logado. O nome original vai no comentario. */
+  --primitive-blue-logo: #008fd5; /* logo; nao e variavel do produto */
+  --primitive-blue-900: #1d6bb7; /* --primary900 */
+  --primitive-blue-1000: #17558f; /* derivado do --primary900, um degrau abaixo, para hover */
+  --primitive-blue-100: #e8f1fb; /* hover azul-claro */
+  --primitive-blue-200: #bcd6f1; /* divisoria azul-clara */
+  --primitive-gray-0: #ffffff; /* branco da pagina */
+  --primitive-gray-50: #f8f9fa; /* fundo da página: um passo abaixo do branco dos painéis */
+  --primitive-gray-100: #f1f3f4; /* --gray100 */
+  --primitive-gray-300: #dee2e6; /* --gray300 */
+  --primitive-gray-500: #6c757d; /* --gray500 */
+  --primitive-gray-600: #5c6670; /* texto apagado com AA sobre o fundo gray-50 */
+  --primitive-gray-900: #202124; /* --gray900 */
+  --primitive-danger-500: #e70202; /* --danger */
+  --primitive-warning-1000: #8a6900; /* derivado do --warning900, que nao passa no AA */
+  --primitive-success-900: #02883c; /* --success da secao 14 do inventario. 4,58:1 sobre --primitive-gray-0 */
+  --primitive-danger-100: #FFECEE; /* fundo do chip vencido, claro. 14,17:1 com --primitive-gray-900 */
+  --primitive-warning-100: #FEF6D5; /* fundo do chip vence hoje, claro. 14,84:1 com --primitive-gray-900 */
 
-  * { box-sizing: border-box; }
-  html, body { margin: 0; }
-  body {
-    background: var(--page);
-    color: var(--text);
-    font-family: var(--sans);
-    padding: 24px 16px 64px;
-  }
+  /* Tema escuro: o Astrea nao tem um, entao estes valores sao proposta. Medidos no AA com contraste.py. */
+  --primitive-dark-950: #0b1a2a; /* texto sobre a acao clara, 6,8:1 */
+  --primitive-dark-900: #111418; /* pagina */
+  --primitive-dark-800: #181c22; /* fundo de coluna e de area */
+  --primitive-dark-700: #232a33; /* superficie: card, dialogo, menu, cabecalho */
+  --primitive-dark-600: #2f3843; /* hover */
+  --primitive-dark-500: #323b47; /* borda */
+  --primitive-dark-400: #6b7785; /* borda forte, 3,2:1 sobre a superficie */
+  --primitive-dark-300: #a3abb8; /* texto secundario, 6,2:1 sobre a superficie */
+  --primitive-dark-100: #e6e9ee; /* texto */
+  --primitive-blue-400: #5aa7ec; /* acao no escuro, 5,6:1 como texto sobre a superficie */
+  --primitive-blue-300: #7dbbf2; /* hover da acao no escuro */
+  --primitive-danger-300: #ff6b6b; /* vencido no escuro, 5,2:1 */
+  --primitive-warning-300: #f2c14e; /* vence hoje no escuro, 8,9:1 */
+  --primitive-success-300: #5fd38a; /* sucesso no escuro, 7,70:1 sobre --primitive-dark-700 */
+  --primitive-danger-dark-100: #3d1f24; /* fundo do chip vencido, escuro. 12,15:1 com --primitive-dark-100 */
+  --primitive-warning-dark-100: #3d3010; /* fundo do chip vence hoje, escuro. 10,59:1 com --primitive-dark-100 */
+  --primitive-tag-blue-100: #e3effc; /* fundo da etiqueta blue */
+  --primitive-tag-blue-700: #1a4f8b; /* texto da etiqueta blue, 7,11:1 sobre o 100 */
+  --primitive-tag-green-100: #e2f4e8; /* fundo da etiqueta green */
+  --primitive-tag-green-700: #1e6b3a; /* texto da etiqueta green, 5,70:1 sobre o 100 */
+  --primitive-tag-yellow-100: #fcf3cf; /* fundo da etiqueta yellow */
+  --primitive-tag-yellow-700: #735a00; /* texto da etiqueta yellow, 5,91:1 sobre o 100 */
+  --primitive-tag-orange-100: #fdebdd; /* fundo da etiqueta orange */
+  --primitive-tag-orange-700: #8f3f0a; /* texto da etiqueta orange, 6,28:1 sobre o 100 */
+  --primitive-tag-red-100: #fce4e4; /* fundo da etiqueta red */
+  --primitive-tag-red-700: #9b1c1c; /* texto da etiqueta red, 6,74:1 sobre o 100 */
+  --primitive-tag-purple-100: #efe6fa; /* fundo da etiqueta purple */
+  --primitive-tag-purple-700: #5b2e91; /* texto da etiqueta purple, 7,74:1 sobre o 100 */
+  --primitive-tag-teal-100: #ddf3f1; /* fundo da etiqueta teal */
+  --primitive-tag-teal-700: #145e58; /* texto da etiqueta teal, 6,55:1 sobre o 100 */
+  --primitive-tag-gray-100: #eceef0; /* fundo da etiqueta gray */
+  --primitive-tag-gray-700: #3f4750; /* texto da etiqueta gray, 8,10:1 sobre o 100 */
 
+  --primitive-shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --primitive-shadow-2: 0 1px 2px rgba(0, 0, 0, 0.4);
 
-  .capa {
-    max-width: 1600px; margin: 0 auto 24px; color: var(--muted); font-size: 14px; line-height: 1.5;
-  }
-  .capa strong { color: var(--text); font-weight: 500; }
+  --primitive-space-4: 4px;
+  --primitive-space-8: 8px;
+  --primitive-space-12: 12px;
+  --primitive-space-16: 16px;
+  --primitive-space-24: 24px;
+  --primitive-space-32: 32px;
+  --primitive-space-40: 40px;
 
-  /* Cada slide é um frame de 1920 × 1080. As medidas em cqw escalam a partir dele:
-     1cqw = 19,2px no tamanho original. */
-  .slide {
-    container-type: inline-size;
-    width: min(100%, 1600px);
-    aspect-ratio: 16 / 9;
-    margin: 0 auto 32px;
-    background: var(--paper);
-    color: var(--text);
-    display: flex; flex-direction: column;
-    padding: 2.6cqw 3.6cqw 2.917cqw;       /* 64 96 56 */
-    gap: 2.083cqw;                          /* 40 */
-    overflow: hidden;
-    border: 1px solid var(--line);
-  }
-  .item { font-size: 0.833cqw; font-weight: 500; line-height: 1.3; color: var(--text); margin: 0 0 0.26cqw; }
-  .pergunta { font-size: 0.9375cqw; line-height: 1.3; color: var(--muted); margin: 0 0 0.833cqw; max-width: 78cqw; }
-  .pergunta::before { content: "“"; } .pergunta::after { content: "”"; }
-  .fluxo-h { width: 100%; height: auto; display: block; }
-  .fluxo-h text { font-family: var(--sans); }
-  .fluxo-h .caixa { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.5; }
-  .fluxo-h .caixa.suave { fill: var(--surface); }
-  .fluxo-h .caixa.tinta { fill: var(--ink); stroke: none; }
-  .fluxo-h .t { fill: var(--text); font-size: 15px; font-weight: 500; }
-  .fluxo-h .s { fill: var(--muted); font-size: 12.5px; }
-  .fluxo-h .inv { fill: var(--inverse); }
-  .fluxo-h .linha { stroke: var(--line-strong); stroke-width: 1.5; fill: none; }
-  .fluxo-h .seta { fill: var(--line-strong); }
-  .fluxo-h .nota-svg { fill: var(--muted); font-size: 13px; }
-  h2 { font-family: var(--serif); font-weight: 400; font-size: 2.917cqw; line-height: 1.1; margin: 0; max-width: 78cqw; letter-spacing: -0.005em; }
-  .corpo { flex: 1; display: flex; gap: 4.167cqw; align-items: flex-start; min-height: 0; }
-  .corpo.vertical { flex-direction: column; gap: 2.083cqw; }
-  .col { display: flex; flex-direction: column; gap: 1.25cqw; min-width: 0; }
-  .col.fixa { width: 42.917cqw; flex: none; }   /* 824 */
-  .col.larga { width: 46.875cqw; flex: none; }  /* 900 */
-  .col.fill { flex: 1; }
-  .rodape { display: flex; justify-content: space-between; font-size: 0.729cqw; color: var(--muted); }
+  --primitive-radius-8: 8px;
+  --primitive-radius-12: 12px;
+  --primitive-radius-round: 50%;
+  --primitive-radius-pill: 9999px;
+  --primitive-border-1: 1px;
+  --primitive-border-2: 2px;
 
-  p { margin: 0; line-height: 1.45; }
-  .tese { font-size: 1.302cqw; }     /* 25 */
-  .texto { font-size: 1.042cqw; }    /* 20 */
-  .nota { font-size: 0.833cqw; color: var(--muted); }
-  h3 { font-size: 0.885cqw; font-weight: 500; color: var(--muted); margin: 0; line-height: 1.3; }
+  --primitive-font-12: 12px;
+  --primitive-font-14: 14px;
+  --primitive-font-13: 13px;
+  --primitive-font-16: 16px;
+  --primitive-font-18: 18px;
+  --primitive-font-20: 20px;
+  --primitive-font-24: 24px;
+  --primitive-font-28: 28px;
+  --primitive-weight-400: 400;
+  --primitive-weight-500: 500;
+  --primitive-weight-600: 600;
+  --primitive-leading-125: 1.25;
+  --primitive-leading-145: 1.45;
+  --primitive-tracking-04: 0.04em;
 
-  table { width: 100%; border-collapse: collapse; font-size: 0.9375cqw; line-height: 1.35; }
-  th { text-align: left; font-weight: 500; font-size: 0.729cqw; color: var(--muted); padding: 0 0 0.417cqw; border-bottom: 1px solid var(--line-strong); }
-  td { padding: 0.573cqw 1.25cqw 0.573cqw 0; vertical-align: top; border-bottom: 1px solid var(--line); }
-  td:last-child, th:last-child { padding-right: 0; }
-  td:first-child { font-weight: 500; }
-  td.muted { color: var(--muted); }
+  --primitive-size-18: 18px;
+  --primitive-size-20: 20px;
+  --primitive-size-22: 22px;
+  --primitive-size-24: 24px;
+  --primitive-size-28: 28px;
+  --primitive-size-32: 32px;
+  --primitive-size-36: 36px;
+  --primitive-size-40: 40px;
+  --primitive-size-44: 44px;
+  --primitive-size-48: 48px;
+  --primitive-size-64: 64px;
+  --primitive-size-88: 88px;
+  --primitive-size-200: 200px; /* sidebar que abraca o item mais longo, "Processos e casos", com 8px de folga */
+  --primitive-size-300: 300px;
+  --primitive-size-440: 440px;
+  --primitive-size-480: 480px;
+  --primitive-size-560: 560px;
+  --primitive-size-960: 960px;
+}
+/* fim dos primitivos */
 
-  ol.passos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.625cqw; counter-reset: passo; }
-  ol.passos li { display: grid; grid-template-columns: 1.563cqw 1fr; gap: 0.729cqw; align-items: start; }
-  ol.passos li::before { counter-increment: passo; content: counter(passo); font-family: var(--serif); font-size: 1.25cqw; line-height: 1.1; }
-  ol.passos b { display: block; font-weight: 500; font-size: 1.042cqw; line-height: 1.35; }
-  ol.passos span { display: block; font-size: 0.9375cqw; color: var(--muted); line-height: 1.4; }
-  ol.passos.compacto li { font-size: 0.9375cqw; line-height: 1.4; }
-  ol.passos.compacto li::before { font-size: 1.146cqw; }
+/* semanticos */
+:root {
+  color-scheme: light;
 
-  .decisao { display: flex; gap: 0.833cqw; align-items: flex-start; }
-  .carimbo {
-    flex: none; border: 2px solid var(--stamp); border-radius: var(--radius); color: var(--stamp);
-    font-size: 0.677cqw; font-weight: 600; letter-spacing: 0.04em; padding: 0.26cqw 0.52cqw; line-height: 1.2;
-  }
-  .decisao p { font-weight: 500; font-size: 1cqw; line-height: 1.35; }
+  --color-bg-page: var(--primitive-gray-50);
+  --color-bg-surface: var(--primitive-gray-0);
+  --color-bg-subtle: var(--primitive-gray-100);
+  --color-bg-hover: var(--primitive-blue-100);
+  --color-text-default: var(--primitive-gray-900);
+  --color-text-muted: var(--primitive-gray-600);
+  --color-text-danger: var(--primitive-danger-500);
+  --color-text-warning: var(--primitive-warning-1000);
+  --color-text-success: var(--primitive-success-900);
+  --color-bg-danger: var(--primitive-danger-100);
+  --color-bg-warning: var(--primitive-warning-100);
+  --color-tag-blue-bg: var(--primitive-tag-blue-100);
+  --color-tag-blue-text: var(--primitive-tag-blue-700);
+  --color-tag-green-bg: var(--primitive-tag-green-100);
+  --color-tag-green-text: var(--primitive-tag-green-700);
+  --color-tag-yellow-bg: var(--primitive-tag-yellow-100);
+  --color-tag-yellow-text: var(--primitive-tag-yellow-700);
+  --color-tag-orange-bg: var(--primitive-tag-orange-100);
+  --color-tag-orange-text: var(--primitive-tag-orange-700);
+  --color-tag-red-bg: var(--primitive-tag-red-100);
+  --color-tag-red-text: var(--primitive-tag-red-700);
+  --color-tag-purple-bg: var(--primitive-tag-purple-100);
+  --color-tag-purple-text: var(--primitive-tag-purple-700);
+  --color-tag-teal-bg: var(--primitive-tag-teal-100);
+  --color-tag-teal-text: var(--primitive-tag-teal-700);
+  --color-tag-gray-bg: var(--primitive-tag-gray-100);
+  --color-tag-gray-text: var(--primitive-tag-gray-700);
+  --color-tag-ink-dark: var(--primitive-gray-900); /* texto da cor personalizada clara; fica igual no escuro */
+  --color-tag-ink-light: var(--primitive-gray-0); /* texto da cor personalizada escura */
+  --color-logo: var(--primitive-blue-logo);
+  --color-border-default: var(--primitive-gray-300);
+  --color-border-strong: var(--primitive-gray-500);
+  --color-border-accent: var(--primitive-blue-200);
+  --color-action: var(--primitive-blue-900);
+  --color-action-hover: var(--primitive-blue-1000);
+  --color-action-text: var(--primitive-gray-0);
+  --color-focus: var(--primitive-blue-900);
+  --color-scrim: color-mix(in srgb, var(--primitive-gray-900) 45%, transparent);
 
-  ul.lista { list-style: none; margin: 0; padding: 0; }
-  ul.lista li { padding: 0.625cqw 0; border-bottom: 1px solid var(--line); }
-  ul.lista li:first-child { padding-top: 0; }
-  ul.lista li:last-child { border-bottom: 0; }
-  ul.lista b { display: block; font-weight: 500; font-size: 1.042cqw; line-height: 1.35; }
-  ul.lista span { display: block; font-size: 0.9375cqw; color: var(--muted); line-height: 1.4; margin-top: 0.156cqw; }
+  --shadow-card: var(--primitive-shadow-1);
 
-  .fases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.083cqw; width: 100%; }
-  .fase { border-top: 2px solid var(--line-strong); padding-top: 0.729cqw; display: flex; flex-direction: column; gap: 0.52cqw; }
-  .fase .periodo { display: flex; gap: 0.52cqw; align-items: baseline; }
-  .fase .periodo i { font-style: normal; font-family: var(--serif); font-size: 1.458cqw; line-height: 1.1; }
-  .fase .periodo b { font-weight: 500; font-size: 0.9375cqw; }
-  .fase p { font-size: 0.9375cqw; }
-  .fase .entrega { font-weight: 500; color: var(--muted); font-size: 0.833cqw; }
-  .formula { font-family: var(--serif); font-size: 1.563cqw; line-height: 1.2; margin: 0; }
+  --space-1: var(--primitive-space-4);
+  --space-2: var(--primitive-space-8);
+  --space-3: var(--primitive-space-12);
+  --space-4: var(--primitive-space-16);
+  --space-5: var(--primitive-space-24);
+  --space-6: var(--primitive-space-32);
+  --space-7: var(--primitive-space-40);
 
-  ol.riscos { list-style: none; margin: 0; padding: 0; counter-reset: risco; }
-  ol.riscos li { display: grid; grid-template-columns: 2.292cqw 1fr; gap: 1.042cqw; padding: 0.9375cqw 0; border-bottom: 1px solid var(--line); }
-  ol.riscos li:first-child { padding-top: 0; }
-  ol.riscos li:last-child { border-bottom: 0; }
-  ol.riscos li::before { counter-increment: risco; content: counter(risco); font-family: var(--serif); font-size: 2.083cqw; line-height: 1; }
-  ol.riscos b { display: block; font-weight: 500; font-size: 1.146cqw; line-height: 1.3; margin-bottom: 0.3cqw; }
-  ol.riscos p { font-size: 0.9375cqw; }
+  /* Densidade de linha. Controle de 36px, como no 03-tela.md; compacta usa 32px, o alvo de opcao. */
+  --density-row: var(--primitive-size-36);
+  --density-row-compact: var(--primitive-size-32);
 
-  .fluxo { width: 100%; height: auto; display: block; }
-  .fluxo text { font-family: var(--sans); }
-  .fluxo .caixa { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.5; }
-  .fluxo .caixa.suave { fill: var(--surface); }
-  .fluxo .caixa.tinta { fill: var(--ink); stroke: none; }
-  .fluxo .t { fill: var(--text); font-size: 15px; font-weight: 500; }
-  .fluxo .s { fill: var(--muted); font-size: 12.5px; }
-  .fluxo .tinta ~ .inv, .fluxo .inv { fill: var(--inverse); }
-  .fluxo .linha { stroke: var(--line-strong); stroke-width: 1.5; fill: none; stroke-linecap: round; }
-  .fluxo .linha.tracejada { stroke-dasharray: 5 5; }
+  --radius: var(--primitive-radius-8);
+  --radius-card: var(--primitive-radius-8);
+  --radius-dialog: var(--primitive-radius-12);
+  --radius-round: var(--primitive-radius-round);
+  --radius-pill: var(--primitive-radius-pill);
+  --border-width: var(--primitive-border-1);
+  --focus-width: var(--primitive-border-2);
 
-  .rascunho { border: 1px dashed var(--line-strong); padding: 1.25cqw; border-radius: var(--radius); }
-  .rascunho .texto { max-width: 70cqw; }
+  --font-sans: "Museo Sans", "museo-sans", "Open Sans", "Segoe UI", system-ui, sans-serif;
+  --font-size-label: var(--primitive-font-12);
+  --font-size-button: var(--primitive-font-13);
+  --font-size-body: var(--primitive-font-13);
+  --font-size-emphasis: var(--primitive-font-14);
+  --font-size-dialog: var(--primitive-font-18);
+  --font-size-title: var(--primitive-font-20);
+  --font-size-logo: var(--primitive-font-24);
+  --font-weight-regular: var(--primitive-weight-400);
+  --font-weight-medium: var(--primitive-weight-500);
+  --font-weight-semibold: var(--primitive-weight-600);
+  --font-leading-tight: var(--primitive-leading-125);
+  --font-leading-base: var(--primitive-leading-145);
+  --font-tracking-caps: var(--primitive-tracking-04);
 
-  @media (max-width: 720px) {
-    .slide { aspect-ratio: auto; }
-    .corpo { flex-direction: column; }
-    .col.fixa, .col.larga { width: 100%; }
-    .fases { grid-template-columns: 1fr 1fr; }
-  }
+  --size-icon: var(--primitive-size-18);
+  --size-icon-field: var(--primitive-size-20);
+  --size-icon-nav: var(--primitive-size-20);
+  --size-chip: var(--primitive-size-22);
+  --size-logo: var(--primitive-size-24);
+  --size-control: var(--primitive-size-36);
+  --size-icon-button: var(--primitive-size-32);
+  --size-option: var(--primitive-size-32);
+  --size-shortcut: var(--primitive-size-36);
+  --size-search-height: var(--primitive-size-40);
+  --size-header: var(--primitive-size-64);
+  --size-sidebar: var(--primitive-size-200);
+  --size-sidebar-recolhida: var(--primitive-size-64);
+  --size-search: var(--primitive-size-480);
+  --size-dialog: var(--primitive-size-440);
+  --size-dialog-wide: var(--primitive-size-560);
+  --size-dialog-detail: var(--primitive-size-960);
+  --size-column: var(--primitive-size-300);
+}
+
+/* componentes do DS usados no deck, copiados de prototipo/astrea.css */
+:root {
+  --component-logo-mark: var(--color-logo);
+  --component-logo-cut: var(--color-bg-page);
+  --component-logo-text: var(--color-text-default);
+  --component-card-bg: var(--color-bg-surface);
+  --component-card-border: var(--color-border-default);
+  --component-card-radius: var(--radius-card);
+  --component-card-shadow: var(--shadow-card);
+  --component-chip-bg: var(--color-bg-subtle);
+  --component-chip-border: var(--color-border-default);
+  --component-chip-height: var(--size-chip);
+  --component-control-bg: var(--color-bg-surface);
+  --component-control-border: var(--color-border-default);
+  --component-control-height: var(--size-control);
+  --component-button-primary-bg: var(--color-action);
+  --component-button-primary-text: var(--color-action-text);
+
+  /* escala do deck: a escala do DS multiplicada para a projeção */
+  --deck-titulo: calc(var(--font-size-title) * 1.8);
+  --deck-titulo-capa: calc(var(--font-size-title) * 2.4);
+  --deck-subtitulo: calc(var(--font-size-title) * 1.1);
+  --deck-destaque: calc(var(--font-size-emphasis) * 1.25);
+  --deck-corpo: calc(var(--font-size-body) * 1.2);
+  --deck-rotulo: var(--font-size-label);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  padding: var(--space-5) var(--space-4) var(--space-7);
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-default);
+  font-family: var(--font-sans);
+  font-size: var(--deck-corpo);
+  line-height: var(--font-leading-base);
+}
+p { margin: 0; }
+code { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
+:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }
+
+.capa { max-width: 1600px; margin: 0 auto var(--space-5); color: var(--color-text-muted); font-size: var(--font-size-emphasis); }
+.capa strong { color: var(--color-text-default); font-weight: var(--font-weight-semibold); }
+
+/* logo: o mesmo desenho de prototipo/moldura.js */
+.logo { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--component-logo-text); font-size: var(--font-size-logo); font-weight: var(--font-weight-semibold); line-height: 1; text-decoration: none; }
+.logo svg { width: var(--size-logo); height: var(--size-logo); flex: none; }
+.logo-marca { fill: var(--component-logo-mark); }
+.logo-recorte { fill: var(--component-logo-cut); }
+
+/* slide: 16:9, fundo da página do DS */
+.slide {
+  container-type: inline-size;
+  width: min(100%, 1600px);
+  aspect-ratio: 16 / 9;
+  margin: 0 auto var(--space-6);
+  display: flex; flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-7) var(--space-5);
+  overflow: hidden;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-default);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+}
+.slide h2 { margin: 0; max-width: 84cqw; font-size: var(--deck-titulo); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.item { margin: 0 0 var(--space-1); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-action); line-height: var(--font-leading-tight); }
+.pergunta { margin: 0 0 var(--space-3); max-width: 78cqw; font-size: var(--font-size-emphasis); color: var(--color-text-muted); line-height: var(--font-leading-tight); }
+.pergunta::before { content: "\201C"; } .pergunta::after { content: "\201D"; }
+.rodape { display: flex; align-items: center; gap: var(--space-4); margin-top: auto; padding-top: var(--space-3); border-top: var(--border-width) solid var(--color-border-default); font-size: var(--font-size-label); color: var(--color-text-muted); }
+.rodape .logo { font-size: var(--font-size-emphasis); }
+.rodape .logo svg { width: var(--size-icon); height: var(--size-icon); }
+.rodape span:last-child { margin-left: auto; font-variant-numeric: tabular-nums; }
+
+/* card do DS */
+.card { padding: var(--space-4); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--component-card-radius); box-shadow: var(--component-card-shadow); min-width: 0; }
+
+/* rótulo de seção, como o DS faz */
+.secao-titulo { font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); line-height: var(--font-leading-tight); text-transform: uppercase; color: var(--color-text-muted); }
+
+/* tag e chip de prazo, de prototipo/astrea.css */
+.tag, .chip-prazo {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  min-height: var(--component-chip-height); padding: 0 var(--space-2);
+  border: var(--border-width) solid var(--component-chip-border); border-radius: var(--radius);
+  font-size: var(--font-size-label); line-height: var(--font-leading-tight); white-space: nowrap;
+}
+.tag { background-color: var(--component-chip-bg); color: var(--color-text-default); }
+.tag-acao { background-color: var(--color-bg-hover); border-color: var(--color-border-accent); color: var(--color-action); }
+.chip-prazo { background-color: var(--component-chip-bg); color: var(--color-text-default); font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; }
+.chip-prazo-vencido { background-color: var(--color-bg-danger); border-color: var(--color-text-danger); }
+.chip-prazo-hoje { background-color: var(--color-bg-warning); border-color: var(--color-text-warning); }
+.chip-prazo-concluido { background-color: var(--color-bg-surface); border-color: var(--color-text-success); font-weight: var(--font-weight-regular); }
+
+/* botão, de prototipo/astrea.css */
+.botao { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); height: var(--component-control-height); padding: 0 var(--space-4); background: none; border: var(--border-width) solid transparent; border-radius: var(--radius); color: var(--color-text-default); font-size: var(--font-size-button); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); white-space: nowrap; }
+.botao-primario { padding: 0 var(--space-5); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; background-color: var(--component-button-primary-bg); border-color: var(--component-button-primary-bg); color: var(--component-button-primary-text); }
+.botao-secundario { background-color: var(--component-control-bg); border-color: var(--component-control-border); }
+
+/* tabela, de prototipo/astrea.css */
+.tabela-quadro { max-width: 100%; overflow-x: auto; border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); background-color: var(--color-bg-surface); }
+.tabela { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tabela th, .tabela td { height: var(--density-row); padding: var(--space-1) var(--space-3); border-bottom: var(--border-width) solid var(--color-border-default); text-align: start; vertical-align: middle; }
+.tabela th { color: var(--color-text-muted); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); white-space: nowrap; }
+.tabela tbody tr:last-child td { border-bottom: 0; }
+
+/* lista com divisórias */
+.lista { margin: 0; padding: 0; list-style: none; background-color: var(--color-bg-surface); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
+.lista > li { padding: var(--space-3) var(--space-4); border-bottom: var(--border-width) solid var(--color-border-default); }
+.lista > li:last-child { border-bottom: 0; }
+
+/* bloco interativo: details nativo com a faixa da seção do DS (.secao-faixa) */
+.bloco { background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--component-card-radius); min-width: 0; }
+.bloco + .bloco { margin-top: var(--space-2); }
+.bloco > summary {
+  display: flex; align-items: center; gap: var(--space-2);
+  min-height: var(--component-control-height); padding: var(--space-2) var(--space-3);
+  list-style: none; cursor: pointer; border-radius: var(--component-card-radius);
+  font-size: var(--deck-destaque); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight);
+}
+.bloco > summary::-webkit-details-marker { display: none; }
+.bloco > summary:hover { background-color: var(--color-bg-hover); }
+.bloco > summary:focus-visible { outline: var(--focus-width) solid var(--color-action); outline-offset: calc(-1 * var(--focus-width)); }
+.bloco > summary > .seta { flex: none; width: var(--size-icon); height: var(--size-icon); fill: none; stroke: var(--color-text-muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-90deg); transition: transform 150ms; }
+.bloco[open] > summary > .seta { transform: none; }
+.bloco[open] > summary { border-bottom: var(--border-width) solid var(--color-border-default); border-radius: var(--component-card-radius) var(--component-card-radius) 0 0; }
+.bloco > summary .resumo { display: block; font-size: var(--deck-corpo); font-weight: var(--font-weight-regular); color: var(--color-text-muted); }
+.bloco > summary .tag, .bloco > summary .chips { margin-left: auto; }
+.bloco > .detalhe { padding: var(--space-3) var(--space-4); }
+@media (prefers-reduced-motion: reduce) { .bloco > summary > .seta { transition: none; } }
+
+/* PDF: tudo aberto */
+@media print {
+  details { display: block; }
+  details > summary { list-style: none; }
+  details > :not(summary) { display: block !important; }
+  details > summary > .seta { transform: none; }
+  body { background-color: var(--color-bg-surface); padding: 0; }
+  .slide { aspect-ratio: auto; min-height: 0; overflow: visible; break-inside: avoid; break-after: page; }
+}
+
+/* deck da Questão 2: regras próprias, só com tokens do DS */
+.corpo { flex: 1; display: flex; gap: var(--space-6); align-items: flex-start; min-height: 0; }
+.corpo.vertical { flex-direction: column; gap: var(--space-4); align-items: stretch; }
+.col { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.col.fixa { width: 42.917cqw; flex: none; }
+.col.larga { width: 46.875cqw; flex: none; }
+.col.fill { flex: 1; }
+.tese { font-size: var(--deck-destaque); }
+.texto { font-size: var(--deck-corpo); }
+.nota { font-size: var(--font-size-emphasis); color: var(--color-text-muted); }
+h3 { margin: 0; }
+
+.marca-capa { margin-bottom: var(--space-3); }
+.decisao { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-3) var(--space-4); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-left: var(--focus-width) solid var(--color-action); border-radius: var(--radius-card); }
+.decisao p { font-size: var(--deck-destaque); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.decisao .tag { flex: none; }
+
+.num { flex: none; display: inline-flex; align-items: center; justify-content: center; min-width: var(--component-chip-height); height: var(--component-chip-height); border-radius: var(--radius); background-color: var(--color-bg-hover); color: var(--color-action); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; }
+.bloco > summary .titulo { min-width: 0; }
+.bloco > .detalhe { font-size: var(--deck-corpo); color: var(--color-text-default); }
+.bloco > .detalhe .tabela { font-size: var(--font-size-body); }
+.bloco > .detalhe:has(> .tabela) { padding: 0; }
+.grupo { display: flex; flex-direction: column; min-width: 0; }
+
+.formula { margin: 0; font-size: var(--deck-subtitulo); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); color: var(--color-action); }
+
+.fluxo, .fluxo-h { display: block; width: 100%; height: auto; }
+.fluxo text, .fluxo-h text { font-family: var(--font-sans); }
+.fluxo .caixa, .fluxo-h .caixa { fill: var(--color-bg-surface); stroke: var(--color-border-strong); stroke-width: 1.5; }
+.fluxo .caixa.suave, .fluxo-h .caixa.suave { fill: var(--color-bg-hover); stroke: var(--color-border-accent); }
+.fluxo .caixa.tinta, .fluxo-h .caixa.tinta { fill: var(--color-action); stroke: none; }
+.fluxo .t, .fluxo-h .t { fill: var(--color-text-default); font-size: 15px; font-weight: var(--font-weight-semibold); }
+.fluxo .s, .fluxo-h .s { fill: var(--color-text-muted); font-size: 11.5px; }
+.fluxo .inv, .fluxo-h .inv { fill: var(--color-action-text); }
+.fluxo .linha, .fluxo-h .linha { stroke: var(--color-border-strong); stroke-width: 1.5; fill: none; stroke-linecap: round; }
+.fluxo .linha.tracejada { stroke-dasharray: 5 5; }
+.fluxo-h .seta { fill: var(--color-border-strong); }
+.fluxo-h .nota-svg { fill: var(--color-text-muted); font-size: 13px; }
+
+.rascunho { padding: var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
+.rascunho .texto { max-width: 70cqw; font-size: var(--deck-destaque); }
+
+.corpo-interno { flex: 1; width: 100%; }
+.slide { gap: var(--space-4); }
+.slide h2 { font-size: calc(var(--font-size-title) * 1.6); }
+.col { gap: var(--space-2); }
+.decisao { padding: var(--space-2) var(--space-3); }
+.tabela-compacta th, .tabela-compacta td { height: var(--density-row-compact); }
+.bloco > .detalhe > .lista { border: 0; border-radius: 0; background: none; }
+.bloco > .detalhe:has(> .lista) { padding: 0; }
+.bloco > .detalhe > .lista > li { padding: var(--space-2) var(--space-4); font-size: var(--font-size-emphasis); }
+
+@media (max-width: 720px) {
+  .slide { aspect-ratio: auto; }
+  .corpo { flex-direction: column; }
+  .col.fixa, .col.larga { width: 100%; }
+  .fases .passos { flex-wrap: wrap; }
+}
+
+/* passos: lista mestre (vertical) ou cards e abas (horizontal) que trocam o painel */
+.mestre { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 34fr) minmax(0, 66fr); gap: var(--space-5); }
+.mestre-baixo { flex: 1; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: var(--space-4); }
+.passos { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; }
+.passos[aria-orientation="horizontal"] { flex-direction: row; }
+.passos[aria-orientation="horizontal"] > .passo { flex: 1 1 0; }
+.passo {
+  display: flex; align-items: flex-start; gap: var(--space-3);
+  width: 100%; min-width: 0; padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-surface); color: var(--color-text-default);
+  border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card);
+  font: inherit; text-align: start; cursor: pointer;
+}
+.passo:hover { background-color: var(--color-bg-subtle); }
+.passo[aria-selected="true"] { background-color: var(--color-bg-hover); border-color: var(--color-border-accent); box-shadow: inset calc(var(--focus-width) + var(--border-width)) 0 0 var(--color-action); }
+.passo:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }
+.passo-num { flex: none; min-width: var(--space-5); color: var(--color-text-muted); font-size: var(--deck-destaque); font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; line-height: var(--font-leading-tight); }
+.passo[aria-selected="true"] .passo-num { color: var(--color-action); }
+.passo-texto { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); min-width: 0; }
+.passo-titulo { font-size: var(--deck-destaque); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.passo-sub { font-size: var(--font-size-emphasis); color: var(--color-text-muted); line-height: var(--font-leading-tight); }
+.passo .tag, .passo .chips { margin-top: var(--space-1); }
+.paineis { min-height: 0; display: grid; }
+.painel {
+  grid-area: 1 / 1; min-height: 0; overflow: hidden;
+  display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-5); background-color: var(--color-bg-surface);
+  border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card);
+}
+.painel[hidden] { display: none; }
+.painel:not([hidden]) { animation: deck-fade .18s ease; }
+@keyframes deck-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .painel:not([hidden]) { animation: none; } }
+.so-impressao { display: none; }
+@media print {
+  .paineis { display: block; }
+  .painel[hidden] { display: flex !important; }
+  .painel { margin-top: var(--space-3); overflow: visible; animation: none; }
+  .so-impressao { display: block; }
+  .mestre, .mestre-baixo { display: block; }
+}
+
+/* Questão 2: o painel guarda a altura do maior item do grupo, para nada pular */
+.paineis > .painel[hidden] { display: flex; visibility: hidden; }
+.mestre { flex: none; grid-template-columns: minmax(0, 40fr) minmax(0, 60fr); gap: var(--space-3); }
+.mestre .passo { padding: var(--space-2) var(--space-3); }
+.mestre-baixo.fases { flex: none; width: 100%; gap: var(--space-2); }
+.mestre-baixo.fases .painel { padding: var(--space-3) var(--space-4); }
+.painel p { font-size: var(--deck-corpo); }
+@media print { .paineis > .painel[hidden] { visibility: visible; } }
 </style>
 </head>
 <body>
 
 
-<p class="capa"><strong>Questão 2, documento-fonte dos slides.</strong> Cada bloco abaixo é um frame de 1920 por 1080. Papel branco, tinta azul, vermelho só no carimbo de decisão. Títulos em Fraunces, texto em Geist, raio único de 4px. Número só onde a ordem é real.</p>
+<p class="capa"><strong>Questão 2, documento-fonte dos slides.</strong> Cada bloco abaixo é um frame de 1920 por 1080. Número só onde a ordem é real.</p>
 
 <!-- ============ 1 ============ -->
 <section class="slide" id="s1">
   <header>
+    <div class="marca-capa"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a></div>
     <p class="item">Questão 2, item 1 de 5. Arquitetura do design system</p>
     <p class="pergunta">Como você organizaria fundamentos, tokens, componentes e padrões. O que vem primeiro e por quê?</p>
     <h2>Primeiro os tokens semânticos. Depois, os componentes</h2>
@@ -164,7 +482,7 @@
   <div class="corpo">
     <div class="col fixa">
       <p class="tese">O Astrea cresceu com times diferentes construindo partes diferentes. O resultado é conhecido: padrão que varia por módulo e componente duplicado. A resposta é uma fonte só, que o front novo e o legado consomem do mesmo lugar. A ordem de construção é o que faz essa fonte valer desde o primeiro mês.</p>
-      <h3>As cinco camadas. Cada uma aponta só para a de baixo.</h3>
+      <h3 class="secao-titulo">As cinco camadas. Cada uma aponta só para a de baixo.</h3>
       <svg class="fluxo-h" viewBox="0 0 824 410" role="img" aria-label="As cinco camadas do design system, de templates a tokens primitivos, e quem consome cada uma">
         <defs><marker id="seta1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="seta" d="M0 0 L10 5 L0 10 z"/></marker></defs>
         <rect class="caixa" x="0" y="0" width="500" height="58" rx="4"/>
@@ -196,21 +514,15 @@
       <p class="nota">O protótipo já tem essa arquitetura: 9 fundamentos e 49 componentes em cinco grupos. São 211 estados desenhados e 185 ausências explicadas. Nenhuma cor da tela fica fora de token.</p>
     </div>
     <div class="col fill">
-      <div class="decisao"><span class="carimbo">Decisão</span><p>Tokens semânticos antes de qualquer componente.</p></div>
+      <div class="decisao"><span class="tag tag-acao">Decisão</span><p>Tokens semânticos antes de qualquer componente.</p></div>
       <p class="texto">O motivo é a convivência. O código legado consome token semântico como variável CSS sem ser reescrito. Troca-se o valor, não o componente. Tela antiga e tela nova se aproximam no visual antes de a migração do front chegar nelas.</p>
-      <h3>A ordem de construção</h3>
-      <ol class="passos">
-        <li><div><b>Tokens semânticos</b><span>Cor, tipografia, espaço, raio e foco. Em JSON, no repositório.</span></div></li>
-        <li><div><b>Moldura</b><span>Cabeçalho, menu lateral, ações e filtros. Depois de padronizada, não muda mais.</span></div></li>
-        <li><div><b>Componentes da gestão de atividades</b><span>Nascem da primeira tela nova, com todos os estados.</span></div></li>
-        <li><div><b>Padrões e templates por módulo</b><span>Lista, filtro, formulário de prazo, estado vazio.</span></div></li>
-        <li><div><b>Padrões para funcionalidade com IA</b><span>Como o sistema sugere, como o usuário confirma, como desfaz, e como aparece quando a IA erra. Mesmos componentes, mesma moldura.</span></div></li>
-      </ol>
-      <h3>Os estados de cada componente</h3>
+      <h3 class="secao-titulo" id="s1-ordem-rotulo">A ordem de construção</h3>
+      <div class="mestre ordem" id="s1-ordem"><div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s1-ordem-rotulo" data-passos><button type="button" class="passo" role="tab" id="s1-ordem-t0" aria-controls="s1-ordem-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">Tokens semânticos</span></span></button><button type="button" class="passo" role="tab" id="s1-ordem-t1" aria-controls="s1-ordem-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Moldura</span></span></button><button type="button" class="passo" role="tab" id="s1-ordem-t2" aria-controls="s1-ordem-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Componentes da gestão de atividades</span></span></button><button type="button" class="passo" role="tab" id="s1-ordem-t3" aria-controls="s1-ordem-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Padrões e templates por módulo</span></span></button><button type="button" class="passo" role="tab" id="s1-ordem-t4" aria-controls="s1-ordem-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">Padrões para funcionalidade com IA</span></span></button></div><div class="paineis" aria-live="polite"><div class="painel" role="tabpanel" id="s1-ordem-p0" aria-labelledby="s1-ordem-t0" tabindex="0"><p class="so-impressao secao-titulo">1. Tokens semânticos</p><p>Cor, tipografia, espaço, raio e foco. Em JSON, no repositório.</p></div><div class="painel" role="tabpanel" id="s1-ordem-p1" aria-labelledby="s1-ordem-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">2. Moldura</p><p>Cabeçalho, menu lateral, ações e filtros. Depois de padronizada, não muda mais.</p></div><div class="painel" role="tabpanel" id="s1-ordem-p2" aria-labelledby="s1-ordem-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">3. Componentes da gestão de atividades</p><p>Nascem da primeira tela nova, com todos os estados.</p></div><div class="painel" role="tabpanel" id="s1-ordem-p3" aria-labelledby="s1-ordem-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">4. Padrões e templates por módulo</p><p>Lista, filtro, formulário de prazo, estado vazio.</p></div><div class="painel" role="tabpanel" id="s1-ordem-p4" aria-labelledby="s1-ordem-t4" tabindex="0" hidden><p class="so-impressao secao-titulo">5. Padrões para funcionalidade com IA</p><p>Como o sistema sugere, como o usuário confirma, como desfaz, e como aparece quando a IA erra. Mesmos componentes, mesma moldura.</p></div></div></div>
+      <h3 class="secao-titulo">Os estados de cada componente</h3>
       <p class="nota">Default, hover, active, foco, disabled, erro, carregando e vazio são a matriz base. Algumas peças pedem mais três: selecionado, sem-destaque e oculto. Cada peça mostra só os estados que tem e escreve por que os outros faltam.</p>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>1 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>1 de 6</span></footer>
 </section>
 
 <!-- ============ 2 ============ -->
@@ -220,8 +532,8 @@
     <p class="pergunta">Como o Figma e o código se mantêm alinhados.</p>
     <h2>Uma fonte só. O Figma lê a fonte, ele não é a fonte</h2>
   </header>
-  <div class="corpo vertical" style="gap: 1.25cqw;">
-    <svg class="fluxo-h" style="width: 88%; margin: 0 auto;" viewBox="0 0 1728 236" role="img" aria-label="O JSON de tokens no repositório alimenta o código legado, o código novo, a biblioteca do Figma e os agentes">
+  <div class="corpo vertical">
+    <svg class="fluxo-h" style="width: 64%; margin: 0 auto;" viewBox="0 0 1728 236" role="img" aria-label="O JSON de tokens no repositório alimenta o código legado, o código novo, a biblioteca do Figma e os agentes">
       <defs><marker id="seta2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="seta" d="M0 0 L10 5 L0 10 z"/></marker></defs>
       <rect class="caixa tinta" x="0" y="88" width="280" height="60" rx="4"/>
       <text class="t inv" x="140" y="113" text-anchor="middle">tokens/ em JSON, padrão DTCG</text>
@@ -245,12 +557,11 @@
       <text class="nota-svg" x="1436" y="112">Code Connect liga cada componente</text>
       <text class="nota-svg" x="1436" y="129">do Figma ao do pacote</text>
     </svg>
-    <div class="corpo" style="flex: 1; width: 100%;">
+    <div class="corpo corpo-interno">
     <div class="col fixa">
-      <div class="decisao"><span class="carimbo">Decisão</span><p>Uma biblioteca, Astrea DS, publicada para todos os squads. As parciais de hoje são absorvidas ou arquivadas. Nenhum squad publica componente próprio.</p></div>
+      <div class="decisao"><span class="tag tag-acao">Decisão</span><p>Uma biblioteca, Astrea DS, publicada para todos os squads. As parciais de hoje são absorvidas ou arquivadas. Nenhum squad publica componente próprio.</p></div>
       <p class="nota">O código já tem um DS legado: 609 variáveis com o prefixo nectar-legacy, lidas no produto em 07/11. Os primitivos do Astrea DS nascem dele, renomeados. A fase 2 começa por esse mapa, não do zero.</p>
-      <h3>No repositório: o documento-base do DS</h3>
-      <table>
+      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">No repositório: o documento-base do DS</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
         <thead><tr><th>Peça</th><th>Papel</th></tr></thead>
         <tbody>
           <tr><td>tokens/ em JSON, padrão DTCG</td><td>Fonte única. Muda aqui, muda em todo lugar</td></tr>
@@ -261,31 +572,23 @@
           <tr><td>skills/astrea-ds</td><td>A mesma regra, no formato que o agente lê</td></tr>
           <tr><td>Changelog por versão</td><td>O que mudou, para designer e para dev</td></tr>
         </tbody>
-      </table>
+      </table></div></details>
     </div>
     <div class="col fill">
-      <h3>No Figma: três coleções de variáveis</h3>
-      <table>
+      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">No Figma: três coleções de variáveis</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
         <thead><tr><th>Coleção</th><th>Conteúdo</th><th>Modos</th></tr></thead>
         <tbody>
           <tr><td>Primitives</td><td>Escalas de cor, espaço, tipografia e raio</td><td>Nenhum</td></tr>
           <tr><td>Semantic</td><td>Papéis da interface. Apontam para Primitives</td><td>Claro, escuro</td></tr>
           <tr><td>Component</td><td>Valor específico de um componente. Aponta para Semantic</td><td>Nenhum</td></tr>
         </tbody>
-      </table>
+      </table></div></details>
       <p class="nota">Nome no formato categoria.papel.variante: color.bg.surface, color.text.danger, space.4.</p>
-      <h3>Como as variáveis nascem</h3>
-      <ol class="passos compacto">
-        <li><div>Primitives: escalas numeradas, de blue.50 a blue.900. Sem modo.</div></li>
-        <li><div>Semantic: cada variável aponta para uma primitiva. Modos claro e escuro na mesma coleção.</div></li>
-        <li><div>Escopo em cada variável: cor de texto só em texto, raio só em canto. O Figma bloqueia o uso errado antes da revisão.</div></li>
-        <li><div>Publicar a biblioteca. Squad consome, nunca copia.</div></li>
-        <li><div>O JSON do repositório gera as três coleções pela API de variáveis.</div></li>
-      </ol>
+      <details class="bloco"><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">Como as variáveis nascem</span></summary><div class="detalhe"><ol class="lista"><li>Primitives: escalas numeradas, de blue.50 a blue.900. Sem modo.</li><li>Semantic: cada variável aponta para uma primitiva. Modos claro e escuro na mesma coleção.</li><li>Escopo em cada variável: cor de texto só em texto, raio só em canto. O Figma bloqueia o uso errado antes da revisão.</li><li>Publicar a biblioteca. Squad consome, nunca copia.</li><li>O JSON do repositório gera as três coleções pela API de variáveis.</li></ol></div></details>
     </div>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>2 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>2 de 6</span></footer>
 </section>
 
 <!-- ============ 3 ============ -->
@@ -297,7 +600,7 @@
   </header>
   <div class="corpo">
     <div class="col larga">
-      <h3>A estrutura. Linha cheia é decisão. Linha tracejada é contribuição. Ninguém se reporta à direção do DS.</h3>
+      <h3 class="secao-titulo">A estrutura. Linha cheia é decisão. Linha tracejada é contribuição. Ninguém se reporta à direção do DS.</h3>
       <svg class="fluxo" viewBox="0 0 900 600" role="img" aria-label="Fluxograma da estrutura de governança do design system">
         <!-- Líderes -->
         <rect class="caixa" x="250" y="0" width="400" height="64" rx="4"/>
@@ -350,17 +653,10 @@
       </svg>
     </div>
     <div class="col fill">
-      <h3>Como um componente novo entra</h3>
-      <ol class="passos compacto">
-        <li><div>O designer abre um pedido com template: problema, onde aparece, quem mais usa.</div></li>
-        <li><div>Triagem semanal de 30 minutos: direção do DS e ponto técnico.</div></li>
-        <li><div>Regra: dois ou mais squads usam, entra no DS. Só um usa, fica local no squad.</div></li>
-        <li><div>A direção decide. A Engenharia veta por motivo técnico, com justificativa.</div></li>
-        <li><div>Versão nova do pacote, com changelog.</div></li>
-      </ol>
+      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">Como um componente novo entra</span></summary><div class="detalhe"><ol class="lista"><li>O designer abre um pedido com template: problema, onde aparece, quem mais usa.</li><li>Triagem semanal de 30 minutos: direção do DS e ponto técnico.</li><li>Regra: dois ou mais squads usam, entra no DS. Só um usa, fica local no squad.</li><li>A direção decide. A Engenharia veta por motivo técnico, com justificativa.</li><li>Versão nova do pacote, com changelog.</li></ol></div></details>
       <p class="nota">No protótipo, a regra funcionou três vezes em um dia. O botão de copiar nasceu local e foi para o DS quando a quarta página o usou. O painel de detalhe nasceu em Contatos e hoje serve sete telas. Um card de registro substituiu três cards parecidos.</p>
-      <div class="decisao"><span class="carimbo">Decisão</span><p>O kit de IA é parte do DS, não um extra. O padrão se mantém por ferramenta, não por cobrança.</p></div>
-      <table>
+      <div class="decisao"><span class="tag tag-acao">Decisão</span><p>O kit de IA é parte do DS, não um extra. O padrão se mantém por ferramenta, não por cobrança.</p></div>
+      <details class="bloco"><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">Peça do kit</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
         <thead><tr><th>Peça do kit</th><th>O que faz</th></tr></thead>
         <tbody>
           <tr><td>Skill astrea-ds</td><td>Regras, tokens e componentes. Todo agente que gera tela consulta ela</td></tr>
@@ -369,10 +665,10 @@
           <tr><td>Agente gerador de tela</td><td>Monta o frame no Figma pela biblioteca, via MCP</td></tr>
           <tr><td>Agente de handoff</td><td>Lê o frame e devolve o código com os tokens certos</td></tr>
         </tbody>
-      </table>
+      </table></div></details>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>3 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>3 de 6</span></footer>
 </section>
 
 <!-- ============ 4 ============ -->
@@ -380,52 +676,26 @@
   <header>
     <p class="item">Questão 2, item 3 de 5. Plano de redesign em fases</p>
     <p class="pergunta">Por onde começar e com qual critério de priorização; como lidar com a convivência entre telas novas e legadas sem confundir quem usa o produto.</p>
-    <h2>A moldura fica fixa primeiro. O conteúdo migra depois</h2>
+    <h2 id="s4-titulo">A moldura fica fixa primeiro. O conteúdo migra depois</h2>
   </header>
   <div class="corpo vertical">
-    <div class="fases">
-      <div class="fase">
-        <div class="periodo"><i>1</i><b>Mês 1</b></div>
-        <p>Inventário de componentes e variações. Discovery com os 4 designers. Linha de base das métricas. Leitura dos dados de suporte.</p>
-        <p class="entrega">Entrega: mapa do que existe e do time</p>
-      </div>
-      <div class="fase">
-        <div class="periodo"><i>2</i><b>Meses 2 e 3</b></div>
-        <p>Tokens semânticos. O legado ganha a pele nova só por token: cor, tipografia, espaçamento e foco acessível. Nenhum componente reescrito.</p>
-        <p class="entrega">Entrega: legado e novo com a mesma pele</p>
-      </div>
-      <div class="fase">
-        <div class="periodo"><i>3</i><b>Meses 3 a 6</b></div>
-        <p>Componentes principais. Piloto na gestão de atividades, atrás de feature flag, com grupo beta de escritórios.</p>
-        <p class="entrega">Entrega: primeira tela nova em produção</p>
-      </div>
-      <div class="fase">
-        <div class="periodo"><i>4</i><b>Meses 6 a 12</b></div>
-        <p>Outros módulos, no ritmo da migração do front. As primeiras funcionalidades com IA nascem nos mesmos componentes e na mesma moldura.</p>
-        <p class="entrega">Entrega: o DS cobre o produto</p>
-      </div>
-    </div>
-    <div class="corpo" style="flex: 1; width: 100%;">
+    <div class="mestre-baixo fases" id="s4-fases"><div class="passos" role="tablist" aria-orientation="horizontal" aria-labelledby="s4-titulo" data-passos><button type="button" class="passo" role="tab" id="s4-fases-t0" aria-controls="s4-fases-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">Mês 1</span><span class="passo-sub">Entrega: mapa do que existe e do time</span></span></button><button type="button" class="passo" role="tab" id="s4-fases-t1" aria-controls="s4-fases-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Meses 2 e 3</span><span class="passo-sub">Entrega: legado e novo com a mesma pele</span></span></button><button type="button" class="passo" role="tab" id="s4-fases-t2" aria-controls="s4-fases-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Meses 3 a 6</span><span class="passo-sub">Entrega: primeira tela nova em produção</span></span></button><button type="button" class="passo" role="tab" id="s4-fases-t3" aria-controls="s4-fases-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Meses 6 a 12</span><span class="passo-sub">Entrega: o DS cobre o produto</span></span></button></div><div class="paineis" aria-live="polite"><div class="painel" role="tabpanel" id="s4-fases-p0" aria-labelledby="s4-fases-t0" tabindex="0"><p class="so-impressao secao-titulo">1. Mês 1</p><p>Inventário de componentes e variações. Discovery com os 4 designers. Linha de base das métricas. Leitura dos dados de suporte.</p></div><div class="painel" role="tabpanel" id="s4-fases-p1" aria-labelledby="s4-fases-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">2. Meses 2 e 3</p><p>Tokens semânticos. O legado ganha a pele nova só por token: cor, tipografia, espaçamento e foco acessível. Nenhum componente reescrito.</p></div><div class="painel" role="tabpanel" id="s4-fases-p2" aria-labelledby="s4-fases-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">3. Meses 3 a 6</p><p>Componentes principais. Piloto na gestão de atividades, atrás de feature flag, com grupo beta de escritórios.</p></div><div class="painel" role="tabpanel" id="s4-fases-p3" aria-labelledby="s4-fases-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">4. Meses 6 a 12</p><p>Outros módulos, no ritmo da migração do front. As primeiras funcionalidades com IA nascem nos mesmos componentes e na mesma moldura.</p></div></div></div>
+    <div class="corpo corpo-interno">
       <div class="col fixa">
-        <h3>Critério de priorização</h3>
+        <h3 class="secao-titulo">Critério de priorização</h3>
         <p class="formula">Frequência de uso × dor relatada × onde a migração do front já está acontecendo</p>
         <p class="texto">Pegar carona na migração custa menos. A tela já vai ser reescrita, então nasce no padrão novo sem trabalho dobrado. A gestão de atividades vem primeiro: é o fluxo diário de prazo, onde a dor é maior e a migração começa.</p>
-        <h3>Fases 1 e 2 em protótipo</h3>
+        <h3 class="secao-titulo">Fases 1 e 2 em protótipo</h3>
         <p class="texto">O protótipo antecipa em HTML o inventário do Astrea, os tokens semânticos e uma moldura única para 17 páginas. Discovery e linha de base ficam para o time. O protótipo não prova a convivência com o legado. Essa prova só existe atrás da flag, em produção.</p>
       </div>
       <div class="col fill">
-        <div class="decisao"><span class="carimbo">Decisão</span><p>O que é moldura fica fixo. O que é conteúdo migra.</p></div>
-        <div class="decisao"><span class="carimbo">Decisão</span><p>Nenhuma mudança chega ao fluxo de prazo sem feature flag. Flag desligada desfaz em minutos, sem deploy. É assim que o produto não para.</p></div>
-        <ul class="lista">
-          <li><b>A moldura unifica primeiro e depois não muda mais</b><span>Cabeçalho, menu lateral, botões de ação e filtros. São a âncora que o usuário reconhece ao cruzar de uma tela nova para uma legada.</span></li>
-          <li><b>Nunca misturar padrão novo e antigo na mesma tela</b><span>Uma tela é toda nova ou toda legada. A moldura é a única coisa em comum.</span></li>
-          <li><b>Cor, tipografia e fluxos principais mudam o mínimo</b><span>O novo se adapta ao que existe, não o contrário. Sem curva de reaprendizado brusca.</span></li>
-          <li><b>Toda mudança é avisada dentro do produto</b><span>Changelog visível, antes de a tela mudar.</span></li>
-        </ul>
+        <div class="decisao"><span class="tag tag-acao">Decisão</span><p>O que é moldura fica fixo. O que é conteúdo migra.</p></div>
+        <div class="decisao"><span class="tag tag-acao">Decisão</span><p>Nenhuma mudança chega ao fluxo de prazo sem feature flag. Flag desligada desfaz em minutos, sem deploy. É assim que o produto não para.</p></div>
+        <div class="mestre conv" id="s4-conv"><div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s4-titulo" data-passos><button type="button" class="passo" role="tab" id="s4-conv-t0" aria-controls="s4-conv-p0" aria-selected="true"><span class="passo-texto"><span class="passo-titulo">A moldura unifica primeiro e depois não muda mais</span></span></button><button type="button" class="passo" role="tab" id="s4-conv-t1" aria-controls="s4-conv-p1" aria-selected="false"><span class="passo-texto"><span class="passo-titulo">Nunca misturar padrão novo e antigo na mesma tela</span></span></button><button type="button" class="passo" role="tab" id="s4-conv-t2" aria-controls="s4-conv-p2" aria-selected="false"><span class="passo-texto"><span class="passo-titulo">Cor, tipografia e fluxos principais mudam o mínimo</span></span></button><button type="button" class="passo" role="tab" id="s4-conv-t3" aria-controls="s4-conv-p3" aria-selected="false"><span class="passo-texto"><span class="passo-titulo">Toda mudança é avisada dentro do produto</span></span></button></div><div class="paineis" aria-live="polite"><div class="painel" role="tabpanel" id="s4-conv-p0" aria-labelledby="s4-conv-t0" tabindex="0"><p class="so-impressao secao-titulo">A moldura unifica primeiro e depois não muda mais</p><p>Cabeçalho, menu lateral, botões de ação e filtros. São a âncora que o usuário reconhece ao cruzar de uma tela nova para uma legada.</p></div><div class="painel" role="tabpanel" id="s4-conv-p1" aria-labelledby="s4-conv-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Nunca misturar padrão novo e antigo na mesma tela</p><p>Uma tela é toda nova ou toda legada. A moldura é a única coisa em comum.</p></div><div class="painel" role="tabpanel" id="s4-conv-p2" aria-labelledby="s4-conv-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">Cor, tipografia e fluxos principais mudam o mínimo</p><p>O novo se adapta ao que existe, não o contrário. Sem curva de reaprendizado brusca.</p></div><div class="painel" role="tabpanel" id="s4-conv-p3" aria-labelledby="s4-conv-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">Toda mudança é avisada dentro do produto</p><p>Changelog visível, antes de a tela mudar.</p></div></div></div>
       </div>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>4 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>4 de 6</span></footer>
 </section>
 
 <!-- ============ 5 ============ -->
@@ -435,7 +705,7 @@
     <p class="pergunta">Como você distribuiria o trabalho entre os quatro designers dos squads sem tirar o foco deles dos seus roadmaps.</p>
     <h2>A contribuição sai do roadmap, não de tarefa extra</h2>
   </header>
-  <div class="corpo vertical" style="gap: 1.5cqw;">
+  <div class="corpo vertical">
     <svg class="fluxo-h" viewBox="0 0 1728 64" role="img" aria-label="Do discovery ao componente no design system, em quatro passos">
       <defs><marker id="seta5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="seta" d="M0 0 L10 5 L0 10 z"/></marker></defs>
       <rect class="caixa tinta" x="0" y="0" width="380" height="64" rx="4"/>
@@ -454,12 +724,11 @@
       <text class="t" x="1536" y="27" text-anchor="middle">Componente entra no DS</text>
       <text class="s" x="1536" y="47" text-anchor="middle">No caminho da tela do squad</text>
     </svg>
-    <div class="corpo" style="flex: 1; width: 100%;">
+    <div class="corpo corpo-interno">
     <div class="col fixa">
-      <div class="decisao"><span class="carimbo">Decisão</span><p>A divisão do trabalho não se define agora. Ela sai do discovery.</p></div>
+      <div class="decisao"><span class="tag tag-acao">Decisão</span><p>A divisão do trabalho não se define agora. Ela sai do discovery.</p></div>
       <p class="texto">Nas duas primeiras semanas, uma conversa individual com cada designer. Cinco perguntas: como é o fluxo do pedido à entrega, o que o roadmap pede em três meses, como usa o Figma, se usa IA no dia a dia, o que mais frustra no produto. Dela sai um mapa simples por pessoa.</p>
-      <h3>O mapa de perfil</h3>
-      <table>
+      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">O mapa de perfil</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
         <thead><tr><th>Eixo</th><th>O que medir</th></tr></thead>
         <tbody>
           <tr><td>Onde o trabalho pesa</td><td>Produto, marketing e aquisição, ou perto do código</td></tr>
@@ -467,12 +736,11 @@
           <tr><td>Uso de IA</td><td>Nenhum, pontual, diário</td></tr>
           <tr><td>Dor principal</td><td>O que o roadmap dele pede e trava</td></tr>
         </tbody>
-      </table>
+      </table></div></details>
       <p class="nota">Marketing entra pela borda. Os mesmos tokens de marca alimentam produto e criativos. Se houver demanda, uma biblioteca de peças prontas para escolher e publicar.</p>
     </div>
     <div class="col fill">
-      <h3>A frente de cada um sai do mapa, não de um organograma pronto</h3>
-      <table>
+      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">A frente de cada um sai do mapa, não de um organograma pronto</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
         <thead><tr><th>Perfil</th><th>Frente natural no DS</th></tr></thead>
         <tbody>
           <tr><td>Perto do código</td><td>Code Connect, Storybook, revisão do pacote com o ponto técnico</td></tr>
@@ -480,17 +748,13 @@
           <tr><td>Perto do marketing</td><td>Tokens de marca e a ponte com o time de marketing</td></tr>
           <tr><td>Perto do usuário</td><td>Padrões de UX writing, pesquisa nos fluxos de atividades</td></tr>
         </tbody>
-      </table>
-      <h3>Como o trabalho acontece</h3>
-      <ul class="lista">
-        <li><b>Construção conjunta, no fluxo</b><span>O ponto de atenção aparece na demanda real do squad. A gente senta junto, decide, constrói. Sem ritual novo com nome próprio.</span></li>
-        <li><b>A contribuição sai do roadmap</b><span>O designer entrega a tela do squad. No caminho, o componente entra no DS. O tempo é acordado por squad, no discovery.</span></li>
-        <li><b>O kit de IA baixa o custo de seguir o padrão</b><span>Seguir o DS vira o caminho mais rápido. É isso que faz o time adotar sem a direção ser gestora de ninguém.</span></li>
-      </ul>
+      </table></div></details>
+      <h3 class="secao-titulo" id="s5-trab-rotulo">Como o trabalho acontece</h3>
+      <div class="mestre trab" id="s5-trab"><div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s5-trab-rotulo" data-passos><button type="button" class="passo" role="tab" id="s5-trab-t0" aria-controls="s5-trab-p0" aria-selected="true"><span class="passo-texto"><span class="passo-titulo">Construção conjunta, no fluxo</span></span></button><button type="button" class="passo" role="tab" id="s5-trab-t1" aria-controls="s5-trab-p1" aria-selected="false"><span class="passo-texto"><span class="passo-titulo">A contribuição sai do roadmap</span></span></button><button type="button" class="passo" role="tab" id="s5-trab-t2" aria-controls="s5-trab-p2" aria-selected="false"><span class="passo-texto"><span class="passo-titulo">O kit de IA baixa o custo de seguir o padrão</span></span></button></div><div class="paineis" aria-live="polite"><div class="painel" role="tabpanel" id="s5-trab-p0" aria-labelledby="s5-trab-t0" tabindex="0"><p class="so-impressao secao-titulo">Construção conjunta, no fluxo</p><p>O ponto de atenção aparece na demanda real do squad. A gente senta junto, decide, constrói. Sem ritual novo com nome próprio.</p></div><div class="painel" role="tabpanel" id="s5-trab-p1" aria-labelledby="s5-trab-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">A contribuição sai do roadmap</p><p>O designer entrega a tela do squad. No caminho, o componente entra no DS. O tempo é acordado por squad, no discovery.</p></div><div class="painel" role="tabpanel" id="s5-trab-p2" aria-labelledby="s5-trab-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">O kit de IA baixa o custo de seguir o padrão</p><p>Seguir o DS vira o caminho mais rápido. É isso que faz o time adotar sem a direção ser gestora de ninguém.</p></div></div></div>
     </div>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>5 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>5 de 6</span></footer>
 </section>
 
 <!-- ============ 6 ============ -->
@@ -502,14 +766,9 @@
   </header>
   <div class="corpo">
     <div class="col larga">
-      <h3>Os três riscos, do mais provável ao menos</h3>
-      <ol class="riscos">
-        <li><div><b>O DS vira projeto paralelo que ninguém adota</b><p>Mitigação: construir a partir das telas do roadmap, nunca em paralelo a elas. Kit de skills e agentes no repositório: melhoria vira pull request, todo mundo puxa. O padrão se mantém por ferramenta, não por cobrança.</p></div></li>
-        <li><div><b>Ruptura visual para quem vive no produto o dia inteiro</b><p>Mitigação: moldura fixa primeiro. Cor, tipografia e fluxos principais mudam o mínimo. Feature flag e grupo beta na primeira tela nova. Chamados de suporte por módulo acompanhados semana a semana.</p></div></li>
-        <li><div><b>O roadmap dos squads toma o tempo dos designers</b><p>Mitigação: líderes como patrocinadores, com o tempo acordado no discovery. A tese: com skills e agentes o tempo de produção cai, e o DS devolve mais tempo do que toma. A métrica de eficiência prova ou derruba isso.</p></div></li>
-      </ol>
-      <h3>No protótipo, o padrão já se mantém por ferramenta</h3>
-      <table>
+      <h3 class="secao-titulo" id="s6-riscos-rotulo">Os três riscos, do mais provável ao menos</h3>
+      <div class="mestre riscos" id="s6-riscos"><div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s6-riscos-rotulo" data-passos><button type="button" class="passo" role="tab" id="s6-riscos-t0" aria-controls="s6-riscos-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">O DS vira projeto paralelo que ninguém adota</span></span></button><button type="button" class="passo" role="tab" id="s6-riscos-t1" aria-controls="s6-riscos-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Ruptura visual para quem vive no produto o dia inteiro</span></span></button><button type="button" class="passo" role="tab" id="s6-riscos-t2" aria-controls="s6-riscos-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">O roadmap dos squads toma o tempo dos designers</span></span></button></div><div class="paineis" aria-live="polite"><div class="painel" role="tabpanel" id="s6-riscos-p0" aria-labelledby="s6-riscos-t0" tabindex="0"><p class="so-impressao secao-titulo">1. O DS vira projeto paralelo que ninguém adota</p><p>Mitigação: construir a partir das telas do roadmap, nunca em paralelo a elas. Kit de skills e agentes no repositório: melhoria vira pull request, todo mundo puxa. O padrão se mantém por ferramenta, não por cobrança.</p></div><div class="painel" role="tabpanel" id="s6-riscos-p1" aria-labelledby="s6-riscos-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">2. Ruptura visual para quem vive no produto o dia inteiro</p><p>Mitigação: moldura fixa primeiro. Cor, tipografia e fluxos principais mudam o mínimo. Feature flag e grupo beta na primeira tela nova. Chamados de suporte por módulo acompanhados semana a semana.</p></div><div class="painel" role="tabpanel" id="s6-riscos-p2" aria-labelledby="s6-riscos-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">3. O roadmap dos squads toma o tempo dos designers</p><p>Mitigação: líderes como patrocinadores, com o tempo acordado no discovery. A tese: com skills e agentes o tempo de produção cai, e o DS devolve mais tempo do que toma. A métrica de eficiência prova ou derruba isso.</p></div></div></div>
+      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">No protótipo, o padrão já se mantém por ferramenta</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
         <thead><tr><th>Portão</th><th>O que barra</th></tr></thead>
         <tbody>
           <tr><td>verificar.py</td><td>Cor fora do bloco de primitivos, primitivo fora do semântico, Kanban fora de sincronia com a moldura</td></tr>
@@ -517,11 +776,10 @@
           <tr><td>detectar.py</td><td>A cara de IA: grid de cards iguais, ícone em caixinha, gradiente</td></tr>
           <tr><td>Revisão ao vivo</td><td>Quatro rodadas minhas. Cada correção está registrada em 04-processo.html</td></tr>
         </tbody>
-      </table>
+      </table></div></details>
     </div>
     <div class="col fill">
-      <h3>Como medir</h3>
-      <table>
+      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">Como medir</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
         <thead><tr><th>Eixo</th><th>Métrica</th><th>Fonte</th></tr></thead>
         <tbody>
           <tr><td>Adoção</td><td>Telas com componentes do DS, em %</td><td class="muted">Inventário trimestral</td></tr>
@@ -534,12 +792,12 @@
           <tr><td>Experiência</td><td>Sucesso na tarefa e CSAT nos fluxos principais</td><td class="muted">Pesquisa recorrente</td></tr>
           <tr><td>Experiência</td><td>Cliques por tarefa-chave, no Astrea e na tela nova, antes do beta</td><td class="muted">Teste de tarefa</td></tr>
         </tbody>
-      </table>
+      </table></div></details>
       <p class="nota">A linha de base das três frentes sai no mês 1. Sem ela, a métrica só mostra o número de hoje, não o que mudou.</p>
       <p class="nota">O protótipo já mostrou a ruptura em tela pequena. Abaixo de 1100px, o painel ao lado some, e a Área de trabalho fica sem detalhe.</p>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>6 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>6 de 6</span></footer>
 </section>
 
 <!-- ============ Fechamento ============ -->
@@ -556,8 +814,72 @@
       <p class="texto">A direção visual, os cinco problemas e o trade-off foram decisões minhas. O kit de skills e agentes que proponho para o Astrea no slide 3 é o mesmo modelo que usei aqui: regra escrita uma vez, no repositório, lida por toda ferramenta que gera tela.</p>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. Atividade prática, UX/UI Designer Especialista</span><span>Uso de IA</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>Uso de IA</span></footer>
 </section>
 
+<script>
+/* Passos do deck: lista ou abas que trocam o painel. Clique, setas, Home e End.
+   Na ponta do grupo, a seta passa para o slide vizinho. */
+(() => {
+  const reduzir = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const tabsDe = (g) => [...g.querySelectorAll('[role="tab"]')];
+
+  function selecionar(g, i, focar) {
+    tabsDe(g).forEach((t, j) => {
+      const ativo = j === i;
+      t.setAttribute('aria-selected', String(ativo));
+      t.tabIndex = ativo ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !ativo;
+    });
+    if (focar) tabsDe(g)[i].focus();
+  }
+
+  function irParaSlide(g, passo) {
+    const slides = [...document.querySelectorAll('.slide')];
+    const alvo = slides[slides.indexOf(g.closest('.slide')) + passo];
+    if (!alvo) return;
+    alvo.scrollIntoView({ block: 'start', behavior: reduzir.matches ? 'auto' : 'smooth' });
+    const tab = alvo.querySelector('[data-passos] [role="tab"][aria-selected="true"]');
+    if (tab) { tab.focus({ preventScroll: true }); return; }
+    alvo.tabIndex = -1;
+    alvo.focus({ preventScroll: true });
+  }
+
+  function teclas(g) {
+    const vertical = g.getAttribute('aria-orientation') === 'vertical';
+    const mais = vertical ? ['ArrowRight', 'ArrowDown'] : ['ArrowRight'];
+    const menos = vertical ? ['ArrowLeft', 'ArrowUp'] : ['ArrowLeft'];
+    return (e) => {
+      const lista = tabsDe(g);
+      const i = lista.indexOf(document.activeElement);
+      if (i < 0) return;
+      let n = null;
+      if (mais.includes(e.key)) {
+        if (i === lista.length - 1) { e.preventDefault(); irParaSlide(g, 1); return; }
+        n = i + 1;
+      } else if (menos.includes(e.key)) {
+        if (i === 0) { e.preventDefault(); irParaSlide(g, -1); return; }
+        n = i - 1;
+      } else if (e.key === 'Home') {
+        n = 0;
+      } else if (e.key === 'End') {
+        n = lista.length - 1;
+      }
+      if (n === null) return;
+      e.preventDefault();
+      selecionar(g, n, true);
+    };
+  }
+
+  document.querySelectorAll('[data-passos]').forEach((g) => {
+    g.addEventListener('click', (e) => {
+      const tab = e.target.closest('[role="tab"]');
+      if (tab) selecionar(g, tabsDe(g).indexOf(tab), true);
+    });
+    g.addEventListener('keydown', teclas(g));
+    selecionar(g, 0, false);
+  });
+})();
+</script>
 </body>
 </html>

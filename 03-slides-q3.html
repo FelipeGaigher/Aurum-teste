@@ -5,172 +5,513 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Q3: a Área de trabalho do Astrea</title>
 <style>
-  :root {
-    --paper: #ffffff; --surface: #eef1f6; --ink: #1b2a4a; --text: #1b2a4a; --muted: #5b6478; --inverse: #ffffff;
-    --line: #c9cfda; --line-strong: #1b2a4a; --stamp: #b3261e; --page: #f3f4f7; --radius: 4px;
-    --serif: "Fraunces", "Source Serif 4", Georgia, "Times New Roman", serif;
-    --sans: "Geist", "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; }
-  body { background: var(--page); color: var(--text); font-family: var(--sans); padding: 24px 16px 64px; }
-  .capa { max-width: 1600px; margin: 0 auto 24px; color: var(--muted); font-size: 14px; line-height: 1.5; }
-  .capa strong { color: var(--text); font-weight: 500; }
-  .slide { container-type: inline-size; width: min(100%, 1600px); aspect-ratio: 16 / 9; margin: 0 auto 32px; background: var(--paper); color: var(--text); display: flex; flex-direction: column; padding: 2.6cqw 3.6cqw 2.917cqw; gap: 1.8cqw; overflow: hidden; border: 1px solid var(--line); }
-  .item { font-size: 0.833cqw; font-weight: 500; line-height: 1.3; color: var(--text); margin: 0 0 0.26cqw; }
-  .pergunta { font-size: 0.9375cqw; line-height: 1.3; color: var(--muted); margin: 0 0 0.6cqw; max-width: 78cqw; }
-  .pergunta::before { content: "“"; } .pergunta::after { content: "”"; }
-  h2 { font-family: var(--serif); font-weight: 400; font-size: 2.917cqw; line-height: 1.1; margin: 0; max-width: 82cqw; letter-spacing: -0.005em; }
-  .corpo { flex: 1; display: flex; gap: 3.5cqw; align-items: flex-start; min-height: 0; }
-  .col { display: flex; flex-direction: column; gap: 0.9cqw; min-width: 0; flex: 1; }
-  .rodape { display: flex; justify-content: space-between; font-size: 0.729cqw; color: var(--muted); }
-  p { margin: 0; line-height: 1.45; }
-  .texto { font-size: 0.9375cqw; }
-  .nota { font-size: 0.78cqw; color: var(--muted); }
-  h3 { font-size: 1.146cqw; font-weight: 500; margin: 0; line-height: 1.3; }
-  h3 .num { font-family: var(--serif); font-weight: 400; margin-right: 0.5cqw; }
-  h4 { font-size: 0.833cqw; font-weight: 500; color: var(--muted); margin: 0; line-height: 1.3; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.885cqw; line-height: 1.35; }
-  th { text-align: left; font-weight: 500; font-size: 0.729cqw; color: var(--muted); padding: 0 0 0.417cqw; border-bottom: 1px solid var(--line-strong); }
-  td { padding: 0.5cqw 1.25cqw 0.5cqw 0; vertical-align: top; border-bottom: 1px solid var(--line); }
-  td:last-child, th:last-child { padding-right: 0; }
-  td:first-child { font-weight: 500; }
-  figure { margin: 0; display: grid; gap: 0.4cqw; }
-  /* Espaço reservado para a captura da tela, inserida depois por Felipe. */
-  figure[data-captura] .reserva { aspect-ratio: 16 / 10; display: grid; place-items: center; border: 1px dashed var(--line-strong); border-radius: var(--radius); background: var(--surface); color: var(--muted); font-size: 0.9cqw; }
-  figcaption { font-size: 0.75cqw; color: var(--muted); line-height: 1.35; }
-  ul.lista { list-style: none; margin: 0; padding: 0; }
-  ul.lista li { padding: 0.55cqw 0; border-bottom: 1px solid var(--line); }
-  ul.lista li:first-child { padding-top: 0; }
-  ul.lista li:last-child { border-bottom: 0; }
-  ul.lista b { display: block; font-weight: 500; font-size: 0.9375cqw; line-height: 1.35; }
-  ul.lista span { display: block; font-size: 0.833cqw; color: var(--muted); line-height: 1.4; margin-top: 0.1cqw; }
-  .decisao { display: flex; gap: 0.833cqw; align-items: flex-start; }
-  .carimbo { flex: none; border: 2px solid var(--stamp); border-radius: var(--radius); color: var(--stamp); font-size: 0.677cqw; font-weight: 600; letter-spacing: 0.04em; padding: 0.26cqw 0.52cqw; line-height: 1.2; }
-  .decisao p { font-weight: 500; font-size: 1cqw; line-height: 1.35; }
-  .tokens { font-size: 0.78cqw; color: var(--muted); line-height: 1.45; }
-  .tokens code { font-family: ui-monospace, Consolas, monospace; font-size: 0.72cqw; color: var(--text); }
-  .props { font-size: 0.78cqw; color: var(--muted); line-height: 1.45; }
-  .props code { font-family: ui-monospace, Consolas, monospace; font-size: 0.72cqw; color: var(--text); }
-  .cadeia { display: flex; align-items: stretch; gap: 0.5cqw; }
-  .cadeia .elo { flex: 1; border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 0.5cqw 0.6cqw; display: grid; gap: 0.15cqw; min-width: 0; }
-  .cadeia .elo.tinta { background: var(--ink); color: var(--inverse); border-color: var(--ink); }
-  .cadeia .elo b { font-size: 0.72cqw; font-weight: 500; color: inherit; opacity: 0.8; }
-  .cadeia .elo code { font-family: ui-monospace, Consolas, monospace; font-size: 0.72cqw; }
-  .cadeia .elo small { font-size: 0.68cqw; opacity: 0.8; }
-  .cadeia .seta { align-self: center; color: var(--muted); font-size: 0.9cqw; }
+/* primitivos */
+:root {
+  /* Espelham as variaveis do CSS do Astrea logado. O nome original vai no comentario. */
+  --primitive-blue-logo: #008fd5; /* logo; nao e variavel do produto */
+  --primitive-blue-900: #1d6bb7; /* --primary900 */
+  --primitive-blue-1000: #17558f; /* derivado do --primary900, um degrau abaixo, para hover */
+  --primitive-blue-100: #e8f1fb; /* hover azul-claro */
+  --primitive-blue-200: #bcd6f1; /* divisoria azul-clara */
+  --primitive-gray-0: #ffffff; /* branco da pagina */
+  --primitive-gray-50: #f8f9fa; /* fundo da página: um passo abaixo do branco dos painéis */
+  --primitive-gray-100: #f1f3f4; /* --gray100 */
+  --primitive-gray-300: #dee2e6; /* --gray300 */
+  --primitive-gray-500: #6c757d; /* --gray500 */
+  --primitive-gray-600: #5c6670; /* texto apagado com AA sobre o fundo gray-50 */
+  --primitive-gray-900: #202124; /* --gray900 */
+  --primitive-danger-500: #e70202; /* --danger */
+  --primitive-warning-1000: #8a6900; /* derivado do --warning900, que nao passa no AA */
+  --primitive-success-900: #02883c; /* --success da secao 14 do inventario. 4,58:1 sobre --primitive-gray-0 */
+  --primitive-danger-100: #FFECEE; /* fundo do chip vencido, claro. 14,17:1 com --primitive-gray-900 */
+  --primitive-warning-100: #FEF6D5; /* fundo do chip vence hoje, claro. 14,84:1 com --primitive-gray-900 */
 
-  /* O palco é a tela do produto: fundo claro mesmo no tema escuro, porque o Astrea só tem tema claro. */
-  .palco { color-scheme: light; background: #ffffff; border: 1px solid var(--line); border-radius: var(--radius); padding: 0.9cqw; }
-  .estados { display: grid; grid-template-columns: repeat(auto-fill, minmax(11cqw, 1fr)); gap: 0.7cqw 0.9cqw; }
-  .estado { display: grid; align-content: start; gap: 0.3cqw; min-width: 0; }
-  .estado-nome { font-family: var(--sans); color: #6c757d; font-size: 0.68cqw; line-height: 1.3; }
+  /* Tema escuro: o Astrea nao tem um, entao estes valores sao proposta. Medidos no AA com contraste.py. */
+  --primitive-dark-950: #0b1a2a; /* texto sobre a acao clara, 6,8:1 */
+  --primitive-dark-900: #111418; /* pagina */
+  --primitive-dark-800: #181c22; /* fundo de coluna e de area */
+  --primitive-dark-700: #232a33; /* superficie: card, dialogo, menu, cabecalho */
+  --primitive-dark-600: #2f3843; /* hover */
+  --primitive-dark-500: #323b47; /* borda */
+  --primitive-dark-400: #6b7785; /* borda forte, 3,2:1 sobre a superficie */
+  --primitive-dark-300: #a3abb8; /* texto secundario, 6,2:1 sobre a superficie */
+  --primitive-dark-100: #e6e9ee; /* texto */
+  --primitive-blue-400: #5aa7ec; /* acao no escuro, 5,6:1 como texto sobre a superficie */
+  --primitive-blue-300: #7dbbf2; /* hover da acao no escuro */
+  --primitive-danger-300: #ff6b6b; /* vencido no escuro, 5,2:1 */
+  --primitive-warning-300: #f2c14e; /* vence hoje no escuro, 8,9:1 */
+  --primitive-success-300: #5fd38a; /* sucesso no escuro, 7,70:1 sobre --primitive-dark-700 */
+  --primitive-danger-dark-100: #3d1f24; /* fundo do chip vencido, escuro. 12,15:1 com --primitive-dark-100 */
+  --primitive-warning-dark-100: #3d3010; /* fundo do chip vence hoje, escuro. 10,59:1 com --primitive-dark-100 */
+  --primitive-tag-blue-100: #e3effc; /* fundo da etiqueta blue */
+  --primitive-tag-blue-700: #1a4f8b; /* texto da etiqueta blue, 7,11:1 sobre o 100 */
+  --primitive-tag-green-100: #e2f4e8; /* fundo da etiqueta green */
+  --primitive-tag-green-700: #1e6b3a; /* texto da etiqueta green, 5,70:1 sobre o 100 */
+  --primitive-tag-yellow-100: #fcf3cf; /* fundo da etiqueta yellow */
+  --primitive-tag-yellow-700: #735a00; /* texto da etiqueta yellow, 5,91:1 sobre o 100 */
+  --primitive-tag-orange-100: #fdebdd; /* fundo da etiqueta orange */
+  --primitive-tag-orange-700: #8f3f0a; /* texto da etiqueta orange, 6,28:1 sobre o 100 */
+  --primitive-tag-red-100: #fce4e4; /* fundo da etiqueta red */
+  --primitive-tag-red-700: #9b1c1c; /* texto da etiqueta red, 6,74:1 sobre o 100 */
+  --primitive-tag-purple-100: #efe6fa; /* fundo da etiqueta purple */
+  --primitive-tag-purple-700: #5b2e91; /* texto da etiqueta purple, 7,74:1 sobre o 100 */
+  --primitive-tag-teal-100: #ddf3f1; /* fundo da etiqueta teal */
+  --primitive-tag-teal-700: #145e58; /* texto da etiqueta teal, 6,55:1 sobre o 100 */
+  --primitive-tag-gray-100: #eceef0; /* fundo da etiqueta gray */
+  --primitive-tag-gray-700: #3f4750; /* texto da etiqueta gray, 8,10:1 sobre o 100 */
 
-  /* Tokens do protótipo, três camadas. Os primitivos espelham o CSS do Astrea logado; o hex só mora aqui. */
-  .astrea {
-    --primitive-blue-900: #1d6bb7; --primitive-blue-1000: #17558f; --primitive-blue-50: #e8f1fa; --primitive-danger-100: #ffecee; --primitive-warning-100: #fef6d5; --primitive-shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06);
-    --primitive-gray-0: #ffffff; --primitive-gray-100: #f1f3f4; --primitive-gray-300: #dee2e6; --primitive-gray-500: #6c757d; --primitive-gray-900: #202124;
-    --primitive-danger-500: #e70202; --primitive-warning-1000: #8a6900; --primitive-success-500: #02883c;
-    --primitive-space-2: 2px; --primitive-space-4: 4px; --primitive-space-8: 8px; --primitive-space-12: 12px; --primitive-space-16: 16px; --primitive-space-24: 24px; --primitive-space-32: 32px;
-    --primitive-radius-8: 8px; --primitive-radius-round: 50%; --primitive-border-1: 1px; --primitive-border-2: 2px;
-    --primitive-font-11: 11px; --primitive-font-12: 12px; --primitive-font-13: 13px; --primitive-font-14: 14px; --primitive-font-20: 20px;
-    --primitive-weight-400: 400; --primitive-weight-500: 500; --primitive-weight-600: 600;
-    --primitive-leading-125: 1.25; --primitive-leading-145: 1.45; --primitive-tracking-04: 0.04em; --primitive-opacity-55: 0.55;
-    --primitive-size-16: 16px; --primitive-size-22: 22px; --primitive-size-28: 28px; --primitive-size-36: 36px;
+  --primitive-shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --primitive-shadow-2: 0 1px 2px rgba(0, 0, 0, 0.4);
 
-    --color-bg-surface: var(--primitive-gray-0); --color-bg-subtle: var(--primitive-gray-100); --color-bg-hover: var(--primitive-gray-300); --color-bg-selected: var(--primitive-blue-50);
-    --color-text-default: var(--primitive-gray-900); --color-text-muted: var(--primitive-gray-500);
-    --color-text-danger: var(--primitive-danger-500); --color-text-warning: var(--primitive-warning-1000); --color-text-success: var(--primitive-success-500); --color-bg-danger: var(--primitive-danger-100); --color-bg-warning: var(--primitive-warning-100); --shadow-card: var(--primitive-shadow-1);
-    --color-border-default: var(--primitive-gray-300); --color-border-strong: var(--primitive-gray-500);
-    --color-action: var(--primitive-blue-900); --color-action-hover: var(--primitive-blue-1000); --color-action-text: var(--primitive-gray-0); --color-focus: var(--primitive-blue-900);
-    --space-0: var(--primitive-space-2); --space-1: var(--primitive-space-4); --space-2: var(--primitive-space-8); --space-3: var(--primitive-space-12); --space-4: var(--primitive-space-16); --space-5: var(--primitive-space-24); --space-6: var(--primitive-space-32);
-    --radius-ui: var(--primitive-radius-8); --radius-round: var(--primitive-radius-round);
-    --border-width: var(--primitive-border-1); --focus-width: var(--primitive-border-2);
-    --font-sans: "Museo Sans", "museo-sans", "Open Sans", "Segoe UI", system-ui, sans-serif;
-    --font-size-small: var(--primitive-font-11); --font-size-label: var(--primitive-font-12); --font-size-body: var(--primitive-font-13); --font-size-emphasis: var(--primitive-font-14); --font-size-title: var(--primitive-font-20);
-    --font-weight-regular: var(--primitive-weight-400); --font-weight-medium: var(--primitive-weight-500); --font-weight-semibold: var(--primitive-weight-600);
-    --font-leading-tight: var(--primitive-leading-125); --font-leading-base: var(--primitive-leading-145); --font-tracking-caps: var(--primitive-tracking-04); --opacity-disabled: var(--primitive-opacity-55);
-    --size-icon: var(--primitive-size-16); --size-chip: var(--primitive-size-22); --size-icon-button: var(--primitive-size-28); --size-control: var(--primitive-size-36); --density-row: var(--primitive-size-36);
+  --primitive-space-4: 4px;
+  --primitive-space-8: 8px;
+  --primitive-space-12: 12px;
+  --primitive-space-16: 16px;
+  --primitive-space-24: 24px;
+  --primitive-space-32: 32px;
+  --primitive-space-40: 40px;
 
-    --component-row-bg: var(--color-bg-surface); --component-row-bg-hover: var(--color-bg-subtle); --component-row-bg-selected: var(--color-bg-selected); --component-row-border: var(--color-border-default);
-    --component-chip-bg: var(--color-bg-subtle); --component-chip-border: var(--color-border-default); --component-chip-height: var(--size-chip);
-    --component-control-bg: var(--color-bg-surface); --component-control-border: var(--color-border-strong); --component-control-height: var(--size-control);
-    --component-skeleton-bg: var(--color-bg-subtle); --component-avatar-bg: var(--color-bg-hover); --component-avatar-size: var(--size-chip);
-    --component-button-primary-bg: var(--color-action); --component-button-primary-text: var(--color-action-text);
+  --primitive-radius-8: 8px;
+  --primitive-radius-12: 12px;
+  --primitive-radius-round: 50%;
+  --primitive-radius-pill: 9999px;
+  --primitive-border-1: 1px;
+  --primitive-border-2: 2px;
 
-    font-family: var(--font-sans); font-size: var(--font-size-body); line-height: var(--font-leading-base); color: var(--color-text-default);
-  }
-  .astrea .foco { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }
-  .astrea p { line-height: var(--font-leading-base); }
-  .astrea svg.ic { width: var(--size-icon); height: var(--size-icon); fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  --primitive-font-12: 12px;
+  --primitive-font-14: 14px;
+  --primitive-font-13: 13px;
+  --primitive-font-16: 16px;
+  --primitive-font-18: 18px;
+  --primitive-font-20: 20px;
+  --primitive-font-24: 24px;
+  --primitive-font-28: 28px;
+  --primitive-weight-400: 400;
+  --primitive-weight-500: 500;
+  --primitive-weight-600: 600;
+  --primitive-leading-125: 1.25;
+  --primitive-leading-145: 1.45;
+  --primitive-tracking-04: 0.04em;
 
-  /* peças comuns */
-  .astrea code.ds { font-family: ui-monospace, Consolas, monospace; font-size: 0.72cqw; font-weight: 400; color: var(--muted); margin-left: 0.4cqw; }
-  .astrea .chip-prazo, .astrea .tag { display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--component-chip-height); padding: 0 var(--space-2); background-color: var(--component-chip-bg); border: var(--border-width) solid var(--component-chip-border); border-radius: var(--radius-ui); color: var(--color-text-default); font-size: var(--font-size-label); line-height: var(--font-leading-tight); white-space: nowrap; }
-  .astrea .chip-prazo { font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; }
-  .astrea .chip-prazo svg.ic { width: var(--font-size-emphasis); height: var(--font-size-emphasis); color: var(--color-text-muted); }
-  .astrea .chip-prazo-vencido { background-color: var(--color-bg-danger); border-color: var(--color-text-danger); }
-  .astrea .chip-prazo-vencido svg.ic { color: var(--color-text-danger); }
-  .astrea .chip-prazo-hoje { background-color: var(--color-bg-warning); border-color: var(--color-text-warning); }
-  .astrea .chip-prazo-hoje svg.ic { color: var(--color-text-warning); }
-  .astrea .chip-prazo-concluido { background-color: var(--color-bg-surface); border-color: var(--color-text-success); font-weight: var(--font-weight-regular); }
-  .astrea .chip-prazo-concluido svg.ic { color: var(--color-text-success); }
-  .astrea .numero { color: var(--color-action); font-size: var(--font-size-label); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .astrea .traco { display: block; height: var(--space-3); border-radius: var(--radius-ui); background-color: var(--component-skeleton-bg); }
-  .astrea .link { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--color-action); font-weight: var(--font-weight-medium); font-size: var(--font-size-label); }
-  .astrea .botao { display: inline-flex; align-items: center; height: var(--size-icon-button); padding: 0 var(--space-3); border: var(--border-width) solid var(--component-control-border); border-radius: var(--radius-ui); font-weight: var(--font-weight-medium); white-space: nowrap; }
-  .astrea .botao-primario { background-color: var(--component-button-primary-bg); border-color: var(--component-button-primary-bg); color: var(--component-button-primary-text); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; }
-  .astrea .redondo { display: inline-grid; place-items: center; width: var(--size-icon-button); height: var(--size-icon-button); border: var(--border-width) solid var(--color-border-strong); border-radius: var(--radius-round); color: var(--color-text-default); background-color: var(--color-bg-surface); }
-  .astrea .reabrir { border-color: var(--color-border-default); box-shadow: var(--shadow-card); justify-self: start; }
+  --primitive-size-18: 18px;
+  --primitive-size-20: 20px;
+  --primitive-size-22: 22px;
+  --primitive-size-24: 24px;
+  --primitive-size-28: 28px;
+  --primitive-size-32: 32px;
+  --primitive-size-36: 36px;
+  --primitive-size-40: 40px;
+  --primitive-size-44: 44px;
+  --primitive-size-48: 48px;
+  --primitive-size-64: 64px;
+  --primitive-size-88: 88px;
+  --primitive-size-200: 200px; /* sidebar que abraca o item mais longo, "Processos e casos", com 8px de folga */
+  --primitive-size-300: 300px;
+  --primitive-size-440: 440px;
+  --primitive-size-480: 480px;
+  --primitive-size-560: 560px;
+  --primitive-size-960: 960px;
+}
+/* fim dos primitivos */
 
-  /* 1. Tabela */
-  .astrea .tabela-quadro { overflow: hidden; border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-ui); background-color: var(--color-bg-surface); }
-  .astrea table.tabela { width: 100%; border-collapse: collapse; font-size: var(--font-size-label); line-height: var(--font-leading-tight); }
-  .astrea .tabela th, .astrea .tabela td { height: var(--density-row); padding: var(--space-1) var(--space-2); border-bottom: var(--border-width) solid var(--color-border-default); vertical-align: middle; font-weight: var(--font-weight-regular); }
-  .astrea .tabela th { color: var(--color-text-muted); font-weight: var(--font-weight-semibold); }
-  .astrea .tabela tbody tr:last-child td { border-bottom: 0; }
-  .astrea .tabela tr.is-hover td { background-color: var(--color-bg-subtle); }
-  .astrea .tabela td.titulo { font-weight: var(--font-weight-medium); }
-  .astrea .tabela td.vazia { color: var(--color-text-muted); }
-  .astrea .tabela td.vazia b { color: var(--color-text-default); font-weight: var(--font-weight-medium); }
+/* semanticos */
+:root {
+  color-scheme: light;
 
-  /* 3. Card de atividade */
-  .astrea .card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); min-width: 0; padding: var(--space-2) var(--space-3); background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-ui); box-shadow: var(--shadow-card); }
-  .astrea .card.is-hover { border-color: var(--color-action); }
-  .astrea .card h4 { color: var(--color-text-default); font-size: var(--font-size-body); }
-  .astrea .card[aria-busy] { gap: var(--space-2); align-items: stretch; }
-  .astrea table.uso { font-size: 0.8cqw; }
-  .astrea table.uso td { padding: 0.35cqw 1cqw 0.35cqw 0; }
+  --color-bg-page: var(--primitive-gray-50);
+  --color-bg-surface: var(--primitive-gray-0);
+  --color-bg-subtle: var(--primitive-gray-100);
+  --color-bg-hover: var(--primitive-blue-100);
+  --color-text-default: var(--primitive-gray-900);
+  --color-text-muted: var(--primitive-gray-600);
+  --color-text-danger: var(--primitive-danger-500);
+  --color-text-warning: var(--primitive-warning-1000);
+  --color-text-success: var(--primitive-success-900);
+  --color-bg-danger: var(--primitive-danger-100);
+  --color-bg-warning: var(--primitive-warning-100);
+  --color-tag-blue-bg: var(--primitive-tag-blue-100);
+  --color-tag-blue-text: var(--primitive-tag-blue-700);
+  --color-tag-green-bg: var(--primitive-tag-green-100);
+  --color-tag-green-text: var(--primitive-tag-green-700);
+  --color-tag-yellow-bg: var(--primitive-tag-yellow-100);
+  --color-tag-yellow-text: var(--primitive-tag-yellow-700);
+  --color-tag-orange-bg: var(--primitive-tag-orange-100);
+  --color-tag-orange-text: var(--primitive-tag-orange-700);
+  --color-tag-red-bg: var(--primitive-tag-red-100);
+  --color-tag-red-text: var(--primitive-tag-red-700);
+  --color-tag-purple-bg: var(--primitive-tag-purple-100);
+  --color-tag-purple-text: var(--primitive-tag-purple-700);
+  --color-tag-teal-bg: var(--primitive-tag-teal-100);
+  --color-tag-teal-text: var(--primitive-tag-teal-700);
+  --color-tag-gray-bg: var(--primitive-tag-gray-100);
+  --color-tag-gray-text: var(--primitive-tag-gray-700);
+  --color-tag-ink-dark: var(--primitive-gray-900); /* texto da cor personalizada clara; fica igual no escuro */
+  --color-tag-ink-light: var(--primitive-gray-0); /* texto da cor personalizada escura */
+  --color-logo: var(--primitive-blue-logo);
+  --color-border-default: var(--primitive-gray-300);
+  --color-border-strong: var(--primitive-gray-500);
+  --color-border-accent: var(--primitive-blue-200);
+  --color-action: var(--primitive-blue-900);
+  --color-action-hover: var(--primitive-blue-1000);
+  --color-action-text: var(--primitive-gray-0);
+  --color-focus: var(--primitive-blue-900);
+  --color-scrim: color-mix(in srgb, var(--primitive-gray-900) 45%, transparent);
 
-  /* 4. Painel de detalhe */
-  .astrea .painel { display: grid; background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-ui); box-shadow: var(--shadow-card); font-size: var(--font-size-label); }
-  .astrea .painel-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); padding: var(--space-2) var(--space-3); }
-  .astrea .painel-topo h4 { color: var(--color-text-default); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); margin-bottom: var(--space-1); }
-  .astrea .painel .nav { display: inline-flex; gap: var(--space-1); color: var(--color-text-muted); }
-  .astrea .painel-bloco { display: grid; margin: 0; padding: var(--space-2) var(--space-3); border-top: var(--border-width) solid var(--color-border-default); }
-  .astrea .painel-bloco small { color: var(--color-text-muted); }
-  .astrea .painel-bloco .destaque { font-size: var(--font-size-title); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
-  .astrea .painel-bloco b { font-weight: var(--font-weight-medium); }
-  .astrea dl.painel-bloco > div { display: flex; justify-content: space-between; gap: var(--space-2); padding: var(--space-1) 0; }
-  .astrea dl.painel-bloco dt { color: var(--color-text-muted); }
-  .astrea dl.painel-bloco dd { margin: 0; }
-  .astrea .painel-rodape { display: flex; justify-content: flex-end; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-top: var(--border-width) solid var(--color-border-default); }
+  --shadow-card: var(--primitive-shadow-1);
 
-  /* Estado vazio e linha, usados no slide da decisão */
-  .astrea .vazio { display: grid; justify-items: start; gap: var(--space-1); padding: var(--space-4); background-color: var(--color-bg-surface); border: var(--border-width) dashed var(--color-border-strong); border-radius: var(--radius-ui); color: var(--color-text-muted); }
-  .astrea .vazio b { color: var(--color-text-default); font-weight: var(--font-weight-medium); }
-  .astrea .linha { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--space-1) var(--space-3); padding: var(--space-2) var(--space-3); background-color: var(--component-row-bg); border-bottom: var(--border-width) solid var(--component-row-border); }
-  .astrea .linha .titulo { font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); min-width: 0; }
+  --space-1: var(--primitive-space-4);
+  --space-2: var(--primitive-space-8);
+  --space-3: var(--primitive-space-12);
+  --space-4: var(--primitive-space-16);
+  --space-5: var(--primitive-space-24);
+  --space-6: var(--primitive-space-32);
+  --space-7: var(--primitive-space-40);
 
-  /* Slide da decisão: as duas aberturas, lado a lado */
-  .astrea .secao { display: grid; }
-  .astrea .secao h5 { display: flex; gap: var(--space-2); margin: 0; padding: var(--space-1) var(--space-3); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-text-muted); background-color: var(--color-bg-subtle); }
-  .astrea .secao h5 span { font-weight: var(--font-weight-regular); }
-  .astrea .hoje-produto { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-2); }
-  .astrea .widget { display: grid; gap: var(--space-1); padding: var(--space-2); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-ui); font-size: var(--font-size-label); color: var(--color-text-muted); }
-  .astrea .widget b { color: var(--color-text-default); font-weight: var(--font-weight-semibold); }
+  /* Densidade de linha. Controle de 36px, como no 03-tela.md; compacta usa 32px, o alvo de opcao. */
+  --density-row: var(--primitive-size-36);
+  --density-row-compact: var(--primitive-size-32);
 
-  @media (max-width: 720px) { .slide { aspect-ratio: auto; } .corpo { flex-direction: column; } }
+  --radius: var(--primitive-radius-8);
+  --radius-card: var(--primitive-radius-8);
+  --radius-dialog: var(--primitive-radius-12);
+  --radius-round: var(--primitive-radius-round);
+  --radius-pill: var(--primitive-radius-pill);
+  --border-width: var(--primitive-border-1);
+  --focus-width: var(--primitive-border-2);
+
+  --font-sans: "Museo Sans", "museo-sans", "Open Sans", "Segoe UI", system-ui, sans-serif;
+  --font-size-label: var(--primitive-font-12);
+  --font-size-button: var(--primitive-font-13);
+  --font-size-body: var(--primitive-font-13);
+  --font-size-emphasis: var(--primitive-font-14);
+  --font-size-dialog: var(--primitive-font-18);
+  --font-size-title: var(--primitive-font-20);
+  --font-size-logo: var(--primitive-font-24);
+  --font-weight-regular: var(--primitive-weight-400);
+  --font-weight-medium: var(--primitive-weight-500);
+  --font-weight-semibold: var(--primitive-weight-600);
+  --font-leading-tight: var(--primitive-leading-125);
+  --font-leading-base: var(--primitive-leading-145);
+  --font-tracking-caps: var(--primitive-tracking-04);
+
+  --size-icon: var(--primitive-size-18);
+  --size-icon-field: var(--primitive-size-20);
+  --size-icon-nav: var(--primitive-size-20);
+  --size-chip: var(--primitive-size-22);
+  --size-logo: var(--primitive-size-24);
+  --size-control: var(--primitive-size-36);
+  --size-icon-button: var(--primitive-size-32);
+  --size-option: var(--primitive-size-32);
+  --size-shortcut: var(--primitive-size-36);
+  --size-search-height: var(--primitive-size-40);
+  --size-header: var(--primitive-size-64);
+  --size-sidebar: var(--primitive-size-200);
+  --size-sidebar-recolhida: var(--primitive-size-64);
+  --size-search: var(--primitive-size-480);
+  --size-dialog: var(--primitive-size-440);
+  --size-dialog-wide: var(--primitive-size-560);
+  --size-dialog-detail: var(--primitive-size-960);
+  --size-column: var(--primitive-size-300);
+}
+
+/* componentes do DS usados no deck, copiados de prototipo/astrea.css */
+:root {
+  --component-logo-mark: var(--color-logo);
+  --component-logo-cut: var(--color-bg-page);
+  --component-logo-text: var(--color-text-default);
+  --component-card-bg: var(--color-bg-surface);
+  --component-card-border: var(--color-border-default);
+  --component-card-radius: var(--radius-card);
+  --component-card-shadow: var(--shadow-card);
+  --component-chip-bg: var(--color-bg-subtle);
+  --component-chip-border: var(--color-border-default);
+  --component-chip-height: var(--size-chip);
+  --component-control-bg: var(--color-bg-surface);
+  --component-control-border: var(--color-border-default);
+  --component-control-height: var(--size-control);
+  --component-button-primary-bg: var(--color-action);
+  --component-button-primary-text: var(--color-action-text);
+
+  /* escala do deck: a escala do DS multiplicada para a projeção */
+  --deck-titulo: calc(var(--font-size-title) * 1.8);
+  --deck-titulo-capa: calc(var(--font-size-title) * 2.4);
+  --deck-subtitulo: calc(var(--font-size-title) * 1.1);
+  --deck-destaque: calc(var(--font-size-emphasis) * 1.25);
+  --deck-corpo: calc(var(--font-size-body) * 1.2);
+  --deck-rotulo: var(--font-size-label);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  padding: var(--space-5) var(--space-4) var(--space-7);
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-default);
+  font-family: var(--font-sans);
+  font-size: var(--deck-corpo);
+  line-height: var(--font-leading-base);
+}
+p { margin: 0; }
+code { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
+:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }
+
+.capa { max-width: 1600px; margin: 0 auto var(--space-5); color: var(--color-text-muted); font-size: var(--font-size-emphasis); }
+.capa strong { color: var(--color-text-default); font-weight: var(--font-weight-semibold); }
+
+/* logo: o mesmo desenho de prototipo/moldura.js */
+.logo { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--component-logo-text); font-size: var(--font-size-logo); font-weight: var(--font-weight-semibold); line-height: 1; text-decoration: none; }
+.logo svg { width: var(--size-logo); height: var(--size-logo); flex: none; }
+.logo-marca { fill: var(--component-logo-mark); }
+.logo-recorte { fill: var(--component-logo-cut); }
+
+/* slide: 16:9, fundo da página do DS */
+.slide {
+  container-type: inline-size;
+  width: min(100%, 1600px);
+  aspect-ratio: 16 / 9;
+  margin: 0 auto var(--space-6);
+  display: flex; flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-7) var(--space-5);
+  overflow: hidden;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-default);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+}
+.slide h2 { margin: 0; max-width: 84cqw; font-size: var(--deck-titulo); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.item { margin: 0 0 var(--space-1); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-action); line-height: var(--font-leading-tight); }
+.pergunta { margin: 0 0 var(--space-3); max-width: 78cqw; font-size: var(--font-size-emphasis); color: var(--color-text-muted); line-height: var(--font-leading-tight); }
+.pergunta::before { content: "\201C"; } .pergunta::after { content: "\201D"; }
+.rodape { display: flex; align-items: center; gap: var(--space-4); margin-top: auto; padding-top: var(--space-3); border-top: var(--border-width) solid var(--color-border-default); font-size: var(--font-size-label); color: var(--color-text-muted); }
+.rodape .logo { font-size: var(--font-size-emphasis); }
+.rodape .logo svg { width: var(--size-icon); height: var(--size-icon); }
+.rodape span:last-child { margin-left: auto; font-variant-numeric: tabular-nums; }
+
+/* card do DS */
+.card { padding: var(--space-4); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--component-card-radius); box-shadow: var(--component-card-shadow); min-width: 0; }
+
+/* rótulo de seção, como o DS faz */
+.secao-titulo { font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); line-height: var(--font-leading-tight); text-transform: uppercase; color: var(--color-text-muted); }
+
+/* tag e chip de prazo, de prototipo/astrea.css */
+.tag, .chip-prazo {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  min-height: var(--component-chip-height); padding: 0 var(--space-2);
+  border: var(--border-width) solid var(--component-chip-border); border-radius: var(--radius);
+  font-size: var(--font-size-label); line-height: var(--font-leading-tight); white-space: nowrap;
+}
+.tag { background-color: var(--component-chip-bg); color: var(--color-text-default); }
+.tag-acao { background-color: var(--color-bg-hover); border-color: var(--color-border-accent); color: var(--color-action); }
+.chip-prazo { background-color: var(--component-chip-bg); color: var(--color-text-default); font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; }
+.chip-prazo-vencido { background-color: var(--color-bg-danger); border-color: var(--color-text-danger); }
+.chip-prazo-hoje { background-color: var(--color-bg-warning); border-color: var(--color-text-warning); }
+.chip-prazo-concluido { background-color: var(--color-bg-surface); border-color: var(--color-text-success); font-weight: var(--font-weight-regular); }
+
+/* botão, de prototipo/astrea.css */
+.botao { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); height: var(--component-control-height); padding: 0 var(--space-4); background: none; border: var(--border-width) solid transparent; border-radius: var(--radius); color: var(--color-text-default); font-size: var(--font-size-button); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); white-space: nowrap; }
+.botao-primario { padding: 0 var(--space-5); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; background-color: var(--component-button-primary-bg); border-color: var(--component-button-primary-bg); color: var(--component-button-primary-text); }
+.botao-secundario { background-color: var(--component-control-bg); border-color: var(--component-control-border); }
+
+/* tabela, de prototipo/astrea.css */
+.tabela-quadro { max-width: 100%; overflow-x: auto; border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); background-color: var(--color-bg-surface); }
+.tabela { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tabela th, .tabela td { height: var(--density-row); padding: var(--space-1) var(--space-3); border-bottom: var(--border-width) solid var(--color-border-default); text-align: start; vertical-align: middle; }
+.tabela th { color: var(--color-text-muted); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); white-space: nowrap; }
+.tabela tbody tr:last-child td { border-bottom: 0; }
+
+/* lista com divisórias */
+.lista { margin: 0; padding: 0; list-style: none; background-color: var(--color-bg-surface); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
+.lista > li { padding: var(--space-3) var(--space-4); border-bottom: var(--border-width) solid var(--color-border-default); }
+.lista > li:last-child { border-bottom: 0; }
+
+/* bloco interativo: details nativo com a faixa da seção do DS (.secao-faixa) */
+.bloco { background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--component-card-radius); min-width: 0; }
+.bloco + .bloco { margin-top: var(--space-2); }
+.bloco > summary {
+  display: flex; align-items: center; gap: var(--space-2);
+  min-height: var(--component-control-height); padding: var(--space-2) var(--space-3);
+  list-style: none; cursor: pointer; border-radius: var(--component-card-radius);
+  font-size: var(--deck-destaque); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight);
+}
+.bloco > summary::-webkit-details-marker { display: none; }
+.bloco > summary:hover { background-color: var(--color-bg-hover); }
+.bloco > summary:focus-visible { outline: var(--focus-width) solid var(--color-action); outline-offset: calc(-1 * var(--focus-width)); }
+.bloco > summary > .seta { flex: none; width: var(--size-icon); height: var(--size-icon); fill: none; stroke: var(--color-text-muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-90deg); transition: transform 150ms; }
+.bloco[open] > summary > .seta { transform: none; }
+.bloco[open] > summary { border-bottom: var(--border-width) solid var(--color-border-default); border-radius: var(--component-card-radius) var(--component-card-radius) 0 0; }
+.bloco > summary .resumo { display: block; font-size: var(--deck-corpo); font-weight: var(--font-weight-regular); color: var(--color-text-muted); }
+.bloco > summary .tag, .bloco > summary .chips { margin-left: auto; }
+.bloco > .detalhe { padding: var(--space-3) var(--space-4); }
+@media (prefers-reduced-motion: reduce) { .bloco > summary > .seta { transition: none; } }
+
+/* PDF: tudo aberto */
+@media print {
+  details { display: block; }
+  details > summary { list-style: none; }
+  details > :not(summary) { display: block !important; }
+  details > summary > .seta { transform: none; }
+  body { background-color: var(--color-bg-surface); padding: 0; }
+  .slide { aspect-ratio: auto; min-height: 0; overflow: visible; break-inside: avoid; break-after: page; }
+}
+
+/* Questão 3: peças próprias do deck, só com os tokens acima */
+:root { --component-code-font: ui-monospace, Consolas, monospace; --component-logo-cut: var(--color-bg-page); --component-skeleton-bg: var(--color-bg-hover); }
+.slide > header > .logo { margin-bottom: var(--space-3); }
+.corpo { flex: 1; display: flex; gap: var(--space-6); align-items: flex-start; min-height: 0; }
+.col { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; flex: 1; }
+.texto { font-size: var(--deck-corpo); }
+.nota { font-size: var(--font-size-body); color: var(--color-text-muted); }
+.props, .tokens { font-size: var(--font-size-body); color: var(--color-text-muted); }
+.props code, .tokens code { font-family: var(--component-code-font); font-size: var(--font-size-label); color: var(--color-text-default); }
+.num { margin-right: var(--space-1); color: var(--color-action); font-variant-numeric: tabular-nums; }
+code.ds { font-family: var(--component-code-font); font-size: var(--font-size-label); font-weight: var(--font-weight-regular); color: var(--color-text-muted); }
+.bloco > summary .chips { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-1); font-weight: var(--font-weight-regular); }
+.bloco > summary .titulo-bloco { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.bloco > .detalhe { display: grid; gap: var(--space-3); }
+.bloco > .detalhe > p { font-size: var(--deck-corpo); color: var(--color-text-muted); }
+
+/* Captura com as marcas: cada item aberto acende o contorno do componente */
+figure { margin: 0; display: grid; gap: var(--space-2); }
+.captura { position: relative; }
+.captura img { display: block; width: 100%; height: auto; border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); }
+figcaption { font-size: var(--font-size-label); color: var(--color-text-muted); line-height: var(--font-leading-base); }
+.marca { position: absolute; opacity: 0; pointer-events: none; border: var(--focus-width) solid var(--color-action); border-radius: var(--radius); background-color: color-mix(in srgb, var(--color-bg-hover) 35%, transparent); transition: opacity 150ms; }
+.marca > span { position: absolute; top: 0; left: 0; padding: 0 var(--space-1); background-color: var(--color-action); color: var(--color-action-text); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-base); white-space: nowrap; border-radius: 0 0 var(--radius) 0; }
+.slide:has(#q3tela-t0[aria-selected="true"]) .marca-faixa,
+.slide:has(#q3tela-t1[aria-selected="true"]) .marca-prazo,
+.slide:has(#q3tela-t2[aria-selected="true"]) .marca-filtros,
+.slide:has(#q3tela-t3[aria-selected="true"]) .marca-numero,
+.slide:has(#q3tela-t4[aria-selected="true"]) .marca-painel,
+.slide:has(#q3tela-t5[aria-selected="true"]) .marca-moldura { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .marca { transition: none; } }
+
+/* palco: a peça viva do produto, em superfície */
+.palco { background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); padding: var(--space-3); }
+.estados { display: grid; grid-template-columns: repeat(auto-fill, minmax(11cqw, 1fr)); gap: var(--space-3) var(--space-4); }
+.estado { display: grid; align-content: start; gap: var(--space-1); min-width: 0; }
+.estado-nome { color: var(--color-text-muted); font-size: var(--font-size-label); line-height: var(--font-leading-tight); }
+
+.astrea { font-family: var(--font-sans); font-size: var(--font-size-body); line-height: var(--font-leading-base); color: var(--color-text-default); }
+.astrea .foco { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }
+.astrea svg.ic { width: var(--size-icon); height: var(--size-icon); fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.chip-prazo svg.ic { width: var(--font-size-emphasis); height: var(--font-size-emphasis); color: var(--color-text-muted); }
+.chip-prazo-vencido svg.ic { color: var(--color-text-danger); }
+.chip-prazo-hoje svg.ic { color: var(--color-text-warning); }
+.chip-prazo-concluido svg.ic { color: var(--color-text-success); }
+.astrea .numero { color: var(--color-action); font-size: var(--font-size-label); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.astrea .traco { display: block; height: var(--space-3); border-radius: var(--radius); background-color: var(--component-skeleton-bg); }
+.astrea .link { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--color-action); font-weight: var(--font-weight-medium); font-size: var(--font-size-label); }
+.astrea .botao { height: var(--size-icon-button); padding: 0 var(--space-3); }
+.astrea .botao-primario { font-size: var(--font-size-label); }
+.astrea .redondo { display: inline-grid; place-items: center; width: var(--size-icon-button); height: var(--size-icon-button); border: var(--border-width) solid var(--color-border-strong); border-radius: var(--radius-round); color: var(--color-text-default); background-color: var(--color-bg-surface); }
+.astrea .reabrir { border-color: var(--color-border-default); box-shadow: var(--shadow-card); justify-self: start; }
+
+/* 1. Tabela */
+.astrea .tabela-quadro { overflow: hidden; }
+.astrea table.tabela { font-size: var(--font-size-label); line-height: var(--font-leading-tight); }
+.astrea .tabela th, .astrea .tabela td { padding: var(--space-1) var(--space-2); }
+.astrea .tabela tr.is-hover td { background-color: var(--color-bg-subtle); }
+.astrea .tabela td.titulo { font-weight: var(--font-weight-medium); }
+.astrea .tabela td.vazia { color: var(--color-text-muted); }
+.astrea .tabela td.vazia b { color: var(--color-text-default); font-weight: var(--font-weight-medium); }
+.astrea table.uso { font-size: var(--font-size-body); }
+.astrea table.uso td:first-child { font-weight: var(--font-weight-medium); }
+
+/* 3. Card de atividade */
+.astrea .card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); padding: var(--space-2) var(--space-3); }
+.astrea .card.is-hover { border-color: var(--color-action); }
+.astrea .card h4 { margin: 0; color: var(--color-text-default); font-size: var(--font-size-body); font-weight: var(--font-weight-medium); }
+.astrea .card[aria-busy] { gap: var(--space-2); align-items: stretch; }
+
+/* 4. Painel de detalhe */
+.astrea .painel-detalhe { display: grid; background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); box-shadow: var(--shadow-card); font-size: var(--font-size-label); }
+.astrea .painel-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2); padding: var(--space-2) var(--space-3); }
+.astrea .painel-topo h4 { margin: 0 0 var(--space-1); color: var(--color-text-default); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
+.astrea .painel-detalhe .nav { display: inline-flex; gap: var(--space-1); color: var(--color-text-muted); }
+.astrea .painel-bloco { display: grid; margin: 0; padding: var(--space-2) var(--space-3); border-top: var(--border-width) solid var(--color-border-default); }
+.astrea .painel-bloco.pilha { gap: var(--space-2); }
+.astrea .painel-bloco small { color: var(--color-text-muted); }
+.astrea .painel-bloco .destaque { font-size: var(--font-size-title); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.astrea .painel-bloco b { font-weight: var(--font-weight-medium); }
+.astrea dl.painel-bloco > div { display: flex; justify-content: space-between; gap: var(--space-2); padding: var(--space-1) 0; }
+.astrea dl.painel-bloco dt { color: var(--color-text-muted); }
+.astrea dl.painel-bloco dd { margin: 0; }
+.astrea .painel-rodape { display: flex; justify-content: flex-end; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-top: var(--border-width) solid var(--color-border-default); }
+
+/* Estado vazio e linha, usados no slide da decisão */
+.astrea .vazio { display: grid; justify-items: start; gap: var(--space-1); padding: var(--space-4); background-color: var(--color-bg-surface); border: var(--border-width) dashed var(--color-border-strong); border-radius: var(--radius); color: var(--color-text-muted); }
+.astrea .vazio b { color: var(--color-text-default); font-weight: var(--font-weight-medium); }
+.astrea .linha { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: var(--space-1) var(--space-3); padding: var(--space-2) var(--space-3); background-color: var(--color-bg-surface); border-bottom: var(--border-width) solid var(--color-border-default); }
+.astrea .linha .titulo { font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); min-width: 0; }
+.astrea .secao { display: grid; }
+.astrea .secao h5 { display: flex; gap: var(--space-2); margin: 0; padding: var(--space-1) var(--space-3); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-text-muted); background-color: var(--color-bg-subtle); }
+.astrea .secao h5 span { font-weight: var(--font-weight-regular); }
+.astrea .hoje-produto { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-2); }
+.astrea .widget { display: grid; gap: var(--space-1); padding: var(--space-2); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius); font-size: var(--font-size-label); color: var(--color-text-muted); }
+.astrea .widget b { color: var(--color-text-default); font-weight: var(--font-weight-semibold); }
+
+/* decisão: a frase fica sempre visível, com a tag de ação */
+.decisao { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-4); background-color: var(--color-bg-surface); border: var(--border-width) solid var(--component-card-border); border-left: var(--focus-width) solid var(--color-action); border-radius: var(--radius-card); }
+.decisao p { font-size: var(--deck-destaque); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+
+@media print { .marca { display: none; } }
+@media (max-width: 720px) { .slide { aspect-ratio: auto; } .corpo { flex-direction: column; } }
+/* passos: lista mestre (vertical) ou cards e abas (horizontal) que trocam o painel */
+.mestre { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 34fr) minmax(0, 66fr); gap: var(--space-5); }
+.mestre-baixo { flex: 1; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: var(--space-4); }
+.passos { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; }
+.passos[aria-orientation="horizontal"] { flex-direction: row; }
+.passos[aria-orientation="horizontal"] > .passo { flex: 1 1 0; }
+.passo {
+  display: flex; align-items: flex-start; gap: var(--space-3);
+  width: 100%; min-width: 0; padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-surface); color: var(--color-text-default);
+  border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card);
+  font: inherit; text-align: start; cursor: pointer;
+}
+.passo:hover { background-color: var(--color-bg-subtle); }
+.passo[aria-selected="true"] { background-color: var(--color-bg-hover); border-color: var(--color-border-accent); box-shadow: inset calc(var(--focus-width) + var(--border-width)) 0 0 var(--color-action); }
+.passo:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }
+.passo-num { flex: none; min-width: var(--space-5); color: var(--color-text-muted); font-size: var(--deck-destaque); font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; line-height: var(--font-leading-tight); }
+.passo[aria-selected="true"] .passo-num { color: var(--color-action); }
+.passo-texto { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); min-width: 0; }
+.passo-titulo { font-size: var(--deck-destaque); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.passo-sub { font-size: var(--font-size-emphasis); color: var(--color-text-muted); line-height: var(--font-leading-tight); }
+.passo .tag, .passo .chips { margin-top: var(--space-1); }
+.paineis { min-height: 0; display: grid; }
+.painel {
+  grid-area: 1 / 1; min-height: 0; overflow: hidden;
+  display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-5); background-color: var(--color-bg-surface);
+  border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card);
+}
+.painel[hidden] { display: none; }
+.painel:not([hidden]) { animation: deck-fade .18s ease; }
+@keyframes deck-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .painel:not([hidden]) { animation: none; } }
+.so-impressao { display: none; }
+@media print {
+  .paineis { display: block; }
+  .painel[hidden] { display: flex !important; }
+  .painel { margin-top: var(--space-3); overflow: visible; animation: none; }
+  .so-impressao { display: block; }
+  .mestre, .mestre-baixo { display: block; }
+}
+
+/* Questão 3 sobre o motor de passos */
+.painel > p { font-size: var(--deck-corpo); color: var(--color-text-muted); }
+.painel .chips { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.passo .ds { margin-left: var(--space-1); }
+.corpo:has([data-passos]) { align-items: stretch; }
+.col { min-height: 0; }
+.col-tela { flex: 1.3; }
+#q3tela .passos { display: grid; grid-template-columns: 1fr 1fr; }
+.slide .painel { padding: var(--space-4); gap: var(--space-2); }
+.slide .passo { padding: var(--space-2) var(--space-3); }
+#q3s2 .col-componentes { flex: 2.4; }
+.slide .painel .estados { gap: var(--space-2) var(--space-3); }
+.col-tela figcaption { max-width: 100%; }
 </style>
 </head>
 <body>
@@ -191,30 +532,53 @@
 <!-- ============ A tela ============ -->
 <section class="slide" id="q3tela">
   <header>
+    <a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a>
     <p class="item">Questão 3, item 1 de 3. A tela</p>
     <p class="pergunta">A tela redesenhada em alta fidelidade no Figma.</p>
     <h2>A Área de trabalho abre pelo que atrasou, dentro da moldura que o escritório já conhece</h2>
   </header>
   <div class="corpo">
-    <div class="col" style="flex: 1.75;">
+    <div class="col col-tela">
       <figure data-captura="area-de-trabalho">
-        <img src="prototipo/capturas/area-de-trabalho-1920-detalhe.png" alt="Área de trabalho redesenhada na visão Lista: filtros numa linha; seções Atrasadas, Hoje e Próximos, cada uma com faixa, tag de contagem e tabela de prazo, atividade, processo, responsável e ações; a primeira atividade atrasada selecionada e o painel de detalhe aberto à direita" style="width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius);">
+        <div class="captura">
+          <img src="prototipo/capturas/area-de-trabalho-1920-detalhe.png" alt="Área de trabalho redesenhada na visão Lista: filtros numa linha; seções Atrasadas, Hoje e Próximos, cada uma com faixa, tag de contagem e tabela de prazo, atividade, processo, responsável e ações; a primeira atividade atrasada selecionada e o painel de detalhe aberto à direita">
+          <!-- Caixas medidas com getBoundingClientRect em prototipo/area-de-trabalho.html?atividade=a1, 1920 por 1080, visão Lista. -->
+          <span class="marca marca-faixa" style="left: 13.385%; top: 14.815%; width: 64.688%; height: 3.611%;" aria-hidden="true"><span>faixa de seção</span></span>
+          <span class="marca marca-faixa" style="left: 13.385%; top: 31.759%; width: 64.688%; height: 3.611%;" aria-hidden="true"></span>
+          <span class="marca marca-faixa" style="left: 13.385%; top: 44.815%; width: 64.688%; height: 3.611%;" aria-hidden="true"></span>
+          <span class="marca marca-prazo" style="left: 13.385%; top: 18.426%; width: 9.896%; height: 52.269%;" aria-hidden="true"><span>chip de prazo</span></span>
+          <span class="marca marca-filtros" style="left: 13.333%; top: 8.148%; width: 85.417%; height: 5.093%;" aria-hidden="true"><span>barra de filtros</span></span>
+          <span class="marca marca-numero" style="left: 49.531%; top: 21.806%; width: 12.5%; height: 48.889%;" aria-hidden="true"><span>número com copiar</span></span>
+          <span class="marca marca-painel" style="left: 78.958%; top: 14.722%; width: 19.792%; height: 37.461%;" aria-hidden="true"><span>painel de detalhe</span></span>
+          <span class="marca marca-moldura" style="left: 0; top: 0; width: 100%; height: 5.926%;" aria-hidden="true"><span>moldura</span></span>
+          <span class="marca marca-moldura" style="left: 0; top: 5.926%; width: 12.083%; height: 94.074%;" aria-hidden="true"></span>
+        </div>
         <figcaption>Área de trabalho redesenhada, com atividades fictícias, na visão Lista. Abre em todas as listas. Cada seção tem uma tabela do DS, e a linha escolhida abre o painel ao lado. Protótipo navegável em HTML, sem rede.</figcaption>
       </figure>
     </div>
     <div class="col">
-      <h4>O que a tela prova, princípio por princípio</h4>
-      <ul class="lista">
-        <li><b>O prazo primeiro</b><span>A tela abre em todas as listas, e Atrasadas fica acima de Hoje. A faixa de cada seção abre e fecha, com a contagem numa tag. Prova P1.</span></li>
-        <li><b>Prazo na área principal</b><span>Cada linha abre pelo chip de prazo, em cor e texto. Prazos, audiências e eventos dividem as seções com as tarefas. PA-33 e PA-34.</span></li>
-        <li><b>Filtros numa linha</b><span>Lista, Responsável, Período e Situação, com a visão e o botão de adicionar ao lado. O filtro continua ao voltar de um processo. 63 votos.</span></li>
-        <li><b>Número com copiar</b><span>O número do processo é link para a ficha. O botão de ícone ao lado copia o número em 1 clique. PA-38 e PA-11.</span></li>
-        <li><b>Detalhe ao lado, sem modal</b><span>O painel muda de largura e troca de atividade com anterior e próximo. Concluir e adiar viram botões redondos de ícone. "Abrir processo" é o primário.</span></li>
-        <li><b>A moldura é a âncora</b><span>Logo, busca e menu do produto. Cinco atalhos no cabeçalho, e o sino mostra a contagem. A tela nova fica atrás de feature flag.</span></li>
-      </ul>
+      <h3 class="secao-titulo">O que a tela prova, princípio por princípio</h3>
+<div class="mestre-baixo">
+<div class="passos" role="tablist" aria-orientation="vertical" aria-label="O que a tela prova, princípio por princípio" data-passos>
+<button type="button" class="passo" role="tab" id="q3tela-t0" aria-controls="q3tela-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">O prazo primeiro</span></span></button>
+<button type="button" class="passo" role="tab" id="q3tela-t1" aria-controls="q3tela-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Prazo na área principal</span></span></button>
+<button type="button" class="passo" role="tab" id="q3tela-t2" aria-controls="q3tela-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Filtros numa linha</span></span></button>
+<button type="button" class="passo" role="tab" id="q3tela-t3" aria-controls="q3tela-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Número com copiar</span></span></button>
+<button type="button" class="passo" role="tab" id="q3tela-t4" aria-controls="q3tela-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">Detalhe ao lado, sem modal</span></span></button>
+<button type="button" class="passo" role="tab" id="q3tela-t5" aria-controls="q3tela-p5" aria-selected="false"><span class="passo-num">6</span><span class="passo-texto"><span class="passo-titulo">A moldura é a âncora</span></span></button>
+</div>
+<div class="paineis" aria-live="polite">
+<div class="painel" role="tabpanel" id="q3tela-p0" aria-labelledby="q3tela-t0" tabindex="0"><p class="so-impressao secao-titulo">O prazo primeiro</p><p>A tela abre em todas as listas, e Atrasadas fica acima de Hoje. A faixa de cada seção abre e fecha, com a contagem numa tag. Prova P1.</p></div>
+<div class="painel" role="tabpanel" id="q3tela-p1" aria-labelledby="q3tela-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Prazo na área principal</p><p>Cada linha abre pelo chip de prazo, em cor e texto. Prazos, audiências e eventos dividem as seções com as tarefas. PA-33 e PA-34.</p></div>
+<div class="painel" role="tabpanel" id="q3tela-p2" aria-labelledby="q3tela-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">Filtros numa linha</p><p>Lista, Responsável, Período e Situação, com a visão e o botão de adicionar ao lado. O filtro continua ao voltar de um processo. 63 votos.</p></div>
+<div class="painel" role="tabpanel" id="q3tela-p3" aria-labelledby="q3tela-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">Número com copiar</p><p>O número do processo é link para a ficha. O botão de ícone ao lado copia o número em 1 clique. PA-38 e PA-11.</p></div>
+<div class="painel" role="tabpanel" id="q3tela-p4" aria-labelledby="q3tela-t4" tabindex="0" hidden><p class="so-impressao secao-titulo">Detalhe ao lado, sem modal</p><p>O painel muda de largura e troca de atividade com anterior e próximo. Concluir e adiar viram botões redondos de ícone. "Abrir processo" é o primário.</p></div>
+<div class="painel" role="tabpanel" id="q3tela-p5" aria-labelledby="q3tela-t5" tabindex="0" hidden><p class="so-impressao secao-titulo">A moldura é a âncora</p><p>Logo, busca e menu do produto. Cinco atalhos no cabeçalho, e o sino mostra a contagem. A tela nova fica atrás de feature flag.</p></div>
+</div>
+</div>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. A primeira tela da nova direção. Questão 3</span><span>A tela</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 3 · Felipe Gaigher · 08/11/2026</span><span>A tela</span></footer>
 </section>
 
 <!-- ============ 1 ============ -->
@@ -225,34 +589,42 @@
     <h2>Quatro componentes entram no sistema. Cada estado citado tem célula própria no design system</h2>
   </header>
   <div class="corpo astrea">
-    <div class="col" style="flex: 1.6;">
-      <h3><span class="num">1</span>Tabela <code class="ds">DS.tabela</code></h3>
-      <p class="props"><code>rotulo</code> obrigatório, <code>colunas</code>, <code>linhas</code>, <code>carregando</code> booleana, <code>vazio</code>, <code>densidade</code> padrão ou compacta. Na tela: Prazo, Atividade, Processo, Responsável, Ações.</p>
-      <div class="palco">
-        <div class="estados" style="grid-template-columns: 1fr 1fr;">
-          <div class="estado" data-estado="default"><span class="estado-nome">default</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span></td><td class="titulo">Protocolar contestação</td><td><span class="numero">5004213-75.2025.8.24.0023</span></td></tr><tr><td><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 1 dia</span></td><td class="titulo">Juntar procuração</td><td><span class="numero">5001789-08.2025.8.24.0008</span></td></tr></tbody></table></div></div>
-          <div class="estado" data-estado="hover"><span class="estado-nome">hover</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 09/11</span></td><td class="titulo">Reunião com a cliente</td><td><span class="numero">5012940-75.2025.8.24.0038</span></td></tr><tr class="is-hover"><td><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 10/11</span></td><td class="titulo">Opor embargos</td><td><span class="numero">0007315-64.2023.8.24.0023</span></td></tr></tbody></table></div></div>
-          <div class="estado" data-estado="carregando"><span class="estado-nome">carregando</span><div class="tabela-quadro" aria-busy="true"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td><span class="traco"></span></td><td><span class="traco"></span></td><td><span class="traco"></span></td></tr><tr><td><span class="traco"></span></td><td><span class="traco"></span></td><td><span class="traco"></span></td></tr></tbody></table></div></div>
-          <div class="estado" data-estado="vazio"><span class="estado-nome">vazio</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td colspan="3" class="vazia"><b>Nenhuma atividade com estes filtros.</b> Ajuste os filtros para ver mais.</td></tr></tbody></table></div></div>
+    <div class="col">
+      <div class="mestre-baixo">
+<div class="passos" role="tablist" aria-orientation="horizontal" aria-label="Componentes" data-passos>
+<button type="button" class="passo" role="tab" id="q3s1-t0" aria-controls="q3s1-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">Tabela</span><span class="passo-sub"><code class="ds">DS.tabela</code></span></span></button>
+<button type="button" class="passo" role="tab" id="q3s1-t1" aria-controls="q3s1-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Chip de prazo</span><span class="passo-sub"><code class="ds">DS.chipPrazo</code></span></span></button>
+</div>
+<div class="paineis" aria-live="polite">
+<div class="painel" role="tabpanel" id="q3s1-p0" aria-labelledby="q3s1-t0" tabindex="0"><p class="so-impressao secao-titulo">Tabela</p><span class="chips"><span class="tag">default</span><span class="tag">hover</span><span class="tag">carregando</span><span class="tag">vazio</span></span>
+          <p class="props"><code>rotulo</code> obrigatório, <code>colunas</code>, <code>linhas</code>, <code>carregando</code> booleana, <code>vazio</code>, <code>densidade</code> padrão ou compacta. Na tela: Prazo, Atividade, Processo, Responsável, Ações.</p>
+          <div class="palco">
+            <div class="estados" style="grid-template-columns: 1fr 1fr;">
+              <div class="estado" data-estado="default"><span class="estado-nome">default</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span></td><td class="titulo">Protocolar contestação</td><td><span class="numero">5004213-75.2025.8.24.0023</span></td></tr><tr><td><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 1 dia</span></td><td class="titulo">Juntar procuração</td><td><span class="numero">5001789-08.2025.8.24.0008</span></td></tr></tbody></table></div></div>
+              <div class="estado" data-estado="hover"><span class="estado-nome">hover</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 09/11</span></td><td class="titulo">Reunião com a cliente</td><td><span class="numero">5012940-75.2025.8.24.0038</span></td></tr><tr class="is-hover"><td><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 10/11</span></td><td class="titulo">Opor embargos</td><td><span class="numero">0007315-64.2023.8.24.0023</span></td></tr></tbody></table></div></div>
+              <div class="estado" data-estado="carregando"><span class="estado-nome">carregando</span><div class="tabela-quadro" aria-busy="true"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td><span class="traco"></span></td><td><span class="traco"></span></td><td><span class="traco"></span></td></tr><tr><td><span class="traco"></span></td><td><span class="traco"></span></td><td><span class="traco"></span></td></tr></tbody></table></div></div>
+              <div class="estado" data-estado="vazio"><span class="estado-nome">vazio</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td colspan="3" class="vazia"><b>Nenhuma atividade com estes filtros.</b> Ajuste os filtros para ver mais.</td></tr></tbody></table></div></div>
+            </div>
+          </div>
+          <p class="tokens">Linha de <code>--density-row</code>, 36px. Hover em <code>--color-bg-subtle</code>. Larga, a tabela rola dentro do quadro, nunca a página. Na tela, a linha escolhida leva <code>aria-selected</code> e barra em <code>--color-action</code>. Essa célula ainda falta no DS.</p>
         </div>
-      </div>
-      <p class="tokens">Linha de <code>--density-row</code>, 36px. Hover em <code>--color-bg-subtle</code>. Larga, a tabela rola dentro do quadro, nunca a página. Na tela, a linha escolhida leva <code>aria-selected</code> e barra em <code>--color-action</code>. Essa célula ainda falta no DS.</p>
-    </div>
-    <div class="col" style="flex: 0.75;">
-      <h3><span class="num">2</span>Chip de prazo <code class="ds">DS.chipPrazo</code></h3>
-      <p class="props"><code>estadoPrazo</code> vencido, hoje, próximo ou concluído. <code>rotulo</code> obrigatório: sem texto, o componente recusa o chip.</p>
-      <div class="palco">
-        <div class="estados" style="grid-template-columns: 1fr;">
-          <div class="estado" data-estado="default"><span class="estado-nome">default, prazo próximo</span><span><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span></span></div>
-          <div class="estado"><span class="estado-nome">Variação Vencido</span><span><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span></span></div>
-          <div class="estado"><span class="estado-nome">Variação Vence hoje</span><span><span class="chip-prazo chip-prazo-hoje"><svg class="ic"><use href="#i-relogio"/></svg>Vence hoje</span></span></div>
-          <div class="estado"><span class="estado-nome">Variação Concluída</span><span><span class="chip-prazo chip-prazo-concluido"><svg class="ic"><use href="#i-check"/></svg>Concluída · prazo 16/11</span></span></div>
+<div class="painel" role="tabpanel" id="q3s1-p1" aria-labelledby="q3s1-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Chip de prazo</p><span class="chips"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span><span class="chip-prazo chip-prazo-hoje"><svg class="ic"><use href="#i-relogio"/></svg>Vence hoje</span><span class="chip-prazo chip-prazo-concluido"><svg class="ic"><use href="#i-check"/></svg>Concluída · prazo 16/11</span></span>
+          <p class="props"><code>estadoPrazo</code> vencido, hoje, próximo ou concluído. <code>rotulo</code> obrigatório: sem texto, o componente recusa o chip.</p>
+          <div class="palco">
+            <div class="estados" style="grid-template-columns: repeat(4, 1fr);">
+              <div class="estado" data-estado="default"><span class="estado-nome">default, prazo próximo</span><span><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span></span></div>
+              <div class="estado"><span class="estado-nome">Variação Vencido</span><span><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span></span></div>
+              <div class="estado"><span class="estado-nome">Variação Vence hoje</span><span><span class="chip-prazo chip-prazo-hoje"><svg class="ic"><use href="#i-relogio"/></svg>Vence hoje</span></span></div>
+              <div class="estado"><span class="estado-nome">Variação Concluída</span><span><span class="chip-prazo chip-prazo-concluido"><svg class="ic"><use href="#i-check"/></svg>Concluída · prazo 16/11</span></span></div>
+            </div>
+          </div>
+          <p class="tokens">Texto em <code>--color-text-default</code>. Vencido com fundo <code>--color-bg-danger</code> e borda <code>--color-text-danger</code>. Hoje em <code>--color-bg-warning</code>. Cor e texto, nunca só cor. Sem hover e sem foco, porque o chip não é controle.</p>
         </div>
-      </div>
-      <p class="tokens">Texto em <code>--color-text-default</code>. Vencido com fundo <code>--color-bg-danger</code> e borda <code>--color-text-danger</code>. Hoje em <code>--color-bg-warning</code>. Cor e texto, nunca só cor. Sem hover e sem foco, porque o chip não é controle.</p>
+</div>
+</div>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. A primeira tela da nova direção. Questão 3</span><span>1 de 3</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 3 · Felipe Gaigher · 08/11/2026</span><span>1 de 3</span></footer>
 </section>
 
 <!-- ============ 2 ============ -->
@@ -262,52 +634,64 @@
     <h2>O card e o painel de detalhe fecham a tela. O estado é a única variante, e o hex só existe no primitivo</h2>
   </header>
   <div class="corpo astrea">
-    <div class="col" style="flex: 1.05;">
-      <h3><span class="num">3</span>Card de atividade <code class="ds">DS.cardAtividade</code></h3>
-      <p class="props"><code>titulo</code>, <code>tipo</code>, <code>prazo</code>, <code>processo</code>, <code>responsavel</code> texto. <code>mostrarPrazo</code>, <code>mostrarProcesso</code>, <code>mostrarResponsavel</code>, <code>mostrarTags</code> e <code>copiarNumero</code> booleanas.</p>
-      <div class="palco">
-        <div class="estados" style="grid-template-columns: repeat(3, 1fr);">
-          <div class="estado" data-estado="default"><span class="estado-nome">default</span><article class="card"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
-          <div class="estado" data-estado="hover"><span class="estado-nome">hover</span><article class="card is-hover"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
-          <div class="estado" data-estado="active"><span class="estado-nome">active</span><article class="card is-hover"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
-          <div class="estado" data-estado="foco"><span class="estado-nome">foco</span><article class="card foco"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
-          <div class="estado" data-estado="carregando"><span class="estado-nome">carregando</span><div class="card" aria-busy="true"><span class="traco" style="width: 45%"></span><span class="traco" style="width: 90%"></span><span class="traco" style="width: 70%"></span></div></div>
-          <div class="estado"><span class="estado-nome">Variação Vencido</span><article class="card"><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span><h4>Protocolar contestação</h4><span class="link"><svg class="ic"><use href="#i-arquivo"/></svg>Abrir processo</span></article></div>
+    <div class="col col-componentes">
+      <div class="mestre-baixo">
+<div class="passos" role="tablist" aria-orientation="horizontal" aria-label="Componentes" data-passos>
+<button type="button" class="passo" role="tab" id="q3s2-t0" aria-controls="q3s2-p0" aria-selected="true"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Card de atividade</span><span class="passo-sub"><code class="ds">DS.cardAtividade</code></span></span></button>
+<button type="button" class="passo" role="tab" id="q3s2-t1" aria-controls="q3s2-p1" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Painel de detalhe</span><span class="passo-sub"><code class="ds">DS.painelDetalhe</code></span></span></button>
+</div>
+<div class="paineis" aria-live="polite">
+<div class="painel" role="tabpanel" id="q3s2-p0" aria-labelledby="q3s2-t0" tabindex="0"><p class="so-impressao secao-titulo">Card de atividade</p><span class="chips"><span class="tag">default</span><span class="tag">hover</span><span class="tag">active</span><span class="tag">foco</span><span class="tag">carregando</span><span class="tag">Variação Vencido</span></span>
+          <p class="props"><code>titulo</code>, <code>tipo</code>, <code>prazo</code>, <code>processo</code>, <code>responsavel</code> texto. <code>mostrarPrazo</code>, <code>mostrarProcesso</code>, <code>mostrarResponsavel</code>, <code>mostrarTags</code> e <code>copiarNumero</code> booleanas.</p>
+          <div class="palco">
+            <div class="estados" style="grid-template-columns: repeat(3, 1fr);">
+              <div class="estado" data-estado="default"><span class="estado-nome">default</span><article class="card"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
+              <div class="estado" data-estado="hover"><span class="estado-nome">hover</span><article class="card is-hover"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
+              <div class="estado" data-estado="active"><span class="estado-nome">active</span><article class="card is-hover"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
+              <div class="estado" data-estado="foco"><span class="estado-nome">foco</span><article class="card foco"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
+              <div class="estado" data-estado="carregando"><span class="estado-nome">carregando</span><div class="card" aria-busy="true"><span class="traco" style="width: 45%"></span><span class="traco" style="width: 90%"></span><span class="traco" style="width: 70%"></span></div></div>
+              <div class="estado"><span class="estado-nome">Variação Vencido</span><article class="card"><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span><h4>Protocolar contestação</h4><span class="link"><svg class="ic"><use href="#i-arquivo"/></svg>Abrir processo</span></article></div>
+            </div>
+          </div>
         </div>
-      </div>
-      <h4 style="margin-top: 0.4cqw;">Onde cada componente serve, além da Área de trabalho</h4>
-      <table class="uso">
-        <thead><tr><th>Componente</th><th>Outras páginas do protótipo</th></tr></thead>
-        <tbody>
-          <tr><td>Tabela</td><td>Contatos, Processos, Atendimentos, Documentos e Buscas</td></tr>
-          <tr><td>Chip de prazo</td><td>Agenda, Alertas, Contatos e Processos</td></tr>
-          <tr><td>Card de atividade</td><td>Só as visões Cards e Kanban daqui. Fecha a entrada no DS quando o Kanban trocar o card próprio</td></tr>
-          <tr><td>Painel de detalhe</td><td>Contatos, Processos, Alertas e a coluna da Agenda</td></tr>
-        </tbody>
-      </table>
+<div class="painel" role="tabpanel" id="q3s2-p1" aria-labelledby="q3s2-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Painel de detalhe</p><span class="chips"><span class="tag">default</span><span class="tag">foco</span><span class="tag">carregando</span><span class="tag">vazio</span><span class="tag">oculto</span></span>
+          <p class="props"><code>titulo</code>, <code>chips</code>, <code>destaque</code>, <code>linhas</code>, <code>acoes</code>. <code>aoAnterior</code> e <code>aoProximo</code> trocam a atividade sem fechar. Divisor de 300 a 560px.</p>
+          <div class="palco">
+            <div class="estados" style="grid-template-columns: 1.35fr 1fr;">
+              <div class="estado" data-estado="default" style="grid-row: span 4;"><span class="estado-nome">default</span>
+                <div class="painel-detalhe">
+                  <div class="painel-topo"><div><h4>Protocolar contestação</h4><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span></div><span class="nav"><svg class="ic"><use href="#i-anterior"/></svg><svg class="ic"><use href="#i-proximo"/></svg><svg class="ic"><use href="#i-fechar"/></svg></span></div>
+                  <div class="painel-bloco"><small>Prazo</small><b class="destaque">Vencido há 2 dias</b></div>
+                  <dl class="painel-bloco"><div><dt>Processo</dt><dd><span class="numero">5004213-75.2025.8.24.0023</span></dd></div><div><dt>Responsável</dt><dd>Rafael Antunes</dd></div><div><dt>Situação</dt><dd>Aberta</dd></div></dl>
+                  <div class="painel-rodape"><span class="redondo"><svg class="ic"><use href="#i-check"/></svg></span><span class="redondo"><svg class="ic"><use href="#i-calendario"/></svg></span><span class="botao botao-primario">Abrir processo</span></div>
+                </div></div>
+              <div class="estado" data-estado="foco"><span class="estado-nome">foco, no botão de esconder</span><div class="painel-detalhe"><div class="painel-topo"><div><h4>Protocolar contestação</h4></div><span class="nav"><svg class="ic"><use href="#i-anterior"/></svg><svg class="ic"><use href="#i-proximo"/></svg><svg class="ic foco"><use href="#i-fechar"/></svg></span></div></div></div>
+              <div class="estado" data-estado="carregando"><span class="estado-nome">carregando</span><div class="painel-detalhe" aria-busy="true"><div class="painel-bloco pilha"><span class="traco" style="width: 70%"></span><span class="traco" style="width: 45%"></span></div></div></div>
+              <div class="estado" data-estado="vazio"><span class="estado-nome">vazio</span><div class="painel-detalhe"><div class="painel-bloco"><b>Sem dados cadastrados.</b></div></div></div>
+              <div class="estado" data-estado="oculto"><span class="estado-nome">oculto: só o botão de reabrir, e o foco vai para ele</span><span class="redondo reabrir"><svg class="ic"><use href="#i-anterior"/></svg></span></div>
+            </div>
+          </div>
+          <p class="tokens">Cartão em <code>--color-bg-surface</code>, borda <code>--color-border-default</code>, <code>--shadow-card</code>. Ações em botões redondos de ícone, com dica. O último botão é o primário: "Abrir processo". Abaixo de 1100px o painel some. A tela estreita fica para a próxima rodada.</p>
+        </div>
+</div>
+</div>
     </div>
-    <div class="col" style="flex: 1;">
-      <h3><span class="num">4</span>Painel de detalhe <code class="ds">DS.painelDetalhe</code></h3>
-      <p class="props"><code>titulo</code>, <code>chips</code>, <code>destaque</code>, <code>linhas</code>, <code>acoes</code>. <code>aoAnterior</code> e <code>aoProximo</code> trocam a atividade sem fechar. Divisor de 300 a 560px.</p>
-      <div class="palco">
-        <div class="estados" style="grid-template-columns: 1.35fr 1fr;">
-          <div class="estado" data-estado="default" style="grid-row: span 3;"><span class="estado-nome">default</span>
-            <div class="painel">
-              <div class="painel-topo"><div><h4>Protocolar contestação</h4><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span></div><span class="nav"><svg class="ic"><use href="#i-anterior"/></svg><svg class="ic"><use href="#i-proximo"/></svg><svg class="ic"><use href="#i-fechar"/></svg></span></div>
-              <div class="painel-bloco"><small>Prazo</small><b class="destaque">Vencido há 2 dias</b></div>
-              <dl class="painel-bloco"><div><dt>Processo</dt><dd><span class="numero">5004213-75.2025.8.24.0023</span></dd></div><div><dt>Responsável</dt><dd>Rafael Antunes</dd></div><div><dt>Situação</dt><dd>Aberta</dd></div></dl>
-              <div class="painel-rodape"><span class="redondo"><svg class="ic"><use href="#i-check"/></svg></span><span class="redondo"><svg class="ic"><use href="#i-calendario"/></svg></span><span class="botao botao-primario">Abrir processo</span></div>
-            </div></div>
-          <div class="estado" data-estado="foco"><span class="estado-nome">foco, no botão de esconder</span><div class="painel"><div class="painel-topo"><div><h4>Protocolar contestação</h4></div><span class="nav"><svg class="ic"><use href="#i-anterior"/></svg><svg class="ic"><use href="#i-proximo"/></svg><svg class="ic foco"><use href="#i-fechar"/></svg></span></div></div></div>
-          <div class="estado" data-estado="carregando"><span class="estado-nome">carregando</span><div class="painel" aria-busy="true"><div class="painel-bloco" style="display: grid; gap: 6px;"><span class="traco" style="width: 70%"></span><span class="traco" style="width: 45%"></span></div></div></div>
-          <div class="estado" data-estado="vazio"><span class="estado-nome">vazio</span><div class="painel"><div class="painel-bloco"><b>Sem dados cadastrados.</b></div></div></div>
-          <div class="estado" data-estado="oculto" style="grid-column: 1 / -1;"><span class="estado-nome">oculto: só o botão de reabrir, e o foco vai para ele</span><span class="redondo reabrir"><svg class="ic"><use href="#i-anterior"/></svg></span></div>
-        </div>
+    <div class="col">
+      <h3 class="secao-titulo">Onde cada componente serve, além da Área de trabalho</h3>
+      <div class="tabela-quadro">
+        <table class="tabela uso">
+          <thead><tr><th>Componente</th><th>Outras páginas do protótipo</th></tr></thead>
+          <tbody>
+            <tr><td>Tabela</td><td>Contatos, Processos, Atendimentos, Documentos e Buscas</td></tr>
+            <tr><td>Chip de prazo</td><td>Agenda, Alertas, Contatos e Processos</td></tr>
+            <tr><td>Card de atividade</td><td>Só as visões Cards e Kanban daqui. Fecha a entrada no DS quando o Kanban trocar o card próprio</td></tr>
+            <tr><td>Painel de detalhe</td><td>Contatos, Processos, Alertas e a coluna da Agenda</td></tr>
+          </tbody>
+        </table>
       </div>
-      <p class="tokens">Cartão em <code>--color-bg-surface</code>, borda <code>--color-border-default</code>, <code>--shadow-card</code>. Ações em botões redondos de ícone, com dica. O último botão é o primário: "Abrir processo". Abaixo de 1100px o painel some. A tela estreita fica para a próxima rodada.</p>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. A primeira tela da nova direção. Questão 3</span><span>2 de 3</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 3 · Felipe Gaigher · 08/11/2026</span><span>2 de 3</span></footer>
 </section>
 
 <!-- ============ 3 ============ -->
@@ -320,7 +704,7 @@
   <div class="corpo">
     <div class="col astrea" style="flex: 0.95;">
       <div class="palco">
-        <div class="estados" style="grid-template-columns: 1fr 1fr; gap: 1.2cqw;">
+        <div class="estados" style="grid-template-columns: 1fr 1fr; gap: var(--space-5);">
           <div class="estado">
             <span class="estado-nome">Como o produto abre hoje: a lista escolhida e o widget de lembretes</span>
             <div class="hoje-produto">
@@ -332,9 +716,9 @@
             <span class="estado-nome">Como o Astrea passa a abrir: todas as listas, Atrasadas no topo</span>
             <div class="secao">
               <h5>Atrasadas <span>1</span></h5>
-              <div class="linha"><span class="chip-prazo" data-estado="vencido"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg>Vencido há 2 dias</span><span class="titulo">Protocolar contestação</span><span class="acoes"></span></div>
+              <div class="linha"><span class="chip-prazo chip-prazo-vencido" data-estado="vencido"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg>Vencido há 2 dias</span><span class="titulo">Protocolar contestação</span><span class="acoes"></span></div>
               <h5>Hoje <span>1</span></h5>
-              <div class="linha"><span class="chip-prazo" data-estado="hoje"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Vence hoje, 14h</span><span class="titulo">Audiência de conciliação</span><span class="acoes"></span></div>
+              <div class="linha"><span class="chip-prazo chip-prazo-hoje" data-estado="hoje"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Vence hoje, 14h</span><span class="titulo">Audiência de conciliação</span><span class="acoes"></span></div>
               <h5>Próximos <span>1</span></h5>
               <div class="linha"><span class="chip-prazo" data-estado="proximo"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Vence em 12/11</span><span class="titulo">Manifestar sobre o laudo pericial</span><span class="acoes"></span></div>
             </div>
@@ -342,23 +726,97 @@
         </div>
       </div>
       <p class="nota">A mesma conta, com os mesmos dados. Hoje o atraso aparece só pela cor da data, e o vencido não tem seção. À direita, ele é a primeira linha da tela, em texto e cor.</p>
-      <h4 style="margin-top: 0.6cqw;">O que eu não escolhi</h4>
+      <h3 class="secao-titulo">O que eu não escolhi</h3>
       <p class="texto">Manter a lista escolhida como abertura e o widget de lembretes, como o produto faz hoje. O ganho era zero reaprendizado. O custo era manter escondido o atrasado (PA-32), o problema que a tela existe para resolver.</p>
     </div>
     <div class="col">
-      <div class="decisao"><span class="carimbo">Decisão</span><p>A tela abre em todas as listas, com Atrasadas acima de Hoje, e o prazo é o dado dominante da linha.</p></div>
-      <ul class="lista">
-        <li><b>O ganho</b><span>O atrasado é a primeira coisa na tela. O escritório não perde prazo por não achar a lista. Perde por não ver a data. É a primeira restrição do briefing, e 136 de 407 votos pedem esse destaque.</span></li>
-        <li><b>O custo</b><span>Reaprendizado na tela mais usada, contra a segunda restrição do briefing. Quem tem muitas listas vê mais linhas na abertura.</span></li>
-        <li><b>Como reduzo o custo</b><span>O filtro de lista continua na tela, e a escolha fica gravada. A moldura não muda. O chip de prazo leva cor e texto, nunca só cor. A tela nova fica atrás de feature flag, com volta para a antiga.</span></li>
-        <li><b>O que confirma a aposta</b><span>Duas medidas no beta. O tempo até o primeiro clique no atrasado. Os chamados com "sumiu" ou "não vi o prazo". Se a volta para a tela antiga passar do limite da linha de base, a abertura volta para a lista escolhida, sem reescrever componente.</span></li>
-        <li><b>O painel ao lado vem desta escolha</b><span>Com as três seções, a lista precisa ficar visível enquanto a pessoa lê uma atividade. O modal de hoje cobre a lista.</span></li>
-        <li><b>O que fica para depois</b><span>Personalizar (37 votos) e ordenação manual (33 votos). Os dois pedem dado novo, e esta tela só reorganiza o que existe.</span></li>
-      </ul>
+      <div class="decisao"><span class="tag tag-acao">Decisão</span><p>A tela abre em todas as listas, com Atrasadas acima de Hoje, e o prazo é o dado dominante da linha.</p></div>
+      <div class="mestre">
+<div class="passos" role="tablist" aria-orientation="vertical" aria-label="Uma decisão difícil" data-passos>
+<button type="button" class="passo" role="tab" id="q3s3-t0" aria-controls="q3s3-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">O ganho</span></span></button>
+<button type="button" class="passo" role="tab" id="q3s3-t1" aria-controls="q3s3-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">O custo</span></span></button>
+<button type="button" class="passo" role="tab" id="q3s3-t2" aria-controls="q3s3-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Como reduzo o custo</span></span></button>
+<button type="button" class="passo" role="tab" id="q3s3-t3" aria-controls="q3s3-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">O que confirma a aposta</span></span></button>
+<button type="button" class="passo" role="tab" id="q3s3-t4" aria-controls="q3s3-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">O painel ao lado vem desta escolha</span></span></button>
+<button type="button" class="passo" role="tab" id="q3s3-t5" aria-controls="q3s3-p5" aria-selected="false"><span class="passo-num">6</span><span class="passo-texto"><span class="passo-titulo">O que fica para depois</span></span></button>
+</div>
+<div class="paineis" aria-live="polite">
+<div class="painel" role="tabpanel" id="q3s3-p0" aria-labelledby="q3s3-t0" tabindex="0"><p class="so-impressao secao-titulo">O ganho</p><p>O atrasado é a primeira coisa na tela. O escritório não perde prazo por não achar a lista. Perde por não ver a data. É a primeira restrição do briefing, e 136 de 407 votos pedem esse destaque.</p></div>
+<div class="painel" role="tabpanel" id="q3s3-p1" aria-labelledby="q3s3-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">O custo</p><p>Reaprendizado na tela mais usada, contra a segunda restrição do briefing. Quem tem muitas listas vê mais linhas na abertura.</p></div>
+<div class="painel" role="tabpanel" id="q3s3-p2" aria-labelledby="q3s3-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">Como reduzo o custo</p><p>O filtro de lista continua na tela, e a escolha fica gravada. A moldura não muda. O chip de prazo leva cor e texto, nunca só cor. A tela nova fica atrás de feature flag, com volta para a antiga.</p></div>
+<div class="painel" role="tabpanel" id="q3s3-p3" aria-labelledby="q3s3-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">O que confirma a aposta</p><p>Duas medidas no beta. O tempo até o primeiro clique no atrasado. Os chamados com "sumiu" ou "não vi o prazo". Se a volta para a tela antiga passar do limite da linha de base, a abertura volta para a lista escolhida, sem reescrever componente.</p></div>
+<div class="painel" role="tabpanel" id="q3s3-p4" aria-labelledby="q3s3-t4" tabindex="0" hidden><p class="so-impressao secao-titulo">O painel ao lado vem desta escolha</p><p>Com as três seções, a lista precisa ficar visível enquanto a pessoa lê uma atividade. O modal de hoje cobre a lista.</p></div>
+<div class="painel" role="tabpanel" id="q3s3-p5" aria-labelledby="q3s3-t5" tabindex="0" hidden><p class="so-impressao secao-titulo">O que fica para depois</p><p>Personalizar (37 votos) e ordenação manual (33 votos). Os dois pedem dado novo, e esta tela só reorganiza o que existe.</p></div>
+</div>
+</div>
     </div>
   </div>
-  <footer class="rodape"><span>Astrea. A primeira tela da nova direção. Questão 3</span><span>3 de 3</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 3 · Felipe Gaigher · 08/11/2026</span><span>3 de 3</span></footer>
 </section>
 
+<script>
+/* Passos do deck: lista ou abas que trocam o painel. Clique, setas, Home e End.
+   Na ponta do grupo, a seta passa para o slide vizinho. */
+(() => {
+  const reduzir = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const tabsDe = (g) => [...g.querySelectorAll('[role="tab"]')];
+
+  function selecionar(g, i, focar) {
+    tabsDe(g).forEach((t, j) => {
+      const ativo = j === i;
+      t.setAttribute('aria-selected', String(ativo));
+      t.tabIndex = ativo ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !ativo;
+    });
+    if (focar) tabsDe(g)[i].focus();
+  }
+
+  function irParaSlide(g, passo) {
+    const slides = [...document.querySelectorAll('.slide')];
+    const alvo = slides[slides.indexOf(g.closest('.slide')) + passo];
+    if (!alvo) return;
+    alvo.scrollIntoView({ block: 'start', behavior: reduzir.matches ? 'auto' : 'smooth' });
+    const tab = alvo.querySelector('[data-passos] [role="tab"][aria-selected="true"]');
+    if (tab) { tab.focus({ preventScroll: true }); return; }
+    alvo.tabIndex = -1;
+    alvo.focus({ preventScroll: true });
+  }
+
+  function teclas(g) {
+    const vertical = g.getAttribute('aria-orientation') === 'vertical';
+    const mais = vertical ? ['ArrowRight', 'ArrowDown'] : ['ArrowRight'];
+    const menos = vertical ? ['ArrowLeft', 'ArrowUp'] : ['ArrowLeft'];
+    return (e) => {
+      const lista = tabsDe(g);
+      const i = lista.indexOf(document.activeElement);
+      if (i < 0) return;
+      let n = null;
+      if (mais.includes(e.key)) {
+        if (i === lista.length - 1) { e.preventDefault(); irParaSlide(g, 1); return; }
+        n = i + 1;
+      } else if (menos.includes(e.key)) {
+        if (i === 0) { e.preventDefault(); irParaSlide(g, -1); return; }
+        n = i - 1;
+      } else if (e.key === 'Home') {
+        n = 0;
+      } else if (e.key === 'End') {
+        n = lista.length - 1;
+      }
+      if (n === null) return;
+      e.preventDefault();
+      selecionar(g, n, true);
+    };
+  }
+
+  document.querySelectorAll('[data-passos]').forEach((g) => {
+    g.addEventListener('click', (e) => {
+      const tab = e.target.closest('[role="tab"]');
+      if (tab) selecionar(g, tabsDe(g).indexOf(tab), true);
+    });
+    g.addEventListener('keydown', teclas(g));
+    selecionar(g, 0, false);
+  });
+})();
+</script>
 </body>
 </html>
