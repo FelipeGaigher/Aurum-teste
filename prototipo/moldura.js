@@ -55,10 +55,10 @@
 
   // Fonte única do menu Adicionar (PA-24). O que pede upgrade fica no fim (PA-26).
   const ITENS_ADICIONAR = [
-    { rotulo: 'Processo manual', destino: 'processos.html' },
-    { rotulo: 'Processo busca automática', destino: 'processos.html' },
-    { rotulo: 'Caso', destino: 'processos.html' },
-    { rotulo: 'Atendimento', destino: 'atendimentos.html' },
+    { rotulo: 'Processo manual', destino: 'processos.html?adicionar=processo' },
+    { rotulo: 'Processo busca automática', destino: 'processos.html?adicionar=busca' },
+    { rotulo: 'Caso', destino: 'processos.html?adicionar=caso' },
+    { rotulo: 'Atendimento', destino: 'atendimentos.html?adicionar=1' },
     // Tarefa e Evento abrem o painel de criar atividade na própria página. Sem
     // componentes.js, o link leva à Agenda, que abre o painel pelo parâmetro criar.
     { rotulo: 'Tarefa', destino: 'agenda.html?criar=tarefa', criar: 'tarefa' },
