@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astrea navegável com design system</title>
+<style>
+    :root {
+      --st-bg:           #FAF9F5;
+      --st-bg-alt:       #F0EEE6;
+      --st-surface:      #FFFFFF;
+      --st-border:       #E3DACC;
+      --st-border-soft:  #F0EEE6;
+      --st-ink:          #141413;
+      --st-ink-soft:     #3D3D3A;
+      --st-ink-muted:    #87867F;
+      --st-ink-faint:    #D1CFC5;
+      --st-accent:       #D97757;
+      --st-accent-soft:  #F5E1D4;
+      --st-rose:         #E0897A;
+      --st-rose-soft:    #F8DDD5;
+      --st-olive:        #788C5D;
+      --st-olive-soft:   #DCE3CC;
+      --st-olive-light:  #A3B88A;
+      --st-amber:        #B47A3C;
+      --st-amber-soft:   #EDD9B7;
+      --st-crimson:      #B0533C;
+      --st-crimson-soft: #F0CFC3;
+      --st-azure:        #3D6688;
+      --st-azure-soft:   #CDDAE6;
+      --st-invert-bg:    #141413;
+      --st-invert-ink:   #F0EEE6;
+      --st-font-serif: ui-serif, "Iowan Old Style", "Apple Garamond", Baskerville, "Times New Roman", "Droid Serif", Times, "Source Serif Pro", serif;
+      --st-font-sans:  system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --st-font-mono:  ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+      --st-space-1: 0.25rem; --st-space-2: 0.5rem; --st-space-3: 0.75rem;
+      --st-space-4: 1rem;    --st-space-5: 1.25rem; --st-space-6: 1.5rem;
+      --st-space-8: 2rem;    --st-space-10: 2.5rem; --st-space-12: 3rem;
+      --st-space-16: 4rem;   --st-space-20: 5rem;
+      --st-radius-sm: 4px; --st-radius: 8px; --st-radius-lg: 12px; --st-radius-xl: 16px;
+      --st-shadow: 0 1px 2px rgba(20, 20, 19, 0.04), 0 2px 8px rgba(20, 20, 19, 0.04);
+      --st-content-width: 1100px;
+      --st-wide-width: 1320px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      font-family: var(--st-font-sans);
+      font-size: 16px; line-height: 1.65;
+      color: var(--st-ink);
+      background: var(--st-bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .st-doc {
+      max-width: var(--st-content-width);
+      margin: 0 auto;
+      padding: var(--st-space-16) var(--st-space-6) var(--st-space-12);
+    }
+
+    .st-eyebrow {
+      font-family: var(--st-font-mono);
+      font-size: 0.75rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--st-ink-muted);
+      margin: 0 0 var(--st-space-4);
+    }
+
+    .st-title {
+      font-family: var(--st-font-serif);
+      font-weight: 500;
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      line-height: 1.15; letter-spacing: -0.01em;
+      color: var(--st-ink);
+      margin: 0 0 var(--st-space-6);
+    }
+    .st-title em.st-accent {
+      font-style: italic; color: var(--st-accent); font-weight: 500;
+    }
+
+    .st-lede {
+      font-size: 1.1rem; line-height: 1.6;
+      color: var(--st-ink-soft);
+      margin: 0 0 var(--st-space-8);
+      max-width: 60ch;
+    }
+
+    h2 {
+      font-family: var(--st-font-serif); font-weight: 500;
+      font-size: clamp(1.4rem, 3vw, 1.75rem);
+      letter-spacing: -0.005em;
+      margin: var(--st-space-16) 0 var(--st-space-4);
+      display: flex; align-items: center; gap: var(--st-space-3);
+    }
+    h3 {
+      font-family: var(--st-font-serif); font-weight: 500;
+      font-size: 1.2rem;
+      margin: var(--st-space-8) 0 var(--st-space-3);
+    }
+    h4 {
+      font-family: var(--st-font-sans); font-weight: 600;
+      font-size: 1rem;
+      margin: var(--st-space-6) 0 var(--st-space-2);
+    }
+
+    .st-section-num {
+      display: inline-block;
+      font-family: var(--st-font-mono);
+      font-size: 0.7rem; font-weight: 500;
+      background: var(--st-bg-alt);
+      color: var(--st-ink-muted);
+      padding: 3px var(--st-space-2);
+      border-radius: var(--st-radius-sm);
+      letter-spacing: 0.05em;
+      vertical-align: middle;
+    }
+
+    p { margin: 0 0 var(--st-space-4); }
+    a {
+      color: var(--st-accent);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    a:hover { color: var(--st-rose); }
+    ul, ol { margin: 0 0 var(--st-space-4); padding-left: var(--st-space-6); }
+    li { margin-bottom: var(--st-space-2); line-height: 1.6; }
+    li::marker { color: var(--st-accent); }
+    strong { font-weight: 600; color: var(--st-ink); }
+    em { color: var(--st-ink-soft); font-style: italic; }
+    hr { border: none; border-top: 1px solid var(--st-border); margin: var(--st-space-10) 0; }
+
+    code {
+      font-family: var(--st-font-mono); font-size: 0.88em;
+      background: var(--st-bg-alt);
+      padding: 2px 6px; border-radius: var(--st-radius-sm);
+      color: var(--st-ink);
+    }
+    pre {
+      background: var(--st-invert-bg); color: var(--st-invert-ink);
+      padding: var(--st-space-4) var(--st-space-5);
+      border-radius: var(--st-radius);
+      overflow-x: auto;
+      font-size: 0.85rem; line-height: 1.55;
+      margin: var(--st-space-4) 0;
+      min-width: 0; max-width: 100%;
+    }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+    .st-pills {
+      display: flex; gap: var(--st-space-2);
+      flex-wrap: wrap;
+      margin: 0 0 var(--st-space-6);
+    }
+    .st-pill {
+      display: inline-flex; align-items: center; gap: var(--st-space-2);
+      padding: 4px var(--st-space-3);
+      border-radius: 999px;
+      font-family: var(--st-font-mono); font-size: 0.78rem;
+      background: var(--st-bg-alt);
+      color: var(--st-ink-soft);
+      border: 1px solid var(--st-border-soft);
+    }
+    .st-pill .st-pill-label { color: var(--st-ink-muted); }
+    .st-pill .st-pill-value { color: var(--st-ink); font-weight: 500; }
+    .st-pill--accent  { background: var(--st-accent-soft);  color: var(--st-accent);  border-color: transparent; }
+    .st-pill--olive   { background: var(--st-olive-soft);   color: var(--st-olive);   border-color: transparent; }
+    .st-pill--amber   { background: var(--st-amber-soft);   color: var(--st-amber);   border-color: transparent; }
+    .st-pill--crimson { background: var(--st-crimson-soft); color: var(--st-crimson); border-color: transparent; }
+    .st-pill--azure   { background: var(--st-azure-soft);   color: var(--st-azure);   border-color: transparent; }
+
+    .st-tldr {
+      background: var(--st-invert-bg); color: var(--st-invert-ink);
+      padding: var(--st-space-6);
+      border-radius: var(--st-radius);
+      margin: 0 0 var(--st-space-10);
+      font-size: 1.05rem; line-height: 1.6;
+    }
+    .st-tldr-label {
+      font-family: var(--st-font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--st-ink-muted);
+      margin-bottom: var(--st-space-2);
+    }
+    .st-tldr p { margin: 0; }
+    .st-tldr code { background: rgba(255,255,255,0.1); color: var(--st-invert-ink); }
+
+    .st-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: var(--st-space-3);
+      margin: 0 0 var(--st-space-10);
+    }
+    .st-stat {
+      background: var(--st-surface);
+      border: 1px solid var(--st-border);
+      border-radius: var(--st-radius);
+      padding: var(--st-space-4);
+    }
+    .st-stat-label {
+      font-family: var(--st-font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--st-ink-muted);
+      margin-bottom: var(--st-space-2);
+    }
+    .st-stat-value {
+      font-family: var(--st-font-serif); font-weight: 500;
+      font-size: 1.15rem;
+      color: var(--st-ink);
+    }
+    .st-stat--accent .st-stat-value { color: var(--st-accent); }
+
+    .st-timeline {
+      position: relative;
+      margin: var(--st-space-6) 0;
+      padding-left: var(--st-space-6);
+      border-left: 1px solid var(--st-border);
+    }
+    .st-timeline-item { position: relative; padding-bottom: var(--st-space-6); }
+    .st-timeline-item:last-child { padding-bottom: 0; }
+    .st-timeline-dot {
+      position: absolute;
+      left: calc(-1 * var(--st-space-6) - 5px);
+      top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--st-ink-muted);
+      border: 2px solid var(--st-bg);
+    }
+    .st-timeline-dot--accent  { background: var(--st-accent); }
+    .st-timeline-dot--olive   { background: var(--st-olive); }
+    .st-timeline-dot--crimson { background: var(--st-crimson); }
+    .st-timeline-dot--hollow {
+      background: var(--st-bg);
+      border: 2px solid var(--st-accent);
+    }
+    .st-timeline-meta {
+      font-family: var(--st-font-mono);
+      font-size: 0.75rem;
+      color: var(--st-ink-muted);
+      margin-bottom: var(--st-space-1);
+    }
+    .st-timeline-title { font-weight: 600; margin: 0 0 var(--st-space-2); }
+    .st-timeline-desc { color: var(--st-ink-soft); margin: 0; font-size: 0.95rem; }
+
+    .st-tag {
+      display: inline-block;
+      font-family: var(--st-font-mono);
+      font-size: 0.78rem;
+      background: var(--st-bg-alt);
+      color: var(--st-ink-soft);
+      padding: 2px var(--st-space-2);
+      border-radius: var(--st-radius-sm);
+      margin: 2px 4px 2px 0;
+    }
+
+    .st-risk-map {
+      display: flex; gap: var(--st-space-2);
+      flex-wrap: wrap;
+      margin: var(--st-space-3) 0;
+    }
+    .st-risk-item {
+      display: inline-flex; align-items: center; gap: var(--st-space-2);
+      font-family: var(--st-font-mono); font-size: 0.82rem;
+      padding: 6px var(--st-space-3);
+      border-radius: var(--st-radius);
+      background: var(--st-bg-alt);
+      color: var(--st-ink-soft);
+    }
+    .st-risk-item::before {
+      content: "";
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--st-olive);
+    }
+    .st-risk-item--watch        { background: var(--st-amber-soft);   color: var(--st-amber); }
+    .st-risk-item--watch::before { background: var(--st-amber); }
+    .st-risk-item--attention    { background: var(--st-crimson-soft); color: var(--st-crimson); }
+    .st-risk-item--attention::before { background: var(--st-crimson); }
+    .st-risk-legend {
+      display: flex; gap: var(--st-space-4);
+      font-family: var(--st-font-mono); font-size: 0.75rem;
+      color: var(--st-ink-muted);
+      margin-top: var(--st-space-2);
+    }
+    .st-risk-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .st-risk-legend-item::before {
+      content: "";
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+    .st-risk-legend-item.safe::before      { background: var(--st-olive); }
+    .st-risk-legend-item.watch::before     { background: var(--st-amber); }
+    .st-risk-legend-item.attention::before { background: var(--st-crimson); }
+
+    .st-callout {
+      background: var(--st-bg-alt);
+      border-radius: var(--st-radius);
+      padding: var(--st-space-4) var(--st-space-5);
+      margin: var(--st-space-4) 0;
+    }
+    .st-callout-label {
+      font-family: var(--st-font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--st-ink-muted);
+      margin-bottom: var(--st-space-2);
+    }
+    .st-callout p:last-child { margin-bottom: 0; }
+    .st-callout--accent   { background: var(--st-accent-soft); }
+    .st-callout--accent .st-callout-label { color: var(--st-accent); }
+    .st-callout--olive    { background: var(--st-olive-soft); }
+    .st-callout--olive .st-callout-label { color: var(--st-olive); }
+    .st-callout--amber    { background: var(--st-amber-soft); }
+    .st-callout--amber .st-callout-label { color: var(--st-amber); }
+    .st-callout--crimson  { background: var(--st-crimson-soft); }
+    .st-callout--crimson .st-callout-label { color: var(--st-crimson); }
+    .st-callout--azure    { background: var(--st-azure-soft); }
+    .st-callout--azure .st-callout-label { color: var(--st-azure); }
+
+    .st-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--st-space-4);
+      margin: var(--st-space-6) 0;
+    }
+    .st-card {
+      background: var(--st-surface);
+      border: 1px solid var(--st-border);
+      border-radius: var(--st-radius);
+      padding: var(--st-space-5);
+      display: flex; flex-direction: column;
+      gap: var(--st-space-3);
+    }
+    .st-card-eyebrow {
+      font-family: var(--st-font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--st-ink-muted);
+    }
+    .st-card-title {
+      font-family: var(--st-font-serif); font-weight: 500;
+      font-size: 1.15rem;
+      margin: 0;
+    }
+    .st-card-body {
+      font-size: 0.95rem;
+      color: var(--st-ink-soft);
+      margin: 0; flex: 1;
+    }
+
+    table {
+      width: 100%; border-collapse: collapse;
+      margin: var(--st-space-4) 0;
+      font-size: 0.92rem;
+      background: var(--st-surface);
+      border-radius: var(--st-radius);
+      overflow: hidden;
+      border: 1px solid var(--st-border);
+    }
+    thead { background: var(--st-bg-alt); }
+    th {
+      text-align: left;
+      padding: var(--st-space-3) var(--st-space-4);
+      font-family: var(--st-font-mono); font-weight: 500;
+      font-size: 0.72rem;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--st-ink-muted);
+      border-bottom: 1px solid var(--st-border);
+    }
+    td {
+      padding: var(--st-space-3) var(--st-space-4);
+      border-bottom: 1px solid var(--st-border-soft);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    .st-checklist { list-style: none; padding: 0; margin: var(--st-space-4) 0; }
+    .st-checklist li {
+      position: relative;
+      padding: var(--st-space-3) 0 var(--st-space-3) calc(14px + var(--st-space-3));
+      border-bottom: 1px solid var(--st-border-soft);
+      min-width: 0;
+    }
+    .st-checklist li:last-child { border-bottom: none; }
+    .st-checklist li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: calc(var(--st-space-3) + 0.3em);
+      width: 14px; height: 14px;
+      border: 1.5px solid var(--st-ink-muted);
+      border-radius: 3px;
+    }
+    .st-checklist li.done {
+      color: var(--st-ink-muted);
+      text-decoration: line-through;
+      text-decoration-color: var(--st-ink-faint);
+    }
+    .st-checklist li.done::before {
+      background: var(--st-olive);
+      border-color: var(--st-olive);
+    }
+
+    details {
+      background: var(--st-surface);
+      border: 1px solid var(--st-border);
+      border-radius: var(--st-radius);
+      padding: var(--st-space-3) var(--st-space-4);
+      margin: var(--st-space-3) 0;
+    }
+    details summary {
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--st-ink);
+      list-style: none;
+      display: flex; align-items: center; gap: var(--st-space-2);
+    }
+    details summary::before {
+      content: "▸";
+      color: var(--st-accent);
+      font-size: 0.85rem;
+      transition: transform 0.15s;
+    }
+    details[open] summary::before { transform: rotate(90deg); }
+    details > *:not(summary) { margin-top: var(--st-space-3); }
+
+    .st-diagram { display: block; margin: var(--st-space-6) auto; max-width: 100%; height: auto; }
+
+    .st-diff {
+      background: var(--st-invert-bg);
+      border-radius: var(--st-radius);
+      padding: var(--st-space-3) 0;
+      overflow-x: auto;
+      font-family: var(--st-font-mono); font-size: 0.82rem; line-height: 1.55;
+      margin: var(--st-space-4) 0;
+    }
+    .st-diff-hunk {
+      padding: 2px var(--st-space-4);
+      color: var(--st-ink-muted);
+      background: rgba(255,255,255,0.04);
+    }
+    .st-diff-line {
+      display: flex;
+      padding: 1px var(--st-space-4);
+      color: var(--st-invert-ink);
+      white-space: pre;
+    }
+    .st-diff-num {
+      display: inline-block;
+      width: 2.5em;
+      color: var(--st-ink-muted);
+      flex-shrink: 0;
+      text-align: right;
+      padding-right: var(--st-space-3);
+      user-select: none;
+    }
+    .st-diff-add { background: rgba(120, 140, 93, 0.15); }
+    .st-diff-add .st-diff-content { color: #C5D9A8; }
+    .st-diff-del { background: rgba(176, 83, 60, 0.18); }
+    .st-diff-del .st-diff-content { color: #E8B2A1; }
+
+    .st-footer {
+      text-align: center;
+      padding: var(--st-space-8) var(--st-space-6) var(--st-space-12);
+      color: var(--st-ink-muted);
+      font-size: 0.85rem;
+    }
+    .st-mono { font-family: var(--st-font-mono); font-size: 0.85em; }
+
+    @media (max-width: 768px) {
+      .st-doc { padding: var(--st-space-8) var(--st-space-4); }
+    }
+  
+@media (prefers-color-scheme: dark) { :root:not(:has(#tema:checked)) { --st-bg:#1C1B19;--st-bg-alt:#2A2926;--st-surface:#242320;--st-border:#3D3B36;--st-border-soft:#2F2D2A;--st-ink:#F0EEE6;--st-ink-soft:#D1CFC5;--st-ink-muted:#A5A399;--st-ink-faint:#5A5852;--st-accent:#E8957A;--st-accent-soft:#4A2E23;--st-amber:#E0B070;--st-amber-soft:#43331C;--st-olive:#B5C99A;--st-olive-soft:#333D26;--st-crimson:#E89A85;--st-crimson-soft:#4A261C;--st-azure:#9DBDD8;--st-azure-soft:#22323F;--st-invert-bg:#0F0F0E;--st-invert-ink:#F0EEE6; } }
+@media (prefers-color-scheme: light) { :root:has(#tema:checked) { --st-bg:#1C1B19;--st-bg-alt:#2A2926;--st-surface:#242320;--st-border:#3D3B36;--st-border-soft:#2F2D2A;--st-ink:#F0EEE6;--st-ink-soft:#D1CFC5;--st-ink-muted:#A5A399;--st-ink-faint:#5A5852;--st-accent:#E8957A;--st-accent-soft:#4A2E23;--st-amber:#E0B070;--st-amber-soft:#43331C;--st-olive:#B5C99A;--st-olive-soft:#333D26;--st-crimson:#E89A85;--st-crimson-soft:#4A261C;--st-azure:#9DBDD8;--st-azure-soft:#22323F;--st-invert-bg:#0F0F0E;--st-invert-ink:#F0EEE6; } }
+.st-tema-chave { position:absolute; opacity:0; width:1px; height:1px; }
+.st-tema-rotulo { position:fixed; top:16px; right:16px; z-index:10; cursor:pointer; font-family:var(--st-font-mono); font-size:.75rem; padding:6px 12px; border-radius:999px; background:var(--st-bg-alt); color:var(--st-ink-soft); border:1px solid var(--st-border); }
+.st-tema-chave:focus-visible + .st-tema-rotulo { outline:2px solid var(--st-accent); outline-offset:2px; }
+.st-tldr strong { color:#FFFFFF; }
+</style>
+</head>
+<body>
+<input type="checkbox" id="tema" class="st-tema-chave" aria-label="Trocar tema claro e escuro">
+<label for="tema" class="st-tema-rotulo">Trocar tema</label>
+<main class="st-doc">
+  <p class="st-eyebrow">Spec · Teste Aurum · Protótipo e design system</p>
+  <h1 class="st-title">Astrea navegável, com <em class="st-accent">design system</em> completo</h1>
+  <div class="st-pills">
+    <span class="st-pill st-pill--accent"><span class="st-pill-label">grau</span> <span class="st-pill-value">2</span></span>
+    <span class="st-pill"><span class="st-pill-label">estado</span> <span class="st-pill-value">aguarda aprovação</span></span>
+    <span class="st-pill"><span class="st-pill-label">base</span> <span class="st-pill-value">a150985</span></span>
+  </div>
+  <div class="st-tldr">
+    <p class="st-tldr-label">Resumo</p>
+    <p>O protótipo passa a ser <strong>a plataforma inteira</strong>. O Kanban fica no topo do menu, com o quadro atual. Os módulos abaixo seguem o <strong>fluxo real do Astrea</strong>, e só mudam em usabilidade e padrão. Um <strong>design system</strong> completo nasce primeiro, e toda tela usa apenas as peças dele.</p>
+  </div>
+
+  <h2><span class="st-section-num">01</span> Problema</h2>
+  <p>A banca hoje abre um único módulo, e o plano de teste nem tem Kanban. O diagnóstico existe só em texto. O catálogo <code>01-pontos-de-atencao.md</code> lista 97 pontos, e 72 deles têm correção possível sem dado novo.</p>
+  <p>A liderança precisa ver o mesmo produto com padrão e usabilidade melhores. O argumento da Q2 é este: dá para modernizar sem mudar o fluxo de quem trabalha com prazo.</p>
+
+  <h2><span class="st-section-num">02</span> Escopo</h2>
+  <h3>A regra de corte</h3>
+  <div class="st-callout st-callout--accent">
+    <p class="st-callout-label">Regra</p>
+    <p><strong>Entra</strong> o que reorganiza, padroniza ou destaca dado que já existe. <strong>Fica fora</strong> o que exige dado, serviço ou permissão nova. Fluxo, ordem de campos e nomes dos módulos seguem o Astrea.</p>
+  </div>
+  <p>Ficam no backlog para a Parte B: painel de IA, etiquetas sugeridas, título separado da descrição, anexo em contato, ordem manual e aviso de comentário novo.</p>
+
+  <h3>Módulos por onda</h3>
+  <table>
+    <thead><tr><th>Onda</th><th>Módulo</th><th>Telas</th><th>Pontos</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>Design system</td><td>Página <code>design-system</code>, com tokens, componentes e estados</td><td>PA-16 a PA-30</td></tr>
+      <tr><td>0</td><td>Moldura</td><td>Cabeçalho, menu com estado ativo, menu recolhido, Kanban ligado à moldura</td><td>PA-01 a PA-15</td></tr>
+      <tr><td>1</td><td>Área de trabalho</td><td>Tela completa. É a tela da Q3</td><td>PA-31 a PA-40</td></tr>
+      <tr><td>1</td><td>Agenda e criar atividade</td><td>Lista, dia, semana, mês, painel de criar</td><td>PA-46 a PA-60</td></tr>
+      <tr><td>1</td><td>Contatos</td><td>Lista, ficha com oito abas, adicionar</td><td>PA-61 a PA-71</td></tr>
+      <tr><td>2</td><td>Processos e casos</td><td>Lista, filtro, ficha com três abas, adicionar processo e caso, busca automática</td><td>PA-72 a PA-77</td></tr>
+      <tr><td>2</td><td>Alertas</td><td>Nove abas e card com ações</td><td>PA-78 a PA-81</td></tr>
+      <tr><td>2</td><td>Atendimentos e Documentos</td><td>Estado vazio, adicionar, documento padrão com passos</td><td>PA-83 a PA-87</td></tr>
+      <tr><td>2</td><td>Administração, Suporte, Resultados de buscas</td><td>Seis abas, central de ajuda, três abas de buscas</td><td>PA-88 a PA-91</td></tr>
+      <tr><td>3</td><td>Publicações, Financeiro, Indicadores, Conheça as IAs</td><td>Upsell padronizado</td><td>PA-13, PA-71</td></tr>
+    </tbody>
+  </table>
+  <p>A onda 1 sozinha já sustenta a Q3. Cada onda fecha com o app navegável, e as seguintes podem parar sem deixar link quebrado.</p>
+  <h3>Fora desta spec</h3>
+  <ul>
+    <li>Replicar o design system no Figma. O teste de escrita pelo MCP decide o caminho, em spec própria.</li>
+    <li>A apresentação da Q2 e a revisão dos slides.</li>
+    <li>Tela inventada de módulo que o trial não mostra.</li>
+  </ul>
+
+  <h2><span class="st-section-num">03</span> Solução</h2>
+  <svg class="st-diagram" viewBox="0 0 760 210" role="img" aria-label="Tokens alimentam componentes e a moldura. As páginas usam os dois. O Kanban mantém o quadro e usa a mesma moldura.">
+    <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#87867F"/></marker></defs>
+    <rect x="10" y="75" width="150" height="62" rx="10" fill="#F5E1D4" stroke="#D97757" stroke-width="1.5"/>
+    <text x="85" y="102" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" fill="#141413">Tokens</text>
+    <text x="85" y="121" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">astrea.css</text>
+    <rect x="220" y="20" width="170" height="62" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+    <text x="305" y="47" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" fill="#141413">Componentes</text>
+    <text x="305" y="66" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">componentes.js</text>
+    <rect x="220" y="130" width="170" height="62" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+    <text x="305" y="157" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" fill="#141413">Moldura</text>
+    <text x="305" y="176" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">moldura.js</text>
+    <rect x="450" y="20" width="290" height="62" rx="10" fill="#FFFFFF" stroke="#E3DACC" stroke-width="1.5"/>
+    <text x="595" y="47" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" fill="#141413">Páginas dos módulos</text>
+    <text x="595" y="66" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#87867F">uma página por módulo, mais o DS</text>
+    <rect x="450" y="130" width="290" height="62" rx="10" fill="#141413"/>
+    <text x="595" y="157" text-anchor="middle" font-family="ui-serif, Georgia, serif" font-size="14" fill="#F0EEE6">kanban.html</text>
+    <text x="595" y="176" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="11" fill="#D1CFC5">quadro igual, moldura nova</text>
+    <line x1="160" y1="96" x2="218" y2="56" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="160" y1="116" x2="218" y2="156" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="390" y1="51" x2="448" y2="51" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="390" y1="146" x2="448" y2="70" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="390" y1="161" x2="448" y2="161" stroke="#87867F" stroke-width="1.5" marker-end="url(#arrow)"/>
+  </svg>
+  <p>O protótipo segue sem build e abre com dois cliques. Cada módulo é uma página em <code>prototipo/</code>. Tokens, moldura e componentes ficam em arquivos compartilhados.</p>
+  <h3>Moldura nova</h3>
+  <table>
+    <thead><tr><th>Área</th><th>Decisão</th></tr></thead>
+    <tbody>
+      <tr><td>Esquerda</td><td>Logo, botão de recolher, trilha e título da página</td></tr>
+      <tr><td>Direita</td><td>Busca global, IA, Adicionar, Cronômetro, tema e usuário</td></tr>
+      <tr><td>Menu do usuário</td><td>Meu perfil, Meu plano, Administração, Sair</td></tr>
+      <tr><td>Menu lateral</td><td>Grupo "Especialista UX/UI" com Kanban e design system, depois os módulos. Item ativo com fundo, cor e <code>aria-current</code></td></tr>
+      <tr><td>Rodapé do menu</td><td>Dias restantes do teste, 1 ano grátis e Contratar, em uma linha</td></tr>
+    </tbody>
+  </table>
+  <h3>Kanban</h3>
+  <p>O quadro, os filtros, os cards e os dados ficam como estão. Mudam o cabeçalho, o menu, o título e os seis rádios de demonstração, que passam a ser o rádio do design system.</p>
+
+  <h2><span class="st-section-num">04</span> Componentes</h2>
+  <p>Cada componente aparece ao vivo na página do design system, com estados, propriedades e tokens. Os nomes das propriedades são os mesmos no código e no Figma.</p>
+  <table>
+    <thead><tr><th>Grupo</th><th>Peças</th></tr></thead>
+    <tbody>
+      <tr><td>Fundamentos</td><td>Cor, tipografia, espaço, raio, sombra, foco, ícones, densidade, tema claro e escuro</td></tr>
+      <tr><td>Ações</td><td>Botão primário, secundário, texto, ícone e destrutivo; grupo de botões; menu de ações</td></tr>
+      <tr><td>Formulário</td><td>Campo, área de texto, busca, seletor, seletor múltiplo, seletor de pessoas, data, período, caixa, rádio, chave</td></tr>
+      <tr><td>Feedback</td><td>Toast, faixa de aviso, diálogo, tooltip, progresso, skeleton, estado vazio, upsell</td></tr>
+      <tr><td>Dados</td><td>Tag, chip de filtro, chip de prazo, selo, avatar, tabela, linha de atividade, card de atividade, card de contato, paginação</td></tr>
+      <tr><td>Navegação</td><td>Navbar, sidebar expandida e recolhida, abas, trilha, barra de filtros, painel lateral, barra de ações, stepper</td></tr>
+    </tbody>
+  </table>
+  <h3>Estados</h3>
+  <p>A matriz completa é default, hover, active, foco, disabled, erro, carregando e vazio. Cada componente mostra só os estados que existem para ele, e a página declara o motivo das ausências.</p>
+  <h3>Propriedades, no modelo do Update card</h3>
+  <table>
+    <thead><tr><th>Componente</th><th>Propriedades</th></tr></thead>
+    <tbody>
+      <tr><td>Card de atividade</td><td>Mostrar prazo, processo, responsável, tags. Título. Tipo. Estado do prazo</td></tr>
+      <tr><td>Linha de atividade</td><td>Mostrar processo, copiar número, responsável, ações. Densidade</td></tr>
+      <tr><td>Botão</td><td>Variante, tamanho, ícone à esquerda, ícone à direita, rótulo, carregando</td></tr>
+      <tr><td>Campo</td><td>Rótulo, ajuda, obrigatório, ícone, largura, erro</td></tr>
+      <tr><td>Item do menu</td><td>Ícone, rótulo, selo, ativo, recolhido</td></tr>
+      <tr><td>Toast</td><td>Tipo, mensagem, ação, fechar</td></tr>
+    </tbody>
+  </table>
+  <p>O limite prático é a matriz: toda propriedade precisa existir no código e no Figma, e combinações sem uso real saem.</p>
+
+  <h2><span class="st-section-num">05</span> Riscos</h2>
+  <table>
+    <thead><tr><th>Risco</th><th>Mitigação</th></tr></thead>
+    <tbody>
+      <tr><td>O Kanban mudar sem querer</td><td>RF-02 compara o quadro com o commit base</td></tr>
+      <tr><td>Quinze ou mais páginas estourarem o prazo</td><td>Ondas independentes, em ordem de valor para a Q3</td></tr>
+      <tr><td>Inventar tela que não existe</td><td>Só entra tela com registro na varredura ou no inventário</td></tr>
+      <tr><td>Duas cópias da moldura divergirem</td><td>O verificador compara tokens e menu do Kanban com os arquivos compartilhados</td></tr>
+      <tr><td>Dado real entrar em repositório público</td><td>Dados fictícios. RF-13 busca os nomes reais do trial</td></tr>
+      <tr><td>O app estourar o limite da Q3</td><td>A entrega é um frame da Área de trabalho. O app e o DS entram como link complementar</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="st-section-num">06</span> Decisões</h2>
+  <table>
+    <thead><tr><th>Decisão</th><th>Motivo</th><th>Alternativa recusada</th></tr></thead>
+    <tbody>
+      <tr><td>Páginas com CSS e JS compartilhados, sem build</td><td>Mantém dois cliques e GitHub Pages, e o Kanban não precisa ser reescrito</td><td>React com Vite obriga reescrever o Kanban. Arquivo único passaria de 400 KB</td></tr>
+      <tr><td>A tela da Q3 é a Área de trabalho</td><td>Concentra os pedidos dos clientes e tem o "antes" registrado</td><td>Agenda tem menos evidência de demanda. Kanban não tem "antes"</td></tr>
+      <tr><td>A moldura muda uma vez e depois fica fixa</td><td>Pedido de Felipe em 08/11. Substitui "no mesmo lugar de hoje"</td><td>Manter a moldura atual mantém PA-01 a PA-08</td></tr>
+      <tr><td>Criar atividade é um painel lateral único</td><td>Felipe vetou modal sobre modal. O aviso de data passada fica dentro do painel</td><td>Diálogo sobre o painel</td></tr>
+      <tr><td>Atividade é o termo geral, com os tipos tarefa, prazo, audiência e evento</td><td>Os clientes tratam os tipos como objetos diferentes. Hipótese a validar</td><td>Trocar tudo por uma palavra só</td></tr>
+      <tr><td>Controles sem elemento nativo visível</td><td>Regra vigente de protótipo. Seletor, data, caixa e rádio com teclado e ARIA</td><td>Controle nativo estilizado</td></tr>
+      <tr><td>Sem consenso adversarial</td><td>Protótipo sem schema, contrato ou dado real. Tudo volta com um revert</td><td>Executar o processo completo</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="st-section-num">07</span> Fontes</h2>
+  <table>
+    <thead><tr><th>Arquivo</th><th>Assunto</th></tr></thead>
+    <tbody>
+      <tr><td><code>00-briefing.md</code></td><td>Enunciado e limites de cada questão</td></tr>
+      <tr><td><code>01-pontos-de-atencao.md</code></td><td>Catálogo de 97 pontos, com princípio, severidade e destino</td></tr>
+      <tr><td><code>01-varredura-modulos.md</code></td><td>Rotas, campos e fluxos de cada módulo, em 08/11</td></tr>
+      <tr><td><code>01-melhorias.md</code></td><td>Backlog M1 a M18</td></tr>
+      <tr><td><code>01-telas-observadas.md</code></td><td>Registro das telas 01 a 25</td></tr>
+      <tr><td><code>01-inventario-css-astrea.md</code></td><td>Módulos, CSS, tokens e componentes repetidos</td></tr>
+      <tr><td><code>01-inventario-ui.md</code></td><td>Cores, componentes e vocabulário</td></tr>
+      <tr><td><code>01-diagnostico.md</code></td><td>Cinco problemas, princípios e validação da Q1</td></tr>
+      <tr><td><code>02-plano-ds.md</code></td><td>Arquitetura, governança e fases do DS</td></tr>
+      <tr><td><code>03-tela.md</code></td><td>Contrato da tela da Q3 e direção visual</td></tr>
+      <tr><td><code>03-componentes.html</code></td><td>Cinco componentes com estados, a alinhar com o protótipo</td></tr>
+      <tr><td><code>03-pesquisa-astrea.md</code></td><td>Levantamento do produto em fontes públicas</td></tr>
+      <tr><td><code>prototipo/kanban.html</code></td><td>Tokens, moldura e quadro atuais</td></tr>
+      <tr><td><code>prototipo/verificar.py</code></td><td>Portão estático do protótipo</td></tr>
+      <tr><td><code>referencias/nectar-tokens.json</code></td><td>Os 609 tokens do Nectar</td></tr>
+      <tr><td><code>referencias/fontes-ux.md</code></td><td>Fontes de UX, Nielsen e Gestalt</td></tr>
+      <tr><td><code>referencias/padroes-fotus-nautica.md</code></td><td>Barra de ações, tabela e cards</td></tr>
+      <tr><td><code>referencias/cockpit-nautica.md</code></td><td>Linha horizontal de leitura</td></tr>
+      <tr><td><code>referencias/modal-tarefa-crm.png</code></td><td>Referência do seletor de participantes</td></tr>
+      <tr><td><code>evidencias/</code></td><td>Prints das telas e capturas pelo Chrome</td></tr>
+      <tr><td>Planilha de pedidos da Aurum</td><td>80 sugestões e 407 votos sobre a Área de trabalho</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="st-section-num">08</span> Critérios de aceite</h2>
+  <p>O script <code>scripts/verificar-app.js</code> executa os critérios marcados com navegador. Ele usa Playwright sem janela visível, com o Chrome da máquina.</p>
+  <table>
+    <thead><tr><th>RF</th><th>Critério</th><th>Prova</th></tr></thead>
+    <tbody>
+      <tr><td>RF-01</td><td>Cada item do menu abre a própria página, sem erro no console</td><td>Navegador, todos os itens</td></tr>
+      <tr><td>RF-02</td><td>No Kanban, <code>main</code> e os arrays <code>HISTORIAS</code> e <code>ATIVIDADES</code> ficam iguais ao commit base. As exceções são <code>h1</code> e <code>#rodape-demo</code></td><td>Comparação com a150985</td></tr>
+      <tr><td>RF-03</td><td>Em 1440px, cabeçalho e menu têm a mesma posição e o mesmo tamanho em todas as páginas</td><td>Navegador, medida de caixa</td></tr>
+      <tr><td>RF-04</td><td>O item do módulo atual tem <code>aria-current="page"</code> e fundo diferente, sem o cursor sobre ele</td><td>Navegador, todas as páginas</td></tr>
+      <tr><td>RF-05</td><td>Tema e menu recolhido persistem ao trocar de página, incluindo o Kanban</td><td>Navegador</td></tr>
+      <tr><td>RF-06</td><td>A página do design system mostra cada componente da seção 04, com os estados declarados</td><td>Navegador, contagem por componente</td></tr>
+      <tr><td>RF-07</td><td>Nenhuma página nova tem <code>select</code> ou <code>input</code> de data, caixa e rádio visível</td><td>Navegador, consulta ao DOM</td></tr>
+      <tr><td>RF-08</td><td>Área de trabalho: seção Atrasadas acima de Hoje, prazos na área principal, chip com texto e cor, filtro mantido ao voltar, número com copiar</td><td>Navegador</td></tr>
+      <tr><td>RF-09</td><td>Agenda abre em Hoje, mostra a grade no estado vazio e o mês inteiro em 1440 por 900</td><td>Navegador</td></tr>
+      <tr><td>RF-10</td><td>Criar atividade abre uma camada só. Formulário vazio fecha sem confirmar. Data passada mostra aviso no próprio painel</td><td>Navegador, contagem de camadas</td></tr>
+      <tr><td>RF-11</td><td>Contatos: tabela ou cards com a escolha lembrada, leitura sem campo vazio, barra de ações fixa, etiqueta criada sem sair da página</td><td>Navegador</td></tr>
+      <tr><td>RF-12</td><td>Teclado alcança todo controle, painel fecha com Esc e o foco volta à origem. Texto e fundo passam no AA nos dois temas</td><td>Navegador e cálculo de contraste</td></tr>
+      <tr><td>RF-13</td><td>Nenhum arquivo em <code>prototipo/</code> contém nome de parte ou número de processo do trial</td><td>Busca pela lista fora do repositório</td></tr>
+      <tr><td>RF-14</td><td><code>verificar.py</code> e <code>detectar.py</code> passam em todos os arquivos novos, com cor só no bloco de primitivos</td><td>Código de saída 0</td></tr>
+      <tr><td>RF-15</td><td>Em 1024px e 700px nenhuma página tem rolagem horizontal fora de quadro e tabela</td><td>Navegador</td></tr>
+    </tbody>
+  </table>
+</main>
+<footer class="st-footer"><span class="st-mono">2026-11-08</span></footer>
+</body>
+</html>

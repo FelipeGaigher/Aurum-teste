@@ -20,6 +20,11 @@ direção, na Q3 como tela, ou fica fora.
 | M11 | 24, Adicionar contato | Barra de ações fixa no rodapé do formulário: Salvar, Cancelar e o estado do que acontece, como salvando ou erro. Toast só para o que acontece fora da tela | Q3, componente do DS; Q1, hierarquia | Ler o padrão da Fotus em `referencias/padroes-fotus-nautica.md` e as fontes em `referencias/fontes-ux.md` |
 | M12 | 22, Etiquetas | Criar etiqueta sem sair do cadastro: modal ou painel lateral, e a etiqueta nova já selecionada ao voltar | Q1, fluxo; Q3, componente | Fontes sobre troca de contexto em `referencias/fontes-ux.md` |
 | M13 | 25, Documentação | Anexar o arquivo do documento no contato, com prévia e download, e controle de quem vê. Padrão da Vila Vela, sem copiar a tela, que tem dado real | Q1, tarefa real do escritório | Decidir o nível de acesso por perfil antes de desenhar |
+| M14 | Processos e casos, moldura | Título da página sobe para o cabeçalho, alinhado à margem do conteúdo. A trilha aparece acima do título a partir do segundo nível. A lista ganha a altura que o título ocupava | Q1, densidade; Q2, moldura; DS, navbar | Confirmar no protótipo o caso do título longo, como nome de contato |
+| M15 | Processos e casos, moldura | Busca global vai para o lado direito do cabeçalho, junto das ações | Q2, moldura | Medir o uso da busca. A mudança de posição precisa de aviso no produto |
+| M16 | Moldura, cinco ícones | Reduzir de cinco para três ícones. Ficam IA, Adicionar e Cronômetro. Administração vai para o menu do usuário. Resultados de buscas vai para dentro de Processos e casos | Q1, P4 e P5; Q2, moldura | Analytics de clique por ícone. A nuvem significa "Resultados de buscas" e foi lida como salvar na nuvem: testar o ícone |
+| M17 | Moldura, trial | "Contratar" e "1 ano grátis" saem do cabeçalho e viram uma linha no rodapé do menu, com os dias restantes | Q1, P5 | Conversão do selo e do botão, com o marketing, antes de propor a remoção em produção |
+| M18 | Processos e casos, ações | Quatro ações viram duas: "Adicionar processo", com rótulo, e "Exportar", com Imprimir e Planilha no menu. Atualizar fica ao lado da contagem da lista | Q1, P4; DS, grupo de botões | Analytics de Imprimir, Exportar e Atualizar. Verificar se a lista atualiza sozinha |
 
 ## Referências externas
 

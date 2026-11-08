@@ -14,7 +14,7 @@ Fatos:
 - Título de página (H1): 24px, peso 400, mesma cor do texto, sem letter-spacing.
 - Link: `rgb(34,139,230)` (= `--primary`), 14px, peso 300.
 - Card (widget da Área de trabalho): fundo branco, borda 0,8px sólida `rgb(222,226,230)` (= `--gray300`), raio 8px, sem sombra.
-- Menu lateral: 240px de largura, fundo branco. Item 14px, peso 500, cor `rgb(108,117,125)` (= `--gray500`), raio 8px. Item ativo ganha fundo cinza claro. "Conheça as IAs" tem fundo lilás e texto roxo.
+- Menu lateral: 240px de largura, fundo branco. Item 14px, peso 500, cor `rgb(108,117,125)` (= `--gray500`), raio 8px. Hover ganha fundo cinza claro. Não existe estado ativo: em 08/11, as capturas confirmaram que o fundo só aparece no hover. "Conheça as IAs" tem fundo lilás e texto roxo.
 - Itens do menu, de cima para baixo. São eles: Área de trabalho, Agenda, Contatos, Atendimentos, Processos e casos, Publicações, Financeiro, Documentos.
 - Itens seguintes do menu: Indicadores, Alertas (selo vermelho com contagem), Conheça as IAs, Suporte.
 - Faixa promocional no topo (amarelo claro, botão azul escuro `rgb(2,85,196)` raio 8px, 14px/700) com botão de fechar.
