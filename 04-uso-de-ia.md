@@ -1,17 +1,22 @@
 # Uso de IA nesta atividade
 
-Parágrafo pedido no enunciado. Fonte: `04-processo.md`.
+Parágrafo pedido no enunciado. Fontes: `04-processo.html` e
+`docs/2026-11-08-revisao-respostas.md`, seção "Uso de IA".
 
 Usei o Claude Code como par de trabalho durante toda a atividade. O MCP
-do Figma ficou ligado enquanto a cota permitiu. Quando a cota do MCP acabou, os decks viraram PNG pelo Playwright e entraram no Figma pelo Claude in Chrome. A IA não escreveu a estratégia.
-Ela recebeu as minhas decisões em conversa e as transformou em
-documento-fonte, que eu iterei linha a linha. Do mesmo documento saíram os
-slides da Questão 2, o diagnóstico da Questão 1 e este texto. Na Questão
-3, a IA executou um plano de cinco tasks com subagentes. Outro agente
-revisou cada task antes do commit. O resultado é o protótipo navegável do
-Kanban. Duas skills minhas guardaram o padrão. Uma de português técnico
-lintou cada frase. Uma contra a cara de IA barrou o grid de cards iguais.
-Barrou também a paleta creme que o modelo propôs primeiro. A direção visual, os cinco
-problemas e o trade-off foram decisões minhas. O kit de skills e agentes
-do slide 3 da Questão 2 é o modelo que usei aqui. Regra escrita uma vez,
-no repositório, lida por toda ferramenta que gera tela.
+do Figma ficou ligado enquanto a cota permitiu. Depois, os decks viraram
+PNG pelo Playwright e entraram no Figma pelo navegador. A IA não escreveu
+a estratégia. Ela recebeu as minhas decisões em conversa e as transformou
+em documento-fonte, que eu iterei linha a linha. O protótipo saiu de uma
+spec e de um plano de 23 tasks. Cada subagente recebeu uma task e os
+arquivos dela. Até sete subagentes trabalharam em paralelo, cada um no seu
+arquivo. Antes do commit, cada task passou por portões automáticos. Um
+script barrou cor solta, referência de rede e qualquer dado real. Um detector barrou
+a cara de interface gerada por IA. Um linter barrou frase longa e voz
+passiva. Depois, um revisor em contexto limpo julgou cada onda contra a
+spec. Em 08/11 foram 132 commits depois do meio-dia, até as 18h13. A IA
+também percorreu o Astrea em produção, só com leitura: texto da página,
+árvore de acessibilidade e captura. Ela comparou cada fluxo com o
+protótipo. O comparativo achou quatro caminhos em que o protótipo perdia
+cliques, e eu mandei corrigir os quatro. A direção visual, os problemas, o
+trade-off e o escopo foram decisões minhas.
