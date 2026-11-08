@@ -1,0 +1,90 @@
+# Escopo da entrega: atividade prática Astrea
+
+Prazo: 08/11/2026, às 16h. Entrega por um único link com acesso de visualização.
+Este arquivo guarda o que Felipe pediu. O detalhe do app mora na spec e no plano.
+
+| Documento | Conteúdo |
+|---|---|
+| `00-briefing.md` | Enunciado da Aurum e limite de páginas |
+| `docs/specs/2026-11-08-astrea-navegavel.html` | Spec aprovada do app navegável |
+| `docs/plans/2026-11-08-astrea-navegavel.md` | Plano do app, com 23 tasks e o progresso |
+
+## O que entra
+
+### Questão 1, até 5 páginas
+
+- Os 5 problemas, com evidência e por que importam.
+- Princípios ligados às 10 heurísticas de Nielsen e às leis de Gestalt.
+- Cada princípio mostra a aplicação no dia a dia do especialista.
+- O que validar, como validar e como analisar os dados coletados.
+- A planilha de pedidos dos clientes entra como evidência.
+
+### Questão 2, até 6 páginas
+
+- Apresentação interativa no lugar dos slides antigos.
+- Arquitetura do design system e componentes flexíveis, com propriedade booleana e de texto.
+- Componentes no Figma com variações: default, hover, active, erro.
+- Fases: tokens, componentes fixos, telas de configuração, demais componentes, fluxos principais.
+- Componentes fixos: sidebar, navbar, filtros e botões de ação.
+- Demais componentes: cards, tabelas, ações, documentos, anexos, assinatura, aprovações, pagamentos, modais.
+- Time: conversa com cada pessoa sobre quem é, tempo de Aurum, rotina, ferramentas, foco e direção.
+- 3 riscos, mitigação e métricas.
+
+### Questão 3, 1 tela e até 3 páginas
+
+- Uma tela em alta fidelidade no Figma. Felipe replica se a tela nascer fora dele.
+- De 3 a 5 componentes com estados e propriedades.
+- Um trade-off difícil e o porquê.
+- O fluxo é escolhido e refeito. O Kanban sozinho não responde à questão.
+- Tela adotada por default: Área de trabalho. Falta a confirmação de Felipe.
+
+### App navegável
+
+- Kanban no topo do menu, como está hoje, com os módulos abaixo.
+- Os módulos seguem o fluxo real do Astrea e recebem só melhoria de usabilidade e padrão.
+- O time da Aurum revisa a plataforma inteira por esse app.
+- Entra o que reorganiza, padroniza ou destaca dado que já existe.
+- Fica fora o que exige dado, serviço ou permissão nova.
+
+### Design system completo
+
+- Estados: default, hover, active, disabled e error.
+- Peças: botões, toasts, tags, filtros, navbar, sidebar e sidebar recolhida.
+
+### Pontos de atenção
+
+- Toda observação de Felipe sobre o Astrea entra em `01-pontos-de-atencao.md` na hora.
+- O catálogo tem 97 pontos, de PA-01 a PA-97.
+
+### Fechamento
+
+- Parágrafo de uso de IA no fim da entrega.
+- Link único em `index.html`, publicado no GitHub Pages.
+- Arquivo do Figma aberto a quem tiver o link.
+
+## Ordem de corte, se o tempo apertar
+
+1. Q3: moldura, Área de trabalho e componentes dela.
+2. Q1 e Q2 fechadas.
+3. Figma e link único.
+4. Agenda e Contatos.
+5. Demais módulos e design system completo.
+
+## Regras fixas
+
+- Dado real de parte ou de processo nunca entra no repositório, que é público.
+- Dado do protótipo é sempre fictício.
+- No Astrea, a varredura só lê. Não salva, não exclui e não contrata.
+- Protótipo não mostra controle nativo de formulário.
+- Não se abre modal sobre modal.
+- Push e reescrita de histórico só com autorização explícita.
+
+## Decisões em aberto
+
+| Decisão | Default |
+|---|---|
+| Incluir as 5 imagens com dado real na limpeza do histórico | Sem push até a resposta |
+| Confirmar a Área de trabalho como tela da Q3 | Seguir com ela |
+| Levar a tela ao Figma, com a cota do MCP esgotada | Tentar `generate_figma_design`, depois réplica manual |
+| Localizar assinatura, aprovações e pagamentos no produto | Manter na fase 3 da Q2 |
+| Marcação preta no print de Processos | Nenhuma alteração |
