@@ -135,3 +135,14 @@ os arquivos de apoio. O compartilhamento é "todos com o link podem ver".
 A pasta reúne um Leia-me com todos os links e cinco PDFs. Os PDFs são as
 três questões, o processo e os ajustes na plataforma. O Figma e o protótipo entram como
 link. Os PDFs saem de `slides/` e das páginas HTML, sem a chave de tema.
+
+### Rodada de melhorias na revisão ao vivo, pedido de 08/11 entre 15h e 16h30
+
+Felipe pediu estas melhorias enquanto revisava o protótipo.
+
+- Lista e detalhe ao lado: a seção acima já cobre o padrão. Ele vale em Contatos, Área de trabalho (Lista e Cards), Processos, Atendimentos, Alertas, Documentos e Resultados de buscas.
+- Agenda: grade de horas na visão por semana e busca por título, processo ou responsável. A grade rola por dentro e não estoura a tela.
+- Cores: hover azul-claro e divisórias azuis, por token (`--color-bg-hover`, `--color-border-accent`). As fichas de processo, contato e atendimento ganham contêineres.
+- Correção: o menu de ações dentro de tabela com rolagem saía do quadro e criava barras. O DS agora posiciona o menu em relação à tela.
+- Resumo do caso nos processos, gerado pela IA do Astrea, com atores, local e data. Aparece no painel e na ficha. Em andamento.
+- Modo cards em Atendimentos, igual ao de Contatos. Em andamento.

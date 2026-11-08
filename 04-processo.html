@@ -200,8 +200,22 @@
       <tr><td class="hora">08/11 13:00 a 13:40</td><td data-r="O quê">Área de trabalho, Agenda e os demais módulos, em até sete agentes em paralelo.</td></tr>
       <tr><td class="hora">08/11 13:27</td><td data-r="O quê">Tela da Questão 3 no Figma.</td></tr>
       <tr><td class="hora">08/11 13:46</td><td data-r="O quê">Fechamento com a suíte inteira verde.</td></tr>
+      <tr><td class="hora">08/11 15:00 a 16:30</td><td data-r="O quê">Rodada de melhorias pedidas por Felipe na revisão ao vivo do protótipo.</td></tr>
     </tbody>
   </table>
+</section>
+
+<section>
+  <h2>Rodada de melhorias na revisão ao vivo</h2>
+  <p>Entre 15h e 16h30 de 08/11, Felipe revisou o protótipo e pediu seis melhorias. A IA aplicou cada uma e executou os portões.</p>
+  <ul>
+    <li><strong>Lista e detalhe ao lado.</strong> Felipe decidiu o padrão para Contatos, Área de trabalho (Lista e Cards), Processos, Atendimentos, Alertas, Documentos e Resultados de buscas. O Kanban ficou de fora. As referências foram Cotação e Náutica. As peças do DS são <code>painelDetalhe</code> e <code>divisorRedimensionavel</code>.</li>
+    <li><strong>Agenda.</strong> A visão por semana ganhou grade de horas e busca por título, processo ou responsável. A grade rola por dentro e não estoura a tela.</li>
+    <li><strong>Cor por token.</strong> O hover azul-claro e as divisórias azuis usam <code>--color-bg-hover</code> e <code>--color-border-accent</code>. As fichas de processo, contato e atendimento ficaram em contêineres.</li>
+    <li><strong>Correção do menu de ações.</strong> Dentro de tabela com rolagem, o menu saía do quadro e criava barras. O DS agora posiciona o menu em relação à tela.</li>
+    <li><strong>Resumo do caso nos processos.</strong> A IA do Astrea gera o resumo, com atores, local e data, no painel e na ficha. Em andamento.</li>
+    <li><strong>Modo cards em Atendimentos.</strong> Ele segue o modo de Contatos. Em andamento.</li>
+  </ul>
 </section>
 
 <section>
