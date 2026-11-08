@@ -37,7 +37,7 @@ REDE = re.compile(r'https?://|(?:src|href)\s*=\s*["\']?//|url\(\s*["\']?//|["\']
 XMLNS_SVG = 'http://www.w3.org/2000/svg'
 COR = re.compile(r'\b(?:rgba?|hsla?)\(', re.I)
 FOLHA = 'astrea.css'
-BASE_KANBAN = '2f24358'
+BASE_KANBAN = '6260dc0'
 PASTA = Path(__file__).resolve().parent
 FORA_DO_TODOS = {'painel-redesign.html', 'kanban-aprovado.html'}
 EXTENSOES = {'.html', '.css', '.js'}
