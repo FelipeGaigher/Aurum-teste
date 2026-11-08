@@ -1745,7 +1745,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: `DS.upsell` da Task 7.
 - Produces: as quatro páginas completas.
 
-- [ ] **Step 1: Implementar**
+- [x] **Step 1: Implementar**
 
 - Use `DS.upsell` nas quatro páginas, com o texto do módulo na varredura.
 - Conheça as IAs usa as mesmas peças e cores, sem roxo próprio (PA-10).
@@ -1753,7 +1753,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 Esperado: quatro páginas com a mesma peça de bloqueio.
 
-- [ ] **Step 2: Executar e confirmar que passa**
+- [x] **Step 2: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/publicacoes.html prototipo/financeiro.html prototipo/indicadores.html prototipo/ias.html
@@ -1762,7 +1762,7 @@ node scripts/verificar-app.js --rf RF-07,RF-12,RF-15 --paginas publicacoes.html,
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 3: Entregar**
+- [x] **Step 3: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 

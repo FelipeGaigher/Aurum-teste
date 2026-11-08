@@ -6,12 +6,16 @@
 <title>Financeiro, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
 </head>
 <body data-pagina="financeiro.html" data-titulo="Financeiro">
 <div class="corpo">
   <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
+    <div id="bloqueio"></div>
   </main>
 </div>
+<script>
+document.getElementById('bloqueio').append(DS.upsell({ titulo: 'Financeiro está em planos superiores', texto: 'Administre as movimentações financeiras do seu escritório de forma integrada.' }));
+</script>
 </body>
 </html>

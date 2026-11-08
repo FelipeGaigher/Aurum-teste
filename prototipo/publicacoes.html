@@ -6,12 +6,16 @@
 <title>Publicações, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
 </head>
 <body data-pagina="publicacoes.html" data-titulo="Publicações">
 <div class="corpo">
   <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
+    <div id="bloqueio"></div>
   </main>
 </div>
+<script>
+document.getElementById('bloqueio').append(DS.upsell({ titulo: 'Publicações está em planos superiores', texto: 'Receba as publicações dos diários oficiais direto no escritório, ligadas aos processos.' }));
+</script>
 </body>
 </html>

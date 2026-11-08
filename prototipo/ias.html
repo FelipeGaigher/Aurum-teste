@@ -6,12 +6,40 @@
 <title>Conheça as IAs, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
+<style>
+.ias-lista { display: grid; gap: var(--space-3); margin: 0 0 var(--space-5); padding: 0; list-style: none; max-width: var(--size-dialog-wide); }
+.ias-item { display: grid; gap: var(--space-1); padding: var(--space-4); background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); }
+.ias-item h2 { margin: 0; font-size: var(--font-size-dialog); font-weight: var(--font-weight-medium); }
+.ias-item p { margin: 0; color: var(--color-text-muted); }
+</style>
 </head>
 <body data-pagina="ias.html" data-titulo="Conheça as IAs">
 <div class="corpo">
   <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
+    <ul class="ias-lista" id="lista-ias"></ul>
+    <div id="bloqueio"></div>
   </main>
 </div>
+<script>
+const IAS = [
+  { nome: 'Tratamento de publicações', texto: 'Lê cada publicação e separa o que exige providência.', vale: false },
+  { nome: 'Tradução do juridiquês', texto: 'Explica andamentos em linguagem simples para o cliente.', vale: false },
+  { nome: 'Criação de peças', texto: 'Monta o rascunho da peça a partir dos dados do processo.', vale: false },
+  { nome: 'Priorização de andamentos', texto: 'Ordena os andamentos novos pelo prazo mais próximo.', vale: true },
+];
+const lista = document.getElementById('lista-ias');
+IAS.forEach((ia) => {
+  const li = document.createElement('li');
+  li.className = 'ias-item';
+  const h = document.createElement('h2');
+  h.textContent = ia.nome;
+  const p = document.createElement('p');
+  p.textContent = ia.texto;
+  li.append(h, p, DS.tag({ rotulo: ia.vale ? 'Vale no plano atual' : 'Não vale no plano atual' }));
+  lista.append(li);
+});
+document.getElementById('bloqueio').append(DS.upsell({ titulo: 'Três das quatro IAs estão em planos superiores', texto: 'Seu plano de teste, o Light, inclui a priorização de andamentos.' }));
+</script>
 </body>
 </html>
