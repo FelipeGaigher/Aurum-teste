@@ -3,19 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Questão 1: Diagnóstico e direção, Astrea: protótipo</title>
+<title>Questionários, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
 </head>
-<body data-pagina="questao-1.html" data-titulo="Questão 1: Diagnóstico e direção">
+<body data-pagina="questionarios.html" data-titulo="Questionários">
 <div class="corpo">
   <main id="conteudo">
-<div class="qa">
+<div class="qa" id="questionarios">
+<div data-questao="q1" data-rotulo="Questão 1">
 <p class="qa-abertura">O Astrea sabe o que é um prazo. A interface ainda não mostra isso. Recorte: gestão de atividades. PA-nn aponta um item do catálogo de 97 pontos de atenção.</p>
-<nav class="qa-indice" aria-label="Perguntas desta questão"><ol><li><a href="#q1-problemas">5 problemas</a></li><li><a href="#q1-principios">Princípios</a></li><li><a href="#q1-validar">O que validar</a></li></ol></nav>
-<section class="qa-topico" id="q1-problemas" aria-labelledby="q1-problemas-p">
-<div class="qa-pergunta"><span>Pergunta 1 de 3</span><h2 id="q1-problemas-p">Os 5 problemas de experiência mais relevantes, com evidência e por que importam.</h2></div>
-<div class="qa-resposta">
+<div class="qa-colunas">
+<nav class="qa-perguntas" aria-label="Perguntas da Questão 1"><ul><li><button type="button" class="qa-botao" data-pergunta="q1-problemas" aria-pressed="false"><span class="qa-botao-numero">Pergunta 1</span><span>Os 5 problemas de experiência mais relevantes, com evidência e por que importam.</span></button></li><li><button type="button" class="qa-botao" data-pergunta="q1-principios" aria-pressed="false"><span class="qa-botao-numero">Pergunta 2</span><span>Princípios de design do redesign.</span></button></li><li><button type="button" class="qa-botao" data-pergunta="q1-validar" aria-pressed="false"><span class="qa-botao-numero">Pergunta 3</span><span>O que validar antes de seguir, e como.</span></button></li></ul></nav>
+<div class="qa-divisor" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Largura da lista de perguntas" aria-valuemin="260" aria-valuemax="480" aria-valuenow="320"></div>
+<div class="qa-respostas">
+<section class="qa-resposta" data-resposta="q1-problemas" aria-labelledby="q1-problemas-t" hidden>
+<h2 id="q1-problemas-t">Os 5 problemas de experiência mais relevantes, com evidência e por que importam.</h2>
 <p class="qa-nota">Os problemas mais relevantes, com evidência e por que importam. Cada um separa sintoma de causa.</p>
 
         <article class="qa-bloco"><h3>P1. O prazo não domina as telas que existem para ele</h3><div class="qa-tags"><span class="qa-ref qa-ref-nielsen"><b>Tipo</b> Hierarquia e densidade</span></div><div><h4>Sintoma</h4><ul>
@@ -57,11 +61,9 @@
               <li>Estatísticas em azul de link, sem ação por trás (Área de trabalho).</li>
               <li>A nuvem do cabeçalho significa "Resultados de buscas" e foi lida como salvar (PA-05).</li>
             </ul></div><div><h4>Evidência</h4><div class="qa-evidencias"><figure class="qa-evid qa-faixa"><button type="button" class="qa-miniatura" popovertarget="z-p5-cabecalho" aria-label="Ampliar: Cabeçalho"><img src="prints/p5-cabecalho.png" alt="Cabeçalho do Astrea com faixa de campanha, ícone de IA, nuvem, selo e botão Contratar marcados" loading="lazy"></button><figcaption><b>Cabeçalho</b><small>Igual em toda tela do produto</small><span>Da esquerda para a direita: contador e botão da campanha, IA em lilás, nuvem que significa "Resultados de buscas", selo "1 ano grátis" e "Contratar".</span></figcaption></figure><figure class="qa-evid"><button type="button" class="qa-miniatura" popovertarget="z-p5-ia-menu" aria-label="Ampliar: Menu lateral, item de IA"><img src="prints/p5-ia-menu.png" alt="Item Conheça as IAs com fundo lilás no menu lateral" loading="lazy"></button><figcaption><b>Menu lateral, item de IA</b><small>Fim do menu, em toda tela</small><span>"Conheça as IAs" é o único item com cor e fundo próprios.</span></figcaption></figure></div><div id="z-p5-cabecalho" popover class="qa-zoom"><img src="prints/p5-cabecalho.png" alt="Cabeçalho do Astrea com faixa de campanha, ícone de IA, nuvem, selo e botão Contratar marcados" loading="lazy"><div class="qa-zoom-pe"><span><b>Cabeçalho.</b> Da esquerda para a direita: contador e botão da campanha, IA em lilás, nuvem que significa "Resultados de buscas", selo "1 ano grátis" e "Contratar".</span><button type="button" class="botao botao-secundario botao-pequeno" popovertarget="z-p5-cabecalho" popovertargetaction="hide">Fechar</button></div></div><div id="z-p5-ia-menu" popover class="qa-zoom"><img src="prints/p5-ia-menu.png" alt="Item Conheça as IAs com fundo lilás no menu lateral" loading="lazy"><div class="qa-zoom-pe"><span><b>Menu lateral, item de IA.</b> "Conheça as IAs" é o único item com cor e fundo próprios.</span><button type="button" class="botao botao-secundario botao-pequeno" popovertarget="z-p5-ia-menu" popovertargetaction="hide">Fechar</button></div></div></div><p class="qa-dia"><b>Causa provável (hipótese)</b> A moldura não tem dono de produto. Marketing e IA entram nela sem passar por um padrão.</p><div class="qa-decisao"><b>Por que importa</b><p>Quem vive no produto lê esse ruído o dia inteiro. E o briefing pede que a IA nasça no mesmo padrão do resto.</p></div></article>
-</div>
 </section>
-<section class="qa-topico" id="q1-principios" aria-labelledby="q1-principios-p">
-<div class="qa-pergunta"><span>Pergunta 2 de 3</span><h2 id="q1-principios-p">Princípios de design do redesign.</h2></div>
-<div class="qa-resposta">
+<section class="qa-resposta" data-resposta="q1-principios" aria-labelledby="q1-principios-t" hidden>
+<h2 id="q1-principios-t">Princípios de design do redesign.</h2>
 <p class="qa-nota">Cada princípio traz a heurística de Nielsen, a lei de Gestalt e como ele se aplica no dia a dia. Gestalt aqui é agrupamento perceptivo, a base da hierarquia visual. Cor é um recurso entre outros.</p>
 
         <article class="qa-bloco"><h3>O prazo primeiro</h3><div class="qa-tags"><span class="qa-ref qa-ref-nielsen"><b>Nielsen</b> Visibilidade do estado do sistema</span><span class="qa-ref qa-ref-gestalt"><b>Gestalt</b> Figura e fundo: o prazo é figura</span></div><div class="qa-decisao"><b>Decisão</b><p>O dado que não pode falhar é o mais visível em toda tela de atividade. Cor e texto, nunca só cor.</p></div><div class="qa-comparacao"><div class="qa-par qa-cabeca"><b class="qa-rot-hoje">Hoje no Astrea</b><b class="qa-rot-sugestao">Sugestão para o Astrea</b></div><div class="qa-par"><p class="qa-hoje">Prazos e audiências em "Lembretes", abaixo das estatísticas (PA-33).</p><p class="qa-sugestao">Levar prazos, audiências e eventos para a área principal.</p></div><div class="qa-par"><p class="qa-hoje">Prazo vencido não tem seção própria (PA-32).</p><p class="qa-sugestao">Criar a seção "Atrasadas" acima de "Hoje".</p></div></div><p class="qa-dia"><b>No dia a dia</b> Teste de desfoque em toda revisão. Se o prazo some, a tela volta.</p></article>
@@ -75,11 +77,9 @@
         <article class="qa-bloco"><h3>Densidade para quem consulta o dia todo</h3><div class="qa-tags"><span class="qa-ref qa-ref-nielsen"><b>Nielsen</b> Flexibilidade e eficiência</span><span class="qa-ref qa-ref-gestalt"><b>Gestalt</b> Continuidade: a grade alinhada guia o olho</span></div><div class="qa-decisao"><b>Decisão</b><p>Compacto por padrão, com modo respirado por escolha. Tabela quando se compara, card quando se age.</p></div><div class="qa-comparacao"><div class="qa-par qa-cabeca"><b class="qa-rot-hoje">Hoje no Astrea</b><b class="qa-rot-sugestao">Sugestão para o Astrea</b></div><div class="qa-par"><p class="qa-hoje">O mês mostra duas semanas por tela (PA-47).</p><p class="qa-sugestao">Oferecer modo compacto, com o mês inteiro na tela.</p></div><div class="qa-par"><p class="qa-hoje">O número do processo não aparece na linha da atividade (PA-38).</p><p class="qa-sugestao">Mostrar o número na linha, com botão de copiar.</p></div></div><p class="qa-dia"><b>No dia a dia</b> Protótipo com volume real de atividades, não com três linhas.</p></article>
 
         <article class="qa-bloco"><h3>Mesmo padrão para tudo, inclusive a IA</h3><div class="qa-tags"><span class="qa-ref qa-ref-nielsen"><b>Nielsen</b> Consistência e padrões. Controle e liberdade</span><span class="qa-ref qa-ref-gestalt"><b>Gestalt</b> Similaridade: mesma função, mesma aparência</span></div><div class="qa-decisao"><b>Decisão</b><p>A IA entra como componente do sistema, com confirmar e desfazer. Sem paleta nem ícone à parte.</p></div><div class="qa-comparacao"><div class="qa-par qa-cabeca"><b class="qa-rot-hoje">Hoje no Astrea</b><b class="qa-rot-sugestao">Sugestão para o Astrea</b></div><div class="qa-par"><p class="qa-hoje">IA em roxo, com paleta própria (PA-10).</p><p class="qa-sugestao">Construir a IA com os mesmos componentes e cores do resto.</p></div><div class="qa-par"><p class="qa-hoje">O ícone de IA não tem rótulo nem texto de apoio (PA-04).</p><p class="qa-sugestao">Dar tooltip e rótulo acessível ao ícone.</p></div></div><p class="qa-dia"><b>No dia a dia</b> Recurso de IA usa o mesmo kit e a mesma revisão do design system.</p></article>
-</div>
 </section>
-<section class="qa-topico" id="q1-validar" aria-labelledby="q1-validar-p">
-<div class="qa-pergunta"><span>Pergunta 3 de 3</span><h2 id="q1-validar-p">O que validar antes de seguir, e como.</h2></div>
-<div class="qa-resposta">
+<section class="qa-resposta" data-resposta="q1-validar" aria-labelledby="q1-validar-t" hidden>
+<h2 id="q1-validar-t">O que validar antes de seguir, e como.</h2>
 <p class="qa-tese">Hipótese que custa caro corrigir se confirma antes. Hipótese que se corrige por token segue direto para o plano da Questão 2.</p>
         <div class="tabela-quadro"><table class="tabela">
           <tr><th scope="col">Hipótese</th><th scope="col">A planilha já responde?</th><th scope="col">Como confirmar</th><th scope="col">Fontes</th></tr>
@@ -107,11 +107,155 @@
           <li>Parte dos pedidos é antiga. Confira cada um no produto atual.</li>
           <li>Voto mostra pedido, não uso.</li>
         </ul>
-</div>
 </section>
-<nav class="qa-passos" aria-label="Outras questões"><span></span><a class="botao botao-primario" href="questao-2.html">Próxima: Questão 2</a></nav>
+</div>
+</div>
+</div>
+<div data-questao="q2" data-rotulo="Questão 2">
+<p class="qa-abertura">Decisões e racional para estruturar o design system sem parar o produto.</p>
+<div class="qa-colunas">
+<nav class="qa-perguntas" aria-label="Perguntas da Questão 2"><ul><li><button type="button" class="qa-botao" data-pergunta="q2-arquitetura" aria-pressed="false"><span class="qa-botao-numero">Pergunta 1</span><span>Arquitetura do DS: fundamentos, tokens, componentes, padrões. O que vem primeiro e por quê.</span></button></li><li><button type="button" class="qa-botao" data-pergunta="q2-governanca" aria-pressed="false"><span class="qa-botao-numero">Pergunta 2</span><span>Governança: contribuição dos squads, quem decide componente novo, papel da Engenharia, alinhamento Figma e código.</span></button></li><li><button type="button" class="qa-botao" data-pergunta="q2-fases" aria-pressed="false"><span class="qa-botao-numero">Pergunta 3</span><span>Plano em fases: por onde começar, critério de priorização, convivência entre novo e legado.</span></button></li><li><button type="button" class="qa-botao" data-pergunta="q2-time" aria-pressed="false"><span class="qa-botao-numero">Pergunta 4</span><span>Envolver o time: distribuir trabalho entre os 4 designers sem tirar foco dos roadmaps.</span></button></li><li><button type="button" class="qa-botao" data-pergunta="q2-riscos" aria-pressed="false"><span class="qa-botao-numero">Pergunta 5</span><span>Riscos e métricas: 3 riscos, mitigação, como medir sucesso.</span></button></li></ul></nav>
+<div class="qa-divisor" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Largura da lista de perguntas" aria-valuemin="260" aria-valuemax="480" aria-valuenow="320"></div>
+<div class="qa-respostas">
+<section class="qa-resposta" data-resposta="q2-arquitetura" aria-labelledby="q2-arquitetura-t" hidden>
+<h2 id="q2-arquitetura-t">Arquitetura do DS: fundamentos, tokens, componentes, padrões. O que vem primeiro e por quê.</h2>
+<p class="qa-tese">Primeiro os tokens semânticos, porque o legado os consome sem reescrita. Troca-se o valor, não a tela.</p>
+        <div class="tabela-quadro"><table class="tabela">
+          <tr><th scope="col">Camada</th><th scope="col">O que é</th><th scope="col">Exemplo</th></tr>
+          <tr><td>Primitivos</td><td>Fundamentos: cor, tipo, espaço, raio</td><td><code>--nectar-p-*</code></td></tr>
+          <tr><td>Semânticos</td><td>Valor com papel na interface</td><td><code>--nectar-s-*</code></td></tr>
+          <tr><td>Componentes</td><td>Peça com propriedades e estados</td><td>Botão, campo, card de atividade</td></tr>
+          <tr><td>Padrões</td><td>Combinação com regra de uso</td><td>Filtro, lista de atividades, resposta de IA</td></tr>
+          <tr><td>Templates</td><td>Tela-modelo por módulo</td><td>Agenda, Área de trabalho, Kanban</td></tr>
+        </table></div>
+        <p>O Nectar já tem a pilha nova <code>--nectar-p-*</code>, <code>-s-*</code> e <code>-m-*</code>, e os primitivos partem dela. Hoje são 646 variáveis CSS e três sistemas de nomes (PA-17). Há três azuis na mesma tela (PA-16), e a IA tem paleta própria em roxo (PA-10).</p><h3>Componentes flexíveis</h3><p class="qa-tese">Um componente com propriedades serve cada contexto, sem cópia. Cada propriedade existe igual no código e no Figma, e combinação sem uso sai.</p>
+        <div class="tabela-quadro"><table class="tabela">
+          <tr><th scope="col">Propriedade do card de atividade</th><th scope="col">Tipo</th></tr>
+          <tr><td>Título</td><td>Texto</td></tr>
+          <tr><td>Mostrar prazo</td><td>Booleana</td></tr>
+          <tr><td>Mostrar processo</td><td>Booleana</td></tr>
+          <tr><td>Mostrar responsável</td><td>Booleana</td></tr>
+          <tr><td>Mostrar tags</td><td>Booleana</td></tr>
+        </table></div>
+        <p><b>Estados:</b> default, hover, active, foco, disabled, erro, carregando, vazio.</p>
+        <p>Quatro booleanas como variantes dariam 16 cards por estado, 128 no total. Como propriedade, o estado é a única variante.</p>
+</section>
+<section class="qa-resposta" data-resposta="q2-governanca" aria-labelledby="q2-governanca-t" hidden>
+<h2 id="q2-governanca-t">Governança: contribuição dos squads, quem decide componente novo, papel da Engenharia, alinhamento Figma e código.</h2>
+<p class="qa-tese">A direção do DS decide, a Engenharia veta e os squads contribuem. Flexibilidade antes de processo: pedido novo é o último recurso.</p>
+        <ol>
+          <li>Resolver com propriedade existente.</li>
+          <li>Compor localmente no squad.</li>
+          <li>Pedir componente novo: problema, onde aparece, quem mais usa.</li>
+        </ol>
+        <div class="tabela-quadro"><table class="tabela">
+          <tr><th scope="col">Papel</th><th scope="col">Quem</th><th scope="col">O que faz</th></tr>
+          <tr><td>Decide</td><td>Direção do DS</td><td>Define o que entra e mantém a fonte</td></tr>
+          <tr><td>Veta</td><td>Engenharia</td><td>Veto técnico, com justificativa, e cuida do pacote de código</td></tr>
+          <tr><td>Contribui</td><td>Squads</td><td>Propõem e constroem a partir do trabalho real</td></tr>
+        </table></div>
+        <p><b>Fonte única:</b> tokens em JSON no repositório alimentam o código e as variáveis do Figma. Code Connect liga o componente do Figma ao código, e o changelog registra cada versão. Componente novo entra no DS quando 2 ou mais squads precisam. Se só 1 precisa, fica local.</p>
+</section>
+<section class="qa-resposta" data-resposta="q2-fases" aria-labelledby="q2-fases-t" hidden>
+<h2 id="q2-fases-t">Plano em fases: por onde começar, critério de priorização, convivência entre novo e legado.</h2>
+<p class="qa-tese">Os componentes entram em produção onde o uso é menos frequente e chegam ao prazo já testados.</p>
+        <div class="tabela-quadro"><table class="tabela">
+          <tr><th scope="col">Fase</th><th scope="col">O que entra</th><th scope="col">Por que nesta ordem</th></tr>
+          <tr><td>1. Tokens</td><td>Semânticos sobre o Nectar</td><td>Aproxima o visual sem reescrever tela</td></tr>
+          <tr><td>2. Moldura</td><td>Sidebar, navbar, filtros, botões de ação</td><td>Muda uma vez e depois fica fixa</td></tr>
+          <tr><td>3. Configuração e Administração</td><td>Cards, tabelas, ações, modais, documentos, anexos, assinatura, aprovações, pagamentos</td><td>Menor frequência de uso</td></tr>
+          <tr><td>4. Fluxos principais</td><td>Agenda, Área de trabalho, Kanban e demais módulos</td><td>Chegam com tudo estruturado</td></tr>
+        </table></div>
+        <dl class="qa-pares">
+          <dt>Critério</dt><dd>Frequência, dor relatada, onde a migração do front já está, e risco.</dd>
+          <dt>Convivência</dt><dd>Feature flag por escritório, com opção de voltar. Recusamos um ambiente paralelo de produção: custa mais e cria risco de prazo desatualizado.</dd>
+          <dt>Desde o início</dt><dd>Teste com dados densos de prazo.</dd>
+          <dt>Cuidado</dt><dd>Menor frequência não significa menor risco. A Administração tem limpeza de conta sem confirmação visível, então a fase 3 começa por modal e ação de confirmação.</dd>
+        </dl>
+</section>
+<section class="qa-resposta" data-resposta="q2-time" aria-labelledby="q2-time-t" hidden>
+<h2 id="q2-time-t">Envolver o time: distribuir trabalho entre os 4 designers sem tirar foco dos roadmaps.</h2>
+<p class="qa-tese">A divisão sai da conversa com cada designer. Ela nasce de quem cada pessoa é e do que o squad já pede.</p>
+        <div class="tabela-quadro"><table class="tabela">
+          <tr><th scope="col">Tema da conversa individual</th><th scope="col">O que perguntar</th></tr>
+          <tr><td>Pessoa</td><td>Quem é e desde quando está na Aurum</td></tr>
+          <tr><td>Trabalho</td><td>Como trabalha, rotina, ferramentas</td></tr>
+          <tr><td>Direção</td><td>Foco atual e para onde quer ir</td></tr>
+        </table></div>
+        <p>As conversas acontecem nas duas primeiras semanas. A contribuição sai do roadmap do squad: o designer entrega a tela, e o componente entra no DS nesse caminho. O líder de cada squad combina o tempo com a direção do DS.</p>
+</section>
+<section class="qa-resposta" data-resposta="q2-riscos" aria-labelledby="q2-riscos-t" hidden>
+<h2 id="q2-riscos-t">Riscos e métricas: 3 riscos, mitigação, como medir sucesso.</h2>
+<div class="tabela-quadro"><table class="tabela">
+          <tr><th scope="col">Risco</th><th scope="col">Mitigação</th></tr>
+          <tr><td>A moldura atinge todos de uma vez e precisa funcionar em duas tecnologias</td><td>Liberação gradual por escritório, com chamados como gatilho de reversão</td></tr>
+          <tr><td>Componente aprovado em tela fácil quebra no fluxo de prazo</td><td>Teste com dados densos desde o início</td></tr>
+          <tr><td>O roadmap consome os designers, e a vaga não é gestora</td><td>Líderes como patrocinadores e contribuição vinda da demanda real</td></tr>
+        </table></div>
+        <div class="tabela-quadro"><table class="tabela">
+          <tr><th scope="col">Eixo</th><th scope="col">Métricas</th></tr>
+          <tr><td>Adoção</td><td>% de telas com componentes do DS, % de cores vindas de token, componentes desvinculados</td></tr>
+          <tr><td>Eficiência</td><td>Tempo do design até o dev, bugs visuais abertos</td></tr>
+          <tr><td>Experiência</td><td>Chamados por módulo, tempo para criar um prazo, sucesso na tarefa, CSAT</td></tr>
+        </table></div>
+        <p>O limite de chamados para reverter sai da linha de base medida antes da fase 2.</p>
+</section>
+</div>
+</div>
+</div>
+<div data-questao="q3" data-rotulo="Questão 3">
+<p class="qa-abertura">A Área de trabalho, redesenhada neste protótipo e importada para o Figma, com cinco componentes, propriedades e estados.</p>
+<div class="qa-colunas">
+<nav class="qa-perguntas" aria-label="Perguntas da Questão 3"><ul><li><button type="button" class="qa-botao" data-pergunta="q3-tela" aria-pressed="false"><span class="qa-botao-numero">Pergunta 1</span><span>Tela da gestão de atividades redesenhada em alta fidelidade.</span></button></li><li><button type="button" class="qa-botao" data-pergunta="q3-componentes" aria-pressed="false"><span class="qa-botao-numero">Pergunta 2</span><span>De 3 a 5 componentes que nasceram dela, com estados.</span></button></li><li><button type="button" class="qa-botao" data-pergunta="q3-decisao" aria-pressed="false"><span class="qa-botao-numero">Pergunta 3</span><span>Uma decisão difícil: um trade-off e o porquê.</span></button></li><li><button type="button" class="qa-botao" data-pergunta="ia" aria-pressed="false"><span class="qa-botao-numero">Pergunta 4</span><span>Uso de IA: quais ferramentas, em quais etapas, o que foi feito com o resultado.</span></button></li></ul></nav>
+<div class="qa-divisor" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Largura da lista de perguntas" aria-valuemin="260" aria-valuemax="480" aria-valuenow="320"></div>
+<div class="qa-respostas">
+<section class="qa-resposta" data-resposta="q3-tela" aria-labelledby="q3-tela-t" hidden>
+<h2 id="q3-tela-t">Tela da gestão de atividades redesenhada em alta fidelidade.</h2>
+<p class="qa-nota">Veja funcionando: <a href="area-de-trabalho.html">Área de trabalho</a> e <a href="design-system.html">Design system</a>. A tela no Figma, nó 26-2, está na <a href="../index.html">página de entrega</a>.</p><p class="qa-tese">É a tela de abertura e o ponto em que o prazo mais se perde. O grupo de pedidos sobre prazo soma 136 de 407 votos.</p>
+        <div class="tabela-quadro"><table class="tabela">
+          <tr><th scope="col">Hoje</th><th scope="col">Na nova tela</th><th scope="col">Origem</th></tr>
+          <tr><td>Lista inicial esconde tarefa atrasada de outra lista</td><td>Todas as listas entram na mesma visão</td><td>PA-31</td></tr>
+          <tr><td>Prazo vencido sem seção própria</td><td>Seções "Atrasadas" e "Hoje" no topo</td><td>PA-32</td></tr>
+          <tr><td>Prazos e audiências no canto, em "Lembretes"</td><td>Prazo como dado dominante, com cor e texto</td><td>PA-33</td></tr>
+          <tr><td>Menu lateral sem estado ativo</td><td>Item ativo marcado em todo módulo</td><td>PA-01</td></tr>
+          <tr><td>Título na página, busca no centro, cinco ícones no cabeçalho</td><td>Título no cabeçalho, busca à direita, três ícones</td><td>M14 a M16</td></tr>
+          <tr><td>Chamadas comerciais no cabeçalho</td><td>Uma linha no rodapé do menu</td><td>M17</td></tr>
+        </table></div>
+</section>
+<section class="qa-resposta" data-resposta="q3-componentes" aria-labelledby="q3-componentes-t" hidden>
+<h2 id="q3-componentes-t">De 3 a 5 componentes que nasceram dela, com estados.</h2>
+<p class="qa-tese">Cinco componentes, e os cinco servem também a Agenda e o Kanban: a regra da Questão 2 para entrar no design system.</p>
+        <div class="tabela-quadro"><table class="tabela">
+          <tr><th scope="col">Componente</th><th scope="col">Propriedades</th><th scope="col">Estados</th><th scope="col">Onde mais aparece</th></tr>
+          <tr><td>Linha de atividade</td><td>título, responsável, mostrar processo, copiar número, ações, densidade</td><td>default, hover, foco, selecionada, carregando</td><td>Lista lateral da Agenda, lista do Kanban</td></tr>
+          <tr><td>Chip de prazo</td><td>estado (vencido, hoje, próximo, concluído), texto, mostrar hora</td><td>um por estado; cor e texto, nunca só cor</td><td>Evento da Agenda, card do Kanban</td></tr>
+          <tr><td>Seletor</td><td>rótulo, valor, obrigatório, erro</td><td>default, hover, foco, aberto, disabled, erro</td><td>Filtros da Agenda e do Kanban, painel de criar</td></tr>
+          <tr><td>Chip de filtro</td><td>rótulo, contagem, removível</td><td>default, hover, foco, aplicado, disabled</td><td>Filtro de tipo da Agenda, de fase do Kanban</td></tr>
+          <tr><td>Estado vazio</td><td>título, texto, mostrar ação, motivo (sem dado ou filtro)</td><td>vazio sem dado, vazio por filtro, carregando</td><td>Dia vazio da Agenda, coluna vazia do Kanban</td></tr>
+        </table></div>
+        <p>Cada propriedade existe igual no código e no Figma. O seletor é botão com <code>aria-haspopup="listbox"</code>, nunca <code>select</code> nativo. O chip aplicado leva <code>aria-pressed</code> e marca de seleção, não só cor.</p>
+</section>
+<section class="qa-resposta" data-resposta="q3-decisao" aria-labelledby="q3-decisao-t" hidden>
+<h2 id="q3-decisao-t">Uma decisão difícil: um trade-off e o porquê.</h2>
+<p class="qa-tese">A tela abre em todas as listas, com Atrasadas acima de Hoje, e o prazo é o dado dominante da linha.</p>
+        <p>Hoje a Área de trabalho abre na lista escolhida, e os prazos ficam num widget de lembretes, no canto. Quem usa o Astrea há anos conhece esse lugar, e mudar a abertura obriga a pessoa a reaprender a tela que ela mais abre. Escolhi mudar assim mesmo: a abertura atual esconde o atrasado. A atividade de outra lista não aparece (PA-31) e o vencido não tem seção (PA-32). O escritório não perde prazo por não achar a lista. Perde por não ver a data.</p>
+        <dl class="qa-pares">
+          <dt>Ganho</dt><dd>O atrasado é a primeira coisa na tela, em texto e cor. 136 de 407 votos pedem esse destaque.</dd>
+          <dt>Custo</dt><dd>Reaprendizado na tela mais usada, contra a restrição do briefing de evitar curva brusca. Quem tem muitas listas vê mais linhas na abertura.</dd>
+          <dt>Como reduzo</dt><dd>O seletor de lista continua no mesmo lugar, e a escolha fica gravada. A moldura não muda. O chip de prazo leva cor e texto. A tela nova fica atrás de feature flag, com volta para a antiga por um ciclo.</dd>
+          <dt>O que não escolhi</dt><dd>Manter a abertura de hoje. Zero reaprendizado, mas o atrasado continuaria escondido, e esse é o problema que a tela existe para resolver.</dd>
+        </dl>
+</section>
+<section class="qa-resposta" data-resposta="ia" aria-labelledby="ia-t" hidden>
+<h2 id="ia-t">Uso de IA: quais ferramentas, em quais etapas, o que foi feito com o resultado.</h2>
+<p>Usei o Claude Code como par de trabalho durante toda a atividade. O MCP do Figma ficou ligado enquanto a cota permitiu. Quando a cota acabou, os decks viraram PNG pelo Playwright e entraram no Figma pelo Claude in Chrome. A IA não escreveu a estratégia. Ela recebeu as minhas decisões em conversa e as transformou em documento-fonte, que eu iterei linha a linha. Do mesmo documento saíram os slides da Questão 2, o diagnóstico da Questão 1 e este texto. Na Questão 3, a IA executou o plano com subagentes, e outro agente revisou cada task antes do commit. Duas skills minhas guardaram o padrão: uma de português técnico e uma contra a cara de IA. A direção visual, os cinco problemas e o trade-off foram decisões minhas.</p>
+</section>
+</div>
+</div>
+</div>
 </div>
   </main>
 </div>
+<script src="questionarios.js"></script>
 </body>
 </html>

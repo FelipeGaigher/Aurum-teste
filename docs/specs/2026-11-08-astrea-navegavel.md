@@ -1,6 +1,6 @@
 <!-- gerado de docs/specs/2026-11-08-astrea-navegavel.html
-     sha256 da fonte: c038b0ac6df74d9b
-     em: 2026-11-08T13:16
+     sha256 da fonte: 0009fa72bcc627e0
+     em: 2026-11-08T14:17
      NAO ESCREVA NESTE ARQUIVO. Altere o HTML e regenere. -->
 
 # Astrea navegável com design system — contrato de máquina
@@ -41,7 +41,7 @@ Cada item do menu abre a própria página, sem erro no console.
 
 ### RF-02 — Kanban preservado
 
-No Kanban, `main` e os arrays `HISTORIAS` e `ATIVIDADES` ficam iguais ao commit `e7ee407`, a base declarada em `BASE_KANBAN`. As exceções são `h1` e `#rodape-demo`.
+No Kanban, `main` e os arrays `HISTORIAS` e `ATIVIDADES` ficam iguais ao commit `ab21425`, a base declarada em `BASE_KANBAN`. As exceções são `h1` e `#rodape-demo`.
 
 ### RF-03 — Moldura estável
 

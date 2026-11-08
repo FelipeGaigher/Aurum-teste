@@ -431,7 +431,7 @@ svg.icone {
   cursor: pointer;
 }
 .atalho svg.icone { width: var(--size-icon-nav); height: var(--size-icon-nav); }
-.atalho:hover { background-color: var(--color-bg-hover); color: var(--color-text-default); }
+.atalho:hover { background-color: var(--color-bg-hover); color: var(--color-action); }
 .atalho-ia {
   font-size: var(--font-size-label);
   font-weight: var(--font-weight-semibold);
@@ -526,7 +526,7 @@ body[data-menu="recolhido"] .menu-grupo { position: absolute; width: 1px; height
   color: var(--color-text-muted);
   cursor: pointer;
 }
-.recolher:hover { background-color: var(--color-bg-hover); color: var(--color-text-default); }
+.recolher:hover { background-color: var(--color-bg-hover); color: var(--color-action); }
 .recolher svg { transition: transform 150ms; }
 body[data-menu="recolhido"] { --component-sidebar-width: var(--component-sidebar-collapsed-width); }
 /* recolhido: só a marca aparece; o botão de expandir cobre a marca no hover e no foco de teclado */
@@ -1410,21 +1410,11 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 <div class="corpo">
   <nav class="menu-lateral" id="menu-principal" aria-label="Menu principal">
     <!-- O grupo do teste vem primeiro: o rótulo é o cargo da vaga, e o item é o módulo oculto do próprio Astrea. -->
-    <p class="menu-grupo" id="grupo-questionamentos">Questionamentos</p>
-    <ul aria-labelledby="grupo-questionamentos">
-      <li><a href="questao-1.html">
-        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 9.5 12 8v8"/></svg>
-        <span class="rotulo">Questão 1</span></a></li>
-      <li><a href="questao-2.html">
-        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 10a2.5 2.5 0 0 1 5 0c0 2-5 3.5-5 6h5"/></svg>
-        <span class="rotulo">Questão 2</span></a></li>
-      <li><a href="questao-3.html">
-        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 8h5l-3 3.2c1.8 0 3 1 3 2.4s-1.2 2.4-2.6 2.4c-1.1 0-2-.5-2.4-1.3"/></svg>
-        <span class="rotulo">Questão 3</span></a></li>
-    </ul>
-    <hr>
     <p class="menu-grupo" id="grupo-especialista">Especialista UX/UI</p>
     <ul aria-labelledby="grupo-especialista">
+      <li><a href="questionarios.html">
+        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v3H8zM6 5.5H4V21h16V5.5h-2M8 12h8M8 16h8"/></svg>
+        <span class="rotulo">Questionários</span></a></li>
       <li><a href="kanban.html" aria-current="page">
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v11h-4zM16 4h4v7h-4z"/></svg>
         <span class="rotulo">Gestão kanban</span></a></li>

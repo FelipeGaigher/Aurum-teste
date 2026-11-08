@@ -41,3 +41,19 @@ achar a decisão.
 decisão ganha destaque. Problema e sugestão ficam lado a lado.
 
 **Virou:** os seis princípios da seção 1.2 seguem esse molde.
+
+### 2026-11-08 — Divisão de conteúdo usa o componente de abas
+
+Felipe reprovou o índice de botões no topo da questão. A frase dele: "isso
+não é abas, são botões fora do lugar". Ele também reprovou o hover preto,
+porque o produto é azul.
+
+**Por quê:** o design system já tinha abas com linha embaixo do item ativo. O
+controle improvisado parecia solto na tela.
+
+**Regra:** quem divide conteúdo no mesmo lugar é `DS.abas`. Perguntas e
+respostas seguem o padrão de duas colunas: lista à esquerda, resposta à direita.
+Hover usa a cor de ação.
+
+**Virou:** o módulo Questionários, em `prototipo/questionarios.html`, e os
+hovers do design system em azul.

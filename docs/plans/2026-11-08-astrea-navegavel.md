@@ -1,6 +1,6 @@
 <!-- gerado de docs/specs/2026-11-08-astrea-navegavel.html
-     sha256 da fonte: c038b0ac6df74d9b
-     em: 2026-11-08T13:16
+     sha256 da fonte: 0009fa72bcc627e0
+     em: 2026-11-08T14:17
      NAO ESCREVA NESTE ARQUIVO. Altere o HTML e regenere. -->
 
 # Astrea navegável com design system — Implementation Plan
@@ -1115,7 +1115,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 > nota: pedido de Felipe em 08/11, 12h55. O quadro mostra o cenário do redesign
 > com as fases da Q2. A Task 9b, com brief manual em `.sancho/`, trocou `FASES`,
-> `HISTORIAS` e `CARDS`. A base do RF-02 passou de `a150985` para `e7ee407`.
+> `HISTORIAS` e `CARDS`. A base do RF-02 passou de `a150985` para `ab21425`.
 > Reversível.
 
 ---
@@ -1841,7 +1841,7 @@ Executado em 08/11/2026, das 12h12 às 13h50. Nenhuma task travada e nenhuma
 decisão subiu ao sovereign.
 
 - Task 9b, fora do plano original: pedido de Felipe às 12h55. O quadro do
-  Kanban mostra as fases da Q2. Base do RF-02 em `e7ee407`.
+  Kanban mostra as fases da Q2. Base do RF-02 em `ab21425`.
 - Decisão de Felipe pendente: limpeza das imagens com dado real no histórico,
   push e GitHub Pages. Script pronto fora do repositório.
 - Dois achados menores ficaram sem correção. Criar atividade pelo menu Adicionar
