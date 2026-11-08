@@ -134,7 +134,7 @@ A lista anterior tinha 12 itens. Dez fecharam, e os números abaixo seguem essa 
 
 Os itens 8 e 10 seguem abertos e voltaram como 1 a 3 da lista acima.
 
-- Depois: a ficha do processo lista os documentos ligados ao número (`processos.html`), e Processos, Atendimentos, Documentos e Agenda usam `DS.botaoCopiar` no lugar das cópias locais.
+- Depois: a ficha do processo lista os documentos ligados ao número (`processos.html`). Processos, Atendimentos, Documentos e Agenda usam `DS.botaoCopiar`, sem cópia local.
 
 ## Ligação com as questões
 
