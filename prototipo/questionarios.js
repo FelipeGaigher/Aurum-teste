@@ -93,10 +93,14 @@
   aplicarLargura(ler() || PADRAO);
   ligarDobras();
 
-  // P1 a P5: faixa que abre e fecha, no padrão da Área de trabalho. O estado vale só nesta sessão.
+  // Problemas e princípios: faixa que abre e fecha, no padrão da Área de trabalho.
+  // Cada resposta é um grupo, com estado próprio. O estado vale só nesta sessão.
   function ligarDobras() {
-    const CHAVE_DOBRAS = 'astrea-questionarios-dobras';
-    const faixas = [...raiz.querySelectorAll('.qa-dobra-faixa')];
+    const grupos = [...raiz.querySelectorAll('.qa-resposta')].filter((r) => r.querySelector('.qa-dobra-faixa'));
+    grupos.forEach((grupo) => ligarGrupo('astrea-questionarios-dobras-' + grupo.dataset.resposta, [...grupo.querySelectorAll('.qa-dobra-faixa')]));
+  }
+
+  function ligarGrupo(CHAVE_DOBRAS, faixas) {
     let abertas = null;
     try { abertas = JSON.parse(sessionStorage.getItem(CHAVE_DOBRAS)); } catch (e) { abertas = null; }
     const aplicar = (faixa, aberta) => {
