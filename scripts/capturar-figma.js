@@ -34,6 +34,12 @@ function servir() {
     });
     const page = await browser.newPage({ viewport: { width: largura, height: 900 } });
     await page.goto(`http://localhost:${PORTA}/${pagina}`, { waitUntil: 'networkidle' });
+    // O protótipo declara Museo Sans e Open Sans antes de Segoe UI. Nenhuma das duas está
+    // instalada aqui, e a captura chegava ao Figma em Segoe UI, fonte que o Figma não tem.
+    // Open Sans entra pelo Google Fonts só na captura; o HTML continua sem CDN.
+    await page.addStyleTag({ url: 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap' });
+    await page.evaluate(() => document.fonts.ready);
+    await page.waitForTimeout(500);
     const resposta = await page.context().request.get('https://mcp.figma.com/mcp/html-to-design/capture.js');
     await page.evaluate((fonte) => {
       const el = document.createElement('script');
