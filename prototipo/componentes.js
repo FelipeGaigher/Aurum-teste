@@ -124,6 +124,30 @@
     return grupo;
   }
 
+  // Menu dentro de contêiner que rola (tabela larga, painel) estica o contêiner e cria barras.
+  // Fora dele, a lista é posicionada em relação à tela, e some quando a página rola.
+  function soltarDoQuadro(raiz, gatilho, lista) {
+    const rola = (el) => {
+      const estilo = getComputedStyle(el);
+      return /(auto|scroll)/.test(estilo.overflowX + estilo.overflowY);
+    };
+    let quadro = raiz.parentElement;
+    while (quadro && quadro !== document.body && !rola(quadro)) quadro = quadro.parentElement;
+    const preso = quadro && quadro !== document.body;
+    lista.classList.toggle('is-solto', preso);
+    if (!preso) { lista.style.top = ''; lista.style.left = ''; return false; }
+    const r = gatilho.getBoundingClientRect();
+    lista.style.top = `${r.bottom}px`;
+    lista.style.left = `${r.left}px`;
+    if (lista.getBoundingClientRect().right > window.innerWidth - MARGEM_DA_TELA_PX) {
+      lista.style.left = `${Math.max(MARGEM_DA_TELA_PX, r.right - lista.offsetWidth)}px`;
+    }
+    const fecharAoRolar = () => { lista.hidden = true; gatilho.setAttribute('aria-expanded', 'false'); quadro.removeEventListener('scroll', fecharAoRolar); window.removeEventListener('scroll', fecharAoRolar, true); };
+    quadro.addEventListener('scroll', fecharAoRolar, { once: true });
+    window.addEventListener('scroll', fecharAoRolar, { capture: true, once: true });
+    return true;
+  }
+
   function ligarMenu(raiz, gatilho, lista) {
     const itens = () => [...lista.querySelectorAll('[role="menuitem"]')];
     const fora = (e) => { if (!raiz.contains(e.target)) fechar(false); };
@@ -135,7 +159,8 @@
     }
     function abrir() {
       lista.hidden = false;
-      lista.classList.toggle('is-direita', lista.getBoundingClientRect().right > window.innerWidth);
+      const solto = soltarDoQuadro(raiz, gatilho, lista);
+      lista.classList.toggle('is-direita', !solto && lista.getBoundingClientRect().right > window.innerWidth);
       gatilho.setAttribute('aria-expanded', 'true');
       document.addEventListener('click', fora);
       itens()[0].focus();

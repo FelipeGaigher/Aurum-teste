@@ -889,6 +889,7 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .menu-acoes .menu-suspenso { left: 0; right: auto; }
 .menu-acoes .menu-suspenso.is-direita { left: auto; right: 0; }
 .menu-acoes.is-estatico .menu-suspenso { position: static; }
+.menu-acoes .menu-suspenso.is-solto { position: fixed; top: auto; right: auto; left: auto; z-index: 3; }
 .menu-suspenso button.is-destrutivo { color: var(--color-text-danger); }
 .menu-suspenso button.is-destrutivo:hover { background-color: var(--color-bg-danger); color: var(--color-text-default); }
 
