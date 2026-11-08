@@ -2,14 +2,14 @@
 (function () {
 const ATIVIDADES = [
   { id: 'a1', titulo: 'Protocolar contestação', tipo: 'prazo', processo: '5004213-75.2025.8.24.0023', responsavel: 'Rafael Antunes', prazoEmDias: -2, status: 'a-fazer' },
-  { id: 'a2', titulo: 'Audiência de conciliação', tipo: 'audiencia', processo: '0301877-92.2024.8.24.0008', responsavel: 'Marina Couto', prazoEmDias: 0, status: 'a-fazer' },
+  { id: 'a2', titulo: 'Audiência de conciliação', tipo: 'audiencia', processo: '0301877-92.2024.8.24.0008', responsavel: 'Felipe Gaigher', prazoEmDias: 0, status: 'a-fazer' },
   { id: 'a3', titulo: 'Reunião com a cliente sobre o acordo', tipo: 'evento', processo: '5012940-75.2025.8.24.0038', responsavel: 'Beatriz Lemos', prazoEmDias: 1, status: 'a-fazer' },
   { id: 'a4', titulo: 'Opor embargos de declaração', tipo: 'prazo', processo: '0007315-64.2023.8.24.0023', responsavel: 'Otávio Prado', prazoEmDias: 2, status: 'a-fazer' },
   { id: 'a5', titulo: 'Manifestar sobre o laudo pericial', tipo: 'prazo', processo: '5020066-92.2024.8.24.0045', responsavel: 'Rafael Antunes', prazoEmDias: 5, status: 'a-fazer', sugestaoIa: 'Criada pela IA a partir de uma publicação' },
   { id: 'a6', titulo: 'Juntar procuração atualizada', tipo: 'tarefa', processo: '5001789-08.2025.8.24.0008', responsavel: 'Beatriz Lemos', prazoEmDias: -1, status: 'fazendo' },
-  { id: 'a7', titulo: 'Interpor recurso de apelação', tipo: 'prazo', processo: '0312054-93.2022.8.24.0038', responsavel: 'Marina Couto', prazoEmDias: 3, status: 'fazendo' },
+  { id: 'a7', titulo: 'Interpor recurso de apelação', tipo: 'prazo', processo: '0312054-93.2022.8.24.0038', responsavel: 'Felipe Gaigher', prazoEmDias: 3, status: 'fazendo' },
   { id: 'a8', titulo: 'Calcular custas finais', tipo: 'tarefa', processo: '5009427-81.2024.8.24.0023', responsavel: 'Otávio Prado', prazoEmDias: 4, status: 'fazendo' },
-  { id: 'a9', titulo: 'Preparar rol de testemunhas', tipo: 'tarefa', processo: '5016603-51.2025.8.24.0064', responsavel: 'Marina Couto', prazoEmDias: 8, status: 'concluido' },
+  { id: 'a9', titulo: 'Preparar rol de testemunhas', tipo: 'tarefa', processo: '5016603-51.2025.8.24.0064', responsavel: 'Felipe Gaigher', prazoEmDias: 8, status: 'concluido' },
   { id: 'a10', titulo: 'Apresentar contrarrazões', tipo: 'prazo', processo: '0004981-88.2023.8.24.0045', responsavel: 'Rafael Antunes', prazoEmDias: 10, status: 'concluido' },
 ];
 
@@ -234,16 +234,16 @@ const DOCUMENTOS_DE_CONTATO = {
     { id: 'd3', nome: 'RG_frente_e_verso.jpg', tipo: 'Imagem', tamanhoKb: 1630, enviadoEm: '2026-08-28', enviadoPor: 'Beatriz Lemos', processo: '' },
   ],
   c2: [
-    { id: 'd4', nome: 'Peticao_inicial_conciliacao.docx', tipo: 'DOCX', tamanhoKb: 96, enviadoEm: '2026-07-15', enviadoPor: 'Marina Couto', processo: NUMEROS[1] },
-    { id: 'd5', nome: 'Comprovante_de_residencia_junho.pdf', tipo: 'PDF', tamanhoKb: 238, enviadoEm: '2026-07-11', enviadoPor: 'Marina Couto', processo: '' },
+    { id: 'd4', nome: 'Peticao_inicial_conciliacao.docx', tipo: 'DOCX', tamanhoKb: 96, enviadoEm: '2026-07-15', enviadoPor: 'Felipe Gaigher', processo: NUMEROS[1] },
+    { id: 'd5', nome: 'Comprovante_de_residencia_junho.pdf', tipo: 'PDF', tamanhoKb: 238, enviadoEm: '2026-07-11', enviadoPor: 'Felipe Gaigher', processo: '' },
   ],
   c4: [
     { id: 'd6', nome: 'Procuracao_ad_judicia_Nestor_Fontes.pdf', tipo: 'PDF', tamanhoKb: 201, enviadoEm: '2026-10-21', enviadoPor: 'Otávio Prado', processo: NUMEROS[3] },
     { id: 'd7', nome: 'Contrato_de_honorarios_2026.docx', tipo: 'DOCX', tamanhoKb: 74, enviadoEm: '2026-10-21', enviadoPor: 'Otávio Prado', processo: NUMEROS[3] },
     { id: 'd8', nome: 'Peticao_inicial_protocolada.pdf', tipo: 'PDF', tamanhoKb: 2870, enviadoEm: '2026-10-09', enviadoPor: 'Rafael Antunes', processo: NUMEROS[3] },
     { id: 'd9', nome: 'Laudo_pericial_contabil.pdf', tipo: 'PDF', tamanhoKb: 5340, enviadoEm: '2026-09-30', enviadoPor: 'Beatriz Lemos', processo: NUMEROS[3] },
-    { id: 'd10', nome: 'RG_digitalizado.png', tipo: 'Imagem', tamanhoKb: 912, enviadoEm: '2026-09-18', enviadoPor: 'Marina Couto', processo: '' },
-    { id: 'd11', nome: 'Comprovante_de_residencia.pdf', tipo: 'PDF', tamanhoKb: 156, enviadoEm: '2026-09-18', enviadoPor: 'Marina Couto', processo: '' },
+    { id: 'd10', nome: 'RG_digitalizado.png', tipo: 'Imagem', tamanhoKb: 912, enviadoEm: '2026-09-18', enviadoPor: 'Felipe Gaigher', processo: '' },
+    { id: 'd11', nome: 'Comprovante_de_residencia.pdf', tipo: 'PDF', tamanhoKb: 156, enviadoEm: '2026-09-18', enviadoPor: 'Felipe Gaigher', processo: '' },
   ],
   c6: [
     { id: 'd12', nome: 'Procuracao_Estaleiro_Tres_Mares.pdf', tipo: 'PDF', tamanhoKb: 230, enviadoEm: '2026-10-30', enviadoPor: 'Beatriz Lemos', processo: NUMEROS[5] },
@@ -252,9 +252,9 @@ const DOCUMENTOS_DE_CONTATO = {
     { id: 'd15', nome: 'Laudo_de_vistoria_do_casco.pdf', tipo: 'PDF', tamanhoKb: 7210, enviadoEm: '2026-10-12', enviadoPor: 'Rafael Antunes', processo: NUMEROS[5] },
   ],
   c9: [
-    { id: 'd16', nome: 'Peticao_inicial_testemunhas.docx', tipo: 'DOCX', tamanhoKb: 112, enviadoEm: '2026-06-03', enviadoPor: 'Marina Couto', processo: NUMEROS[8] },
-    { id: 'd17', nome: 'RG_digitalizado_Dalva.jpg', tipo: 'Imagem', tamanhoKb: 1205, enviadoEm: '2026-05-27', enviadoPor: 'Marina Couto', processo: '' },
-    { id: 'd18', nome: 'Procuracao_Dalva_Castanho.pdf', tipo: 'PDF', tamanhoKb: 176, enviadoEm: '2026-05-27', enviadoPor: 'Marina Couto', processo: NUMEROS[8] },
+    { id: 'd16', nome: 'Peticao_inicial_testemunhas.docx', tipo: 'DOCX', tamanhoKb: 112, enviadoEm: '2026-06-03', enviadoPor: 'Felipe Gaigher', processo: NUMEROS[8] },
+    { id: 'd17', nome: 'RG_digitalizado_Dalva.jpg', tipo: 'Imagem', tamanhoKb: 1205, enviadoEm: '2026-05-27', enviadoPor: 'Felipe Gaigher', processo: '' },
+    { id: 'd18', nome: 'Procuracao_Dalva_Castanho.pdf', tipo: 'PDF', tamanhoKb: 176, enviadoEm: '2026-05-27', enviadoPor: 'Felipe Gaigher', processo: NUMEROS[8] },
   ],
 };
 
@@ -262,7 +262,7 @@ Object.assign(window.DADOS, { DOCUMENTOS_DE_CONTATO });
 
 // Atendimentos fictícios. Cliente e processo saem pelo índice de NUMEROS; processo vazio é atendimento sem processo.
 const ATENDIMENTOS = [
-  { id: 'at1', assunto: 'Verbas rescisórias não pagas', cliente: CLIENTES[1], processo: NUMEROS[1], responsavel: 'Marina Couto',
+  { id: 'at1', assunto: 'Verbas rescisórias não pagas', cliente: CLIENTES[1], processo: NUMEROS[1], responsavel: 'Felipe Gaigher',
     inicio: '2026-10-27', status: 'andamento', area: 'Trabalhista', honorarios: 4800, horas: 6.5, documentos: 3 },
   { id: 'at2', assunto: 'Revisão de pensão alimentícia', cliente: CLIENTES[9], processo: NUMEROS[9], responsavel: 'Rafael Antunes',
     inicio: '2026-10-30', status: 'aguardando', area: 'Família', honorarios: 3200, horas: 2, documentos: 1 },
@@ -270,7 +270,7 @@ const ATENDIMENTOS = [
     inicio: '2026-09-02', status: 'concluido', area: 'Cível', honorarios: 2500, horas: 4.25, documentos: 2 },
   { id: 'at4', assunto: 'Aposentadoria por tempo de contribuição', cliente: CLIENTES[4], processo: NUMEROS[4], responsavel: 'Rafael Antunes',
     inicio: '2026-10-14', status: 'andamento', area: 'Previdenciário', honorarios: 6000, horas: 9, documentos: 4 },
-  { id: 'at5', assunto: 'Partilha de bens no inventário', cliente: CLIENTES[8], processo: NUMEROS[8], responsavel: 'Marina Couto',
+  { id: 'at5', assunto: 'Partilha de bens no inventário', cliente: CLIENTES[8], processo: NUMEROS[8], responsavel: 'Felipe Gaigher',
     inicio: '2026-06-03', status: 'andamento', area: 'Família', honorarios: 8500, horas: 12.5, documentos: 3 },
   { id: 'at6', assunto: 'Indenização por avaria no casco', cliente: CLIENTES[5], processo: NUMEROS[5], responsavel: 'Beatriz Lemos',
     inicio: '2026-10-12', status: 'aguardando', area: 'Cível', honorarios: 12000, horas: 7.75, documentos: 4 },
@@ -283,10 +283,10 @@ const ATENDIMENTOS = [
 // Linha do tempo de cada atendimento, da mais antiga para a mais recente.
 const ANOTACOES_DE_ATENDIMENTO = {
   at1: [
-    { autor: 'Marina Couto', em: '2026-10-27T09:40', texto: 'Primeira conversa. O cliente saiu da empresa em setembro e não recebeu férias nem a multa do FGTS.' },
-    { autor: 'Marina Couto', em: '2026-10-29T15:10', texto: 'Recebi os holerites dos últimos doze meses. Faltam o termo de rescisão e o extrato do FGTS.' },
+    { autor: 'Felipe Gaigher', em: '2026-10-27T09:40', texto: 'Primeira conversa. O cliente saiu da empresa em setembro e não recebeu férias nem a multa do FGTS.' },
+    { autor: 'Felipe Gaigher', em: '2026-10-29T15:10', texto: 'Recebi os holerites dos últimos doze meses. Faltam o termo de rescisão e o extrato do FGTS.' },
     { autor: 'Beatriz Lemos', em: '2026-11-02T11:25', texto: 'Cálculo preliminar pronto: diferença de R$ 18.420,00 com correção até outubro.' },
-    { autor: 'Marina Couto', em: '2026-11-05T17:05', texto: 'Cliente aprovou o cálculo. Petição em revisão para protocolo nesta semana.' },
+    { autor: 'Felipe Gaigher', em: '2026-11-05T17:05', texto: 'Cliente aprovou o cálculo. Petição em revisão para protocolo nesta semana.' },
   ],
   at2: [
     { autor: 'Rafael Antunes', em: '2026-10-30T10:00', texto: 'O cliente mudou de emprego e a renda caiu pela metade. Quer reduzir o valor da pensão.' },
@@ -307,10 +307,10 @@ const ANOTACOES_DE_ATENDIMENTO = {
     { autor: 'Beatriz Lemos', em: '2026-11-06T10:20', texto: 'Agendada a perícia documental para o dia 19.' },
   ],
   at5: [
-    { autor: 'Marina Couto', em: '2026-06-03T14:00', texto: 'Três herdeiros. Um imóvel no litoral e uma conta poupança.' },
-    { autor: 'Marina Couto', em: '2026-07-18T10:35', texto: 'Avaliação do imóvel recebida. Os herdeiros discordam do valor.' },
+    { autor: 'Felipe Gaigher', em: '2026-06-03T14:00', texto: 'Três herdeiros. Um imóvel no litoral e uma conta poupança.' },
+    { autor: 'Felipe Gaigher', em: '2026-07-18T10:35', texto: 'Avaliação do imóvel recebida. Os herdeiros discordam do valor.' },
     { autor: 'Otávio Prado', em: '2026-09-09T17:20', texto: 'Proposta de partilha com compensação em dinheiro enviada aos três.' },
-    { autor: 'Marina Couto', em: '2026-10-25T09:50', texto: 'Dois herdeiros aceitaram. O terceiro pediu reunião para a primeira quinzena de novembro.' },
+    { autor: 'Felipe Gaigher', em: '2026-10-25T09:50', texto: 'Dois herdeiros aceitaram. O terceiro pediu reunião para a primeira quinzena de novembro.' },
   ],
   at6: [
     { autor: 'Beatriz Lemos', em: '2026-10-12T11:00', texto: 'Avaria no casco depois do reparo feito por terceiro. O estaleiro quer ressarcimento.' },
@@ -324,7 +324,7 @@ const ANOTACOES_DE_ATENDIMENTO = {
   ],
   at8: [
     { autor: 'Otávio Prado', em: '2026-08-19T09:30', texto: 'Jornada de 12 horas sem registro de ponto. Testemunhas disponíveis.' },
-    { autor: 'Marina Couto', em: '2026-08-30T16:45', texto: 'Planilha de horas montada a partir das escalas que o cliente guardou.' },
+    { autor: 'Felipe Gaigher', em: '2026-08-30T16:45', texto: 'Planilha de horas montada a partir das escalas que o cliente guardou.' },
     { autor: 'Otávio Prado', em: '2026-09-22T11:15', texto: 'Audiência de conciliação com acordo de R$ 27.500,00.' },
     { autor: 'Otávio Prado', em: '2026-10-15T14:00', texto: 'Acordo quitado. Atendimento encerrado.' },
   ],

@@ -4,7 +4,7 @@
 (function () {
   const CHAVE_TEMA = 'astrea-tema';
   const CHAVE_MENU = 'astrea-menu';
-  const USUARIO = 'Marina Couto';
+  const USUARIO = 'Felipe Gaigher';
   const GRUPO_ESPECIALISTA = 'Especialista UX/UI';
 
   const ICONES = {

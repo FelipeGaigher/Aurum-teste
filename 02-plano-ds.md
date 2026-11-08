@@ -131,10 +131,10 @@ Atendimentos e Documentos.
 
 | Fase | Período | O que entra | Entrega |
 |---|---|---|---|
-| 1 | Mês 1 | Inventário, discovery com os 4 designers, linha de base | Mapa do que existe e do time |
-| 2 | Meses 2 e 3 | Tokens semânticos sobre o legado | Legado e novo com a mesma pele |
-| 3 | Meses 3 a 6 | Componentes principais, piloto na gestão de atividades | Primeira tela nova em produção |
-| 4 | Meses 6 a 12 | Outros módulos, no ritmo da migração do front | O DS cobre o produto |
+| 1 | Semanas 1 e 2 | Inventário e linha de base das métricas; o protótipo já adiantou o inventário | Mapa do que existe e do time |
+| 2 | Semanas 3 a 6 | Tokens semânticos sobre o Nectar; o legado ganha a pele por token | Legado e novo com a mesma pele |
+| 3 | Meses 2 e 3 | Componentes principais e piloto na gestão de atividades, atrás de feature flag | Primeira tela nova em produção |
+| 4 | Meses 4 a 6 | Demais módulos, no ritmo da migração do front; primeiras funcionalidades com IA nos mesmos componentes | O DS cobre o produto |
 
 **Critério:** frequência de uso × dor relatada × onde a migração do front já acontece.
 
@@ -220,7 +220,7 @@ No protótipo, o padrão já se mantém por ferramenta:
 **Ruptura em tela pequena:** abaixo de 1100px, o painel ao lado some. A Área de trabalho fica sem detalhe.
 
 Apoio: a regra dos 1100px está em `prototipo/astrea.css:1818`. A linha de
-base das três frentes sai no mês 1.
+base das três frentes sai nas semanas 1 e 2.
 
 > nota: `verificar-app.js` mede RF-01, RF-03 a RF-12 e RF-15. O
 > `verificar.py` cobre RF-02, RF-13 e RF-14, os portões estáticos.

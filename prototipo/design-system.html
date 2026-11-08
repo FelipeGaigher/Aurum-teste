@@ -462,7 +462,7 @@
 
   const TIPOS = [['', 'Selecione o tipo'], ['tarefa', 'Tarefa'], ['prazo', 'Prazo'], ['audiencia', 'Audiência'], ['evento', 'Evento']];
   const TIPOS_DA_LISTA = TIPOS.slice(1);
-  const PESSOAS = [['rafael', 'Rafael Antunes'], ['marina', 'Marina Couto'], ['beatriz', 'Beatriz Lemos'], ['otavio', 'Otávio Prado']];
+  const PESSOAS = [['rafael', 'Rafael Antunes'], ['marina', 'Felipe Gaigher'], ['beatriz', 'Beatriz Lemos'], ['otavio', 'Otávio Prado']];
   const NUMERO_FICTICIO = '5004213-75.2025.8.24.0023';
   const TEXTO_DE_LEITURA = 'Protocolar contestação até o fim do prazo.';
   const SEM_ESPERA = 'o valor é local e não há espera.';
@@ -1006,7 +1006,7 @@
       id: 'avatar', titulo: 'Avatar', nota: 'Iniciais sobre fundo neutro, sem foto. Sozinho, o nome vira o rótulo e a dica.',
       estados: [['default', avatar({ nome: 'Rafael Antunes', mostrarNome: true })]],
       ausentes: { hover: SO_INFORMA, active: SO_INFORMA, foco: SO_INFORMA, disabled: SO_INFORMA, erro: SEM_VALOR, carregando: SEM_ESPERA_DE_DADO, vazio: 'atividade sem responsável não mostra avatar.' },
-      variacoes: [['Só iniciais', avatar({ nome: 'Marina Couto' })]],
+      variacoes: [['Só iniciais', avatar({ nome: 'Felipe Gaigher' })]],
     });
   }
 
@@ -1145,7 +1145,7 @@
     chip: 'Cível',
     destaque: { rotulo: 'Processo', valor: NUMERO_FICTICIO, copiar: NUMERO_FICTICIO },
     linhas: [
-      { rotulo: 'Responsável', valor: 'Marina Couto', pessoa: true },
+      { rotulo: 'Responsável', valor: 'Felipe Gaigher', pessoa: true },
       { rotulo: 'Data', valor: '12/11/2026' },
       { rotulo: 'Tamanho', valor: '240 KB' },
       { rotulo: 'Origem', valor: 'Protocolo digital' },
@@ -1600,7 +1600,7 @@
   const semAcao = () => {};
   const ITENS_DO_DETALHE = [
     {
-      titulo: 'Marina Couto', avatar: 'Marina Couto', chips: ['Cliente', 'Pessoa física'],
+      titulo: 'Felipe Gaigher', avatar: 'Felipe Gaigher', chips: ['Cliente', 'Pessoa física'],
       destaque: { rotulo: 'Processos ativos', valor: '3' },
       linhas: [
         { icone: 'telefone', rotulo: 'Telefone', valor: '(48) 3333-0102' },
