@@ -54,6 +54,21 @@ com data. O que foi entregue fica no commit, não aqui.
   consumidores. Slide 3, a estrutura do time. Slide 5, do discovery ao
   componente.
 
+### Leitura do produto pelo Claude in Chrome
+
+- Com o trial aberto no Chrome de Felipe, o snippet de console rodou no
+  produto logado. Achado: 646 variáveis CSS, 609 com prefixo
+  `--nectar-legacy-`. A Aurum tem um DS legado em código, o Nectar.
+- Fonte real: `museo-sans`, peso 300 no corpo. Primário `#228BE6`. Raio 8.
+- A hipótese do Mantine caiu. Os valores coincidem, a origem não.
+- Decisão de Felipe no mesmo dia: o protótipo segue o visual atual do
+  Astrea. Logo, navbar e sidebar iguais, sem tema escuro, raio 8. A
+  direção visual própria do protótipo foi descartada.
+- Decisão de Felipe: cadastro, onboarding e Contatos saem da Q1. A Q1 fica
+  só na gestão de atividades. O resto vive no backlog para a Parte B.
+- Um subagente varre o produto inteiro pelo Chrome, só leitura, e grava
+  `01-inventario-css-astrea.md` e `referencias/nectar-tokens.json`.
+
 ### Pesquisa do produto
 
 - Enquanto o trial não abria, um subagente pesquisou o Astrea em fontes

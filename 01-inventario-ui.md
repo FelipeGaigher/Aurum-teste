@@ -34,9 +34,31 @@ bibliotecas diferentes. É a evidência concreta de "times diferentes
 construindo partes diferentes".
 
 [I] O azul do botão e o cinza do divisor batem com os valores padrão do
-Mantine. Hipótese: o front novo usa Mantine sem tema próprio. Confirmar
-com o snippet de coleta abaixo. Se confirmar, os tokens semânticos entram
-pelo tema do Mantine, e o custo da fase 2 do plano cai.
+Mantine. Hipótese inicial: o front novo usa Mantine sem tema próprio.
+
+Fato, lido no CSS do produto logado em 07/11, pelo Claude in Chrome:
+
+- O Astrea declara 646 variáveis CSS. 609 têm o prefixo `--nectar-legacy-`.
+  Existe um design system legado em código, chamado Nectar. O briefing
+  diz "não existe DS estruturado"; existe um, legado e sem Figma.
+- As 36 variáveis fora do Nectar são a paleta de hoje. `--primary`
+  `#228BE6`, `--primary900` `#1D6BB7`, `--primary100` `#DAF3FF`. Cinzas de
+  `--gray100` a `--gray900`. `--danger`, `--success` e `--warning`, cada
+  uma com degraus 100 e 900.
+- A fonte é `museo-sans`, declarada em `--primary-font`. O corpo usa peso
+  300 em 14px. Escala de texto: 10, 12, 14, 16. Títulos: 20, 24, 32, 48.
+- Raio dominante: 8px em 28 elementos; 4px em 4.
+- Os cinco ícones do cabeçalho têm nome no código: Adicionar, Resultados
+  de buscas, Cronômetro timesheet, Administração, e o de IA.
+- Botão primário "Adicionar tarefa": `#228BE6` com texto branco, caixa
+  alta, 12px, peso 800, raio 8. Botão "Contratar": `#02883C`.
+
+[I] O `#228BE6` é o `--primary` deles, não um default de biblioteca. A
+coincidência com o Mantine é do valor, não da origem. A hipótese do
+Mantine cai. A conclusão para a Q2 fica mais forte. Os primitivos do DS
+novo nascem do Nectar. A fase 2 começa renomeando, não inventando.
+
+Os 609 tokens do Nectar ficam em `referencias/nectar-tokens.json`.
 
 ## Componentes vistos, por tela
 

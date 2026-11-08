@@ -74,6 +74,12 @@ chegar nelas.
 > bibliotecas parciais de hoje são absorvidas ou arquivadas. Nenhum squad
 > publica componente próprio.
 
+> nota: em 07/11 o CSS do produto logado mostrou 609 variáveis com prefixo
+> `--nectar-legacy-`. Existe um DS legado em código, o Nectar, sem par no
+> Figma. Os primitivos do `Astrea DS` nascem dele, renomeados para o padrão
+> `categoria.papel.variante`. A fase 2 do slide 4 começa por esse mapa, não
+> do zero. A hipótese do Mantine, do inventário, caiu.
+
 Três coleções de variáveis:
 
 | Coleção | Conteúdo | Modos |
