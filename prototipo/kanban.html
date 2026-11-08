@@ -1470,8 +1470,8 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
     </ul>
 
     <div class="usuario-area">
-      <button type="button" class="usuario" id="abrir-usuario" aria-label="Marina Couto, menu do usuário" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-usuario">
-        <span class="usuario-nome">Marina Couto</span>
+      <button type="button" class="usuario" id="abrir-usuario" aria-label="Felipe Gaigher, menu do usuário" aria-haspopup="menu" aria-expanded="false" aria-controls="menu-usuario">
+        <span class="usuario-nome">Felipe Gaigher</span>
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg>
       </button>
       <div class="menu-suspenso" id="menu-usuario" role="menu" aria-label="Menu do usuário" hidden>
@@ -1761,22 +1761,22 @@ const COLUNAS_PLANO = [
 
 const TIPOS = { tarefa: 'Tarefa', evento: 'Evento', prazo: 'Prazo', audiencia: 'Audiência' };
 
-const RESPONSAVEIS = ['Beatriz Lemos', 'Marina Couto', 'Otávio Prado', 'Rafael Antunes'];
+const RESPONSAVEIS = ['Beatriz Lemos', 'Felipe Gaigher', 'Otávio Prado', 'Rafael Antunes'];
 
 const FASES = [
-  { id: 'f1', nome: 'Fase 1. Tokens semânticos', periodo: 'Meses 1 a 3, sprints 1 a 6', sprints: [1, 6] },
-  { id: 'f2', nome: 'Fase 2. Moldura', periodo: 'Meses 3 a 5, sprints 7 a 10', sprints: [7, 10] },
-  { id: 'f3', nome: 'Fase 3. Configuração e Administração', periodo: 'Meses 5 a 8, sprints 11 a 16', sprints: [11, 16] },
-  { id: 'f4', nome: 'Fase 4. Fluxos principais', periodo: 'Meses 8 a 12, sprints 17 a 24', sprints: [17, 24] },
+  { id: 'f1', nome: 'Fase 1. Tokens semânticos', periodo: 'Semanas 1 a 6, sprints 1 a 3', sprints: [1, 3] },
+  { id: 'f2', nome: 'Fase 2. Moldura', periodo: 'Meses 2 e 3, sprints 4 a 6', sprints: [4, 6] },
+  { id: 'f3', nome: 'Fase 3. Configuração e Administração', periodo: 'Meses 3 e 4, sprints 7 a 9', sprints: [7, 9] },
+  { id: 'f4', nome: 'Fase 4. Fluxos principais', periodo: 'Meses 4 a 6, sprints 10 a 12', sprints: [10, 12] },
 ];
-// A lista de sprints nasce das fases: 24 sprints quinzenais em 12 meses. A demonstração está na sprint 2.
+// A lista de sprints nasce das fases: 12 sprints quinzenais em 6 meses. A demonstração está na sprint 2.
 const SPRINT_ATUAL = 2;
 const SPRINTS = FASES.flatMap((fase) => {
   const lista = [];
   for (let numero = fase.sprints[0]; numero <= fase.sprints[1]; numero += 1) lista.push({ numero, fase: fase.id });
   return lista;
 });
-// "1 e 2", "3 a 5", "12, 18 e 24" viram listas de números. Texto fora do contrato é erro.
+// "1 e 2", "3 a 5", "6, 9 e 12" viram listas de números. Texto fora do contrato é erro.
 function sprintsDe(texto) {
   const numeros = [];
   for (const parte of texto.split(/,| e /)) {
@@ -1810,27 +1810,27 @@ const CARDS = [
     entregavel: 'Tabela de cores por tela, lista de componentes com variações e os sistemas de nomes em uso.',
     deveres: ['Engenharia: roda o levantamento de variáveis CSS, fontes e classes no produto logado.', 'Direção do DS: consolida e publica o inventário.'],
     pronto: 'Cada variável CSS do produto tem tela de uso e sistema de nome anotados.' },
-  { id: 'c21', fase: 'f1', sprint: '2', titulo: 'Inventário do Nectar', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia', 'Designer forte em Figma'], status: 'feito',
+  { id: 'c21', fase: 'f1', sprint: '1', titulo: 'Inventário do Nectar', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia', 'Designer forte em Figma'], status: 'feito',
     objetivo: 'O Nectar já tem pilha nova de primitivos, semânticos e componentes. Saber o que ela cobre evita criar token que já existe.',
     entregavel: 'Mapa entre as variáveis do produto e os tokens do Nectar: o que tem par, o que falta e o que conflita.',
     deveres: ['Direção do DS: compara a pilha do Nectar com o inventário de CSS.', 'Engenharia: aponta onde cada token do Nectar já está no código.', 'Designer forte em Figma: confere a biblioteca do Nectar no Figma contra o código.'],
     pronto: 'Toda cor do inventário tem par no Nectar ou está marcada como lacuna.' },
-  { id: 'c03', fase: 'f1', sprint: '2', titulo: 'Linha de base das métricas', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia', 'Suporte'], status: 'feito',
+  { id: 'c03', fase: 'f1', sprint: '1', titulo: 'Linha de base das métricas', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia', 'Suporte'], status: 'feito',
     objetivo: 'Medir antes de mudar. Sem linha de base, a métrica só mostra o número de hoje, e a moldura fica sem gatilho de reversão.',
     entregavel: 'Número de hoje para adoção, eficiência e experiência: cores por token, tempo do design ao dev, chamados por módulo.',
     deveres: ['Engenharia: lint de cores e contagem de componentes no CI.', 'Suporte: chamados dos últimos seis meses por módulo.', 'Direção do DS: tempo de handoff com os squads.'],
     pronto: 'Cada métrica do slide 6 da Questão 2 tem um valor datado.' },
-  { id: 'c05', fase: 'f1', sprint: '2 a 4', titulo: 'Tokens semânticos em JSON sobre o Nectar', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia'], status: 'fazendo',
+  { id: 'c05', fase: 'f1', sprint: '1 e 2', titulo: 'Tokens semânticos em JSON sobre o Nectar', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia'], status: 'fazendo',
     objetivo: 'Um azul de ação, uma escala de cinza, um token de foco, espaço e raio. Nome de papel, não de valor, sobre os primitivos do Nectar.',
     entregavel: 'Repositório do DS com os semânticos em JSON, modos claro e escuro, e o Style Dictionary gerando CSS e TS.',
     deveres: ['Direção do DS: define nomes e valores e mede o contraste de cada par.', 'Engenharia: cria o repositório, o pacote e o CI.'],
     pronto: 'O pacote gera CSS e TS, e todo par de texto passa no AA nos dois temas.' },
-  { id: 'c07', fase: 'f1', sprint: '4 e 5', titulo: 'Variáveis no Figma geradas do JSON', dono: 'Designer forte em Figma', equipes: ['Designer forte em Figma', 'Engenharia'], status: 'a-fazer',
+  { id: 'c07', fase: 'f1', sprint: '2 e 3', titulo: 'Variáveis no Figma geradas do JSON', dono: 'Designer forte em Figma', equipes: ['Designer forte em Figma', 'Engenharia'], status: 'a-fazer',
     objetivo: 'O Figma lê a fonte, não é a fonte. Três coleções: Primitives, Semantic com modos, Component.',
     entregavel: 'Biblioteca Astrea DS publicada com as três coleções, escopo em cada variável, bibliotecas parciais arquivadas.',
     deveres: ['Designer forte em Figma: estrutura as coleções e publica.', 'Engenharia: script que gera as variáveis pela API do Figma.'],
     pronto: 'Alterar um valor no JSON atualiza a variável no Figma sem edição manual.' },
-  { id: 'c08', fase: 'f1', sprint: '5 e 6', titulo: 'Legado recebe os tokens por variável CSS', dono: 'Engenharia', equipes: ['Engenharia', 'Direção do DS'], status: 'a-fazer',
+  { id: 'c08', fase: 'f1', sprint: '3', titulo: 'Legado recebe os tokens por variável CSS', dono: 'Engenharia', equipes: ['Engenharia', 'Direção do DS'], status: 'a-fazer',
     objetivo: 'Tela antiga e nova com a mesma pele antes de qualquer componente ser reescrito.',
     entregavel: 'Cor, tipografia, espaçamento e foco do legado lendo as variáveis. Nenhum componente alterado.',
     deveres: ['Engenharia: mapeia os hex do legado para tokens e troca por variável.', 'Direção do DS: aprova o resultado tela a tela, atrás de flag.'],
@@ -1840,121 +1840,121 @@ const CARDS = [
     entregavel: 'Mapa de perfil por designer: tempo de Aurum, rotina, ferramentas, foco atual e direção.',
     deveres: ['Direção do DS: uma conversa de 1 hora com cada designer, nas duas primeiras semanas.', 'Cada designer: traz o roadmap do squad e uma tela que o frustra.'],
     pronto: 'Os quatro mapas estão escritos e cada designer revisou o próprio.' },
-  { id: 'c22', fase: 'f1', sprint: '2', titulo: 'Contribuição a partir do roadmap do squad', dono: 'Direção do DS', equipes: ['Direção do DS', 'Líderes dos squads'], status: 'fazendo',
+  { id: 'c22', fase: 'f1', sprint: '1', titulo: 'Contribuição a partir do roadmap do squad', dono: 'Direção do DS', equipes: ['Direção do DS', 'Líderes dos squads'], status: 'fazendo',
     objetivo: 'A contribuição sai do roadmap: o designer entrega a tela, e o componente entra no DS nesse caminho. Sem tarefa extra.',
     entregavel: 'Telas de cada roadmap que tocam o DS nos próximos três meses e o tempo combinado por squad.',
     deveres: ['Direção do DS: cruza os mapas de perfil com os roadmaps.', 'Líderes dos squads: combinam o tempo de cada designer com a Direção do DS.'],
     pronto: 'Cada squad tem a primeira tela que leva componente ao DS, com o tempo acordado.' },
 
-  { id: 'c09', fase: 'f2', sprint: '7 e 8', titulo: 'Sidebar, navbar, busca e ações', dono: 'Designer forte em Figma', equipes: ['Designer forte em Figma', 'Engenharia', 'Marketing'], status: 'a-fazer',
+  { id: 'c09', fase: 'f2', sprint: '4', titulo: 'Sidebar, navbar, busca e ações', dono: 'Designer forte em Figma', equipes: ['Designer forte em Figma', 'Engenharia', 'Marketing'], status: 'a-fazer',
     objetivo: 'A moldura é a âncora. Depois de padronizada, não muda mais. Sem faixa de campanha nem selo comercial dentro do produto.',
     entregavel: 'Sidebar, navbar, busca e botões de ação no pacote e na biblioteca, com as mesmas propriedades no AngularJS e no front novo.',
     deveres: ['Designer forte em Figma: desenha e documenta a moldura.', 'Engenharia: implementa uma versão para cada tecnologia.', 'Marketing: campanha sai da moldura, combinada com a Direção do DS.'],
     pronto: 'As duas versões têm as mesmas propriedades e passam no revisor.' },
-  { id: 'c23', fase: 'f2', sprint: '9 e 10', titulo: 'Liberação gradual da moldura', dono: 'Engenharia', equipes: ['Engenharia', 'Suporte', 'Direção do DS'], status: 'a-fazer',
+  { id: 'c23', fase: 'f2', sprint: '5', titulo: 'Liberação gradual da moldura', dono: 'Engenharia', equipes: ['Engenharia', 'Suporte', 'Direção do DS'], status: 'a-fazer',
     objetivo: 'A moldura atinge todos de uma vez. Liberar por escritório limita o impacto e permite voltar.',
     entregavel: 'Feature flag por escritório, com opção de voltar, e o limite de chamados que dispara a reversão.',
     deveres: ['Engenharia: liga a flag por escritório e a reversão.', 'Suporte: acompanha os chamados por semana contra a linha de base.', 'Direção do DS: escreve o aviso dentro do produto e o changelog.'],
     pronto: 'Todos os escritórios usam a moldura nova, e nenhum passou do limite de chamados.' },
-  { id: 'c10', fase: 'f2', sprint: '7 e 8', titulo: 'Botões e formulário', dono: 'Designer perto do código', equipes: ['Designer perto do código', 'Direção do DS', 'Engenharia'], status: 'a-fazer',
+  { id: 'c10', fase: 'f2', sprint: '4', titulo: 'Botões e formulário', dono: 'Designer perto do código', equipes: ['Designer perto do código', 'Direção do DS', 'Engenharia'], status: 'a-fazer',
     objetivo: 'Um botão com caixa, raio e peso únicos. Rótulo, foco e seletor em um padrão só.',
     entregavel: 'Botão, campo, seletor, caixa e rádio com padrão, hover, active, foco, disabled, erro e carregando, ligados por Code Connect.',
     deveres: ['Designer perto do código: desenha e escreve o Code Connect.', 'Direção do DS: revisa propriedades e corta combinação sem uso.', 'Engenharia: implementa no pacote e publica no Storybook.'],
     pronto: 'Nenhum seletor nativo resta no recorte e o foco tem um estilo só.' },
-  { id: 'c25', fase: 'f2', sprint: '9 e 10', titulo: 'Feedback e navegação', dono: 'Designer perto do código', equipes: ['Designer perto do código', 'Direção do DS', 'Engenharia'], status: 'a-fazer',
+  { id: 'c25', fase: 'f2', sprint: '5', titulo: 'Feedback e navegação', dono: 'Designer perto do código', equipes: ['Designer perto do código', 'Direção do DS', 'Engenharia'], status: 'a-fazer',
     objetivo: 'Aviso, toast, estado vazio, carregando, abas e paginação no mesmo padrão.',
     entregavel: 'Componentes de feedback e navegação no Figma e no pacote, com Code Connect e Storybook.',
     deveres: ['Designer perto do código: desenha e documenta a regra de uso.', 'Direção do DS: revisa contra o contrato das telas.', 'Engenharia: implementa e publica no Storybook.'],
     pronto: 'Os componentes passam no revisor e aparecem no Storybook com todos os estados.' },
 
-  { id: 'c26', fase: 'f3', sprint: '11', titulo: 'Modal e ação de confirmação', dono: 'Designer perto do usuário', equipes: ['Designer perto do usuário', 'Engenharia'], status: 'a-fazer',
+  { id: 'c26', fase: 'f3', sprint: '6', titulo: 'Modal e ação de confirmação', dono: 'Designer perto do usuário', equipes: ['Designer perto do usuário', 'Engenharia'], status: 'a-fazer',
     objetivo: 'A Administração limpa conta sem confirmação visível. A fase começa pelo componente que fecha esse risco.',
     entregavel: 'Modal, confirmação de ação destrutiva e barra de Salvar no pacote e na biblioteca.',
     deveres: ['Designer perto do usuário: desenha e testa o texto de cada confirmação.', 'Engenharia: implementa e aplica na limpeza de conta.'],
     pronto: 'Limpar a conta pede confirmação, e todo rádio de segurança tem Salvar.' },
-  { id: 'c27', fase: 'f3', sprint: '12 a 14', titulo: 'Administração no padrão novo', dono: 'Designer perto do usuário', equipes: ['Designer perto do usuário', 'Engenharia', 'Suporte'], status: 'a-fazer',
+  { id: 'c27', fase: 'f3', sprint: '6 e 7', titulo: 'Administração no padrão novo', dono: 'Designer perto do usuário', equipes: ['Designer perto do usuário', 'Engenharia', 'Suporte'], status: 'a-fazer',
     objetivo: 'Cards, tabelas e ações da Administração com os componentes do DS. O administrador do escritório é cliente.',
     entregavel: 'Telas da Administração com cards, tabelas, ações e modais do DS, atrás de flag.',
     deveres: ['Designer perto do usuário: desenha com o que existe no DS e pede o que falta pela triagem.', 'Engenharia: migra as telas atrás da flag.', 'Suporte: registra os chamados da Administração por semana.'],
     pronto: 'As telas passam no revisor e ficam quatro semanas em beta sem aumento de chamados.' },
-  { id: 'c28', fase: 'f3', sprint: '14 a 16', titulo: 'Suporte e configurações', dono: 'Designer perto do usuário', equipes: ['Designer perto do usuário', 'Engenharia'], status: 'a-fazer',
+  { id: 'c28', fase: 'f3', sprint: '7 e 8', titulo: 'Suporte e configurações', dono: 'Designer perto do usuário', equipes: ['Designer perto do usuário', 'Engenharia'], status: 'a-fazer',
     objetivo: 'Documentos, anexos, assinatura, aprovações e pagamentos no mesmo padrão da Administração.',
     entregavel: 'Suporte e as telas de configuração com os componentes do DS, atrás de flag.',
     deveres: ['Designer perto do usuário: confirma onde ficam assinatura, aprovações e pagamentos e desenha.', 'Engenharia: migra as telas atrás da flag.'],
     pronto: 'Cada tela de configuração passa no revisor e fica quatro semanas em beta.' },
 
-  { id: 'c30', fase: 'f4', sprint: '17 e 18', titulo: 'Área de trabalho e Kanban', dono: 'Designer do squad Atividades', equipes: ['Designer do squad Atividades', 'Engenharia', 'Suporte'], status: 'a-fazer',
+  { id: 'c30', fase: 'f4', sprint: '9', titulo: 'Área de trabalho e Kanban', dono: 'Designer do squad Atividades', equipes: ['Designer do squad Atividades', 'Engenharia', 'Suporte'], status: 'a-fazer',
     objetivo: 'Prazo dominante no card, arrastar e teclado. Os componentes chegam testados com dados densos de prazo.',
     entregavel: 'Área de trabalho e Kanban com os componentes do DS, atrás de flag para um grupo beta.',
     deveres: ['Designer do squad Atividades: desenha a partir do roadmap do squad.', 'Engenharia: implementa e liga a flag por escritório.', 'Suporte: escolhe os escritórios do beta e registra os chamados por semana.'],
     pronto: 'Vinte escritórios usam as duas telas por quatro semanas sem aumento de chamados.' },
-  { id: 'c20', fase: 'f4', sprint: '18 e 19', titulo: 'Criar atividade sem interromper: o formulário de prazo', dono: 'Designer do squad Atividades', equipes: ['Designer do squad Atividades', 'Designer perto do usuário', 'Engenharia'], status: 'a-fazer',
+  { id: 'c20', fase: 'f4', sprint: '9 e 10', titulo: 'Criar atividade sem interromper: o formulário de prazo', dono: 'Designer do squad Atividades', equipes: ['Designer do squad Atividades', 'Designer perto do usuário', 'Engenharia'], status: 'a-fazer',
     objetivo: 'A ação mais repetida do dia sem atrito. Menos campos obrigatórios, prazo fatal com campo próprio, data passada com motivo e saída. É o P3 da Questão 1.',
     entregavel: 'Padrão "formulário de prazo" no DS e o painel de criar atividade no padrão novo, atrás da flag da Área de trabalho.',
     deveres: ['Designer do squad Atividades: desenha o painel a partir do funil do modal atual.', 'Designer perto do usuário: testa com cinco usuários do beta.', 'Engenharia: implementa atrás da mesma flag da Área de trabalho.'],
     pronto: 'O tempo até salvar cai contra a linha de base e nenhuma atividade nasce sem prazo fatal.' },
-  { id: 'c17', fase: 'f4', sprint: '19 e 20', titulo: 'Agenda compacta por token de densidade', dono: 'Designer do squad Atividades', equipes: ['Designer do squad Atividades', 'Engenharia'], status: 'a-fazer',
+  { id: 'c17', fase: 'f4', sprint: '10', titulo: 'Agenda compacta por token de densidade', dono: 'Designer do squad Atividades', equipes: ['Designer do squad Atividades', 'Engenharia'], status: 'a-fazer',
     objetivo: 'O mês inteiro numa tela, com o prazo visível primeiro. Modo compacto por padrão, respirado por escolha.',
     entregavel: 'Coleção de densidade na biblioteca e na Agenda, com o modo salvo por usuário.',
     deveres: ['Designer do squad Atividades: define os dois modos e mede quantas semanas cabem.', 'Engenharia: aplica a coleção e salva a preferência.'],
     pronto: 'Quatro semanas visíveis em 1920 por 1080 no modo compacto.' },
-  { id: 'c14', fase: 'f4', sprint: '19 a 21', titulo: 'Processos e Alertas no padrão novo', dono: 'Designer do squad Processos', equipes: ['Designer do squad Processos', 'Engenharia'], status: 'a-fazer',
+  { id: 'c14', fase: 'f4', sprint: '10 e 11', titulo: 'Processos e Alertas no padrão novo', dono: 'Designer do squad Processos', equipes: ['Designer do squad Processos', 'Engenharia'], status: 'a-fazer',
     objetivo: 'Os módulos seguintes no ritmo da migração do front. Pegam carona na reescrita.',
     entregavel: 'Lista e detalhe de processo e a central de alertas com os componentes do DS, atrás de flag.',
     deveres: ['Designer do squad Processos: desenha com o que já existe no DS e pede o que falta pela triagem.', 'Engenharia: migra junto com a troca de tecnologia.'],
     pronto: 'As telas passam no revisor e ficam quatro semanas em beta.' },
-  { id: 'c15', fase: 'f4', sprint: '21 a 23', titulo: 'Contatos: grade de largura, barra de ações, tabela e cards', dono: 'Designer do squad Clientes', equipes: ['Designer do squad Clientes', 'Engenharia'], status: 'a-fazer',
+  { id: 'c15', fase: 'f4', sprint: '11 e 12', titulo: 'Contatos: grade de largura, barra de ações, tabela e cards', dono: 'Designer do squad Clientes', equipes: ['Designer do squad Clientes', 'Engenharia'], status: 'a-fazer',
     objetivo: 'Formulário com grade de largura por token, ação primária numa barra fixa e a lista com dois modos de ver.',
     entregavel: 'Três padrões novos no DS: grade de formulário, barra de ações e alternância tabela e cards.',
     deveres: ['Designer do squad Clientes: desenha e testa com cinco usuários.', 'Engenharia: implementa os três padrões como componentes do pacote.'],
     pronto: 'Os três padrões entram no DS pela regra de dois squads.' },
-  { id: 'c16', fase: 'f4', sprint: '21 a 24', titulo: 'Padrões para funcionalidade com IA', dono: 'Direção do DS', equipes: ['Direção do DS', 'Designer do squad Atividades', 'Engenharia'], status: 'a-fazer',
+  { id: 'c16', fase: 'f4', sprint: '11 e 12', titulo: 'Padrões para funcionalidade com IA', dono: 'Direção do DS', equipes: ['Direção do DS', 'Designer do squad Atividades', 'Engenharia'], status: 'a-fazer',
     objetivo: 'Como o sistema sugere, como o usuário confirma, como desfaz, e como aparece quando a IA erra. Mesmos componentes, mesma moldura.',
     entregavel: 'Padrão de sugestão no chip, padrão de confirmação e desfazer, padrão de erro de IA, documentados e aplicados na primeira funcionalidade.',
     deveres: ['Direção do DS: escreve os padrões e o critério de aceite.', 'Designer do squad Atividades: aplica na sugestão de prazo por publicação.', 'Engenharia: implementa o desfazer com histórico.'],
     pronto: 'A primeira funcionalidade com IA passa no revisor sem cor nem ícone à parte.' },
-  { id: 'c18', fase: 'f4', sprint: '18 e 24', titulo: 'Métricas trimestrais e changelog', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia', 'Suporte'], status: 'a-fazer',
-    objetivo: 'Provar ou derrubar a tese de que o DS devolve mais tempo do que toma. Um relatório por trimestre na fase 4, contra a linha de base medida antes da fase 2.',
-    entregavel: 'Relatório trimestral com adoção, eficiência e experiência contra a linha de base, e changelog por versão do pacote.',
-    deveres: ['Direção do DS: escreve o relatório e apresenta aos líderes.', 'Engenharia: mantém o changelog por versão.', 'Suporte: envia os chamados por módulo a cada trimestre.'],
-    pronto: 'Quatro relatórios publicados, com a comparação contra o mês 1.' },
+  { id: 'c18', fase: 'f4', sprint: '9 e 12', titulo: 'Métricas da fase 4 e changelog', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia', 'Suporte'], status: 'a-fazer',
+    objetivo: 'Provar ou derrubar a tese de que o DS devolve mais tempo do que toma. Um relatório na sprint 9 e outro na 12, contra a linha de base medida antes da fase 2.',
+    entregavel: 'Relatório com adoção, eficiência e experiência contra a linha de base, e changelog por versão do pacote.',
+    deveres: ['Direção do DS: escreve o relatório e apresenta aos líderes.', 'Engenharia: mantém o changelog por versão.', 'Suporte: envia os chamados por módulo a cada relatório.'],
+    pronto: 'Dois relatórios publicados, com a comparação contra a sprint 1.' },
 ];
 
 // Histórias, como no Jira: cada card do quadro é uma história, e as entregas acima são as subtarefas dela.
-// A coluna de cada história é a situação dela no fluxo, não a das subtarefas. Na sprint 2, três estão abertas na fase 1.
+// A coluna de cada história é a situação dela no fluxo, não a das subtarefas. Na sprint 2, a de tokens está aberta na fase 1.
 const HISTORIAS = [
-  { id: 'h1', fase: 'f1', sprint: '1 e 2', status: 'validacao', titulo: 'Inventário de CSS e do Nectar', dono: 'Direção do DS', subtarefas: ['c01', 'c21', 'c03'],
+  { id: 'h1', fase: 'f1', sprint: '1', status: 'validacao', titulo: 'Inventário de CSS e do Nectar', dono: 'Direção do DS', subtarefas: ['c01', 'c21', 'c03'],
     objetivo: 'Saber o que existe, o que o Nectar já cobre e quanto custa hoje, antes do primeiro token.',
     entregavel: 'Inventário de CSS por tela, mapa contra o Nectar e o número de hoje de cada métrica.',
     pronto: 'Toda cor tem par no Nectar ou está marcada como lacuna, e cada métrica tem valor datado.' },
-  { id: 'h2', fase: 'f1', sprint: '2 a 6', status: 'desenvolvimento', titulo: 'Tokens semânticos sobre o Nectar', dono: 'Direção do DS', subtarefas: ['c05', 'c07', 'c08'],
+  { id: 'h2', fase: 'f1', sprint: '1 a 3', status: 'desenvolvimento', titulo: 'Tokens semânticos sobre o Nectar', dono: 'Direção do DS', subtarefas: ['c05', 'c07', 'c08'],
     objetivo: 'Trocar o valor, não a tela. O legado consome os semânticos sem reescrita.',
     entregavel: 'Tokens semânticos em JSON gerando CSS, TS e as variáveis do Figma, com o legado lendo o mesmo pacote.',
     pronto: 'Mudar um valor no JSON muda o legado, o front novo e o Figma sem edição manual.' },
-  { id: 'h3', fase: 'f1', sprint: '1 e 2', status: 'pesquisa', titulo: 'Discovery com os quatro designers', dono: 'Direção do DS', subtarefas: ['c02', 'c22'],
+  { id: 'h3', fase: 'f1', sprint: '1', status: 'pesquisa', titulo: 'Discovery com os quatro designers', dono: 'Direção do DS', subtarefas: ['c02', 'c22'],
     objetivo: 'Dividir o trabalho a partir de quem cada designer é e do que o squad já pede, sem tirar foco do roadmap.',
     entregavel: 'Mapa de perfil por designer e a contribuição combinada com cada líder de squad.',
     pronto: 'Cada designer concorda com a própria contribuição e cada líder combinou o tempo com a Direção do DS.' },
-  { id: 'h4', fase: 'f2', sprint: '7 a 10', status: 'backlog', titulo: 'Moldura compartilhada', dono: 'Designer forte em Figma', subtarefas: ['c09', 'c23'],
+  { id: 'h4', fase: 'f2', sprint: '4 e 5', status: 'backlog', titulo: 'Moldura compartilhada', dono: 'Designer forte em Figma', subtarefas: ['c09', 'c23'],
     objetivo: 'A moldura muda uma vez e depois fica fixa. Sidebar, navbar, busca e ações iguais em toda tela.',
     entregavel: 'Moldura no pacote e na biblioteca, nas duas tecnologias, liberada por escritório.',
     pronto: 'Toda tela mostra a mesma moldura, legado incluído, sem aumento de chamados.' },
-  { id: 'h5', fase: 'f2', sprint: '7 a 10', status: 'backlog', titulo: 'Design system de base', dono: 'Designer perto do código', subtarefas: ['c10', 'c25'],
+  { id: 'h5', fase: 'f2', sprint: '4 e 5', status: 'backlog', titulo: 'Design system de base', dono: 'Designer perto do código', subtarefas: ['c10', 'c25'],
     objetivo: 'As peças que toda tela usa, com propriedades e estados, antes da primeira tela de módulo.',
     entregavel: 'Botões, formulário, feedback e navegação no Figma e no pacote, ligados por Code Connect.',
     pronto: 'Cada componente tem todos os estados no Storybook, e o Figma mostra o código certo.' },
-  { id: 'h6', fase: 'f3', sprint: '11 a 16', status: 'backlog', titulo: 'Administração, Suporte e configurações', dono: 'Designer perto do usuário', subtarefas: ['c26', 'c27', 'c28'],
+  { id: 'h6', fase: 'f3', sprint: '6 a 8', status: 'backlog', titulo: 'Administração, Suporte e configurações', dono: 'Designer perto do usuário', subtarefas: ['c26', 'c27', 'c28'],
     objetivo: 'Os componentes entram em produção onde o uso é menos frequente. Menor frequência não é menor risco.',
     entregavel: 'Modal e confirmação, Administração, Suporte e configurações no padrão novo, atrás de flag.',
     pronto: 'Nenhuma ação destrutiva sai sem confirmação, e cada tela da fase passa no revisor.' },
-  { id: 'h7', fase: 'f4', sprint: '17 a 20', status: 'backlog', titulo: 'Área de trabalho e Agenda com o prazo primeiro', dono: 'Designer do squad Atividades', subtarefas: ['c30', 'c20', 'c17'],
+  { id: 'h7', fase: 'f4', sprint: '9 e 10', status: 'backlog', titulo: 'Área de trabalho e Agenda com o prazo primeiro', dono: 'Designer do squad Atividades', subtarefas: ['c30', 'c20', 'c17'],
     objetivo: 'Os fluxos mais usados chegam por último, com os componentes já testados. O prazo domina a tela.',
     entregavel: 'Área de trabalho, Kanban, Agenda e o formulário de prazo no padrão novo, atrás de flag.',
     pronto: 'O tempo para criar um prazo cai contra a linha de base, sem aumento de chamados.' },
-  { id: 'h8', fase: 'f4', sprint: '19 a 24', status: 'backlog', titulo: 'Processos, Contatos, Alertas e IA', dono: 'Designer do squad Processos', subtarefas: ['c14', 'c15', 'c16', 'c18'],
+  { id: 'h8', fase: 'f4', sprint: '10 a 12', status: 'backlog', titulo: 'Processos, Contatos, Alertas e IA', dono: 'Designer do squad Processos', subtarefas: ['c14', 'c15', 'c16', 'c18'],
     objetivo: 'Os demais módulos no mesmo padrão, no ritmo da migração do front. A IA usa os mesmos componentes.',
-    entregavel: 'Processos, Alertas, Contatos e os padrões de IA no DS, e o relatório trimestral de métricas.',
-    pronto: 'Cada módulo passa no revisor, a IA não usa cor própria e o quarto relatório está publicado.' },
+    entregavel: 'Processos, Alertas, Contatos e os padrões de IA no DS, e o relatório de métricas.',
+    pronto: 'Cada módulo passa no revisor, a IA não usa cor própria e o segundo relatório está publicado.' },
 ];
 
 function subtarefasDe(historia) {
@@ -2641,7 +2641,7 @@ const SKILLS_POR_PAPEL = {
     compartilha: 'A ponte com o marketing passa pelo designer perto do marketing, nos tokens de marca.' },
   'Suporte': {
     traz: 'Chamados por módulo, a métrica de experiência.',
-    compartilha: 'Os chamados por módulo entram na linha de base do mês 1 e no acompanhamento do beta.' },
+    compartilha: 'Os chamados por módulo entram na linha de base da sprint 1 e no acompanhamento do beta.' },
 };
 
 function itemSkills(papel) {
