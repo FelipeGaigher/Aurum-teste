@@ -8,12 +8,12 @@
 <script src="moldura.js"></script>
 <script src="componentes.js"></script>
 <style>
-  /* Contexto da entrega: o leitor sabe o que é o teste antes de ler os itens. */
-  .qa-contexto { display: grid; gap: var(--space-3); max-width: var(--size-dialog-detail); margin-bottom: var(--space-5); padding: var(--space-4); background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); font-size: var(--font-size-emphasis); line-height: var(--font-leading-base); }
-  .qa-contexto > * { margin: 0; }
-  .qa-contexto > h2 { font-size: var(--font-size-dialog); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
-  .qa-contexto code { font-size: var(--font-size-label); }
-  .qa-pede { padding-left: var(--space-3); border-left: var(--focus-width) solid var(--color-border-default); color: var(--color-text-muted); }
+  /* Legenda das siglas, uma linha sob as abas. */
+  .qa-legenda { margin: 0 0 var(--space-4); color: var(--color-text-muted); font-size: var(--font-size-label); line-height: var(--font-leading-base); }
+  /* Como pensei: o raciocínio de Felipe antes de cada resposta. */
+  .qa-pensei { display: grid; gap: var(--space-1); max-width: var(--size-dialog-detail); padding-left: var(--space-3); border-left: var(--focus-width) solid var(--color-action); line-height: var(--font-leading-base); }
+  .qa-pensei > p { margin: 0; }
+  .qa-pensei-rotulo { font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); color: var(--color-text-muted); }
   /* P1 a P5: faixa que abre e fecha, no padrão da Área de trabalho. */
   .qa-dobra { padding: 0; overflow: hidden; gap: 0; }
   .qa-dobra-cabeca { margin: 0; font: inherit; }
@@ -35,20 +35,7 @@
 <body data-pagina="questionarios.html" data-titulo="Questionários">
 <div class="corpo">
   <main id="conteudo">
-<section class="qa-contexto" aria-labelledby="contexto-t">
-<h2 id="contexto-t">Contexto</h2>
-<p>Esta página reúne as respostas do teste para UX/UI Specialist da Aurum. São três questões sobre o Astrea, o software jurídico da Aurum.</p>
-<p>O trabalho teve três partes. Primeiro, um diagnóstico do Astrea em produção, numa conta de teste. Depois, um protótipo navegável com design system próprio. Por fim, uma varredura dos módulos e um comparativo de cliques.</p>
-<dl class="qa-pares">
-  <dt>Votos</dt><dd>Planilha de pedidos de clientes da Área de trabalho: 80 sugestões e 407 votos (<code>01-pedidos-clientes.md</code>).</dd>
-  <dt>PA-NN</dt><dd>Ponto de atenção do catálogo, com tela e evidência (<code>01-pontos-de-atencao.md</code>).</dd>
-  <dt>Mnn</dt><dd>Ideia de melhoria do backlog, de M1 em diante, como M14 (<code>01-melhorias.md</code>).</dd>
-  <dt>RF-NN</dt><dd>Requisito do protótipo. Um portão automático confere cada um antes do commit.</dd>
-  <dt>Varredura</dt><dd>Leitura do Astrea em produção em 08/11, sem escrita. Ela não substitui o teste com usuário.</dd>
-  <dt>Nectar</dt><dd>Design system legado do Astrea, lido no CSS do produto: 609 das 646 variáveis levam o prefixo <code>nectar</code> (<code>01-inventario-css-astrea.md</code>). A Q2 constrói os tokens semânticos sobre ele.</dd>
-</dl>
-<p>Todo dado do protótipo é fictício. Escolha a questão nas abas e a pergunta na lista à esquerda.</p>
-</section>
+<p class="qa-legenda" id="qa-legenda">PA-NN: ponto de atenção catalogado · M: melhoria do backlog · RF: requisito conferido por portão · Nectar: design system legado do Astrea, lido no CSS do produto · varredura: leitura do Astrea em produção em 08/11</p>
 <div class="qa" id="questionarios">
 <div data-questao="q1" data-rotulo="Questão 1">
 <p class="qa-abertura">O Astrea sabe o que é um prazo. A interface ainda não mostra isso. Recorte: gestão de atividades. PA-nn aponta um item do catálogo de 97 pontos de atenção.</p>
@@ -58,7 +45,7 @@
 <div class="qa-respostas">
 <section class="qa-resposta" data-resposta="q1-problemas" aria-labelledby="q1-problemas-t" hidden>
 <h2 id="q1-problemas-t">Os 5 problemas de experiência mais relevantes, com evidência e por que importam.</h2>
-<p class="qa-pede">A pergunta pede os cinco problemas de experiência mais relevantes. Cada faixa abre um problema: sintoma, evidência com captura, causa provável e por que importa.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>No Astrea, a Área de trabalho abre numa lista só. A tarefa atrasada de outra lista fica fora da vista, e o vencido não tem seção própria.</p><p>A planilha confirmou o que eu vi: 136 de 407 votos pedem destaque de prazo.</p><p>Por isso recortei na gestão de atividades e usei o prazo como régua para escolher os cinco.</p><p><b>Com a IA:</b> a IA leu o CSS e as telas do Astrea e catalogou cada ponto de atenção que eu apontava, 97 no fim, e a escolha dos cinco ficou comigo.</p></div>
 
         <article class="qa-bloco qa-dobra"><h3 class="qa-dobra-cabeca"><button type="button" class="qa-dobra-faixa" aria-expanded="true" aria-controls="corpo-p1" data-dobra="p1"><span class="qa-dobra-titulo">P1. O prazo não domina as telas que existem para ele</span><span class="tag" data-cor="blue">Hierarquia e densidade</span></button></h3><div class="qa-dobra-corpo" id="corpo-p1"><div><h4>Sintoma</h4><ul>
               <li>136 de 407 votos (33%) pedem destaque de prazo, audiência, data limite e atividades do dia.</li>
@@ -106,7 +93,7 @@
 </section>
 <section class="qa-resposta" data-resposta="q1-principios" aria-labelledby="q1-principios-t" hidden>
 <h2 id="q1-principios-t">Princípios de design do redesign.</h2>
-<p class="qa-pede">A pergunta pede os princípios do redesign. Cada um traz a decisão, um par "hoje" e "sugestão" e o status da sugestão no protótipo.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>O advogado abre a Área de trabalho para saber o que vence. Então o prazo vem primeiro, em cor e texto.</p><p>Vi a mesma atividade com nomes diferentes em quatro lugares. Daí veio uma palavra para cada objeto.</p><p>Tirei a linha de números do topo da Área de trabalho, porque as seções já diziam o mesmo.</p><p><b>Com a IA:</b> a IA aplicou os princípios nas telas do protótipo e marcou o status de cada sugestão, e o que entra e o que sai da tela foi decisão minha.</p></div>
 <p class="qa-nota">Cada princípio traz a heurística de Nielsen, a lei de Gestalt e como ele se aplica no dia a dia. Gestalt aqui é agrupamento perceptivo, a base da hierarquia visual. Cor é um recurso entre outros.</p>
 
         <article class="qa-bloco"><h3>O prazo primeiro</h3><div class="qa-tags"><span class="qa-ref qa-ref-nielsen"><b>Nielsen</b> Visibilidade do estado do sistema</span><span class="qa-ref qa-ref-gestalt"><b>Gestalt</b> Figura e fundo: o prazo é figura</span></div><div class="qa-decisao"><b>Decisão</b><p>O dado que não pode falhar é o mais visível em toda tela de atividade. Cor e texto, nunca só cor.</p></div><div class="qa-comparacao"><div class="qa-par qa-cabeca"><b class="qa-rot-hoje">Hoje no Astrea</b><b class="qa-rot-sugestao">Sugestão para o Astrea</b></div><div class="qa-par"><p class="qa-hoje">Prazos e audiências em "Lembretes", abaixo das estatísticas (PA-33).</p><p class="qa-sugestao">Levar prazos, audiências e eventos para a área principal.<span class="qa-status"><span class="tag" data-cor="green">Feito no protótipo</span><a href="area-de-trabalho.html">Ver em Área de trabalho</a></span></p></div><div class="qa-par"><p class="qa-hoje">Prazo vencido não tem seção própria (PA-32).</p><p class="qa-sugestao">Criar a seção "Atrasadas" acima de "Hoje".<span class="qa-status"><span class="tag" data-cor="green">Feito no protótipo</span><a href="area-de-trabalho.html">Ver em Área de trabalho</a></span></p></div></div><p class="qa-dia"><b>No dia a dia</b> Teste de desfoque em toda revisão. Se o prazo some, a tela volta.</p></article>
@@ -124,7 +111,7 @@
 </section>
 <section class="qa-resposta" data-resposta="q1-validar" aria-labelledby="q1-validar-t" hidden>
 <h2 id="q1-validar-t">O que validar antes de seguir, e como.</h2>
-<p class="qa-pede">A pergunta pede as hipóteses a confirmar antes do redesign. A tabela traz uma linha por hipótese. Depois vêm as fontes de análise e os limites da planilha.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>Na varredura, a Agenda abriu em "Ontem", e as duas tarefas da conta não apareceram. Não sei se é filtro, data ou bug, então isso vira hipótese.</p><p>A planilha mostra o que o cliente pede, mas não mostra se ele já resolve por Alertas.</p><p>Hipótese cara de corrigir eu confirmo antes. A que se corrige por token segue direto.</p><p><b>Com a IA:</b> a IA percorreu o Astrea em produção, só lendo, e cruzou o que viu com a planilha, e o que vira hipótese ficou comigo.</p></div>
 <p class="qa-tese">Hipótese que custa caro corrigir se confirma antes. Hipótese que se corrige por token segue direto para o plano da Questão 2.</p>
         <div class="tabela-quadro"><table class="tabela">
           <tr><th scope="col">Hipótese</th><th scope="col">A planilha já responde?</th><th scope="col">Como confirmar</th><th scope="col">Fontes</th></tr>
@@ -167,7 +154,7 @@
 <div class="qa-respostas">
 <section class="qa-resposta" data-resposta="q2-arquitetura" aria-labelledby="q2-arquitetura-t" hidden>
 <h2 id="q2-arquitetura-t">Arquitetura do DS: fundamentos, tokens, componentes, padrões. O que vem primeiro e por quê.</h2>
-<p class="qa-pede">A pergunta pede as camadas do DS e a ordem de construção. A resposta traz as camadas, a ordem, os estados e o que o protótipo já tem.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>Li o CSS do Astrea: 609 das 646 variáveis têm o prefixo nectar. A Aurum já tem um design system no código, só falta a camada semântica.</p><p>Por isso os tokens semânticos vêm primeiro, por cima do Nectar. A tela legada consome o token sem reescrita.</p><p>Componente com propriedade booleana e de texto serve cada contexto sem cópia.</p><p><b>Com a IA:</b> a IA extraiu as variáveis do CSS do produto e construiu o DS do protótipo com os estados, e a ordem das camadas foi minha.</p></div>
 <p class="qa-tese">Primeiro os tokens semânticos. Depois, os componentes. O legado consome o token como variável CSS, sem reescrita.</p>
 <div class="tabela-quadro"><table class="tabela">
 <tr><th scope="col">Camada</th><th scope="col">O que é</th><th scope="col">Exemplo</th></tr>
@@ -195,7 +182,7 @@
 </section>
 <section class="qa-resposta" data-resposta="q2-governanca" aria-labelledby="q2-governanca-t" hidden>
 <h2 id="q2-governanca-t">Governança: contribuição dos squads, quem decide componente novo, papel da Engenharia, alinhamento Figma e código.</h2>
-<p class="qa-pede">A pergunta pede o papel de squads, direção e Engenharia, e o alinhamento entre Figma e código. A resposta traz a fonte única, os papéis e o fluxo de entrada.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>No Astrea vi três azuis, três cinzas e quatro jeitos de criar uma atividade. Isso nasce quando cada tela decide sozinha.</p><p>Por isso uma fonte só, igual no Figma e no código.</p><p>Quando duas peças do protótipo ficaram fora do DS, o botão de copiar e o painel de criar atividade, mandei colocar as duas no DS.</p><p><b>Com a IA:</b> a IA executou em cada tela os portões que barram cor solta e componente fora do padrão, e quem decide, contribui e veta ficou comigo.</p></div>
 <p class="qa-tese">Uma fonte só. O Figma lê a fonte, ele não é a fonte.</p>
 <div class="tabela-quadro"><table class="tabela">
 <tr><th scope="col">Saída</th><th scope="col">Caminho</th><th scope="col">Quem consome</th></tr>
@@ -226,7 +213,7 @@
 </section>
 <section class="qa-resposta" data-resposta="q2-fases" aria-labelledby="q2-fases-t" hidden>
 <h2 id="q2-fases-t">Plano em fases: por onde começar, critério de priorização, convivência entre novo e legado.</h2>
-<p class="qa-pede">A pergunta pede o ponto de partida, o critério e a convivência entre novo e legado. A resposta traz quatro fases, o critério e a regra da feature flag.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>Quem usa o Astrea há anos se orienta pela moldura: menu, cabeçalho, filtros e botões de ação. Se a moldura muda junto com o conteúdo, a pessoa perde a casa.</p><p>Por isso a ordem é tokens, componentes fixos, telas de configuração, demais componentes e fluxos principais. A tela nova convive com a legada atrás de feature flag.</p><p>No Kanban com o plano de 12 meses, a coluna é situação, não fase. A fase virou tag.</p><p><b>Com a IA:</b> a IA montou o plano no Kanban do protótipo e conferiu cada história contra a Questão 2, e eu aprovei as sete correções que ela apontou.</p></div>
 <p class="qa-tese">A moldura fica fixa primeiro. O conteúdo migra depois.</p>
 <div class="tabela-quadro"><table class="tabela">
 <tr><th scope="col">Fase</th><th scope="col">Período</th><th scope="col">O que entra</th><th scope="col">Entrega</th></tr>
@@ -245,7 +232,7 @@
 </section>
 <section class="qa-resposta" data-resposta="q2-time" aria-labelledby="q2-time-t" hidden>
 <h2 id="q2-time-t">Envolver o time: distribuir trabalho entre os 4 designers sem tirar foco dos roadmaps.</h2>
-<p class="qa-pede">A pergunta pede como dividir o trabalho entre os 4 designers sem tirar o foco dos roadmaps. A resposta traz o discovery, o mapa de perfil e a frente de cada perfil.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>Os quatro designers têm roadmap próprio. Tirar gente do roadmap faz o DS virar projeto paralelo.</p><p>A contribuição sai das telas que cada um já vai fazer. A divisão vem de uma conversa com cada pessoa: rotina, ferramentas, foco e direção.</p><p>As frentes transversais ficam por perfil: forte em Figma, perto do código, perto do usuário.</p><p><b>Com a IA:</b> a IA achou no plano do Kanban o dono por squad, que contrariava essa regra, e trocou pelo perfil com o meu ok.</p></div>
 <p class="qa-tese">A contribuição sai do roadmap, não de tarefa extra. A divisão do trabalho sai do discovery.</p>
 <p>O fluxo: discovery de duas semanas, mapa de perfil, frente de cada um e componente no DS.</p>
 <div class="tabela-quadro"><table class="tabela">
@@ -266,7 +253,7 @@
 </section>
 <section class="qa-resposta" data-resposta="q2-riscos" aria-labelledby="q2-riscos-t" hidden>
 <h2 id="q2-riscos-t">Riscos e métricas: 3 riscos, mitigação, como medir sucesso.</h2>
-<p class="qa-pede">A pergunta pede três riscos, a mitigação de cada um e a medida de sucesso. A resposta traz os riscos, os portões do protótipo e as métricas em três eixos.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>O primeiro risco é a ruptura para quem passa o dia no produto. Por isso moldura fixa, feature flag e grupo beta.</p><p>Sucesso se mede em cliques por tarefa, contados no Astrea e na tela nova antes do beta.</p><p>Copiar o número de um processo custa 2 cliques no Astrea e 1 no protótipo.</p><p><b>Com a IA:</b> a IA contou os cliques de cada fluxo no Astrea e no protótipo e achou quatro caminhos em que o protótipo perdia, e eu mandei corrigir os quatro.</p></div>
 <div class="tabela-quadro"><table class="tabela">
 <tr><th scope="col">Risco</th><th scope="col">Mitigação</th></tr>
 <tr><td>O DS vira projeto paralelo que ninguém adota</td><td>Construir a partir das telas do roadmap. Kit de skills e agentes no repositório</td></tr>
@@ -300,7 +287,7 @@
 <div class="qa-respostas">
 <section class="qa-resposta" data-resposta="q3-tela" aria-labelledby="q3-tela-t" hidden>
 <h2 id="q3-tela-t">Tela da gestão de atividades redesenhada em alta fidelidade.</h2>
-<p class="qa-pede">A pergunta pede a tela da gestão de atividades em alta fidelidade. A resposta traz a tela escolhida, o motivo e o que mudou em relação ao Astrea.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>A Área de trabalho é a primeira tela que o advogado abre, e ele abre para saber o que vence. No Astrea, o prazo fica num widget de lembretes, no canto.</p><p>Fiz do prazo o dado dominante da linha, com Atrasadas acima de Hoje. O detalhe abre ao lado, no padrão lista e detalhe que trouxe de outros projetos meus, para a lista não sumir atrás de um modal.</p><p>As notificações foram para o sino da navbar, e não para um item de menu. A volta virou trilha embaixo do título.</p><p><b>Com a IA:</b> a IA construiu a tela no protótipo com o DS, e as correções ao vivo, rodada por rodada, foram minhas.</p></div>
 <p class="qa-nota">Veja funcionando: <a href="area-de-trabalho.html">Área de trabalho</a> e <a href="design-system.html">Design system</a>. A tela no Figma está na <a href="../index.html">página de entrega</a>.</p>
 <p class="qa-tese">É a tela de abertura e o ponto em que o prazo mais se perde. O grupo de pedidos sobre prazo soma 136 de 407 votos.</p>
 <div class="tabela-quadro"><table class="tabela">
@@ -319,7 +306,7 @@
 </section>
 <section class="qa-resposta" data-resposta="q3-componentes" aria-labelledby="q3-componentes-t" hidden>
 <h2 id="q3-componentes-t">De 3 a 5 componentes que nasceram dela, com estados.</h2>
-<p class="qa-pede">A pergunta pede de 3 a 5 componentes que nasceram da tela, com estados. A resposta traz quatro, com propriedades, estados e onde mais aparecem.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>Escolhi as peças que a tela pedia e que voltam em outros módulos: tabela, chip de prazo, card de atividade e painel de detalhe.</p><p>O chip de prazo não aceita ficar sem texto. Quem não distingue cor precisa ler "Vencido há 2 dias".</p><p>O painel ao lado substitui o modal que cobre a lista a cada clique.</p><p><b>Com a IA:</b> a IA escreveu os componentes com cada estado no DS do protótipo, e o recorte dos quatro foi meu.</p></div>
 <p class="qa-tese">Quatro componentes da tela entram no DS. A variação muda o dado. O estado muda a interação.</p>
 <div class="tabela-quadro"><table class="tabela">
 <tr><th scope="col">Componente</th><th scope="col">Propriedades</th><th scope="col">Estados no DS</th><th scope="col">Onde mais aparece</th></tr>
@@ -334,7 +321,7 @@
 </section>
 <section class="qa-resposta" data-resposta="q3-decisao" aria-labelledby="q3-decisao-t" hidden>
 <h2 id="q3-decisao-t">Uma decisão difícil: um trade-off e o porquê.</h2>
-<p class="qa-pede">A pergunta pede uma decisão difícil, com o trade-off e o porquê. A resposta traz a escolha, o ganho, o custo, como reduzo o custo e o que não escolhi.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>Quem usa o Astrea há anos sabe onde fica o widget de lembretes. Mudar a abertura obriga a reaprender a tela mais usada.</p><p>Mudei assim mesmo. O escritório não perde prazo por não achar a lista. Perde por não ver a data.</p><p>Reduzi o custo com o filtro de lista gravado, a moldura igual e a volta para a tela antiga por um ciclo.</p><p><b>Com a IA:</b> a IA confirmou na varredura que a linha do Astrea marca o atraso só pela cor da data, e a escolha e o argumento ficaram comigo.</p></div>
 <p class="qa-tese">A tela abre em todas as listas, com Atrasadas acima de Hoje, e o prazo é o dado dominante da linha.</p>
 <p>Hoje os prazos ficam num widget de lembretes, no canto. Quem usa o Astrea há anos conhece esse lugar. Mudar a abertura obriga a pessoa a reaprender a tela que ela mais abre.</p>
 <p>Escolhi mudar assim mesmo. Hoje a lista marca o atraso só pela cor da data, e o vencido não tem seção (PA-32). O escritório não perde prazo por não achar a lista. Perde por não ver a data.</p>
@@ -349,7 +336,7 @@
 </section>
 <section class="qa-resposta" data-resposta="ia" aria-labelledby="ia-t" hidden>
 <h2 id="ia-t">Uso de IA: quais ferramentas, em quais etapas, o que foi feito com o resultado.</h2>
-<p class="qa-pede">A pergunta pede as ferramentas de IA, as etapas e o que fiz com o resultado. A resposta é um parágrafo, como pede o enunciado.</p>
+<div class="qa-pensei"><p class="qa-pensei-rotulo">Como pensei</p><p>Usei a IA como par, não como autora. O que olhar no Astrea, o que mudar e por quê ficou comigo.</p><p>Antes de responder às questões, pedi para ler o Astrea de novo e comparar com o protótipo, fluxo por fluxo.</p><p>Onde o protótipo perdia cliques, corrigi.</p><p><b>Com a IA:</b> a IA leu o CSS e as telas, catalogou os pontos de atenção, construiu o protótipo e o DS e executou os portões, e o recorte, as decisões e as correções ao vivo ficaram comigo.</p></div>
 <p>Usei o Claude Code como par de trabalho durante toda a atividade. O MCP do Figma ficou ligado enquanto a cota permitiu. Depois, os decks viraram PNG pelo Playwright e entraram no Figma pelo navegador. A IA não escreveu a estratégia. Ela recebeu as minhas decisões em conversa e as transformou em documento-fonte, que eu iterei linha a linha. O protótipo saiu de uma spec e de um plano de 23 tasks. Cada subagente recebeu uma task e os arquivos dela. Até sete subagentes trabalharam em paralelo, cada um no seu arquivo. Antes do commit, cada task passou por portões automáticos. Um script barrou cor solta, referência de rede e qualquer dado real. Um detector barrou a cara de interface gerada por IA. Um linter barrou frase longa e voz passiva. Depois, um revisor em contexto limpo julgou cada onda contra a spec. Em 08/11 foram 132 commits depois do meio-dia, até as 18h13. A IA também percorreu o Astrea em produção, só com leitura: texto da página, árvore de acessibilidade e captura. Ela comparou cada fluxo com o protótipo. O comparativo achou quatro caminhos em que o protótipo perdia cliques, e eu mandei corrigir os quatro. A direção visual, os problemas, o trade-off e o escopo foram decisões minhas.</p>
 </section>
 </div>

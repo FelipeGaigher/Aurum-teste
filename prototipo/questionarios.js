@@ -122,4 +122,7 @@
     aoMudar: (chave) => marcarNaUrl(chave, questoes.find((q) => q.dataset.questao === chave).dataset.atual),
   });
   raiz.append(abas);
+  // A legenda das siglas fica sob as abas, antes do painel da questão.
+  const legenda = document.getElementById('qa-legenda');
+  if (legenda) abas.querySelector('.abas-lista').after(legenda);
 })();
