@@ -233,12 +233,14 @@
   --component-button-primary-text: var(--color-action-text);
 
   /* escala do deck: a escala do DS multiplicada para a projeção */
-  --deck-titulo: calc(var(--font-size-title) * 1.8);
+  --deck-titulo: calc(var(--font-size-title) * 2.1);
   --deck-titulo-capa: calc(var(--font-size-title) * 2.4);
   --deck-subtitulo: calc(var(--font-size-title) * 1.1);
-  --deck-destaque: calc(var(--font-size-emphasis) * 1.25);
-  --deck-corpo: calc(var(--font-size-body) * 1.2);
+  --deck-destaque: calc(var(--font-size-title) * 1.1);
+  --deck-corpo: calc(var(--font-size-body) * 1.6);
+  --deck-contexto: calc(var(--font-size-emphasis) * 1.3);
   --deck-rotulo: var(--font-size-label);
+  --deck-palco-zoom: 1.35;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -281,8 +283,7 @@ code { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
 }
 .slide h2 { margin: 0; max-width: 84cqw; font-size: var(--deck-titulo); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
 .item { margin: 0 0 var(--space-1); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-action); line-height: var(--font-leading-tight); }
-.pergunta { margin: 0 0 var(--space-3); max-width: 78cqw; font-size: var(--font-size-emphasis); color: var(--color-text-muted); line-height: var(--font-leading-tight); }
-.pergunta::before { content: "\201C"; } .pergunta::after { content: "\201D"; }
+.contexto { margin: var(--space-2) 0 0; max-width: 78cqw; font-size: var(--deck-contexto); color: var(--color-text-muted); line-height: var(--font-leading-tight); }
 .rodape { display: flex; align-items: center; gap: var(--space-4); margin-top: auto; padding-top: var(--space-3); border-top: var(--border-width) solid var(--color-border-default); font-size: var(--font-size-label); color: var(--color-text-muted); }
 .rodape .logo { font-size: var(--font-size-emphasis); }
 .rodape .logo svg { width: var(--size-icon); height: var(--size-icon); }
@@ -361,9 +362,6 @@ code { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
 .corpo { flex: 1; display: flex; gap: var(--space-6); align-items: flex-start; min-height: 0; }
 .col { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; flex: 1; }
 .texto { font-size: var(--deck-corpo); }
-.nota { font-size: var(--font-size-body); color: var(--color-text-muted); }
-.props, .tokens { font-size: var(--font-size-body); color: var(--color-text-muted); }
-.props code, .tokens code { font-family: var(--component-code-font); font-size: var(--font-size-label); color: var(--color-text-default); }
 .num { margin-right: var(--space-1); color: var(--color-action); font-variant-numeric: tabular-nums; }
 code.ds { font-family: var(--component-code-font); font-size: var(--font-size-label); font-weight: var(--font-weight-regular); color: var(--color-text-muted); }
 .bloco > summary .chips { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-1); font-weight: var(--font-weight-regular); }
@@ -379,15 +377,15 @@ figcaption { font-size: var(--font-size-label); color: var(--color-text-muted); 
 .marca { position: absolute; opacity: 0; pointer-events: none; border: var(--focus-width) solid var(--color-action); border-radius: var(--radius); background-color: color-mix(in srgb, var(--color-bg-hover) 35%, transparent); transition: opacity 150ms; }
 .marca > span { position: absolute; top: 0; left: 0; padding: 0 var(--space-1); background-color: var(--color-action); color: var(--color-action-text); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-base); white-space: nowrap; border-radius: 0 0 var(--radius) 0; }
 .slide:has(#q3tela-t0[aria-selected="true"]) .marca-faixa,
-.slide:has(#q3tela-t1[aria-selected="true"]) .marca-prazo,
-.slide:has(#q3tela-t2[aria-selected="true"]) .marca-filtros,
-.slide:has(#q3tela-t3[aria-selected="true"]) .marca-numero,
-.slide:has(#q3tela-t4[aria-selected="true"]) .marca-painel,
-.slide:has(#q3tela-t5[aria-selected="true"]) .marca-moldura { opacity: 1; }
+.slide:has(#q3tela-t0[aria-selected="true"]) .marca-prazo,
+.slide:has(#q3tela-t1[aria-selected="true"]) .marca-filtros,
+.slide:has(#q3tela-t2[aria-selected="true"]) .marca-numero,
+.slide:has(#q3tela-t3[aria-selected="true"]) .marca-painel,
+.slide:has(#q3tela-t4[aria-selected="true"]) .marca-moldura { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .marca { transition: none; } }
 
 /* palco: a peça viva do produto, em superfície */
-.palco { background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); padding: var(--space-3); }
+.palco { zoom: var(--deck-palco-zoom); background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); padding: var(--space-3); }
 .estados { display: grid; grid-template-columns: repeat(auto-fill, minmax(11cqw, 1fr)); gap: var(--space-3) var(--space-4); }
 .estado { display: grid; align-content: start; gap: var(--space-1); min-width: 0; }
 .estado-nome { color: var(--color-text-muted); font-size: var(--font-size-label); line-height: var(--font-leading-tight); }
@@ -477,7 +475,7 @@ figcaption { font-size: var(--font-size-label); color: var(--color-text-muted); 
 .passo[aria-selected="true"] .passo-num { color: var(--color-action); }
 .passo-texto { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); min-width: 0; }
 .passo-titulo { font-size: var(--deck-destaque); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
-.passo-sub { font-size: var(--font-size-emphasis); color: var(--color-text-muted); line-height: var(--font-leading-tight); }
+.passo-sub { font-size: var(--deck-contexto); color: var(--color-text-muted); line-height: var(--font-leading-tight); }
 .passo .tag, .passo .chips { margin-top: var(--space-1); }
 .paineis { min-height: 0; display: grid; }
 .painel {
@@ -505,11 +503,28 @@ figcaption { font-size: var(--font-size-label); color: var(--color-text-muted); 
 .passo .ds { margin-left: var(--space-1); }
 .corpo:has([data-passos]) { align-items: stretch; }
 .col { min-height: 0; }
-.col-tela { flex: 1.3; }
-#q3tela .passos { display: grid; grid-template-columns: 1fr 1fr; }
-.slide .painel { padding: var(--space-4); gap: var(--space-2); }
+.col-tela { flex: 2.5; }
+#q3tela .paineis { align-items: start; }
+.slide .painel { justify-content: center; }
+#q3s3 .corpo > .col.astrea { justify-content: center; }
+#q3s1 .estados, #q3s2 .estados { row-gap: var(--space-5); zoom: 1.25; }
+.painel > .tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; }
+#q3s3 .paineis { align-items: start; }
+#q3s3 .painel { justify-content: flex-start; }
+#q3s3 .palco > .estados { zoom: 1.15; }
+@container (min-width: 1500px) {
+  #q3s1 .palco { --deck-palco-zoom: 1.85; }
+  #q3s2 .palco { --deck-palco-zoom: 2; }
+  #q3s3 .palco { --deck-palco-zoom: 2.1; }
+}
+#q3s1 .palco { --deck-palco-zoom: 1.3; }
+#q3s2 .palco { --deck-palco-zoom: 1.45; }
+#q3s3 .palco { --deck-palco-zoom: 1.55; }
+#q3s3 .passos { gap: var(--space-3); }
+#q3s3 .passo { padding: var(--space-4); }
+#q3s3 .painel > p, #q3tela .painel > p { font-size: var(--deck-destaque); }
+.slide .painel { padding: var(--space-5); gap: var(--space-4); }
 .slide .passo { padding: var(--space-2) var(--space-3); }
-#q3s2 .col-componentes { flex: 2.4; }
 .slide .painel .estados { gap: var(--space-2) var(--space-3); }
 .col-tela figcaption { max-width: 100%; }
 </style>
@@ -533,9 +548,8 @@ figcaption { font-size: var(--font-size-label); color: var(--color-text-muted); 
 <section class="slide" id="q3tela">
   <header>
     <a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a>
-    <p class="item">Questão 3, item 1 de 3. A tela</p>
-    <p class="pergunta">A tela redesenhada em alta fidelidade no Figma.</p>
-    <h2>A Área de trabalho abre pelo que atrasou, dentro da moldura que o escritório já conhece</h2>
+    <p class="item">Questão 3 · A tela</p>
+    <h2>A Área de trabalho abre pelo que atrasou</h2>
   </header>
   <div class="corpo">
     <div class="col col-tela">
@@ -553,40 +567,37 @@ figcaption { font-size: var(--font-size-label); color: var(--color-text-muted); 
           <span class="marca marca-moldura" style="left: 0; top: 0; width: 100%; height: 5.926%;" aria-hidden="true"><span>moldura</span></span>
           <span class="marca marca-moldura" style="left: 0; top: 5.926%; width: 12.083%; height: 94.074%;" aria-hidden="true"></span>
         </div>
-        <figcaption>Área de trabalho redesenhada, com atividades fictícias, na visão Lista. Abre em todas as listas. Cada seção tem uma tabela do DS, e a linha escolhida abre o painel ao lado. Protótipo navegável em HTML, sem rede.</figcaption>
+        <figcaption>Protótipo navegável em HTML, visão Lista. Atividades fictícias.</figcaption>
       </figure>
     </div>
     <div class="col">
-      <h3 class="secao-titulo">O que a tela prova, princípio por princípio</h3>
-<div class="mestre-baixo">
-<div class="passos" role="tablist" aria-orientation="vertical" aria-label="O que a tela prova, princípio por princípio" data-passos>
-<button type="button" class="passo" role="tab" id="q3tela-t0" aria-controls="q3tela-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">O prazo primeiro</span></span></button>
-<button type="button" class="passo" role="tab" id="q3tela-t1" aria-controls="q3tela-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Prazo na área principal</span></span></button>
-<button type="button" class="passo" role="tab" id="q3tela-t2" aria-controls="q3tela-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Filtros numa linha</span></span></button>
-<button type="button" class="passo" role="tab" id="q3tela-t3" aria-controls="q3tela-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Número com copiar</span></span></button>
-<button type="button" class="passo" role="tab" id="q3tela-t4" aria-controls="q3tela-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">Detalhe ao lado, sem modal</span></span></button>
-<button type="button" class="passo" role="tab" id="q3tela-t5" aria-controls="q3tela-p5" aria-selected="false"><span class="passo-num">6</span><span class="passo-texto"><span class="passo-titulo">A moldura é a âncora</span></span></button>
+      <div class="mestre-baixo">
+<div class="passos" role="tablist" aria-orientation="vertical" aria-label="O que a tela prova" data-passos>
+<button type="button" class="passo" role="tab" id="q3tela-t0" aria-controls="q3tela-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">Atrasadas no topo</span></span></button>
+<button type="button" class="passo" role="tab" id="q3tela-t1" aria-controls="q3tela-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Filtros numa linha</span></span></button>
+<button type="button" class="passo" role="tab" id="q3tela-t2" aria-controls="q3tela-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Número com copiar</span></span></button>
+<button type="button" class="passo" role="tab" id="q3tela-t3" aria-controls="q3tela-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Detalhe ao lado</span></span></button>
+<button type="button" class="passo" role="tab" id="q3tela-t4" aria-controls="q3tela-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">A moldura não muda</span></span></button>
 </div>
 <div class="paineis" aria-live="polite">
-<div class="painel" role="tabpanel" id="q3tela-p0" aria-labelledby="q3tela-t0" tabindex="0"><p class="so-impressao secao-titulo">O prazo primeiro</p><p>A tela abre em todas as listas, e Atrasadas fica acima de Hoje. A faixa de cada seção abre e fecha, com a contagem numa tag. Prova P1.</p></div>
-<div class="painel" role="tabpanel" id="q3tela-p1" aria-labelledby="q3tela-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Prazo na área principal</p><p>Cada linha abre pelo chip de prazo, em cor e texto. Prazos, audiências e eventos dividem as seções com as tarefas. PA-33 e PA-34.</p></div>
-<div class="painel" role="tabpanel" id="q3tela-p2" aria-labelledby="q3tela-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">Filtros numa linha</p><p>Lista, Responsável, Período e Situação, com a visão e o botão de adicionar ao lado. O filtro continua ao voltar de um processo. 63 votos.</p></div>
-<div class="painel" role="tabpanel" id="q3tela-p3" aria-labelledby="q3tela-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">Número com copiar</p><p>O número do processo é link para a ficha. O botão de ícone ao lado copia o número em 1 clique. PA-38 e PA-11.</p></div>
-<div class="painel" role="tabpanel" id="q3tela-p4" aria-labelledby="q3tela-t4" tabindex="0" hidden><p class="so-impressao secao-titulo">Detalhe ao lado, sem modal</p><p>O painel muda de largura e troca de atividade com anterior e próximo. Concluir e adiar viram botões redondos de ícone. "Abrir processo" é o primário.</p></div>
-<div class="painel" role="tabpanel" id="q3tela-p5" aria-labelledby="q3tela-t5" tabindex="0" hidden><p class="so-impressao secao-titulo">A moldura é a âncora</p><p>Logo, busca e menu do produto. Cinco atalhos no cabeçalho, e o sino mostra a contagem. A tela nova fica atrás de feature flag.</p></div>
+<div class="painel" role="tabpanel" id="q3tela-p0" aria-labelledby="q3tela-t0" tabindex="0"><p class="so-impressao secao-titulo">Atrasadas no topo</p><p>Abre em todas as listas, Atrasadas acima de Hoje. Cada linha começa pelo chip de prazo, em cor e texto. PA-33 e PA-34.</p></div>
+<div class="painel" role="tabpanel" id="q3tela-p1" aria-labelledby="q3tela-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Filtros numa linha</p><p>Lista, Responsável, Período e Situação. O filtro continua ao voltar de um processo. 63 votos.</p></div>
+<div class="painel" role="tabpanel" id="q3tela-p2" aria-labelledby="q3tela-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">Número com copiar</p><p>O número abre a ficha do processo. O ícone ao lado copia em 1 clique. PA-38 e PA-11.</p></div>
+<div class="painel" role="tabpanel" id="q3tela-p3" aria-labelledby="q3tela-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">Detalhe ao lado</p><p>Sem modal: a lista fica visível. Anterior e próximo trocam a atividade. "Abrir processo" é o primário.</p></div>
+<div class="painel" role="tabpanel" id="q3tela-p4" aria-labelledby="q3tela-t4" tabindex="0" hidden><p class="so-impressao secao-titulo">A moldura não muda</p><p>Logo, busca, menu do produto e os cinco atalhos do cabeçalho ficam onde o escritório conhece.</p></div>
 </div>
 </div>
     </div>
   </div>
-  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 3 · Felipe Gaigher · 08/11/2026</span><span>A tela</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Questão 3 · Felipe Gaigher · detalhe em 03-tela.md</span><span>A tela</span></footer>
 </section>
 
 <!-- ============ 1 ============ -->
 <section class="slide" id="q3s1">
   <header>
-    <p class="item">Questão 3, item 2 de 3. Componentes, 1 e 2 de 4</p>
-    <p class="pergunta">De 3 a 5 componentes que nasceram dessa tela e entrariam no design system, com seus estados principais.</p>
-    <h2>Quatro componentes entram no sistema. Cada estado citado tem célula própria no design system</h2>
+    <p class="item">Questão 3 · Componentes, 1 e 2 de 4</p>
+    <h2>Tabela e chip de prazo entram no design system</h2>
+    <p class="contexto">Cada estado tem célula própria no design system.</p>
   </header>
   <div class="corpo astrea">
     <div class="col">
@@ -596,162 +607,132 @@ figcaption { font-size: var(--font-size-label); color: var(--color-text-muted); 
 <button type="button" class="passo" role="tab" id="q3s1-t1" aria-controls="q3s1-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Chip de prazo</span><span class="passo-sub"><code class="ds">DS.chipPrazo</code></span></span></button>
 </div>
 <div class="paineis" aria-live="polite">
-<div class="painel" role="tabpanel" id="q3s1-p0" aria-labelledby="q3s1-t0" tabindex="0"><p class="so-impressao secao-titulo">Tabela</p><span class="chips"><span class="tag">default</span><span class="tag">hover</span><span class="tag">carregando</span><span class="tag">vazio</span></span>
-          <p class="props"><code>rotulo</code> obrigatório, <code>colunas</code>, <code>linhas</code>, <code>carregando</code> booleana, <code>vazio</code>, <code>densidade</code> padrão ou compacta. Na tela: Prazo, Atividade, Processo, Responsável, Ações.</p>
+<div class="painel" role="tabpanel" id="q3s1-p0" aria-labelledby="q3s1-t0" tabindex="0"><p class="so-impressao secao-titulo">Tabela</p>
           <div class="palco">
-            <div class="estados" style="grid-template-columns: 1fr 1fr;">
-              <div class="estado" data-estado="default"><span class="estado-nome">default</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span></td><td class="titulo">Protocolar contestação</td><td><span class="numero">5004213-75.2025.8.24.0023</span></td></tr><tr><td><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 1 dia</span></td><td class="titulo">Juntar procuração</td><td><span class="numero">5001789-08.2025.8.24.0008</span></td></tr></tbody></table></div></div>
-              <div class="estado" data-estado="hover"><span class="estado-nome">hover</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 09/11</span></td><td class="titulo">Reunião com a cliente</td><td><span class="numero">5012940-75.2025.8.24.0038</span></td></tr><tr class="is-hover"><td><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 10/11</span></td><td class="titulo">Opor embargos</td><td><span class="numero">0007315-64.2023.8.24.0023</span></td></tr></tbody></table></div></div>
-              <div class="estado" data-estado="carregando"><span class="estado-nome">carregando</span><div class="tabela-quadro" aria-busy="true"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td><span class="traco"></span></td><td><span class="traco"></span></td><td><span class="traco"></span></td></tr><tr><td><span class="traco"></span></td><td><span class="traco"></span></td><td><span class="traco"></span></td></tr></tbody></table></div></div>
-              <div class="estado" data-estado="vazio"><span class="estado-nome">vazio</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th><th>Processo</th></tr></thead><tbody><tr><td colspan="3" class="vazia"><b>Nenhuma atividade com estes filtros.</b> Ajuste os filtros para ver mais.</td></tr></tbody></table></div></div>
+            <div class="estados" style="grid-template-columns: repeat(2, 1fr);">
+              <div class="estado" data-estado="default"><span class="estado-nome">default</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th></tr></thead><tbody><tr><td><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span></td><td class="titulo">Protocolar contestação</td></tr></tbody></table></div></div>
+              <div class="estado" data-estado="hover"><span class="estado-nome">hover</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th></tr></thead><tbody><tr class="is-hover"><td><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 10/11</span></td><td class="titulo">Opor embargos</td></tr></tbody></table></div></div>
+              <div class="estado" data-estado="carregando"><span class="estado-nome">carregando</span><div class="tabela-quadro" aria-busy="true"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th></tr></thead><tbody><tr><td><span class="traco"></span></td><td><span class="traco"></span></td></tr></tbody></table></div></div>
+              <div class="estado" data-estado="vazio"><span class="estado-nome">vazio</span><div class="tabela-quadro"><table class="tabela"><thead><tr><th>Prazo</th><th>Atividade</th></tr></thead><tbody><tr><td colspan="2" class="vazia"><b>Nenhuma atividade com estes filtros.</b></td></tr></tbody></table></div></div>
             </div>
           </div>
-          <p class="tokens">Linha de <code>--density-row</code>, 36px. Hover em <code>--color-bg-subtle</code>. Larga, a tabela rola dentro do quadro, nunca a página. Na tela, a linha escolhida leva <code>aria-selected</code> e barra em <code>--color-action</code>. Essa célula ainda falta no DS.</p>
+          <p class="tags"><span class="tag">Contatos</span><span class="tag">Processos</span><span class="tag">Atendimentos</span><span class="tag">Documentos</span><span class="tag">Buscas</span></p>
         </div>
-<div class="painel" role="tabpanel" id="q3s1-p1" aria-labelledby="q3s1-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Chip de prazo</p><span class="chips"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span><span class="chip-prazo chip-prazo-hoje"><svg class="ic"><use href="#i-relogio"/></svg>Vence hoje</span><span class="chip-prazo chip-prazo-concluido"><svg class="ic"><use href="#i-check"/></svg>Concluída · prazo 16/11</span></span>
-          <p class="props"><code>estadoPrazo</code> vencido, hoje, próximo ou concluído. <code>rotulo</code> obrigatório: sem texto, o componente recusa o chip.</p>
+<div class="painel" role="tabpanel" id="q3s1-p1" aria-labelledby="q3s1-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Chip de prazo</p>
           <div class="palco">
-            <div class="estados" style="grid-template-columns: repeat(4, 1fr);">
-              <div class="estado" data-estado="default"><span class="estado-nome">default, prazo próximo</span><span><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span></span></div>
-              <div class="estado"><span class="estado-nome">Variação Vencido</span><span><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span></span></div>
-              <div class="estado"><span class="estado-nome">Variação Vence hoje</span><span><span class="chip-prazo chip-prazo-hoje"><svg class="ic"><use href="#i-relogio"/></svg>Vence hoje</span></span></div>
-              <div class="estado"><span class="estado-nome">Variação Concluída</span><span><span class="chip-prazo chip-prazo-concluido"><svg class="ic"><use href="#i-check"/></svg>Concluída · prazo 16/11</span></span></div>
+            <div class="estados" style="grid-template-columns: repeat(2, 1fr);">
+              <div class="estado" data-estado="default"><span class="estado-nome">default, próximo</span><span><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span></span></div>
+              <div class="estado"><span class="estado-nome">vencido</span><span><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span></span></div>
+              <div class="estado"><span class="estado-nome">vence hoje</span><span><span class="chip-prazo chip-prazo-hoje"><svg class="ic"><use href="#i-relogio"/></svg>Vence hoje</span></span></div>
+              <div class="estado"><span class="estado-nome">concluída</span><span><span class="chip-prazo chip-prazo-concluido"><svg class="ic"><use href="#i-check"/></svg>Concluída · prazo 16/11</span></span></div>
             </div>
           </div>
-          <p class="tokens">Texto em <code>--color-text-default</code>. Vencido com fundo <code>--color-bg-danger</code> e borda <code>--color-text-danger</code>. Hoje em <code>--color-bg-warning</code>. Cor e texto, nunca só cor. Sem hover e sem foco, porque o chip não é controle.</p>
+          <p>Cor e texto, nunca só cor.</p><p class="tags"><span class="tag">Agenda</span><span class="tag">Alertas</span><span class="tag">Contatos</span><span class="tag">Processos</span></p>
         </div>
 </div>
 </div>
     </div>
   </div>
-  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 3 · Felipe Gaigher · 08/11/2026</span><span>1 de 3</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Questão 3 · Felipe Gaigher</span><span>1 de 3</span></footer>
 </section>
 
 <!-- ============ 2 ============ -->
 <section class="slide" id="q3s2">
   <header>
-    <p class="item">Questão 3, item 2 de 3. Componentes, 3 e 4 de 4, e onde cada um serve</p>
-    <h2>O card e o painel de detalhe fecham a tela. O estado é a única variante, e o hex só existe no primitivo</h2>
+    <p class="item">Questão 3 · Componentes, 3 e 4 de 4</p>
+    <h2>Card e painel de detalhe fecham a tela</h2>
+    <p class="contexto">O estado é a única variante. O hex só existe no primitivo.</p>
   </header>
   <div class="corpo astrea">
-    <div class="col col-componentes">
+    <div class="col">
       <div class="mestre-baixo">
 <div class="passos" role="tablist" aria-orientation="horizontal" aria-label="Componentes" data-passos>
 <button type="button" class="passo" role="tab" id="q3s2-t0" aria-controls="q3s2-p0" aria-selected="true"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Card de atividade</span><span class="passo-sub"><code class="ds">DS.cardAtividade</code></span></span></button>
 <button type="button" class="passo" role="tab" id="q3s2-t1" aria-controls="q3s2-p1" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Painel de detalhe</span><span class="passo-sub"><code class="ds">DS.painelDetalhe</code></span></span></button>
 </div>
 <div class="paineis" aria-live="polite">
-<div class="painel" role="tabpanel" id="q3s2-p0" aria-labelledby="q3s2-t0" tabindex="0"><p class="so-impressao secao-titulo">Card de atividade</p><span class="chips"><span class="tag">default</span><span class="tag">hover</span><span class="tag">active</span><span class="tag">foco</span><span class="tag">carregando</span><span class="tag">Variação Vencido</span></span>
-          <p class="props"><code>titulo</code>, <code>tipo</code>, <code>prazo</code>, <code>processo</code>, <code>responsavel</code> texto. <code>mostrarPrazo</code>, <code>mostrarProcesso</code>, <code>mostrarResponsavel</code>, <code>mostrarTags</code> e <code>copiarNumero</code> booleanas.</p>
+<div class="painel" role="tabpanel" id="q3s2-p0" aria-labelledby="q3s2-t0" tabindex="0"><p class="so-impressao secao-titulo">Card de atividade</p>
           <div class="palco">
             <div class="estados" style="grid-template-columns: repeat(3, 1fr);">
-              <div class="estado" data-estado="default"><span class="estado-nome">default</span><article class="card"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
-              <div class="estado" data-estado="hover"><span class="estado-nome">hover</span><article class="card is-hover"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
-              <div class="estado" data-estado="active"><span class="estado-nome">active</span><article class="card is-hover"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
-              <div class="estado" data-estado="foco"><span class="estado-nome">foco</span><article class="card foco"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4><span class="numero">5020066-92.2024.8.24.0045</span></article></div>
-              <div class="estado" data-estado="carregando"><span class="estado-nome">carregando</span><div class="card" aria-busy="true"><span class="traco" style="width: 45%"></span><span class="traco" style="width: 90%"></span><span class="traco" style="width: 70%"></span></div></div>
-              <div class="estado"><span class="estado-nome">Variação Vencido</span><article class="card"><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span><h4>Protocolar contestação</h4><span class="link"><svg class="ic"><use href="#i-arquivo"/></svg>Abrir processo</span></article></div>
+              <div class="estado" data-estado="default"><span class="estado-nome">default</span><article class="card"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4></article></div>
+              <div class="estado" data-estado="hover"><span class="estado-nome">hover e active</span><article class="card is-hover"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4></article></div>
+              <div class="estado" data-estado="foco"><span class="estado-nome">foco</span><article class="card foco"><span class="chip-prazo"><svg class="ic"><use href="#i-calendario"/></svg>Vence em 13/11</span><h4>Manifestar sobre o laudo</h4></article></div>
+              <div class="estado" data-estado="carregando"><span class="estado-nome">carregando</span><div class="card" aria-busy="true"><span class="traco" style="width: 45%"></span><span class="traco" style="width: 90%"></span></div></div>
+              <div class="estado"><span class="estado-nome">vencido</span><article class="card"><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span><h4>Protocolar contestação</h4></article></div>
             </div>
           </div>
+          <p class="tags"><span class="tag">Visão Cards</span><span class="tag">Visão Kanban</span></p>
         </div>
-<div class="painel" role="tabpanel" id="q3s2-p1" aria-labelledby="q3s2-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Painel de detalhe</p><span class="chips"><span class="tag">default</span><span class="tag">foco</span><span class="tag">carregando</span><span class="tag">vazio</span><span class="tag">oculto</span></span>
-          <p class="props"><code>titulo</code>, <code>chips</code>, <code>destaque</code>, <code>linhas</code>, <code>acoes</code>. <code>aoAnterior</code> e <code>aoProximo</code> trocam a atividade sem fechar. Divisor de 300 a 560px.</p>
+<div class="painel" role="tabpanel" id="q3s2-p1" aria-labelledby="q3s2-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Painel de detalhe</p>
           <div class="palco">
-            <div class="estados" style="grid-template-columns: 1.35fr 1fr;">
-              <div class="estado" data-estado="default" style="grid-row: span 4;"><span class="estado-nome">default</span>
+            <div class="estados" style="grid-template-columns: 1.4fr 1fr 1fr;">
+              <div class="estado" data-estado="default" style="grid-row: span 2;"><span class="estado-nome">default</span>
                 <div class="painel-detalhe">
                   <div class="painel-topo"><div><h4>Protocolar contestação</h4><span class="chip-prazo chip-prazo-vencido"><svg class="ic"><use href="#i-alerta"/></svg>Vencido há 2 dias</span></div><span class="nav"><svg class="ic"><use href="#i-anterior"/></svg><svg class="ic"><use href="#i-proximo"/></svg><svg class="ic"><use href="#i-fechar"/></svg></span></div>
-                  <div class="painel-bloco"><small>Prazo</small><b class="destaque">Vencido há 2 dias</b></div>
-                  <dl class="painel-bloco"><div><dt>Processo</dt><dd><span class="numero">5004213-75.2025.8.24.0023</span></dd></div><div><dt>Responsável</dt><dd>Rafael Antunes</dd></div><div><dt>Situação</dt><dd>Aberta</dd></div></dl>
+                  <dl class="painel-bloco"><div><dt>Responsável</dt><dd>Rafael Antunes</dd></div></dl>
                   <div class="painel-rodape"><span class="redondo"><svg class="ic"><use href="#i-check"/></svg></span><span class="redondo"><svg class="ic"><use href="#i-calendario"/></svg></span><span class="botao botao-primario">Abrir processo</span></div>
                 </div></div>
-              <div class="estado" data-estado="foco"><span class="estado-nome">foco, no botão de esconder</span><div class="painel-detalhe"><div class="painel-topo"><div><h4>Protocolar contestação</h4></div><span class="nav"><svg class="ic"><use href="#i-anterior"/></svg><svg class="ic"><use href="#i-proximo"/></svg><svg class="ic foco"><use href="#i-fechar"/></svg></span></div></div></div>
+              <div class="estado" data-estado="foco"><span class="estado-nome">foco</span><div class="painel-detalhe"><div class="painel-topo"><div><h4>Protocolar contestação</h4></div><span class="nav"><svg class="ic"><use href="#i-anterior"/></svg><svg class="ic"><use href="#i-proximo"/></svg><svg class="ic foco"><use href="#i-fechar"/></svg></span></div></div></div>
               <div class="estado" data-estado="carregando"><span class="estado-nome">carregando</span><div class="painel-detalhe" aria-busy="true"><div class="painel-bloco pilha"><span class="traco" style="width: 70%"></span><span class="traco" style="width: 45%"></span></div></div></div>
               <div class="estado" data-estado="vazio"><span class="estado-nome">vazio</span><div class="painel-detalhe"><div class="painel-bloco"><b>Sem dados cadastrados.</b></div></div></div>
-              <div class="estado" data-estado="oculto"><span class="estado-nome">oculto: só o botão de reabrir, e o foco vai para ele</span><span class="redondo reabrir"><svg class="ic"><use href="#i-anterior"/></svg></span></div>
+              <div class="estado" data-estado="oculto"><span class="estado-nome">oculto</span><span class="redondo reabrir"><svg class="ic"><use href="#i-anterior"/></svg></span></div>
             </div>
           </div>
-          <p class="tokens">Cartão em <code>--color-bg-surface</code>, borda <code>--color-border-default</code>, <code>--shadow-card</code>. Ações em botões redondos de ícone, com dica. O último botão é o primário: "Abrir processo". Abaixo de 1100px o painel some. A tela estreita fica para a próxima rodada.</p>
+          <p class="tags"><span class="tag">Contatos</span><span class="tag">Processos</span><span class="tag">Alertas</span><span class="tag">Agenda</span></p>
         </div>
 </div>
 </div>
     </div>
-    <div class="col">
-      <h3 class="secao-titulo">Onde cada componente serve, além da Área de trabalho</h3>
-      <div class="tabela-quadro">
-        <table class="tabela uso">
-          <thead><tr><th>Componente</th><th>Outras páginas do protótipo</th></tr></thead>
-          <tbody>
-            <tr><td>Tabela</td><td>Contatos, Processos, Atendimentos, Documentos e Buscas</td></tr>
-            <tr><td>Chip de prazo</td><td>Agenda, Alertas, Contatos e Processos</td></tr>
-            <tr><td>Card de atividade</td><td>Só as visões Cards e Kanban daqui. Fecha a entrada no DS quando o Kanban trocar o card próprio</td></tr>
-            <tr><td>Painel de detalhe</td><td>Contatos, Processos, Alertas e a coluna da Agenda</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
-  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 3 · Felipe Gaigher · 08/11/2026</span><span>2 de 3</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Questão 3 · Felipe Gaigher</span><span>2 de 3</span></footer>
 </section>
 
 <!-- ============ 3 ============ -->
 <section class="slide" id="q3s3">
   <header>
-    <p class="item">Questão 3, item 3 de 3. Uma decisão difícil</p>
-    <p class="pergunta">Um trade-off que você fez nesta tela e por quê.</p>
-    <h2>A tela abre pelo que atrasou, não pela lista escolhida. Quem usa o Astrea há anos reaprende a tela que mais abre</h2>
+    <p class="item">Questão 3 · Uma decisão difícil</p>
+    <h2>Abrir pelo atrasado custa reaprender a tela mais usada</h2>
   </header>
   <div class="corpo">
-    <div class="col astrea" style="flex: 0.95;">
+    <div class="col astrea">
       <div class="palco">
-        <div class="estados" style="grid-template-columns: 1fr 1fr; gap: var(--space-5);">
+        <div class="estados" style="grid-template-columns: 1fr; gap: var(--space-4);">
           <div class="estado">
-            <span class="estado-nome">Como o produto abre hoje: a lista escolhida e o widget de lembretes</span>
-            <div class="hoje-produto">
-              <div class="vazio"><b>Lista de tarefas</b><span>Ainda não existem tarefas cadastradas nesta lista.</span></div>
-              <div class="widget"><b>Lembretes</b><span>Hoje: sem compromissos agendados</span><span>Amanhã: sem compromissos agendados</span></div>
-            </div>
+            <span class="estado-nome">Hoje: lista escolhida</span>
+            <div class="vazio"><b>Lista de tarefas</b><span>Ainda não existem tarefas cadastradas nesta lista.</span></div>
           </div>
           <div class="estado">
-            <span class="estado-nome">Como o Astrea passa a abrir: todas as listas, Atrasadas no topo</span>
+            <span class="estado-nome">Proposta</span>
             <div class="secao">
               <h5>Atrasadas <span>1</span></h5>
-              <div class="linha"><span class="chip-prazo chip-prazo-vencido" data-estado="vencido"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg>Vencido há 2 dias</span><span class="titulo">Protocolar contestação</span><span class="acoes"></span></div>
+              <div class="linha"><span class="chip-prazo chip-prazo-vencido" data-estado="vencido"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg>Vencido há 2 dias</span><span class="titulo">Protocolar contestação</span></div>
               <h5>Hoje <span>1</span></h5>
-              <div class="linha"><span class="chip-prazo chip-prazo-hoje" data-estado="hoje"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Vence hoje, 14h</span><span class="titulo">Audiência de conciliação</span><span class="acoes"></span></div>
-              <h5>Próximos <span>1</span></h5>
-              <div class="linha"><span class="chip-prazo" data-estado="proximo"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Vence em 12/11</span><span class="titulo">Manifestar sobre o laudo pericial</span><span class="acoes"></span></div>
+              <div class="linha"><span class="chip-prazo chip-prazo-hoje" data-estado="hoje"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Vence hoje, 14h</span><span class="titulo">Audiência de conciliação</span></div>
             </div>
           </div>
         </div>
       </div>
-      <p class="nota">A mesma conta, com os mesmos dados. Hoje o atraso aparece só pela cor da data, e o vencido não tem seção. À direita, ele é a primeira linha da tela, em texto e cor.</p>
-      <h3 class="secao-titulo">O que eu não escolhi</h3>
-      <p class="texto">Manter a lista escolhida como abertura e o widget de lembretes, como o produto faz hoje. O ganho era zero reaprendizado. O custo era manter escondido o atrasado (PA-32), o problema que a tela existe para resolver.</p>
     </div>
     <div class="col">
-      <div class="decisao"><span class="tag tag-acao">Decisão</span><p>A tela abre em todas as listas, com Atrasadas acima de Hoje, e o prazo é o dado dominante da linha.</p></div>
-      <div class="mestre">
+      <div class="mestre-baixo">
 <div class="passos" role="tablist" aria-orientation="vertical" aria-label="Uma decisão difícil" data-passos>
 <button type="button" class="passo" role="tab" id="q3s3-t0" aria-controls="q3s3-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">O ganho</span></span></button>
 <button type="button" class="passo" role="tab" id="q3s3-t1" aria-controls="q3s3-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">O custo</span></span></button>
-<button type="button" class="passo" role="tab" id="q3s3-t2" aria-controls="q3s3-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Como reduzo o custo</span></span></button>
-<button type="button" class="passo" role="tab" id="q3s3-t3" aria-controls="q3s3-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">O que confirma a aposta</span></span></button>
-<button type="button" class="passo" role="tab" id="q3s3-t4" aria-controls="q3s3-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">O painel ao lado vem desta escolha</span></span></button>
-<button type="button" class="passo" role="tab" id="q3s3-t5" aria-controls="q3s3-p5" aria-selected="false"><span class="passo-num">6</span><span class="passo-texto"><span class="passo-titulo">O que fica para depois</span></span></button>
+<button type="button" class="passo" role="tab" id="q3s3-t2" aria-controls="q3s3-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Como reduzo</span></span></button>
+<button type="button" class="passo" role="tab" id="q3s3-t3" aria-controls="q3s3-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">O que confirma</span></span></button>
+<button type="button" class="passo" role="tab" id="q3s3-t4" aria-controls="q3s3-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">Fica para depois</span></span></button>
 </div>
 <div class="paineis" aria-live="polite">
-<div class="painel" role="tabpanel" id="q3s3-p0" aria-labelledby="q3s3-t0" tabindex="0"><p class="so-impressao secao-titulo">O ganho</p><p>O atrasado é a primeira coisa na tela. O escritório não perde prazo por não achar a lista. Perde por não ver a data. É a primeira restrição do briefing, e 136 de 407 votos pedem esse destaque.</p></div>
-<div class="painel" role="tabpanel" id="q3s3-p1" aria-labelledby="q3s3-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">O custo</p><p>Reaprendizado na tela mais usada, contra a segunda restrição do briefing. Quem tem muitas listas vê mais linhas na abertura.</p></div>
-<div class="painel" role="tabpanel" id="q3s3-p2" aria-labelledby="q3s3-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">Como reduzo o custo</p><p>O filtro de lista continua na tela, e a escolha fica gravada. A moldura não muda. O chip de prazo leva cor e texto, nunca só cor. A tela nova fica atrás de feature flag, com volta para a antiga.</p></div>
-<div class="painel" role="tabpanel" id="q3s3-p3" aria-labelledby="q3s3-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">O que confirma a aposta</p><p>Duas medidas no beta. O tempo até o primeiro clique no atrasado. Os chamados com "sumiu" ou "não vi o prazo". Se a volta para a tela antiga passar do limite da linha de base, a abertura volta para a lista escolhida, sem reescrever componente.</p></div>
-<div class="painel" role="tabpanel" id="q3s3-p4" aria-labelledby="q3s3-t4" tabindex="0" hidden><p class="so-impressao secao-titulo">O painel ao lado vem desta escolha</p><p>Com as três seções, a lista precisa ficar visível enquanto a pessoa lê uma atividade. O modal de hoje cobre a lista.</p></div>
-<div class="painel" role="tabpanel" id="q3s3-p5" aria-labelledby="q3s3-t5" tabindex="0" hidden><p class="so-impressao secao-titulo">O que fica para depois</p><p>Personalizar (37 votos) e ordenação manual (33 votos). Os dois pedem dado novo, e esta tela só reorganiza o que existe.</p></div>
+<div class="painel" role="tabpanel" id="q3s3-p0" aria-labelledby="q3s3-t0" tabindex="0"><p class="so-impressao secao-titulo">O ganho</p><p>O escritório não perde prazo por não achar a lista. Perde por não ver a data. 136 votos pedem esse destaque.</p><p class="tags"><span class="tag">PA-32</span><span class="tag">136 de 407 votos</span></p></div>
+<div class="painel" role="tabpanel" id="q3s3-p1" aria-labelledby="q3s3-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">O custo</p><p>Reaprendizado na tela que mais abre, contra a segunda restrição do briefing. Mais listas, mais linhas na abertura.</p><p class="tags"><span class="tag">Restrição 2 do briefing</span></p></div>
+<div class="painel" role="tabpanel" id="q3s3-p2" aria-labelledby="q3s3-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">Como reduzo o custo</p><p>O filtro de lista fica, e o Astrea grava a escolha. A moldura não muda. Feature flag, com volta para a tela antiga.</p><p class="tags"><span class="tag">Restrição 2 do briefing</span><span class="tag">Feature flag</span></p></div>
+<div class="painel" role="tabpanel" id="q3s3-p3" aria-labelledby="q3s3-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">O que confirma a aposta</p><p>No beta: tempo até o primeiro clique no atrasado, e chamados com "não vi o prazo". Se a volta passar da linha de base, a abertura volta.</p><p class="tags"><span class="tag">Beta atrás de flag</span></p></div>
+<div class="painel" role="tabpanel" id="q3s3-p4" aria-labelledby="q3s3-t4" tabindex="0" hidden><p class="so-impressao secao-titulo">O que fica para depois</p><p>Personalizar e ordenação manual. Os dois pedem dado novo, e esta tela só reorganiza o que existe.</p><p class="tags"><span class="tag">Personalizar · 37 votos</span><span class="tag">Ordenação manual · 33 votos</span></p></div>
 </div>
 </div>
     </div>
   </div>
-  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 3 · Felipe Gaigher · 08/11/2026</span><span>3 de 3</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Questão 3 · Felipe Gaigher</span><span>3 de 3</span></footer>
 </section>
 
 <script>
