@@ -143,6 +143,10 @@
     background-color: var(--component-card-bg);
     border: var(--border-width) solid var(--component-card-border);
     border-radius: var(--radius-card);
+    position: sticky;
+    top: calc(var(--component-header-height) + var(--space-5));
+    max-height: calc(100vh - var(--component-header-height) - 2 * var(--space-5));
+    overflow-y: auto;
   }
   .prioridades-ajuda { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-size: var(--font-size-label); }
   .prioridades ol { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
