@@ -1,333 +1,186 @@
 # Q2 — Design system e plano de redesign incremental
 
-Documento-fonte dos 6 slides. Cada seção vira um slide. O texto aqui é o que
-a gente itera; o Figma recebe a versão fechada.
+Documento-fonte da apresentação interativa. São exatamente 6 slides, o limite
+do enunciado. Cada slide tem um título que responde à pergunta, uma ideia
+central e pouco texto.
 
 Legenda:
 
-- `> decisão:` algo que já fechamos na conversa.
-- `> aberto:` algo que ainda depende de você.
-
-> nota: no Figma, a governança ocupa dois slides. O slide 2 responde como o
-> Figma e o código se mantêm alinhados. O slide 3 responde quem decide, quem
-> contribui e quem veta, com o fluxograma. O parágrafo de uso de IA sai da
-> conta da Q2. Ele vira o slide de fechamento da entrega inteira, como o
-> enunciado pede.
->
-> A ordem no Figma, na página "Questão 2", frames `Q2 / 01` a `Q2 / 06`:
->
-> 1. Tese e arquitetura
-> 2. Uma fonte, um lugar
-> 3. Governança
-> 4. Fases e convivência
-> 5. Como envolver o time
-> 6. Riscos e métricas
->
-> Toda cor vem de variável da coleção `Deck Q2`.
-
-> decisão: a Q2 não depende do trial. O cadastro não logou e seguimos sem as
-> telas. Os prints da página Extra do Figma guardam a evidência da falha. As
-> telas só pesam na Q1 e na Q3.
+- `Apoio:` evidência para as perguntas ao vivo. Não aparece no slide.
+- `> nota:` cuidado para quem apresenta. Não aparece no slide.
+- `> aberto:` decisão que ainda falta.
 
 ---
 
 ## Slide 1 — Arquitetura
 
-> decisão: o título responde a pergunta da banca ao pé da letra, sem tese e
-> sem IA. "Primeiro os tokens semânticos. Depois, os componentes." A tese
-> "usado por pessoas e por IA" era interpretação e tirava o foco. A IA fica no
-> passo 5 da ordem de construção e no kit do slide 3.
+**Pergunta:** como o DS se organiza e o que vem primeiro?
 
-> decisão: o espaço em branco abaixo das tabelas fica como respiro. O slide é
-> para apresentação ao vivo, e a banca lê em 30 segundos. Nada mais entra no
-> slide 1.
+**Título:** Primeiro os tokens semânticos, porque o legado os consome sem reescrita.
 
-### A abertura
-
-O Astrea cresceu com times diferentes construindo partes diferentes. O
-resultado é conhecido: padrão que varia por módulo e componente duplicado. A
-resposta é uma fonte só, que o front novo e o legado consomem do mesmo lugar.
-A ordem de construção é o que faz essa fonte valer desde o primeiro mês.
-
-### As camadas
+**Ideia central:** troca-se o valor, não a tela. Antigo e novo se aproximam antes de a migração chegar.
 
 | Camada | O que é | Exemplo |
 |---|---|---|
-| Tokens primitivos | Valores brutos, sem significado | `blue.600`, `space.16` |
-| Tokens semânticos | Valores com papel na interface | `color.bg.surface`, `color.text.danger`, `space.4` |
-| Componentes | Peças com comportamento | Botão, campo, tabela, chip de prazo |
-| Padrões | Combinações com regra de uso | Lista de atividades, filtro, formulário de prazo, estado vazio |
-| Templates | Telas-modelo por módulo | Agenda, Área de Trabalho, Kanban |
+| Primitivos | Fundamentos: cor, tipo, espaço, raio | `--nectar-p-*` |
+| Semânticos | Valor com papel na interface | `--nectar-s-*` |
+| Componentes | Peça com propriedades e estados | Botão, campo, card de atividade |
+| Padrões | Combinação com regra de uso | Filtro, lista de atividades, resposta de IA |
+| Templates | Tela-modelo por módulo | Agenda, Área de trabalho, Kanban |
 
-### O que vem primeiro: tokens semânticos
+**Ponto de partida:** o Nectar já tem pilha nova `--nectar-p-*`, `-s-*` e `-m-*`. Os primitivos partem dela.
 
-> decisão: tokens semânticos antes de qualquer componente.
-
-O motivo é a convivência. O código legado consegue consumir token semântico
-como variável CSS sem ser reescrito. Troca-se o valor, não o componente. Assim
-tela antiga e tela nova se aproximam no visual antes de a migração do front
-chegar nelas.
-
-### No Figma: um lugar só
-
-> decisão: uma biblioteca só, `Astrea DS`, publicada para todos os squads. As
-> bibliotecas parciais de hoje são absorvidas ou arquivadas. Nenhum squad
-> publica componente próprio.
-
-> nota: em 07/11 o CSS do produto logado mostrou 609 variáveis com prefixo
-> `--nectar-legacy-`. Existe um DS legado em código, o Nectar, sem par no
-> Figma. Os primitivos do `Astrea DS` nascem dele, renomeados para o padrão
-> `categoria.papel.variante`. A fase 2 do slide 4 começa por esse mapa, não
-> do zero. A hipótese do Mantine, do inventário, caiu.
-
-Três coleções de variáveis:
-
-| Coleção | Conteúdo | Modos |
-|---|---|---|
-| Primitives | Escalas de cor, espaço, tipografia, raio | Nenhum |
-| Semantic | Papéis da interface, apontam para Primitives | Claro, escuro, densidade |
-| Component | Valores específicos de componente, apontam para Semantic | Nenhum |
-
-Nomes no formato `categoria.papel.variante`: `color.bg.surface`,
-`color.text.danger`, `space.4`.
-
-Como as variáveis nascem, nesta ordem:
-
-1. Primitives: escalas numeradas, `blue.50` a `blue.900`, `space.4` a
-   `space.64`. Sem modo.
-2. Semantic: cada variável aponta para uma primitiva, por alias. Modos claro e
-   escuro na mesma coleção. Densidade vira coleção à parte, só se o Kanban pedir.
-3. Escopo em cada variável: cor de texto só em texto, raio só em canto. O
-   Figma bloqueia o uso errado antes da revisão.
-4. Component: só quando dois componentes divergem do semântico. Caso raro.
-5. Publicar a biblioteca. Squad consome, nunca copia.
-6. O JSON do repositório gera as três coleções, por plugin ou pela REST API de
-   variáveis. O Figma lê a fonte. Ele não é a fonte.
-
-### O documento-base do DS
-
-> decisão: o documento-base é o repositório, não uma página de wiki.
-
-| Peça | O que guarda |
-|---|---|
-| `README` | Princípios, regras de uso, como contribuir |
-| `tokens/` | O JSON no padrão DTCG |
-| Storybook | Cada componente, com estados e uso |
-| `skills/astrea-ds` | A mesma regra, no formato que o agente lê |
-
-Uma página de wiki envelhece em silêncio. O repositório muda junto com o
-código, e o changelog mostra o que mudou.
+Apoio: 646 variáveis CSS e três sistemas de nomes (PA-17). O token novo de
+marca é `#0A74D1`, e o botão medido é `#228BE6`. Três azuis na mesma tela
+(PA-16). A IA tem paleta própria em roxo (PA-10).
 
 ---
 
-## Slide 2 — Governança
+## Slide 2 — Componentes flexíveis
 
-### Estrutura
+**Pergunta:** como um componente serve módulos diferentes sem virar cópia?
 
-> decisão: você no centro, alinhado direto com os líderes dos squads. Sem time
-> novo. A Engenharia participa pelo repositório do DS.
+**Título:** Um componente com propriedades serve cada contexto, sem cópia.
 
-| Papel | Quem | Responsabilidade |
-|---|---|---|
-| Direção do DS | A vaga | Decide o que entra, mantém a fonte, lidera o redesign |
-| Patrocínio | Líderes dos squads | Garantem o tempo dos designers e a prioridade no roadmap |
-| Contribuição | Os 4 designers | Propõem e constroem a partir do trabalho real do squad |
-| Ponto técnico | Um dev de front por indicação da Engenharia | Mantém o pacote de código e tem veto técnico |
+**Ideia central:** cada propriedade existe igual no código e no Figma, e combinação sem uso sai.
 
-### O desenho da estrutura
+Exemplo: card de atividade, em auto layout.
 
-Vira fluxograma no slide. Linha cheia é decisão. Linha tracejada é
-contribuição.
-
-```
-        Líderes dos squads (patrocínio: tempo e prioridade)
-                            │
-         Direção do DS ─────┼───── Ponto técnico de front (Engenharia)
-                            │                       │
-        ┌─────────┬─────────┼─────────┬─────────┐   │
-       D1        D2        D3        D4  ········┘   │   contribuem a partir
-        └─────────┴────┬────┴─────────┘               │   do roadmap do squad
-                       ▼                              ▼
-        Biblioteca Figma `Astrea DS`  ◄════►  Repositório do DS
-        (variáveis, componentes)              (tokens JSON, pacote, skills,
-                       │                       agentes, Storybook)
-                       └──────────────┬────────────────┘
-                                      ▼
-                 Produto: telas novas, telas legadas, features de IA
-```
-
-A fonte fica embaixo, uma só. Os dois lados leem dela. Ninguém se reporta à
-direção do DS. A direção decide sobre o DS, e os líderes garantem o tempo.
-
-### Como um componente novo entra
-
-1. O designer abre um pedido com template: problema, onde aparece, quem mais usa.
-2. Triagem semanal, 30 min, você e o ponto técnico.
-3. **Regra:** 2 ou mais squads usam, entra no DS. Só 1 usa, fica local no squad.
-4. Você decide. A Engenharia pode vetar por motivo técnico, com justificativa.
-5. Versão nova do pacote com changelog.
-
-### Figma e código alinhados
-
-A fonte única é um JSON de tokens no repositório, no padrão DTCG.
-
-| Peça | Papel |
+| Propriedade | Tipo |
 |---|---|
-| JSON de tokens (DTCG) | Fonte única. Muda aqui, muda em todo lugar |
-| Style Dictionary | Gera CSS, TS e o que mais o front precisar |
-| Sync de variáveis | O mesmo JSON alimenta as variáveis do Figma |
-| Code Connect | Liga cada componente do Figma ao código |
-| Storybook | Documentação viva dos componentes |
-| Changelog por versão | Registro do que mudou, para designer e dev |
+| Título | Texto |
+| Mostrar prazo | Booleana |
+| Mostrar processo | Booleana |
+| Mostrar responsável | Booleana |
+| Mostrar tags | Booleana |
 
-### Os agentes e skills
+**Estados:** default, hover, active, foco, disabled, erro, carregando, vazio.
 
-> decisão: o kit de IA é parte do DS, não um extra.
-
-| Item | O que faz | Quem usa |
-|---|---|---|
-| Skill `astrea-ds` | Regras, tokens e componentes. Qualquer agente que gera tela consulta ela | Designer, dev, feature de IA |
-| Agente revisor | Avisa frame sem variável e componente desvinculado (detach) | Designer, antes de entregar |
-| Skill de UX writing | Tom, termos jurídicos, microcopy padrão | Designer, dev, feature de IA |
-| Agente gerador de tela | Monta o frame no Figma a partir da biblioteca, via MCP. Só usa componente e variável publicados | Designer, no rascunho da tela |
-| Agente de handoff | Lê o frame e devolve o código com os tokens e o Code Connect certos | Dev, ao implementar |
-
-O modelo é o de toolkit compartilhado: melhoria vira pull request, todo mundo
-puxa, todo mundo anda igual. O padrão se mantém por ferramenta, não por
-cobrança.
-
-Um instalador puxa o kit do repositório para a máquina de cada designer e de
-cada dev. A versão é a mesma em todo lugar. Quem não usa IA hoje recebe o kit
-pronto e um par para a primeira semana.
+Apoio: botão varia em caixa, raio e peso (PA-18). Existem seletores nativos e
+customizados (PA-20). Há três padrões de rótulo (PA-21) e dois estilos de foco
+(PA-22). Quatro booleanas como variantes dariam 16 cards por estado, 128 no
+total. Como propriedade, o estado é a única variante.
 
 ---
 
-## Slide 3 — Fases e convivência
+## Slide 3 — Governança
 
-### As fases
+**Pergunta:** quem decide componente novo, e como os squads e a Engenharia participam?
 
-| Período | O que acontece | Entrega |
+**Título:** A direção do DS decide, a Engenharia veta e os squads contribuem.
+
+**Ideia central:** flexibilidade antes de processo. Pedido novo é o último recurso.
+
+Ordem para qualquer necessidade:
+
+1. Resolver com propriedade existente.
+2. Compor localmente no squad.
+3. Pedir componente novo: problema, onde aparece, quem mais usa.
+
+| Papel | Quem | O que faz |
 |---|---|---|
-| Mês 1 | Inventário de componentes e variações. Discovery com os 4 designers. Linha de base das métricas. Leitura dos dados de suporte | Mapa do que existe e do time |
-| Meses 2–3 | Tokens semânticos. Atualização visual do legado só por token: cor, tipografia, espaçamento, foco acessível | Legado e novo com a mesma pele |
-| Meses 3–6 | Componentes principais. Piloto na gestão de atividades, atrás de feature flag, com grupo beta | Primeira tela nova em produção |
-| Meses 6–12 | Outros módulos no ritmo da migração do front. Padrões de IA | DS cobre o produto |
+| Decide | Direção do DS | Define o que entra e mantém a fonte |
+| Veta | Engenharia | Veto técnico, com justificativa, e cuida do pacote de código |
+| Contribui | Squads | Propõem e constroem a partir do trabalho real |
 
-### Critério de priorização
+**Fonte única:** tokens em JSON no repositório alimentam o código e as variáveis do Figma.
 
-Frequência de uso × dor relatada × onde a migração do front já está acontecendo.
-
-Pegar carona na migração custa menos: a tela já vai ser reescrita, então
-nasce no padrão novo sem trabalho dobrado.
-
-### Regras de convivência
-
-> decisão: o que é moldura fica fixo; o que é conteúdo migra.
-
-1. A moldura unifica primeiro: cabeçalho, menu lateral, botões de ação,
-   filtros. Depois de padronizados, **não mudam mais**. São a âncora que o
-   usuário reconhece ao cruzar de uma tela nova para uma legada.
-2. Nunca misturar padrão novo e antigo na mesma tela.
-3. Cor, tipografia e fluxos principais mudam o mínimo. O novo se adapta ao
-   que existe, não o contrário.
-4. Toda mudança é avisada dentro do produto, com changelog.
+Apoio: componente novo entra no DS quando 2 ou mais squads precisam. Se só 1
+precisa, fica local. Code Connect liga o componente do Figma ao código. O
+changelog registra cada versão. Não existe comitê nem ritual novo.
 
 ---
 
-## Slide 4 — Como envolver o time
+## Slide 4 — Fases e convivência
 
-### Primeiro: entender como cada um trabalha
+**Pergunta:** por onde começar, com qual critério, e como novo e legado convivem?
 
-> decisão: a divisão do trabalho não se define agora. Ela sai do discovery.
+**Título:** Tokens, moldura, configuração e, por último, os fluxos principais.
 
-Nas duas primeiras semanas, uma conversa individual com cada designer:
+**Ideia central:** os componentes entram em produção onde o uso é menos frequente e chegam ao prazo já testados.
 
-| Pergunta | O que ela revela |
-|---|---|
-| Como é o seu fluxo hoje, do pedido à entrega? | Onde o DS encaixa sem atrapalhar |
-| O que o roadmap do seu squad pede nos próximos 3 meses? | Quais componentes nascem do trabalho real |
-| Como você usa o Figma? Variáveis, componentes, bibliotecas? | Maturidade técnica e o que ensinar |
-| Usa IA no dia a dia? Como? | Quem já está pronto para o kit de agentes |
-| O que mais te frustra no produto hoje? | Dor que vira prioridade |
+| Fase | O que entra | Por que nesta ordem |
+|---|---|---|
+| 1. Tokens | Semânticos sobre o Nectar | Aproxima o visual sem reescrever tela |
+| 2. Moldura | Sidebar, navbar, filtros, botões de ação | Muda uma vez e depois fica fixa |
+| 3. Configuração e Administração | Cards, tabelas, ações, modais, documentos, anexos, assinatura, aprovações, pagamentos | Menor frequência de uso |
+| 4. Fluxos principais do Astrea | Agenda, Área de trabalho, Kanban e demais módulos | Chegam com tudo estruturado |
 
-### O mapa de perfil
+**Critério:** frequência, dor relatada, onde a migração do front já está, e risco.
 
-Das conversas sai um mapa simples por designer:
+**Convivência:** feature flag por escritório, com opção de voltar.
 
-| Eixo | O que medir |
-|---|---|
-| Onde o trabalho pesa | Produto, marketing e aquisição, ou perto do código |
-| Maturidade no Figma | Variáveis, componentes, bibliotecas |
-| Uso de IA | Nenhum, pontual, diário |
-| Dor principal | O que o roadmap dele pede e trava |
+**Desde o primeiro componente:** teste com dados densos de prazo.
 
-A frente de cada um sai do mapa, não de um organograma pronto:
+Apoio: 33% dos votos da planilha de pedidos tratam de prazo (PA-33). O
+argumento da fase 3 é frequência, não "fluxo interno". O administrador do
+escritório é cliente. Recusamos um ambiente paralelo de produção: custa mais
+e cria risco de prazo desatualizado. A moldura reúne PA-01 a PA-15.
 
-| Perfil | Frente natural no DS |
-|---|---|
-| Perto do código | Code Connect, Storybook, revisão do pacote com o ponto técnico |
-| Forte em Figma | Estrutura da biblioteca, variantes, auditoria de detach |
-| Perto do marketing | Tokens de marca e a ponte com o time de marketing |
-| Perto do usuário | Padrões de UX writing, pesquisa nos fluxos de atividades |
+> nota: menor frequência não significa menor risco. A Administração tem
+> limpeza de conta sem confirmação visível e rádios de segurança sem botão
+> Salvar. Comece a fase 3 por modal e ação de confirmação.
 
-Cada um fica com o que o próprio roadmap já pede e com o que ele faz melhor.
+> aberto: assinatura, aprovações e pagamentos não apareceram na varredura do
+> plano de teste. Confirmar onde esses fluxos ficam antes da apresentação.
+> Default: manter a lista, porque é a intenção da fase.
 
-Marketing entra pela borda. Os mesmos tokens de marca alimentam produto e
-criativos. Se houver demanda, nasce uma biblioteca de peças prontas, para
-escolher e publicar, igual ao que fizemos na Flovi. É uma linha no slide, não
-uma seção. A Q2 é sobre o produto.
-
-### Como o trabalho acontece
-
-- **Construção conjunta no fluxo.** O ponto de atenção aparece na demanda
-  real do squad. A gente senta junto, decide, constrói. Sem ritual novo com
-  nome próprio.
-- **A contribuição sai do roadmap, não de tarefa extra.** O designer entrega
-  a tela do squad. No caminho, o componente entra no DS.
-- **O kit de IA baixa o custo de seguir o padrão.** Seguir o DS vira o
-  caminho mais rápido. É isso que faz o time adotar sem você ser gestor.
-
-> aberto: percentual de tempo combinado com os líderes. Sugestão: nenhum
-> número fixo no slide. Dizer que o tempo é acordado por squad no discovery.
+> aberto: meses por fase, dentro dos 12 meses. Sugestão: tokens de 1 a 3.
+> Moldura de 3 a 5. Configuração de 5 a 8. Fluxos principais de 8 a 12.
+> Default: ficar fora do slide e responder ao vivo.
 
 ---
 
-## Slide 5 — Riscos e métricas
+## Slide 5 — Como envolver o time
 
-### Os 3 riscos
+**Pergunta:** como distribuir o trabalho entre os 4 designers sem tirar foco dos roadmaps?
+
+**Título:** A divisão sai da conversa com cada designer.
+
+**Ideia central:** não definimos a divisão agora. Ela nasce de quem cada pessoa é e do que o squad já pede.
+
+Conversa individual, nas duas primeiras semanas:
+
+| Tema | O que perguntar |
+|---|---|
+| Pessoa | Quem é e desde quando está na Aurum |
+| Trabalho | Como trabalha, rotina, ferramentas |
+| Direção | Foco atual e para onde quer ir |
+
+**Contribuição:** sai do roadmap do squad. O designer entrega a tela, e o componente entra no DS nesse caminho.
+
+Apoio: não existe tarefa extra nem frente definida antes das conversas. O
+líder de cada squad combina o tempo com a direção do DS.
+
+---
+
+## Slide 6 — Riscos e métricas
+
+**Pergunta:** quais são os 3 riscos, como mitigar e como medir sucesso?
+
+**Título:** Os riscos são a moldura, o prazo e o tempo do time.
+
+**Ideia central:** cada risco tem uma resposta concreta, e o sucesso se mede em adoção, eficiência e experiência.
 
 | Risco | Mitigação |
 |---|---|
-| **O DS vira projeto paralelo que ninguém adota** | Construir a partir de telas do roadmap. Modelo de toolkit: skills e agentes no repositório, melhoria vira pull request, todo mundo puxa. O padrão se mantém por ferramenta |
-| **Ruptura visual para quem vive no produto o dia todo** | Moldura fixa primeiro (sidebar, ações, filtros). Cor, tipografia e fluxos principais mudam o mínimo. Feature flag e grupo beta na primeira tela nova. Acompanhar chamados de suporte por módulo |
-| **O roadmap dos squads toma o tempo dos designers** | Líderes como patrocinadores. A tese: com skills e agentes o tempo de produção cai, e o DS devolve mais tempo do que toma. A métrica de eficiência prova ou derruba isso |
+| A moldura atinge todos de uma vez e precisa funcionar em duas tecnologias | Liberação gradual por escritório. Chamados como gatilho de reversão |
+| Componente aprovado em tela fácil quebra no fluxo de prazo | Teste com dados densos desde o início |
+| O roadmap consome os designers, e a vaga não é gestora | Líderes como patrocinadores. Contribuição vinda da demanda real |
 
-### Métricas
+| Eixo | Métricas |
+|---|---|
+| Adoção | % de telas com componentes do DS, % de cores vindas de token, componentes desvinculados |
+| Eficiência | Tempo do design até o dev, bugs visuais abertos |
+| Experiência | Chamados por módulo, tempo para criar um prazo, sucesso na tarefa, CSAT |
 
-| Eixo | Métrica | Fonte |
-|---|---|---|
-| Adoção | % de telas com componentes do DS | Inventário trimestral |
-| Adoção | % de cores vindas de token no código | Lint no CI |
-| Adoção | Componentes desvinculados (detach) | Figma Library Analytics |
-| Eficiência | Tempo do design até o dev | Ferramenta de gestão do squad |
-| Eficiência | Bugs visuais abertos | Backlog |
-| Experiência | Chamados de suporte por módulo | Suporte |
-| Experiência | Tempo para criar um prazo | Analytics do produto |
-| Experiência | Sucesso na tarefa e CSAT nos fluxos principais | Pesquisa recorrente |
+Apoio: o legado é AngularJS, e o menu lateral usa `ng-show`. A moldura precisa
+de uma versão para cada tecnologia, com as mesmas propriedades. O limite de
+chamados para reverter sai da linha de base medida antes da fase 2.
 
 ---
 
-## Slide 6 — Uso de IA (parágrafo obrigatório)
+## Fora dos 6 slides
 
-> aberto: escrever no fim, quando as três questões estiverem prontas.
-
-A ideia: o parágrafo mostra o próprio kit de agentes como prova do que a Q2
-propõe. Ferramentas usadas, em quais etapas, o que foi feito com o resultado.
-
----
-
-## Fora do escopo da Q2
-
-- Marketing e criativos como frente própria. Entram só pela linha do slide 4.
-- Seleção de pessoas. Os 4 designers já estão no cargo. O que se decide é a
-  frente de cada um, pelo mapa de perfil.
+- O parágrafo de uso de IA fica no fim da entrega geral, como o enunciado pede.
+- O kit de agentes e skills fica para as perguntas ao vivo.
