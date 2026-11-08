@@ -1113,7 +1113,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 ---
 
-> nota: pedido de Felipe em 08/11, 12h55: o quadro mostra o cenário do redesign
+> nota: pedido de Felipe em 08/11, 12h55. O quadro mostra o cenário do redesign
 > com as fases da Q2. A Task 9b, com brief manual em `.sancho/`, trocou `FASES`,
 > `HISTORIAS` e `CARDS`. A base do RF-02 passou de `a150985` para `e7ee407`.
 > Reversível.
