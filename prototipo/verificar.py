@@ -179,7 +179,8 @@ def comparar_moldura(kanban, css, moldura):
 
 def _dobrar(texto):
     sem = unicodedata.normalize('NFD', texto)
-    return ''.join(c for c in sem if not unicodedata.combining(c)).casefold()
+    dobrado = ''.join(c for c in sem if not unicodedata.combining(c)).casefold()
+    return re.sub(r'\s+', ' ', dobrado)
 
 
 def _termos(lista):
@@ -237,6 +238,8 @@ def _erros_dos_dados(lista):
     caminho = Path(lista)
     if not caminho.is_file():
         return ['lista de dados reais nao encontrada.']
+    if not _termos(caminho):
+        return ['lista de dados reais sem termo.']
     return buscar_dados_reais(caminho, PASTA)
 
 

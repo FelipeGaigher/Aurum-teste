@@ -214,6 +214,22 @@ class DadosReais(unittest.TestCase):
     def test_linha_vazia_e_comentario_nao_contam(self):
         self.assertEqual(self._executar('\n# nota\n', 'nota qualquer\n'), [])
 
+    def test_quebra_de_linha_nao_esconde_o_termo(self):
+        self.assertEqual(len(self._executar('Nome Plantado\n', 'Nome\nPlantado\n')), 1)
+
+    def test_nbsp_nao_esconde_o_termo(self):
+        self.assertEqual(len(self._executar('Nome Plantado\n', 'Nome Plantado\n')), 1)
+
+    def test_espaco_duplo_nao_esconde_o_termo(self):
+        self.assertEqual(len(self._executar('Nome Plantado\n', 'Nome  Plantado\n')), 1)
+
+    def test_lista_so_com_comentario_acusa_na_linha_de_comando(self):
+        with tempfile.TemporaryDirectory() as pasta:
+            lista = Path(pasta) / 'lista.txt'
+            lista.write_text('\n# nota\n', encoding='utf-8')
+            erros = verificar._erros_dos_dados(str(lista))
+        self.assertEqual(erros, ['lista de dados reais sem termo.'])
+
 
 if __name__ == '__main__':
     unittest.main()
