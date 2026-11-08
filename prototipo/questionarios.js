@@ -91,6 +91,28 @@
   });
   divisores.forEach(ligarDivisor);
   aplicarLargura(ler() || PADRAO);
+  ligarDobras();
+
+  // P1 a P5: faixa que abre e fecha, no padrão da Área de trabalho. O estado vale só nesta sessão.
+  function ligarDobras() {
+    const CHAVE_DOBRAS = 'astrea-questionarios-dobras';
+    const faixas = [...raiz.querySelectorAll('.qa-dobra-faixa')];
+    let abertas = null;
+    try { abertas = JSON.parse(sessionStorage.getItem(CHAVE_DOBRAS)); } catch (e) { abertas = null; }
+    const aplicar = (faixa, aberta) => {
+      faixa.setAttribute('aria-expanded', String(aberta));
+      document.getElementById(faixa.getAttribute('aria-controls')).hidden = !aberta;
+    };
+    faixas.forEach((faixa) => {
+      faixa.prepend(DS.icone('seta'));
+      if (Array.isArray(abertas)) aplicar(faixa, abertas.includes(faixa.dataset.dobra));
+      faixa.addEventListener('click', () => {
+        aplicar(faixa, faixa.getAttribute('aria-expanded') !== 'true');
+        const estado = faixas.filter((f) => f.getAttribute('aria-expanded') === 'true').map((f) => f.dataset.dobra);
+        try { sessionStorage.setItem(CHAVE_DOBRAS, JSON.stringify(estado)); } catch (e) { /* sem armazenamento, vale só nesta visita */ }
+      });
+    });
+  }
 
   const pedida = url.get('questao');
   const abas = DS.abas({
