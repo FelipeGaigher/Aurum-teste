@@ -233,12 +233,19 @@
   --component-button-primary-text: var(--color-action-text);
 
   /* escala do deck: a escala do DS multiplicada para a projeção */
-  --deck-titulo: calc(var(--font-size-title) * 1.8);
+  /* tipografia de apresentação: corpo e item 18px ou mais, contexto 16px ou mais, título 36px ou mais */
+  --deck-titulo: calc(var(--primitive-font-24) * 1.75);
   --deck-titulo-capa: calc(var(--font-size-title) * 2.4);
   --deck-subtitulo: calc(var(--font-size-title) * 1.1);
-  --deck-destaque: calc(var(--font-size-emphasis) * 1.25);
-  --deck-corpo: calc(var(--font-size-body) * 1.2);
+  --deck-no: var(--primitive-font-28);
+  --deck-item: calc(var(--primitive-font-20) * 1.1);
+  --deck-destaque: calc(var(--primitive-font-20) * 1.1);
+  --deck-contexto: var(--primitive-font-20);
+  --deck-corpo: var(--primitive-font-20);
+  --deck-tabela: var(--primitive-font-20);
+  --deck-painel: var(--primitive-font-24);
   --deck-rotulo: var(--font-size-label);
+  --deck-respiro: 4cqw; /* espaço entre blocos do painel: cresce com o slide */
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -399,7 +406,7 @@ h3 { margin: 0; }
 
 .corpo-interno { flex: 1; width: 100%; }
 .slide { gap: var(--space-4); }
-.slide h2 { font-size: calc(var(--font-size-title) * 1.6); }
+.slide h2 { font-size: var(--deck-titulo); }
 .col { gap: var(--space-2); }
 .decisao { padding: var(--space-2) var(--space-3); }
 .tabela-compacta th, .tabela-compacta td { height: var(--density-row-compact); }
@@ -464,6 +471,61 @@ h3 { margin: 0; }
 .mestre-baixo.fases .painel { padding: var(--space-3) var(--space-4); }
 .painel p { font-size: var(--deck-corpo); }
 @media print { .paineis > .painel[hidden] { visibility: visible; } }
+
+/* padrão claro e direto: título, uma linha de contexto, até 5 itens à esquerda e o painel à direita */
+.slide { gap: var(--space-6); padding: var(--space-7) var(--space-7) var(--space-5); }
+.slide h2 { max-width: none; }
+.item { margin-bottom: var(--space-3); }
+.contexto { margin-top: var(--space-3); font-size: var(--deck-contexto); color: var(--color-text-muted); line-height: var(--font-leading-tight); }
+.deck-mestre { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 44fr) minmax(0, 56fr); gap: var(--space-6); }
+.deck-lado { display: flex; flex-direction: column; gap: var(--space-5); min-height: 0; }
+.deck-lado > .passos { flex: 1; min-height: 0; gap: var(--space-3); }
+.deck-lado .passo { flex: 1 1 0; align-items: center; padding: var(--space-3) var(--space-5); }
+.passo-num { font-size: var(--deck-item); }
+.passo-titulo { font-size: var(--deck-item); }
+.deck-mestre .paineis, .deck-fluxo .paineis { min-height: 0; }
+.deck-mestre .painel, .deck-fluxo .painel { gap: var(--space-5); padding: var(--space-6) var(--space-7); }
+.painel p { font-size: var(--deck-painel); line-height: var(--font-leading-base); }
+.painel .tabela { font-size: var(--deck-tabela); }
+.painel:has(.tabela) { gap: var(--deck-respiro); }
+.painel .tabela th, .painel .tabela td { height: var(--size-search-height); padding: var(--space-2) var(--space-4); }
+.itens { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--deck-respiro); }
+.itens > li { padding-left: var(--space-4); border-left: var(--focus-width) solid var(--color-border-accent); font-size: var(--deck-painel); line-height: var(--font-leading-tight); }
+.numeros { display: flex; gap: var(--space-7); margin: 0; }
+.numeros > div { display: flex; flex-direction: column-reverse; }
+.numeros dt { font-size: var(--deck-rotulo); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: var(--font-tracking-caps); font-weight: var(--font-weight-semibold); }
+.numeros dd { margin: 0; font-size: var(--deck-titulo); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); color: var(--color-action); font-variant-numeric: tabular-nums; }
+
+.painel p.periodo { font-size: var(--deck-rotulo); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-action); }
+
+/* slide 2: fluxo de quatro nós grandes, ligados por conector simples */
+.deck-fluxo { flex: 1; min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: var(--space-5); }
+.nos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-7); }
+.no { position: relative; flex-direction: column; align-items: flex-start; justify-content: center; gap: var(--space-2); min-height: var(--primitive-size-88); padding: var(--space-6) var(--space-5); overflow: visible; }
+.no-nome { font-size: var(--deck-no); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.no-sub { font-size: var(--deck-corpo); color: var(--color-text-muted); line-height: var(--font-leading-tight); }
+.no + .no::before { content: ""; position: absolute; top: 50%; right: calc(100% + var(--border-width)); width: calc(var(--space-7) - var(--space-2)); border-top: var(--focus-width) solid var(--color-border-strong); }
+.no + .no::after { content: ""; position: absolute; top: 50%; right: calc(100% + var(--border-width)); width: var(--space-3); height: var(--space-4); translate: 0 -50%; background-color: var(--color-border-strong); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+
+@media (max-width: 720px) {
+  .deck-mestre, .nos { grid-template-columns: minmax(0, 1fr); }
+  .no + .no::before, .no + .no::after { display: none; }
+}
+@media print {
+  .deck-mestre, .deck-fluxo { display: block; }
+  .deck-lado .passo { flex: none; }
+}
+
+/* blocos do painel: o que, regra ou prazo, e uma âncora visual do DS */
+.deck-mestre .painel { gap: var(--deck-respiro); }
+.pb { display: flex; flex-direction: column; gap: var(--space-4); }
+.painel p.pb-rotulo { font-size: var(--deck-rotulo); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-text-muted); line-height: var(--font-leading-tight); }
+.pb > p:not(.pb-rotulo) { font-size: var(--deck-item); line-height: var(--font-leading-tight); }
+.tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.painel .tag { min-height: var(--size-control); padding: 0 var(--space-3); font-size: var(--deck-corpo); background-color: var(--color-bg-hover); border-color: var(--color-border-accent); color: var(--color-tag-blue-text); }
+.pb-num { flex-direction: row; align-items: baseline; gap: var(--space-3); }
+.pb-valor { font-size: var(--deck-titulo); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); color: var(--color-action); font-variant-numeric: tabular-nums; }
+.pb-legenda { font-size: var(--deck-corpo); color: var(--color-text-muted); }
 </style>
 </head>
 <body>
@@ -475,347 +537,198 @@ h3 { margin: 0; }
 <section class="slide" id="s1">
   <header>
     <div class="marca-capa"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a></div>
-    <p class="item">Questão 2, item 1 de 5. Arquitetura do design system</p>
-    <p class="pergunta">Como você organizaria fundamentos, tokens, componentes e padrões. O que vem primeiro e por quê?</p>
-    <h2>Primeiro os tokens semânticos. Depois, os componentes</h2>
+    <p class="item">Questão 2 · item 1 de 5 · Arquitetura</p>
+    <h2 id="s1-titulo">Primeiro os tokens semânticos. Depois, os componentes</h2>
+    <p class="contexto">Uma fonte só, que o front novo e o legado consomem do mesmo lugar.</p>
   </header>
-  <div class="corpo">
-    <div class="col fixa">
-      <p class="tese">O Astrea cresceu com times diferentes construindo partes diferentes. O resultado é conhecido: padrão que varia por módulo e componente duplicado. A resposta é uma fonte só, que o front novo e o legado consomem do mesmo lugar. A ordem de construção é o que faz essa fonte valer desde o primeiro mês.</p>
-      <h3 class="secao-titulo">As cinco camadas. Cada uma aponta só para a de baixo.</h3>
-      <svg class="fluxo-h" viewBox="0 0 824 410" role="img" aria-label="As cinco camadas do design system, de templates a tokens primitivos, e quem consome cada uma">
-        <defs><marker id="seta1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="seta" d="M0 0 L10 5 L0 10 z"/></marker></defs>
-        <rect class="caixa" x="0" y="0" width="500" height="58" rx="4"/>
-        <text class="t" x="16" y="24">Templates</text>
-        <text class="s" x="16" y="44">Telas-modelo por módulo: Agenda, Área de Trabalho, Kanban</text>
-        <path class="linha" d="M250 58 V86" marker-end="url(#seta1)"/>
-        <rect class="caixa" x="0" y="88" width="500" height="58" rx="4"/>
-        <text class="t" x="16" y="112">Padrões</text>
-        <text class="s" x="16" y="132">Combinações com regra de uso: lista de atividades, formulário de prazo, estado vazio</text>
-        <path class="linha" d="M250 146 V174" marker-end="url(#seta1)"/>
-        <rect class="caixa" x="0" y="176" width="500" height="58" rx="4"/>
-        <text class="t" x="16" y="200">Componentes</text>
-        <text class="s" x="16" y="220">Peças com comportamento e estados: card de atividade, filtro de prazo, seletor de responsável</text>
-        <path class="linha" d="M250 234 V262" marker-end="url(#seta1)"/>
-        <rect class="caixa tinta" x="0" y="264" width="500" height="58" rx="4"/>
-        <text class="t inv" x="16" y="288">Tokens semânticos. Vêm primeiro</text>
-        <text class="s inv" x="16" y="308">Valor com papel na interface: color.bg.surface, color.text.danger, space.4</text>
-        <path class="linha" d="M250 322 V350" marker-end="url(#seta1)"/>
-        <rect class="caixa" x="0" y="352" width="500" height="58" rx="4"/>
-        <text class="t" x="16" y="376">Tokens primitivos</text>
-        <text class="s" x="16" y="396">Valor bruto, sem significado: blue.600, space.16. Ninguém usa direto</text>
-        <path class="linha" d="M500 205 H540"/>
-        <text class="nota-svg" x="548" y="200">O front novo consome o pacote</text>
-        <text class="nota-svg" x="548" y="217">de componentes</text>
-        <path class="linha" d="M500 293 H540"/>
-        <text class="nota-svg" x="548" y="288">O legado consome como variável CSS,</text>
-        <text class="nota-svg" x="548" y="305">sem reescrever componente</text>
-      </svg>
-      <p class="nota">O protótipo já tem essa arquitetura: 9 fundamentos e 49 componentes em cinco grupos. São 211 estados desenhados e 185 ausências explicadas. Nenhuma cor da tela fica fora de token.</p>
+  <div class="deck-mestre" id="s1-ordem">
+    <div class="deck-lado">
+      <div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s1-titulo" data-passos>
+        <button type="button" class="passo" role="tab" id="s1-t0" aria-controls="s1-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-titulo">Tokens semânticos</span></button>
+        <button type="button" class="passo" role="tab" id="s1-t1" aria-controls="s1-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-titulo">Moldura</span></button>
+        <button type="button" class="passo" role="tab" id="s1-t2" aria-controls="s1-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-titulo">Componentes da gestão de atividades</span></button>
+        <button type="button" class="passo" role="tab" id="s1-t3" aria-controls="s1-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-titulo">Padrões e templates por módulo</span></button>
+        <button type="button" class="passo" role="tab" id="s1-t4" aria-controls="s1-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-titulo">Padrões para funcionalidade com IA</span></button>
+      </div>
+      <dl class="numeros">
+        <div><dt>fundamentos</dt><dd>9</dd></div>
+        <div><dt>componentes</dt><dd>49</dd></div>
+        <div><dt>estados desenhados</dt><dd>211</dd></div>
+      </dl>
     </div>
-    <div class="col fill">
-      <div class="decisao"><span class="tag tag-acao">Decisão</span><p>Tokens semânticos antes de qualquer componente.</p></div>
-      <p class="texto">O motivo é a convivência. O código legado consome token semântico como variável CSS sem ser reescrito. Troca-se o valor, não o componente. Tela antiga e tela nova se aproximam no visual antes de a migração do front chegar nelas.</p>
-      <h3 class="secao-titulo" id="s1-ordem-rotulo">A ordem de construção</h3>
-      <div class="mestre ordem" id="s1-ordem"><div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s1-ordem-rotulo" data-passos><button type="button" class="passo" role="tab" id="s1-ordem-t0" aria-controls="s1-ordem-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">Tokens semânticos</span></span></button><button type="button" class="passo" role="tab" id="s1-ordem-t1" aria-controls="s1-ordem-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Moldura</span></span></button><button type="button" class="passo" role="tab" id="s1-ordem-t2" aria-controls="s1-ordem-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Componentes da gestão de atividades</span></span></button><button type="button" class="passo" role="tab" id="s1-ordem-t3" aria-controls="s1-ordem-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Padrões e templates por módulo</span></span></button><button type="button" class="passo" role="tab" id="s1-ordem-t4" aria-controls="s1-ordem-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-texto"><span class="passo-titulo">Padrões para funcionalidade com IA</span></span></button></div><div class="paineis" aria-live="polite"><div class="painel" role="tabpanel" id="s1-ordem-p0" aria-labelledby="s1-ordem-t0" tabindex="0"><p class="so-impressao secao-titulo">1. Tokens semânticos</p><p>Cor, tipografia, espaço, raio e foco. Em JSON, no repositório.</p></div><div class="painel" role="tabpanel" id="s1-ordem-p1" aria-labelledby="s1-ordem-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">2. Moldura</p><p>Cabeçalho, menu lateral, ações e filtros. Depois de padronizada, não muda mais.</p></div><div class="painel" role="tabpanel" id="s1-ordem-p2" aria-labelledby="s1-ordem-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">3. Componentes da gestão de atividades</p><p>Nascem da primeira tela nova, com todos os estados.</p></div><div class="painel" role="tabpanel" id="s1-ordem-p3" aria-labelledby="s1-ordem-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">4. Padrões e templates por módulo</p><p>Lista, filtro, formulário de prazo, estado vazio.</p></div><div class="painel" role="tabpanel" id="s1-ordem-p4" aria-labelledby="s1-ordem-t4" tabindex="0" hidden><p class="so-impressao secao-titulo">5. Padrões para funcionalidade com IA</p><p>Como o sistema sugere, como o usuário confirma, como desfaz, e como aparece quando a IA erra. Mesmos componentes, mesma moldura.</p></div></div></div>
-      <h3 class="secao-titulo">Os estados de cada componente</h3>
-      <p class="nota">Default, hover, active, foco, disabled, erro, carregando e vazio são a matriz base. Algumas peças pedem mais três: selecionado, sem-destaque e oculto. Cada peça mostra só os estados que tem e escreve por que os outros faltam.</p>
+    <div class="paineis" aria-live="polite">
+      <div class="painel" role="tabpanel" id="s1-p0" aria-labelledby="s1-t0" tabindex="0"><p class="so-impressao secao-titulo">1. Tokens semânticos</p><div class="pb"><p class="pb-rotulo">O que é</p><p>Valor com papel na interface. Aponta para um primitivo e vem antes de qualquer componente.</p></div><div class="pb"><p class="pb-rotulo">Exemplos</p><div class="tags"><span class="tag"><code>color.bg.surface</code></span><span class="tag"><code>color.text.danger</code></span><span class="tag"><code>space.4</code></span></div></div><div class="pb"><p class="pb-rotulo">Regra</p><p>O legado consome o token como variável CSS, sem reescrita.</p></div></div>
+      <div class="painel" role="tabpanel" id="s1-p1" aria-labelledby="s1-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">2. Moldura</p><div class="pb"><p class="pb-rotulo">O que é</p><p>A âncora que não muda mais. O que é moldura fica fixo; o conteúdo migra.</p></div><div class="pb"><p class="pb-rotulo">Partes</p><div class="tags"><span class="tag">Cabeçalho</span><span class="tag">Menu lateral</span><span class="tag">Ações</span><span class="tag">Filtros</span></div></div><div class="pb"><p class="pb-rotulo">Prazo</p><p>Fase 2, meses 2 e 3.</p></div></div>
+      <div class="painel" role="tabpanel" id="s1-p2" aria-labelledby="s1-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">3. Componentes da gestão de atividades</p><div class="pb"><p class="pb-rotulo">O que é</p><p>Peça com comportamento e estados.</p></div><div class="pb"><p class="pb-rotulo">Exemplos</p><div class="tags"><span class="tag">Card de atividade</span><span class="tag">Filtro de prazo</span><span class="tag">Seletor de responsável</span></div></div><div class="pb"><p class="pb-rotulo">Matriz base de estados</p><div class="tags"><span class="tag">default</span><span class="tag">hover</span><span class="tag">active</span><span class="tag">foco</span><span class="tag">disabled</span><span class="tag">erro</span><span class="tag">carregando</span><span class="tag">vazio</span></div></div></div>
+      <div class="painel" role="tabpanel" id="s1-p3" aria-labelledby="s1-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">4. Padrões e templates por módulo</p><div class="pb"><p class="pb-rotulo">Padrões: combinação com regra de uso</p><div class="tags"><span class="tag">Lista de atividades</span><span class="tag">Formulário de prazo</span><span class="tag">Estado vazio</span></div></div><div class="pb"><p class="pb-rotulo">Templates: tela-modelo por módulo</p><div class="tags"><span class="tag">Agenda</span><span class="tag">Área de Trabalho</span><span class="tag">Kanban</span></div></div><div class="pb"><p class="pb-rotulo">Regra</p><p>Cada peça mostra só os estados que tem e escreve por que os outros faltam.</p></div></div>
+      <div class="painel" role="tabpanel" id="s1-p4" aria-labelledby="s1-t4" tabindex="0" hidden><p class="so-impressao secao-titulo">5. Padrões para funcionalidade com IA</p><div class="pb"><p class="pb-rotulo">Padrões</p><div class="tags"><span class="tag">Sugerir</span><span class="tag">Confirmar</span><span class="tag">Desfazer</span><span class="tag">Errar</span></div></div><div class="pb"><p class="pb-rotulo">Regra</p><p>A IA nasce nos mesmos componentes do DS.</p></div><div class="pb"><p class="pb-rotulo">Prazo</p><p>Primeiras funcionalidades na fase 4, meses 4 a 6. Todos os fluxos na fase 6, meses 10 a 12.</p></div></div>
     </div>
   </div>
-  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>1 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Questão 2 · Felipe Gaigher · 08/11/2026</span><span>1 de 6</span></footer>
 </section>
 
 <!-- ============ 2 ============ -->
 <section class="slide" id="s2">
   <header>
-    <p class="item">Questão 2, item 2 de 5. Governança, primeira parte</p>
-    <p class="pergunta">Como o Figma e o código se mantêm alinhados.</p>
-    <h2>Uma fonte só. O Figma lê a fonte, ele não é a fonte</h2>
+    <p class="item">Questão 2 · item 2 de 5 · Governança, primeira parte</p>
+    <h2 id="s2-titulo">Uma fonte só. O Figma lê a fonte</h2>
+    <p class="contexto">Uma biblioteca, Astrea DS, para todos os squads. Nenhum squad publica componente próprio.</p>
   </header>
-  <div class="corpo vertical">
-    <svg class="fluxo-h" style="width: 64%; margin: 0 auto;" viewBox="0 0 1728 236" role="img" aria-label="O JSON de tokens no repositório alimenta o código legado, o código novo, a biblioteca do Figma e os agentes">
-      <defs><marker id="seta2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="seta" d="M0 0 L10 5 L0 10 z"/></marker></defs>
-      <rect class="caixa tinta" x="0" y="88" width="280" height="60" rx="4"/>
-      <text class="t inv" x="140" y="113" text-anchor="middle">tokens/ em JSON, padrão DTCG</text>
-      <text class="s inv" x="140" y="133" text-anchor="middle">A fonte. Muda aqui, muda em todo lugar</text>
-      <path class="linha" d="M280 118 H330 M330 24 V212 M330 24 H372 M330 86 H372 M330 150 H372 M330 212 H372"/>
-      <rect class="caixa" x="380" y="0" width="240" height="48" rx="4"/><text class="t" x="500" y="29" text-anchor="middle">Style Dictionary</text>
-      <rect class="caixa" x="380" y="62" width="240" height="48" rx="4"/><text class="t" x="500" y="91" text-anchor="middle">Style Dictionary</text>
-      <rect class="caixa" x="380" y="126" width="240" height="48" rx="4"/><text class="t" x="500" y="155" text-anchor="middle">API de variáveis do Figma</text>
-      <rect class="caixa" x="380" y="188" width="240" height="48" rx="4"/><text class="t" x="500" y="217" text-anchor="middle">skills/astrea-ds</text>
-      <path class="linha" d="M620 24 H692 M620 86 H692 M620 150 H692 M620 212 H692" marker-end="url(#seta2)"/>
-      <rect class="caixa suave" x="700" y="0" width="300" height="48" rx="4"/><text class="t" x="850" y="29" text-anchor="middle">Variáveis CSS</text>
-      <rect class="caixa suave" x="700" y="62" width="300" height="48" rx="4"/><text class="t" x="850" y="91" text-anchor="middle">Pacote de componentes em TS</text>
-      <rect class="caixa suave" x="700" y="126" width="300" height="48" rx="4"/><text class="t" x="850" y="155" text-anchor="middle">Biblioteca Figma: Astrea DS</text>
-      <rect class="caixa suave" x="700" y="188" width="300" height="48" rx="4"/><text class="t" x="850" y="217" text-anchor="middle">Agentes do kit</text>
-      <path class="linha" d="M1000 24 H1072 M1000 86 H1072 M1000 150 H1072 M1000 212 H1072" marker-end="url(#seta2)"/>
-      <rect class="caixa" x="1080" y="0" width="300" height="48" rx="4"/><text class="t" x="1230" y="29" text-anchor="middle">Telas legadas, sem reescrita</text>
-      <rect class="caixa" x="1080" y="62" width="300" height="48" rx="4"/><text class="t" x="1230" y="91" text-anchor="middle">Telas novas</text>
-      <rect class="caixa" x="1080" y="126" width="300" height="48" rx="4"/><text class="t" x="1230" y="155" text-anchor="middle">Designers dos quatro squads</text>
-      <rect class="caixa" x="1080" y="188" width="300" height="48" rx="4"/><text class="t" x="1230" y="217" text-anchor="middle">Telas e features geradas com IA</text>
-      <path class="linha" d="M1380 86 H1420 V150 H1380" stroke-dasharray="5 5"/>
-      <text class="nota-svg" x="1436" y="112">Code Connect liga cada componente</text>
-      <text class="nota-svg" x="1436" y="129">do Figma ao do pacote</text>
-    </svg>
-    <div class="corpo corpo-interno">
-    <div class="col fixa">
-      <div class="decisao"><span class="tag tag-acao">Decisão</span><p>Uma biblioteca, Astrea DS, publicada para todos os squads. As parciais de hoje são absorvidas ou arquivadas. Nenhum squad publica componente próprio.</p></div>
-      <p class="nota">O código já tem um DS legado: 609 variáveis com o prefixo nectar-legacy, lidas no produto em 07/11. Os primitivos do Astrea DS nascem dele, renomeados. A fase 2 começa por esse mapa, não do zero.</p>
-      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">No repositório: o documento-base do DS</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
-        <thead><tr><th>Peça</th><th>Papel</th></tr></thead>
-        <tbody>
-          <tr><td>tokens/ em JSON, padrão DTCG</td><td>Fonte única. Muda aqui, muda em todo lugar</td></tr>
-          <tr><td>Style Dictionary</td><td>Gera CSS e TS para o front novo e para o legado</td></tr>
-          <tr><td>Code Connect</td><td>Liga cada componente do Figma ao código</td></tr>
-          <tr><td>Storybook</td><td>Cada componente, com estados e regra de uso</td></tr>
-          <tr><td>README</td><td>Princípios, regras de uso, como contribuir</td></tr>
-          <tr><td>skills/astrea-ds</td><td>A mesma regra, no formato que o agente lê</td></tr>
-          <tr><td>Changelog por versão</td><td>O que mudou, para designer e para dev</td></tr>
-        </tbody>
-      </table></div></details>
+  <div class="deck-fluxo">
+    <div class="nos" role="tablist" aria-orientation="horizontal" aria-labelledby="s2-titulo" data-passos>
+      <button type="button" class="passo no" role="tab" id="s2-t0" aria-controls="s2-p0" aria-selected="true"><span class="no-nome">Fonte</span><span class="no-sub"><code>tokens/</code> em JSON</span></button>
+      <button type="button" class="passo no" role="tab" id="s2-t1" aria-controls="s2-p1" aria-selected="false"><span class="no-nome">Geradores</span><span class="no-sub">Código e Figma</span></button>
+      <button type="button" class="passo no" role="tab" id="s2-t2" aria-controls="s2-p2" aria-selected="false"><span class="no-nome">Saídas</span><span class="no-sub">CSS, TS, Figma, agentes</span></button>
+      <button type="button" class="passo no" role="tab" id="s2-t3" aria-controls="s2-p3" aria-selected="false"><span class="no-nome">Quem usa</span><span class="no-sub">Telas e designers</span></button>
     </div>
-    <div class="col fill">
-      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">No Figma: três coleções de variáveis</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
-        <thead><tr><th>Coleção</th><th>Conteúdo</th><th>Modos</th></tr></thead>
-        <tbody>
-          <tr><td>Primitives</td><td>Escalas de cor, espaço, tipografia e raio</td><td>Nenhum</td></tr>
-          <tr><td>Semantic</td><td>Papéis da interface. Apontam para Primitives</td><td>Claro, escuro</td></tr>
-          <tr><td>Component</td><td>Valor específico de um componente. Aponta para Semantic</td><td>Nenhum</td></tr>
-        </tbody>
-      </table></div></details>
-      <p class="nota">Nome no formato categoria.papel.variante: color.bg.surface, color.text.danger, space.4.</p>
-      <details class="bloco"><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">Como as variáveis nascem</span></summary><div class="detalhe"><ol class="lista"><li>Primitives: escalas numeradas, de blue.50 a blue.900. Sem modo.</li><li>Semantic: cada variável aponta para uma primitiva. Modos claro e escuro na mesma coleção.</li><li>Escopo em cada variável: cor de texto só em texto, raio só em canto. O Figma bloqueia o uso errado antes da revisão.</li><li>Publicar a biblioteca. Squad consome, nunca copia.</li><li>O JSON do repositório gera as três coleções pela API de variáveis.</li></ol></div></details>
-    </div>
+    <div class="paineis" aria-live="polite">
+      <div class="painel" role="tabpanel" id="s2-p0" aria-labelledby="s2-t0" tabindex="0"><p class="so-impressao secao-titulo">Fonte</p><ul class="itens">
+        <li>JSON no padrão DTCG, no repositório</li>
+        <li>Muda aqui, muda em todo lugar</li>
+        <li>Nasce das 609 variáveis <code>nectar-legacy</code></li>
+        <li>Mantida pela direção do DS</li>
+      </ul></div>
+      <div class="painel" role="tabpanel" id="s2-p1" aria-labelledby="s2-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Geradores</p><ul class="itens">
+        <li>Style Dictionary gera CSS e TS</li>
+        <li>API de variáveis gera o Figma</li>
+        <li><code>skills/astrea-ds</code> leva a regra aos agentes</li>
+        <li>Code Connect liga Figma e pacote</li>
+      </ul></div>
+      <div class="painel" role="tabpanel" id="s2-p2" aria-labelledby="s2-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">Saídas</p><ul class="itens">
+        <li>Variáveis CSS</li>
+        <li>Pacote de componentes em TS</li>
+        <li>Biblioteca Figma Astrea DS: Primitives, Semantic, Component</li>
+        <li>Agentes do kit</li>
+      </ul></div>
+      <div class="painel" role="tabpanel" id="s2-p3" aria-labelledby="s2-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">Quem usa</p><ul class="itens">
+        <li>Telas legadas, sem reescrita</li>
+        <li>Telas novas</li>
+        <li>Designers dos quatro squads</li>
+        <li>Telas e features geradas com IA</li>
+      </ul></div>
     </div>
   </div>
-  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>2 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Questão 2 · Felipe Gaigher · 08/11/2026</span><span>2 de 6</span></footer>
 </section>
 
 <!-- ============ 3 ============ -->
 <section class="slide" id="s3">
   <header>
-    <p class="item">Questão 2, item 2 de 5. Governança, segunda parte</p>
-    <p class="pergunta">Como designers dos squads contribuem, quem decide sobre um componente novo, como Engenharia participa.</p>
-    <h2>Quem decide, quem contribui, quem veta</h2>
+    <p class="item">Questão 2 · item 2 de 5 · Governança, segunda parte</p>
+    <h2 id="s3-titulo">Quem decide, quem contribui, quem veta</h2>
+    <p class="contexto">Dois ou mais squads usam, entra no DS. Só um usa, fica local.</p>
   </header>
-  <div class="corpo">
-    <div class="col larga">
-      <h3 class="secao-titulo">A estrutura. Linha cheia é decisão. Linha tracejada é contribuição. Ninguém se reporta à direção do DS.</h3>
-      <svg class="fluxo" viewBox="0 0 900 600" role="img" aria-label="Fluxograma da estrutura de governança do design system">
-        <!-- Líderes -->
-        <rect class="caixa" x="250" y="0" width="400" height="64" rx="4"/>
-        <text class="t" x="450" y="26" text-anchor="middle">Líderes dos squads</text>
-        <text class="s" x="450" y="46" text-anchor="middle">Patrocínio: garantem o tempo dos designers e a prioridade no roadmap</text>
-        <path class="linha" d="M450 64 V96 M240 96 H660 M240 96 V124 M660 96 V124"/>
-        <!-- Direção -->
-        <rect class="caixa tinta" x="40" y="124" width="400" height="84" rx="4"/>
-        <text class="t inv" x="240" y="162" text-anchor="middle" font-size="16">Direção do DS, a vaga</text>
-        <text class="s inv" x="240" y="182" text-anchor="middle">Decide o que entra, mantém a fonte, lidera o redesign</text>
-        <!-- Ponto técnico -->
-        <rect class="caixa" x="480" y="124" width="360" height="84" rx="4"/>
-        <text class="t" x="660" y="156" text-anchor="middle">Ponto técnico de front</text>
-        <text class="s" x="660" y="174" text-anchor="middle">Engenharia. Mantém o pacote de código.</text>
-        <text class="s" x="660" y="190" text-anchor="middle">Veto técnico, com justificativa</text>
-        <!-- Direção -> designers -->
-        <path class="linha" d="M240 208 V240 M135 240 H765 M135 240 V268 M345 240 V268 M555 240 V268 M765 240 V268"/>
-        <!-- Designers -->
-        <g>
-          <rect class="caixa" x="40" y="268" width="190" height="60" rx="4"/>
-          <text class="t" x="135" y="292" text-anchor="middle">Designer do squad 1</text>
-          <text class="s" x="135" y="312" text-anchor="middle">Contribui a partir do roadmap</text>
-          <rect class="caixa" x="250" y="268" width="190" height="60" rx="4"/>
-          <text class="t" x="345" y="292" text-anchor="middle">Designer do squad 2</text>
-          <text class="s" x="345" y="312" text-anchor="middle">Contribui a partir do roadmap</text>
-          <rect class="caixa" x="460" y="268" width="190" height="60" rx="4"/>
-          <text class="t" x="555" y="292" text-anchor="middle">Designer do squad 3</text>
-          <text class="s" x="555" y="312" text-anchor="middle">Contribui a partir do roadmap</text>
-          <rect class="caixa" x="670" y="268" width="190" height="60" rx="4"/>
-          <text class="t" x="765" y="292" text-anchor="middle">Designer do squad 4</text>
-          <text class="s" x="765" y="312" text-anchor="middle">Contribui a partir do roadmap</text>
-        </g>
-        <!-- Designers -> biblioteca (contribuição) -->
-        <path class="linha tracejada" d="M135 328 V360 M345 328 V360 M555 328 V360 M765 328 V360 M135 360 H765 M240 360 V392"/>
-        <!-- Ponto técnico -> repositório -->
-        <path class="linha" d="M840 166 H880 V432 H840"/>
-        <!-- Biblioteca e repositório -->
-        <rect class="caixa suave" x="40" y="392" width="400" height="80" rx="4"/>
-        <text class="t" x="240" y="426" text-anchor="middle">Biblioteca Figma: Astrea DS</text>
-        <text class="s" x="240" y="446" text-anchor="middle">Variáveis e componentes publicados. Squad consome, nunca copia</text>
-        <rect class="caixa suave" x="480" y="392" width="360" height="80" rx="4"/>
-        <text class="t" x="660" y="426" text-anchor="middle">Repositório do DS</text>
-        <text class="s" x="660" y="446" text-anchor="middle">Tokens JSON, pacote de código, skills, agentes, Storybook</text>
-        <path class="linha" d="M440 432 H480"/>
-        <!-- -> produto -->
-        <path class="linha" d="M240 472 V504 M660 472 V504 M240 504 H660 M450 504 V536"/>
-        <rect class="caixa tinta" x="150" y="536" width="600" height="64" rx="4"/>
-        <text class="t inv" x="450" y="562" text-anchor="middle" font-size="16">Produto</text>
-        <text class="s inv" x="450" y="582" text-anchor="middle">Telas novas, telas legadas e features de IA, da mesma fonte</text>
-      </svg>
+  <div class="deck-mestre">
+    <div class="deck-lado">
+      <div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s3-titulo" data-passos>
+        <button type="button" class="passo" role="tab" id="s3-t0" aria-controls="s3-p0" aria-selected="true"><span class="passo-titulo">Líderes dos squads patrocinam</span></button>
+        <button type="button" class="passo" role="tab" id="s3-t1" aria-controls="s3-p1" aria-selected="false"><span class="passo-titulo">A direção do DS decide</span></button>
+        <button type="button" class="passo" role="tab" id="s3-t2" aria-controls="s3-p2" aria-selected="false"><span class="passo-titulo">O ponto técnico de front veta</span></button>
+        <button type="button" class="passo" role="tab" id="s3-t3" aria-controls="s3-p3" aria-selected="false"><span class="passo-titulo">Os designers dos squads contribuem</span></button>
+        <button type="button" class="passo" role="tab" id="s3-t4" aria-controls="s3-p4" aria-selected="false"><span class="passo-titulo">Como um componente novo entra</span></button>
+      </div>
     </div>
-    <div class="col fill">
-      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">Como um componente novo entra</span></summary><div class="detalhe"><ol class="lista"><li>O designer abre um pedido com template: problema, onde aparece, quem mais usa.</li><li>Triagem semanal de 30 minutos: direção do DS e ponto técnico.</li><li>Regra: dois ou mais squads usam, entra no DS. Só um usa, fica local no squad.</li><li>A direção decide. A Engenharia veta por motivo técnico, com justificativa.</li><li>Versão nova do pacote, com changelog.</li></ol></div></details>
-      <p class="nota">No protótipo, a regra funcionou três vezes em um dia. O botão de copiar nasceu local e foi para o DS quando a quarta página o usou. O painel de detalhe nasceu em Contatos e hoje serve sete telas. Um card de registro substituiu três cards parecidos.</p>
-      <div class="decisao"><span class="tag tag-acao">Decisão</span><p>O kit de IA é parte do DS, não um extra. O padrão se mantém por ferramenta, não por cobrança.</p></div>
-      <details class="bloco"><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">Peça do kit</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
-        <thead><tr><th>Peça do kit</th><th>O que faz</th></tr></thead>
-        <tbody>
-          <tr><td>Skill astrea-ds</td><td>Regras, tokens e componentes. Todo agente que gera tela consulta ela</td></tr>
-          <tr><td>Agente revisor</td><td>Avisa frame sem variável e componente desvinculado, antes da entrega</td></tr>
-          <tr><td>Skill de UX writing</td><td>Tom, termos jurídicos e microcopy padrão</td></tr>
-          <tr><td>Agente gerador de tela</td><td>Monta o frame no Figma pela biblioteca, via MCP</td></tr>
-          <tr><td>Agente de handoff</td><td>Lê o frame e devolve o código com os tokens certos</td></tr>
-        </tbody>
-      </table></div></details>
+    <div class="paineis" aria-live="polite">
+      <div class="painel" role="tabpanel" id="s3-p0" aria-labelledby="s3-t0" tabindex="0"><p class="so-impressao secao-titulo">Líderes dos squads patrocinam</p><div class="pb"><p class="pb-rotulo">O que fazem</p><p>Garantem o tempo dos designers e a prioridade no roadmap.</p></div><div class="pb"><p class="pb-rotulo">Prazo</p><p>O líder de cada squad combina o tempo no discovery.</p></div><div class="pb"><p class="pb-rotulo">Regra</p><p>Ninguém se reporta à direção do DS.</p></div></div>
+      <div class="painel" role="tabpanel" id="s3-p1" aria-labelledby="s3-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">A direção do DS decide</p><div class="pb"><p class="pb-rotulo">Decide sobre</p><div class="tags"><span class="tag">O que entra</span><span class="tag">A fonte</span><span class="tag">O redesign</span></div></div><div class="pb"><p class="pb-rotulo">Regra</p><p>Dois ou mais squads usam: entra. Só um usa: fica local.</p></div><div class="pb"><p class="pb-rotulo">Exemplo</p><p>O botão de copiar nasceu local e foi para o DS quando a quarta página o usou.</p></div></div>
+      <div class="painel" role="tabpanel" id="s3-p2" aria-labelledby="s3-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">O ponto técnico de front veta</p><div class="pb"><p class="pb-rotulo">Quem</p><p>O ponto técnico de front, da Engenharia. Mantém o pacote de código.</p></div><div class="pb"><p class="pb-rotulo">Regra</p><p>Veto por motivo técnico, sempre com justificativa.</p></div><div class="pb pb-num"><span class="pb-valor">30 min</span><span class="pb-legenda">triagem semanal, com a direção do DS</span></div></div>
+      <div class="painel" role="tabpanel" id="s3-p3" aria-labelledby="s3-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">Os designers dos squads contribuem</p><div class="pb"><p class="pb-rotulo">O que fazem</p><p>Propõem a partir do roadmap. Abrem um pedido com template.</p></div><div class="pb"><p class="pb-rotulo">O pedido traz</p><div class="tags"><span class="tag">Problema</span><span class="tag">Onde aparece</span><span class="tag">Quem mais usa</span></div></div><div class="pb"><p class="pb-rotulo">Exemplo</p><p>O painel de detalhe nasceu em Contatos e hoje serve sete telas.</p></div></div>
+      <div class="painel" role="tabpanel" id="s3-p4" aria-labelledby="s3-t4" tabindex="0" hidden><p class="so-impressao secao-titulo">Como um componente novo entra</p><div class="pb"><p class="pb-rotulo">Passos</p><div class="tags"><span class="tag">Pedido</span><span class="tag">Triagem semanal</span><span class="tag">Decisão da direção</span><span class="tag">Veto técnico</span><span class="tag">Versão com changelog</span></div></div><div class="pb"><p class="pb-rotulo">Regra</p><p>Dois ou mais squads usam: entra no DS.</p></div><div class="pb"><p class="pb-rotulo">Exemplo</p><p>Um card de registro substituiu três cards parecidos.</p></div></div>
     </div>
   </div>
-  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>3 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Questão 2 · Felipe Gaigher · 08/11/2026</span><span>3 de 6</span></footer>
 </section>
 
 <!-- ============ 4 ============ -->
 <section class="slide" id="s4">
   <header>
-    <p class="item">Questão 2, item 3 de 5. Plano de redesign em fases</p>
-    <p class="pergunta">Por onde começar e com qual critério de priorização; como lidar com a convivência entre telas novas e legadas sem confundir quem usa o produto.</p>
+    <p class="item">Questão 2 · item 3 de 5 · Fases</p>
     <h2 id="s4-titulo">A moldura fica fixa primeiro. O conteúdo migra depois</h2>
+    <p class="contexto">Critério: frequência de uso × dor relatada × onde a migração do front já acontece.</p>
+    <p class="contexto">Configuração e administração estreiam a flag, porque errar ali custa pouco.</p>
   </header>
-  <div class="corpo vertical">
-    <div class="mestre-baixo fases" id="s4-fases"><div class="passos" role="tablist" aria-orientation="horizontal" aria-labelledby="s4-titulo" data-passos><button type="button" class="passo" role="tab" id="s4-fases-t0" aria-controls="s4-fases-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">Semanas 1 e 2</span><span class="passo-sub">Entrega: mapa do que existe e do time</span></span></button><button type="button" class="passo" role="tab" id="s4-fases-t1" aria-controls="s4-fases-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Semanas 3 a 6</span><span class="passo-sub">Entrega: legado e novo com a mesma pele</span></span></button><button type="button" class="passo" role="tab" id="s4-fases-t2" aria-controls="s4-fases-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">Meses 2 e 3</span><span class="passo-sub">Entrega: primeira tela nova em produção</span></span></button><button type="button" class="passo" role="tab" id="s4-fases-t3" aria-controls="s4-fases-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-texto"><span class="passo-titulo">Meses 4 a 6</span><span class="passo-sub">Entrega: o DS cobre o produto</span></span></button></div><div class="paineis" aria-live="polite"><div class="painel" role="tabpanel" id="s4-fases-p0" aria-labelledby="s4-fases-t0" tabindex="0"><p class="so-impressao secao-titulo">1. Semanas 1 e 2</p><p>Inventário e linha de base das métricas. O protótipo já adiantou o inventário de componentes e variações.</p></div><div class="painel" role="tabpanel" id="s4-fases-p1" aria-labelledby="s4-fases-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">2. Semanas 3 a 6</p><p>Tokens semânticos sobre o Nectar. O legado ganha a pele nova só por token: cor, tipografia, espaçamento e foco acessível. Nenhum componente reescrito.</p></div><div class="painel" role="tabpanel" id="s4-fases-p2" aria-labelledby="s4-fases-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">3. Meses 2 e 3</p><p>Componentes principais. Piloto na gestão de atividades, atrás de feature flag, com grupo beta de escritórios.</p></div><div class="painel" role="tabpanel" id="s4-fases-p3" aria-labelledby="s4-fases-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">4. Meses 4 a 6</p><p>Demais módulos, no ritmo da migração do front. As primeiras funcionalidades com IA nascem nos mesmos componentes e na mesma moldura.</p></div></div></div>
-    <div class="corpo corpo-interno">
-      <div class="col fixa">
-        <h3 class="secao-titulo">Critério de priorização</h3>
-        <p class="formula">Frequência de uso × dor relatada × onde a migração do front já está acontecendo</p>
-        <p class="texto">Pegar carona na migração custa menos. A tela já vai ser reescrita, então nasce no padrão novo sem trabalho dobrado. A gestão de atividades vem primeiro: é o fluxo diário de prazo, onde a dor é maior e a migração começa.</p>
-        <h3 class="secao-titulo">Fases 1 e 2 em protótipo</h3>
-        <p class="texto">O protótipo antecipa em HTML o inventário do Astrea, os tokens semânticos e uma moldura única para 17 páginas. Discovery e linha de base ficam para o time. O protótipo não prova a convivência com o legado. Essa prova só existe atrás da flag, em produção.</p>
-      </div>
-      <div class="col fill">
-        <div class="decisao"><span class="tag tag-acao">Decisão</span><p>O que é moldura fica fixo. O que é conteúdo migra.</p></div>
-        <div class="decisao"><span class="tag tag-acao">Decisão</span><p>Nenhuma mudança chega ao fluxo de prazo sem feature flag. Flag desligada desfaz em minutos, sem deploy. É assim que o produto não para.</p></div>
-        <div class="mestre conv" id="s4-conv"><div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s4-titulo" data-passos><button type="button" class="passo" role="tab" id="s4-conv-t0" aria-controls="s4-conv-p0" aria-selected="true"><span class="passo-texto"><span class="passo-titulo">A moldura unifica primeiro e depois não muda mais</span></span></button><button type="button" class="passo" role="tab" id="s4-conv-t1" aria-controls="s4-conv-p1" aria-selected="false"><span class="passo-texto"><span class="passo-titulo">Nunca misturar padrão novo e antigo na mesma tela</span></span></button><button type="button" class="passo" role="tab" id="s4-conv-t2" aria-controls="s4-conv-p2" aria-selected="false"><span class="passo-texto"><span class="passo-titulo">Cor, tipografia e fluxos principais mudam o mínimo</span></span></button><button type="button" class="passo" role="tab" id="s4-conv-t3" aria-controls="s4-conv-p3" aria-selected="false"><span class="passo-texto"><span class="passo-titulo">Toda mudança é avisada dentro do produto</span></span></button></div><div class="paineis" aria-live="polite"><div class="painel" role="tabpanel" id="s4-conv-p0" aria-labelledby="s4-conv-t0" tabindex="0"><p class="so-impressao secao-titulo">A moldura unifica primeiro e depois não muda mais</p><p>Cabeçalho, menu lateral, botões de ação e filtros. São a âncora que o usuário reconhece ao cruzar de uma tela nova para uma legada.</p></div><div class="painel" role="tabpanel" id="s4-conv-p1" aria-labelledby="s4-conv-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">Nunca misturar padrão novo e antigo na mesma tela</p><p>Uma tela é toda nova ou toda legada. A moldura é a única coisa em comum.</p></div><div class="painel" role="tabpanel" id="s4-conv-p2" aria-labelledby="s4-conv-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">Cor, tipografia e fluxos principais mudam o mínimo</p><p>O novo se adapta ao que existe, não o contrário. Sem curva de reaprendizado brusca.</p></div><div class="painel" role="tabpanel" id="s4-conv-p3" aria-labelledby="s4-conv-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">Toda mudança é avisada dentro do produto</p><p>Changelog visível, antes de a tela mudar.</p></div></div></div>
+  <div class="deck-mestre">
+    <div class="deck-lado">
+      <div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s4-titulo" data-passos>
+        <button type="button" class="passo" role="tab" id="s4-t0" aria-controls="s4-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-titulo">Tokens semânticos</span></button>
+        <button type="button" class="passo" role="tab" id="s4-t1" aria-controls="s4-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-titulo">Moldura</span></button>
+        <button type="button" class="passo" role="tab" id="s4-t2" aria-controls="s4-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-titulo">Configuração e administração</span></button>
+        <button type="button" class="passo" role="tab" id="s4-t3" aria-controls="s4-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-titulo">Fluxos principais</span></button>
+        <button type="button" class="passo" role="tab" id="s4-t4" aria-controls="s4-p4" aria-selected="false"><span class="passo-num">5</span><span class="passo-titulo">Onboarding</span></button>
+        <button type="button" class="passo" role="tab" id="s4-t5" aria-controls="s4-p5" aria-selected="false"><span class="passo-num">6</span><span class="passo-titulo">IA e DS em regime</span></button>
       </div>
     </div>
+    <div class="paineis" aria-live="polite">
+      <div class="painel" role="tabpanel" id="s4-p0" aria-labelledby="s4-t0" tabindex="0"><p class="so-impressao secao-titulo">1. Tokens semânticos</p><p class="periodo">Semanas 1 a 6</p><ul class="itens"><li>Inventário e linha de base das métricas</li><li>Tokens semânticos sobre o Nectar</li><li>O legado ganha a pele por token</li><li>Entrega: legado e novo com a mesma pele</li></ul></div>
+      <div class="painel" role="tabpanel" id="s4-p1" aria-labelledby="s4-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">2. Moldura</p><p class="periodo">Meses 2 e 3</p><ul class="itens"><li>Moldura única: cabeçalho, menu lateral, ações e filtros</li><li>Componentes principais</li><li>Entrega: a âncora que não muda mais</li></ul></div>
+      <div class="painel" role="tabpanel" id="s4-p2" aria-labelledby="s4-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">3. Configuração e administração</p><p class="periodo">Meses 3 e 4</p><ul class="itens"><li>As primeiras telas novas</li><li>Atrás de feature flag</li><li>Entrega: primeira tela nova em produção</li></ul></div>
+      <div class="painel" role="tabpanel" id="s4-p3" aria-labelledby="s4-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">4. Fluxos principais</p><p class="periodo">Meses 4 a 6</p><ul class="itens"><li>Gestão de atividades primeiro, com grupo beta</li><li>Demais módulos no ritmo da migração</li><li>Primeiras funcionalidades com IA</li><li>Entrega: o DS cobre o produto</li></ul></div>
+      <div class="painel" role="tabpanel" id="s4-p4" aria-labelledby="s4-t4" tabindex="0" hidden><p class="so-impressao secao-titulo">5. Onboarding</p><p class="periodo">Meses 7 a 9</p><ul class="itens"><li>Tour por módulo e “o que mudou” por tela</li><li>Flags desligadas; telas legadas e bibliotecas parciais aposentadas</li><li>Tela estreita</li><li>Entrega: legado desligado, sem chamado de “onde ficou”</li></ul></div>
+      <div class="painel" role="tabpanel" id="s4-p5" aria-labelledby="s4-t5" tabindex="0" hidden><p class="so-impressao secao-titulo">6. IA e DS em regime</p><p class="periodo">Meses 10 a 12</p><ul class="itens"><li>IA em todos os fluxos: sugerir, confirmar, desfazer e errar</li><li>DS em regime: versão 1.0, changelog, auditoria trimestral</li><li>Segunda rodada de entrevistas</li><li>Entrega: DS como produto, IA no mesmo padrão</li></ul></div>
+    </div>
   </div>
-  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>4 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Questão 2 · Felipe Gaigher · 08/11/2026</span><span>4 de 6</span></footer>
 </section>
 
 <!-- ============ 5 ============ -->
 <section class="slide" id="s5">
   <header>
-    <p class="item">Questão 2, item 4 de 5. Como envolver o time</p>
-    <p class="pergunta">Como você distribuiria o trabalho entre os quatro designers dos squads sem tirar o foco deles dos seus roadmaps.</p>
-    <h2>A contribuição sai do roadmap, não de tarefa extra</h2>
+    <p class="item">Questão 2 · item 4 de 5 · Time</p>
+    <h2 id="s5-titulo">A contribuição sai do roadmap, não de tarefa extra</h2>
+    <p class="contexto">A divisão do trabalho não se define agora. Ela sai do discovery.</p>
   </header>
-  <div class="corpo vertical">
-    <svg class="fluxo-h" viewBox="0 0 1728 64" role="img" aria-label="Do discovery ao componente no design system, em quatro passos">
-      <defs><marker id="seta5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="seta" d="M0 0 L10 5 L0 10 z"/></marker></defs>
-      <rect class="caixa tinta" x="0" y="0" width="380" height="64" rx="4"/>
-      <text class="t inv" x="190" y="27" text-anchor="middle">Discovery, duas semanas</text>
-      <text class="s inv" x="190" y="47" text-anchor="middle">Uma conversa com cada designer</text>
-      <path class="linha" d="M380 32 H440" marker-end="url(#seta5)"/>
-      <rect class="caixa" x="448" y="0" width="380" height="64" rx="4"/>
-      <text class="t" x="638" y="27" text-anchor="middle">Mapa de perfil</text>
-      <text class="s" x="638" y="47" text-anchor="middle">Onde o trabalho pesa, Figma, IA, dor</text>
-      <path class="linha" d="M828 32 H888" marker-end="url(#seta5)"/>
-      <rect class="caixa" x="896" y="0" width="380" height="64" rx="4"/>
-      <text class="t" x="1086" y="27" text-anchor="middle">Frente de cada um no DS</text>
-      <text class="s" x="1086" y="47" text-anchor="middle">O que o roadmap dele já pede</text>
-      <path class="linha" d="M1276 32 H1336" marker-end="url(#seta5)"/>
-      <rect class="caixa suave" x="1344" y="0" width="384" height="64" rx="4"/>
-      <text class="t" x="1536" y="27" text-anchor="middle">Componente entra no DS</text>
-      <text class="s" x="1536" y="47" text-anchor="middle">No caminho da tela do squad</text>
-    </svg>
-    <div class="corpo corpo-interno">
-    <div class="col fixa">
-      <div class="decisao"><span class="tag tag-acao">Decisão</span><p>A divisão do trabalho não se define agora. Ela sai do discovery.</p></div>
-      <p class="texto">Nas duas primeiras semanas, uma conversa individual com cada designer. Cinco perguntas: como é o fluxo do pedido à entrega, o que o roadmap pede em três meses, como usa o Figma, se usa IA no dia a dia, o que mais frustra no produto. Dela sai um mapa simples por pessoa.</p>
-      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">O mapa de perfil</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
-        <thead><tr><th>Eixo</th><th>O que medir</th></tr></thead>
-        <tbody>
-          <tr><td>Onde o trabalho pesa</td><td>Produto, marketing e aquisição, ou perto do código</td></tr>
-          <tr><td>Maturidade no Figma</td><td>Variáveis, componentes, bibliotecas</td></tr>
-          <tr><td>Uso de IA</td><td>Nenhum, pontual, diário</td></tr>
-          <tr><td>Dor principal</td><td>O que o roadmap dele pede e trava</td></tr>
-        </tbody>
-      </table></div></details>
-      <p class="nota">Marketing entra pela borda. Os mesmos tokens de marca alimentam produto e criativos. Se houver demanda, uma biblioteca de peças prontas para escolher e publicar.</p>
+  <div class="deck-mestre" id="s5-time">
+    <div class="deck-lado">
+      <div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s5-titulo" data-passos>
+        <button type="button" class="passo" role="tab" id="s5-t0" aria-controls="s5-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-titulo">Discovery de duas semanas</span></button>
+        <button type="button" class="passo" role="tab" id="s5-t1" aria-controls="s5-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-titulo">Mapa de perfil</span></button>
+        <button type="button" class="passo" role="tab" id="s5-t2" aria-controls="s5-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-titulo">Frente de cada um no DS</span></button>
+        <button type="button" class="passo" role="tab" id="s5-t3" aria-controls="s5-p3" aria-selected="false"><span class="passo-num">4</span><span class="passo-titulo">Componente entra no DS</span></button>
+      </div>
     </div>
-    <div class="col fill">
-      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">A frente de cada um sai do mapa, não de um organograma pronto</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
-        <thead><tr><th>Perfil</th><th>Frente natural no DS</th></tr></thead>
+    <div class="paineis" aria-live="polite">
+      <div class="painel" role="tabpanel" id="s5-p0" aria-labelledby="s5-t0" tabindex="0"><p class="so-impressao secao-titulo">1. Discovery de duas semanas</p><div class="pb"><p class="pb-rotulo">O que é</p><p>Uma conversa com cada designer dos quatro squads.</p></div><div class="pb"><p class="pb-rotulo">A conversa cobre</p><div class="tags"><span class="tag">Rotina</span><span class="tag">Ferramentas</span><span class="tag">Foco</span><span class="tag">Direção</span></div></div><div class="pb"><p class="pb-rotulo">Quando e entregável</p><p>Duas semanas. Sai um mapa de perfil por pessoa.</p></div></div>
+      <div class="painel" role="tabpanel" id="s5-p1" aria-labelledby="s5-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">2. Mapa de perfil</p><div class="pb"><p class="pb-rotulo">O que é</p><p>Um mapa por designer, em quatro eixos.</p></div><div class="pb"><p class="pb-rotulo">Eixos</p><div class="tags"><span class="tag">Onde o trabalho pesa</span><span class="tag">Maturidade no Figma</span><span class="tag">Uso de IA</span><span class="tag">Dor principal</span></div></div><div class="pb"><p class="pb-rotulo">Quando e entregável</p><p>Fim do discovery. Sai a frente de cada um no DS.</p></div></div>
+      <div class="painel" role="tabpanel" id="s5-p2" aria-labelledby="s5-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">3. Frente de cada um no DS</p><div class="tabela-quadro"><table class="tabela">
+        <thead><tr><th scope="col">Perfil</th><th scope="col">Frente natural</th></tr></thead>
         <tbody>
-          <tr><td>Perto do código</td><td>Code Connect, Storybook, revisão do pacote com o ponto técnico</td></tr>
-          <tr><td>Forte em Figma</td><td>Estrutura da biblioteca, variantes, auditoria de componente desvinculado</td></tr>
-          <tr><td>Perto do marketing</td><td>Tokens de marca e a ponte com o time de marketing</td></tr>
-          <tr><td>Perto do usuário</td><td>Padrões de UX writing, pesquisa nos fluxos de atividades</td></tr>
+          <tr><td>Perto do código</td><td>Code Connect, Storybook, pacote</td></tr>
+          <tr><td>Forte em Figma</td><td>Biblioteca, variantes, auditoria</td></tr>
+          <tr><td>Perto do marketing</td><td>Tokens de marca</td></tr>
+          <tr><td>Perto do usuário</td><td>UX writing, pesquisa nos fluxos</td></tr>
         </tbody>
-      </table></div></details>
-      <h3 class="secao-titulo" id="s5-trab-rotulo">Como o trabalho acontece</h3>
-      <div class="mestre trab" id="s5-trab"><div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s5-trab-rotulo" data-passos><button type="button" class="passo" role="tab" id="s5-trab-t0" aria-controls="s5-trab-p0" aria-selected="true"><span class="passo-texto"><span class="passo-titulo">Construção conjunta, no fluxo</span></span></button><button type="button" class="passo" role="tab" id="s5-trab-t1" aria-controls="s5-trab-p1" aria-selected="false"><span class="passo-texto"><span class="passo-titulo">A contribuição sai do roadmap</span></span></button><button type="button" class="passo" role="tab" id="s5-trab-t2" aria-controls="s5-trab-p2" aria-selected="false"><span class="passo-texto"><span class="passo-titulo">O kit de IA baixa o custo de seguir o padrão</span></span></button></div><div class="paineis" aria-live="polite"><div class="painel" role="tabpanel" id="s5-trab-p0" aria-labelledby="s5-trab-t0" tabindex="0"><p class="so-impressao secao-titulo">Construção conjunta, no fluxo</p><p>O ponto de atenção aparece na demanda real do squad. A gente senta junto, decide, constrói. Sem ritual novo com nome próprio.</p></div><div class="painel" role="tabpanel" id="s5-trab-p1" aria-labelledby="s5-trab-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">A contribuição sai do roadmap</p><p>O designer entrega a tela do squad. No caminho, o componente entra no DS. O tempo é acordado por squad, no discovery.</p></div><div class="painel" role="tabpanel" id="s5-trab-p2" aria-labelledby="s5-trab-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">O kit de IA baixa o custo de seguir o padrão</p><p>Seguir o DS vira o caminho mais rápido. É isso que faz o time adotar sem a direção ser gestora de ninguém.</p></div></div></div>
-    </div>
+      </table></div><div class="pb"><p class="pb-rotulo">Entregável</p><p>Uma frente por designer, saída do mapa, não de um organograma pronto.</p></div></div>
+      <div class="painel" role="tabpanel" id="s5-p3" aria-labelledby="s5-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">4. Componente entra no DS</p><div class="pb"><p class="pb-rotulo">O que é</p><p>O designer entrega a tela do squad. No caminho, o componente entra no DS.</p></div><div class="pb"><p class="pb-rotulo">Regra</p><p>Sem tarefa extra nem ritual novo.</p></div><div class="pb"><p class="pb-rotulo">Entregável</p><p>Versão nova do pacote, com changelog.</p></div></div>
     </div>
   </div>
-  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>5 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Questão 2 · Felipe Gaigher · 08/11/2026</span><span>5 de 6</span></footer>
 </section>
 
 <!-- ============ 6 ============ -->
 <section class="slide" id="s6">
   <header>
-    <p class="item">Questão 2, item 5 de 5. Riscos e métricas</p>
-    <p class="pergunta">Os 3 principais riscos do plano, como mitigá-los e como você mediria se o design system e o redesign estão dando certo.</p>
-    <h2>Três riscos, e o que prova que está dando certo</h2>
+    <p class="item">Questão 2 · item 5 de 5 · Riscos e métricas</p>
+    <h2 id="s6-titulo">Três riscos, e o que prova que está dando certo</h2>
   </header>
-  <div class="corpo">
-    <div class="col larga">
-      <h3 class="secao-titulo" id="s6-riscos-rotulo">Os três riscos, do mais provável ao menos</h3>
-      <div class="mestre riscos" id="s6-riscos"><div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s6-riscos-rotulo" data-passos><button type="button" class="passo" role="tab" id="s6-riscos-t0" aria-controls="s6-riscos-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-texto"><span class="passo-titulo">O DS vira projeto paralelo que ninguém adota</span></span></button><button type="button" class="passo" role="tab" id="s6-riscos-t1" aria-controls="s6-riscos-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-texto"><span class="passo-titulo">Ruptura visual para quem vive no produto o dia inteiro</span></span></button><button type="button" class="passo" role="tab" id="s6-riscos-t2" aria-controls="s6-riscos-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-texto"><span class="passo-titulo">O roadmap dos squads toma o tempo dos designers</span></span></button></div><div class="paineis" aria-live="polite"><div class="painel" role="tabpanel" id="s6-riscos-p0" aria-labelledby="s6-riscos-t0" tabindex="0"><p class="so-impressao secao-titulo">1. O DS vira projeto paralelo que ninguém adota</p><p>Mitigação: construir a partir das telas do roadmap, nunca em paralelo a elas. Kit de skills e agentes no repositório: melhoria vira pull request, todo mundo puxa. O padrão se mantém por ferramenta, não por cobrança.</p></div><div class="painel" role="tabpanel" id="s6-riscos-p1" aria-labelledby="s6-riscos-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">2. Ruptura visual para quem vive no produto o dia inteiro</p><p>Mitigação: moldura fixa primeiro. Cor, tipografia e fluxos principais mudam o mínimo. Feature flag e grupo beta na primeira tela nova. Chamados de suporte por módulo acompanhados semana a semana.</p></div><div class="painel" role="tabpanel" id="s6-riscos-p2" aria-labelledby="s6-riscos-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">3. O roadmap dos squads toma o tempo dos designers</p><p>Mitigação: líderes como patrocinadores, com o tempo acordado no discovery. A tese: com skills e agentes o tempo de produção cai, e o DS devolve mais tempo do que toma. A métrica de eficiência prova ou derruba isso.</p></div></div></div>
-      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">No protótipo, o padrão já se mantém por ferramenta</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
-        <thead><tr><th>Portão</th><th>O que barra</th></tr></thead>
-        <tbody>
-          <tr><td>verificar.py</td><td>Cor fora do bloco de primitivos, primitivo fora do semântico, Kanban fora de sincronia com a moldura</td></tr>
-          <tr><td>verificar-app.js</td><td>Os requisitos RF-01 a RF-15 no navegador: moldura, telas, teclado, contraste AA e controle nativo visível</td></tr>
-          <tr><td>detectar.py</td><td>A cara de IA: grid de cards iguais, ícone em caixinha, gradiente</td></tr>
-          <tr><td>Revisão ao vivo</td><td>Quatro rodadas minhas. Cada correção está registrada em 04-processo.html</td></tr>
-        </tbody>
-      </table></div></details>
+  <div class="deck-mestre" id="s6-riscos">
+    <div class="deck-lado">
+      <div class="passos" role="tablist" aria-orientation="vertical" aria-labelledby="s6-titulo" data-passos>
+        <button type="button" class="passo" role="tab" id="s6-t0" aria-controls="s6-p0" aria-selected="true"><span class="passo-num">1</span><span class="passo-titulo">O DS vira projeto paralelo que ninguém adota</span></button>
+        <button type="button" class="passo" role="tab" id="s6-t1" aria-controls="s6-p1" aria-selected="false"><span class="passo-num">2</span><span class="passo-titulo">Ruptura visual para quem vive no produto</span></button>
+        <button type="button" class="passo" role="tab" id="s6-t2" aria-controls="s6-p2" aria-selected="false"><span class="passo-num">3</span><span class="passo-titulo">O roadmap toma o tempo dos designers</span></button>
+        <button type="button" class="passo" role="tab" id="s6-t3" aria-controls="s6-p3" aria-selected="false"><span class="passo-titulo">Como medir</span></button>
+      </div>
     </div>
-    <div class="col fill">
-      <details class="bloco" open><summary><svg class="seta" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10l4 4 4-4"/></svg><span class="titulo">Como medir</span></summary><div class="detalhe"><table class="tabela tabela-compacta">
-        <thead><tr><th>Eixo</th><th>Métrica</th><th>Fonte</th></tr></thead>
-        <tbody>
-          <tr><td>Adoção</td><td>Telas com componentes do DS, em %</td><td class="muted">Inventário trimestral</td></tr>
-          <tr><td>Adoção</td><td>Cores vindas de token no código, em %</td><td class="muted">Lint no CI</td></tr>
-          <tr><td>Adoção</td><td>Componentes desvinculados da biblioteca</td><td class="muted">Figma Library Analytics</td></tr>
-          <tr><td>Eficiência</td><td>Tempo do design até o dev</td><td class="muted">Ferramenta de gestão do squad</td></tr>
-          <tr><td>Eficiência</td><td>Bugs visuais abertos</td><td class="muted">Backlog</td></tr>
-          <tr><td>Experiência</td><td>Chamados de suporte por módulo</td><td class="muted">Suporte</td></tr>
-          <tr><td>Experiência</td><td>Tempo para criar um prazo</td><td class="muted">Analytics do produto</td></tr>
-          <tr><td>Experiência</td><td>Sucesso na tarefa e CSAT nos fluxos principais</td><td class="muted">Pesquisa recorrente</td></tr>
-          <tr><td>Experiência</td><td>Cliques por tarefa-chave, no Astrea e na tela nova, antes do beta</td><td class="muted">Teste de tarefa</td></tr>
-        </tbody>
-      </table></div></details>
-      <p class="nota">A linha de base das três frentes sai nas semanas 1 e 2. Sem ela, a métrica só mostra o número de hoje, não o que mudou.</p>
-      <p class="nota">O protótipo já mostrou a ruptura em tela pequena. Abaixo de 1100px, o painel ao lado some, e a Área de trabalho fica sem detalhe.</p>
+    <div class="paineis" aria-live="polite">
+      <div class="painel" role="tabpanel" id="s6-p0" aria-labelledby="s6-t0" tabindex="0"><p class="so-impressao secao-titulo">1. O DS vira projeto paralelo que ninguém adota</p><div class="pb"><p class="pb-rotulo">Mitigação</p><p>Construir a partir das telas do roadmap. Kit de skills e agentes no repositório.</p></div><div class="pb"><p class="pb-rotulo">Sinal de alerta</p><div class="tags"><span class="tag">% de telas com DS</span><span class="tag">Componentes desvinculados</span></div></div><div class="pb"><p class="pb-rotulo">Regra</p><p>O padrão se mantém por ferramenta, não por cobrança.</p></div></div>
+      <div class="painel" role="tabpanel" id="s6-p1" aria-labelledby="s6-t1" tabindex="0" hidden><p class="so-impressao secao-titulo">2. Ruptura visual para quem vive no produto</p><div class="pb"><p class="pb-rotulo">Mitigação</p><p>Moldura fixa primeiro, feature flag e grupo beta.</p></div><div class="pb"><p class="pb-rotulo">Sinal de alerta</p><div class="tags"><span class="tag">Chamados por módulo</span><span class="tag">Tempo para criar um prazo</span></div></div><div class="pb"><p class="pb-rotulo">Já visto no protótipo</p><p>Abaixo de 1100px, o painel ao lado some.</p></div></div>
+      <div class="painel" role="tabpanel" id="s6-p2" aria-labelledby="s6-t2" tabindex="0" hidden><p class="so-impressao secao-titulo">3. O roadmap toma o tempo dos designers</p><div class="pb"><p class="pb-rotulo">Mitigação</p><p>Líderes como patrocinadores, com o tempo acordado no discovery.</p></div><div class="pb"><p class="pb-rotulo">Sinal de alerta</p><div class="tags"><span class="tag">Tempo do design até o dev</span><span class="tag">Bugs visuais abertos</span></div></div><div class="pb"><p class="pb-rotulo">Regra</p><p>A métrica de eficiência prova ou derruba a tese.</p></div></div>
+      <div class="painel" role="tabpanel" id="s6-p3" aria-labelledby="s6-t3" tabindex="0" hidden><p class="so-impressao secao-titulo">Como medir</p><div class="pb"><p class="pb-rotulo">Adoção</p><div class="tags"><span class="tag">% de telas com DS</span><span class="tag">% de cores de token</span><span class="tag">Componentes desvinculados</span></div></div><div class="pb"><p class="pb-rotulo">Eficiência</p><div class="tags"><span class="tag">Tempo do design até o dev</span><span class="tag">Bugs visuais</span></div></div><div class="pb"><p class="pb-rotulo">Experiência</p><div class="tags"><span class="tag">Chamados por módulo</span><span class="tag">Tempo para criar prazo</span><span class="tag">CSAT</span></div></div><div class="pb"><p class="pb-rotulo">Linha de base</p><p>Sai nas semanas 1 e 2.</p></div></div>
     </div>
   </div>
-  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>6 de 6</span></footer>
+  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Questão 2 · Felipe Gaigher · 08/11/2026 · Detalhe em 02-plano-ds.md</span><span>6 de 6</span></footer>
 </section>
 
-<!-- ============ Fechamento ============ -->
-<section class="slide" id="s7">
-  <header>
-    <p class="item">Fechamento da entrega, fora da conta da Q2. Uso de IA</p>
-    <p class="pergunta">Inclua um parágrafo contando quais ferramentas usou, em quais etapas e o que fez com o resultado.</p>
-    <h2>Como a IA entrou neste trabalho</h2>
-  </header>
-  <div class="corpo">
-    <div class="col fill rascunho">
-      <p class="texto">Usei o Claude Code como par de trabalho durante toda a atividade, com o MCP do Figma ligado enquanto a cota permitiu. A IA não escreveu a estratégia. Ela recebeu as minhas decisões em conversa e as transformou em documento-fonte, que eu iterei linha a linha. Do mesmo documento saíram os slides da Questão 2, o diagnóstico da Questão 1 e este texto.</p>
-      <p class="texto">Na Questão 3, a IA executou um plano de cinco tasks com subagentes, cada task revisada por outro agente antes do commit, e entregou o protótipo navegável do Kanban. Duas skills minhas guardaram o padrão. Uma de português técnico lintou cada frase. Uma contra a cara de IA barrou o grid de cards iguais, o rótulo em caixa alta e a paleta creme com terracota que o modelo propôs primeiro.</p>
-      <p class="texto">A direção visual, os cinco problemas e o trade-off foram decisões minhas. O kit de skills e agentes que proponho para o Astrea no slide 3 é o mesmo modelo que usei aqui: regra escrita uma vez, no repositório, lida por toda ferramenta que gera tela.</p>
-    </div>
-  </div>
-  <footer class="rodape"><a class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></a><span>Atividade prática Astrea · Questão 2 · Felipe Gaigher · 08/11/2026</span><span>Uso de IA</span></footer>
-</section>
 
 <script>
 /* Passos do deck: lista ou abas que trocam o painel. Clique, setas, Home e End.
