@@ -68,12 +68,14 @@
   /* Lista: a tabela do DS, a mesma de Atendimentos e Processos, dentro do contêiner da seção. */
   /* O contorno é o da seção; a tabela não ganha um segundo, e o fundo fica no tom da página. */
   .secao .tabela-quadro { border: 0; border-radius: 0; background-color: transparent; }
-  .secao .tabela { table-layout: fixed; }
   .secao .tabela .celula-prazo, .secao .tabela .celula-processo, .secao .tabela td:last-child { white-space: nowrap; }
   .secao .tabela td:last-child { width: 1%; }
+  /* Com o painel aberto, Prazo e Processo encolhem ao conteúdo e Atividade fica com o resto. */
+  .secao .tabela th:nth-child(1), .secao .tabela th:nth-child(3) { width: 1%; white-space: nowrap; }
   /* Com largura sobrando, as colunas das quatro seções alinham; com o painel aberto, a tabela se ajusta ao conteúdo. */
   [data-visao="lista"] .secao { container-type: inline-size; }
   @container (min-width: 960px) {
+    .secao .tabela { table-layout: fixed; }
     .secao .tabela th:nth-child(1) { width: calc(var(--component-row-prazo-width) + var(--space-7)); }
     .secao .tabela th:nth-child(3) { width: calc(var(--component-row-processo-width) + var(--space-5)); }
     .secao .tabela th:nth-child(4) { width: calc(var(--component-row-pessoa-width) + var(--space-5)); }
