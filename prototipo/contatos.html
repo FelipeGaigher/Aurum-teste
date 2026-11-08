@@ -441,8 +441,8 @@
       tipo: 'info', fechar: true,
       mensagem: 'Editar pelo painel fica para uma próxima versão. Abra a ficha para ver e alterar o cadastro.',
     })));
-    const abrir = criar('a', 'botao botao-primario', 'Abrir ficha');
-    abrir.href = urlDaFicha(c);
+    const abrir = DS.botao({ variante: 'primario', rotulo: 'Abrir ficha' });
+    abrir.addEventListener('click', () => { location.href = urlDaFicha(c); });
     aviso.replaceChildren();
     return {
       titulo: c.nome, avatar: c.nome, chips: [c.tipo, PERFIS[c.perfil]],

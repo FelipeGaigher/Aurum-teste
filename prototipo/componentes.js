@@ -1648,15 +1648,19 @@
     return raiz;
   }
 
-  function celula(valor) {
-    const td = criar('td');
-    if (valor instanceof HTMLElement) td.append(valor);
+  // PA-66: valor ausente mostra traço, e o leitor de tela ouve "Não informado".
+  function preencherValor(alvo, valor) {
+    if (valor instanceof HTMLElement) alvo.append(valor);
     else if (valor === undefined || valor === null || valor === '') {
       const traco = criar('span', 'tabela-sem-dado', '—');
       traco.setAttribute('aria-hidden', 'true');
-      td.append(traco, criar('span', 'visualmente-oculto', 'Não informado'));
-    } else td.textContent = String(valor);
-    return td;
+      alvo.append(traco, criar('span', 'visualmente-oculto', 'Não informado'));
+    } else alvo.textContent = String(valor);
+    return alvo;
+  }
+
+  function celula(valor) {
+    return preencherValor(criar('td'), valor);
   }
 
   function linhasDeEsqueleto(colunas, total) {
@@ -1720,6 +1724,234 @@
     tabelaEl.append(legenda, cabeca, corpo);
     quadro.append(tabelaEl);
     return quadro;
+  }
+
+  // --- painel de detalhe: lista e cartão lado a lado ---------------------------
+
+  const ROTULOS_DO_DETALHE = {
+    anterior: 'Item anterior da lista', proximo: 'Próximo item da lista',
+    esconder: 'Esconder o painel', mostrar: 'Mostrar o painel',
+  };
+
+  function linhaDoDetalhe(linha) {
+    exigir(linha && linha.rotulo, 'painelDetalhe', 'cada linha tem rotulo');
+    const item = criar('div', 'painel-detalhe-linha');
+    const dt = criar('dt');
+    if (linha.icone) dt.append(icone(linha.icone));
+    dt.append(criar('span', null, linha.rotulo));
+    item.append(dt, preencherValor(criar('dd'), linha.valor));
+    return item;
+  }
+
+  function cabecalhoDoDetalhe(d) {
+    const partes = [];
+    if (d.avatar) {
+      const inicial = avatar({ nome: d.avatar });
+      inicial.removeAttribute('role');
+      inicial.removeAttribute('aria-label');
+      inicial.setAttribute('aria-hidden', 'true');
+      partes.push(inicial);
+    }
+    const textos = criar('div', 'painel-detalhe-textos');
+    textos.append(criar(`h${d.nivel || 2}`, 'painel-detalhe-titulo', d.titulo));
+    const chips = (d.chips || []).map((c) => (c instanceof HTMLElement ? c : tag({ rotulo: c })));
+    if (chips.length) {
+      const grupo = criar('div', 'painel-detalhe-chips');
+      grupo.append(...chips);
+      textos.append(grupo);
+    }
+    partes.push(textos);
+    return partes;
+  }
+
+  function secoesDoDetalhe(d) {
+    const secoes = [];
+    if (d.destaque) {
+      exigir(d.destaque.rotulo, 'painelDetalhe', 'destaque tem rotulo e valor');
+      const bloco = criar('div', 'painel-detalhe-destaque');
+      bloco.append(criar('p', 'painel-detalhe-destaque-rotulo', d.destaque.rotulo),
+        preencherValor(criar('p', 'painel-detalhe-destaque-valor'), d.destaque.valor));
+      secoes.push(bloco);
+    }
+    if (d.linhas && d.linhas.length) {
+      const lista = criar('dl', 'painel-detalhe-linhas');
+      lista.append(...d.linhas.map(linhaDoDetalhe));
+      secoes.push(lista);
+    }
+    (d.corpo || []).forEach((el) => {
+      exigir(el instanceof HTMLElement, 'painelDetalhe', 'corpo é uma lista de elementos');
+      const secao = criar('div', 'painel-detalhe-secao');
+      secao.append(el);
+      secoes.push(secao);
+    });
+    return secoes;
+  }
+
+  // Ação é elemento pronto ou props de botão com aoClicar. A última fica à direita: é a primária.
+  function acaoDoDetalhe(acao) {
+    return acao instanceof HTMLElement ? acao : botaoDeProps({ variante: 'secundario', ...acao });
+  }
+
+  // O cartão do item escolhido, no fluxo, ao lado da lista. Não é modal: não move o foco ao trocar.
+  function painelDetalhe(props = {}) {
+    const { rotulo, aoAnterior, aoProximo, aoFechar, aoReabrir } = props;
+    exigir(rotulo, 'painelDetalhe', 'rotulo é obrigatório');
+    const rotulos = { ...ROTULOS_DO_DETALHE, ...(props.rotulos || {}) };
+    const raiz = criar('div', 'painel-detalhe');
+    const card = criar('aside', 'painel-detalhe-card');
+    card.id = novoId('detalhe');
+    card.setAttribute('aria-label', rotulo);
+
+    const identidade = criar('div', 'painel-detalhe-identidade');
+    const navegacao = criar('div', 'painel-detalhe-nav');
+    const seta = (nome, texto, acao, aoClicar) => {
+      const el = botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: nome, rotulo: texto });
+      el.dataset.acao = acao;
+      el.addEventListener('click', () => { if (aoClicar) aoClicar(); });
+      return el;
+    };
+    const anterior = seta('esquerda', rotulos.anterior, 'anterior', aoAnterior);
+    const proximo = seta('direita', rotulos.proximo, 'proximo', aoProximo);
+    const fechar = seta('fechar', rotulos.esconder, 'esconder', null);
+    fechar.setAttribute('aria-controls', card.id);
+    navegacao.append(anterior, proximo, fechar);
+    const topo = criar('div', 'painel-detalhe-topo');
+    topo.append(identidade, navegacao);
+
+    const conteudo = criar('div', 'painel-detalhe-conteudo');
+    const rodape = criar('div', 'painel-detalhe-rodape');
+    // A troca de item é anunciada pelo título, não pelo cartão inteiro.
+    const anuncio = criar('p', 'visualmente-oculto');
+    anuncio.setAttribute('aria-live', 'polite');
+    card.append(topo, conteudo, rodape, anuncio);
+
+    const alca = botao({ variante: 'icone', iconeEsquerda: 'direita', rotulo: rotulos.mostrar });
+    alca.classList.add('painel-detalhe-reabrir');
+    alca.setAttribute('aria-controls', card.id);
+    alca.setAttribute('aria-expanded', 'false');
+    alca.hidden = true;
+    raiz.append(card, alca);
+
+    let atual = {};
+    function mostrar(dados = {}) {
+      atual = { ...atual, ...dados };
+      exigir(atual.titulo, 'painelDetalhe', 'titulo é obrigatório');
+      identidade.replaceChildren(...cabecalhoDoDetalhe(atual));
+      conteudo.replaceChildren(...secoesDoDetalhe(atual));
+      const acoes = (atual.acoes || []).map(acaoDoDetalhe);
+      rodape.replaceChildren(...acoes);
+      rodape.hidden = !acoes.length;
+      anterior.disabled = atual.navegavel === false;
+      proximo.disabled = atual.navegavel === false;
+      anuncio.textContent = atual.titulo;
+    }
+    function esconder() {
+      raiz.dataset.oculto = '';
+      card.hidden = true;
+      alca.hidden = false;
+    }
+    function reabrir() {
+      delete raiz.dataset.oculto;
+      card.hidden = false;
+      alca.hidden = true;
+    }
+    fechar.addEventListener('click', () => { esconder(); alca.focus(); if (aoFechar) aoFechar(); });
+    alca.addEventListener('click', () => { reabrir(); fechar.focus(); if (aoReabrir) aoReabrir(); });
+    if (props.titulo) mostrar(props);
+    return { el: raiz, card, mostrar, esconder, reabrir, oculto: () => card.hidden };
+  }
+
+  const PASSO_DO_DIVISOR = 16;
+  const LADOS_DO_DIVISOR = { direita: 1, esquerda: -1 };
+
+  function lerLargura(chave) {
+    if (!chave) return NaN;
+    try { return Number(localStorage.getItem(chave)); } catch (e) { return NaN; }
+  }
+
+  function gravarLargura(chave, valor) {
+    if (!chave) return;
+    try { localStorage.setItem(chave, String(valor)); } catch (e) { /* sem armazenamento */ }
+  }
+
+  // Padrão "window splitter" do WAI-ARIA APG. O valor é a largura do alvo, em px.
+  // lado: onde o alvo fica em relação ao divisor. reserva: o mínimo que sobra para o vizinho.
+  function divisorRedimensionavel(props = {}) {
+    const {
+      alvo, rotulo = 'Largura do painel', minimo = 300, maximo = 560, padrao = 380, chave, reserva = 0, lado = 'direita',
+    } = props;
+    exigir(alvo instanceof HTMLElement, 'divisorRedimensionavel', 'alvo é o elemento que muda de largura');
+    exigir(minimo <= padrao && padrao <= maximo, 'divisorRedimensionavel', 'minimo <= padrao <= maximo');
+    exigir(LADOS_DO_DIVISOR[lado], 'divisorRedimensionavel', `lado desconhecido "${lado}"`);
+    const sentido = LADOS_DO_DIVISOR[lado];
+    const el = criar('div', 'divisor');
+    el.setAttribute('role', 'separator');
+    el.setAttribute('aria-orientation', 'vertical');
+    el.setAttribute('aria-label', rotulo);
+    el.setAttribute('aria-valuemin', String(minimo));
+    el.tabIndex = 0;
+    if (alvo.id) el.setAttribute('aria-controls', alvo.id);
+
+    let desejada = padrao;
+    let largura = padrao;
+    function teto() {
+      const pai = alvo.parentElement;
+      const espaco = pai && reserva ? pai.clientWidth - reserva - PASSO_DO_DIVISOR : 0;
+      return espaco > 0 ? Math.max(minimo, Math.min(maximo, espaco)) : maximo;
+    }
+    function aplicar() {
+      const limite = teto();
+      largura = Math.round(Math.min(limite, Math.max(minimo, desejada)));
+      alvo.style.setProperty('--largura-redimensionavel', `${largura}px`);
+      el.setAttribute('aria-valuenow', String(largura));
+      el.setAttribute('aria-valuemax', String(limite));
+      el.setAttribute('aria-valuetext', `${largura} pixels`);
+      return largura;
+    }
+    function definir(valor) {
+      desejada = Math.min(maximo, Math.max(minimo, valor));
+      return aplicar();
+    }
+    // Grava só no fim do gesto, nunca a cada pixel.
+    const concluir = () => gravarLargura(chave, largura);
+    function restaurar() { definir(padrao); concluir(); }
+
+    let inicio = null;
+    el.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      el.setPointerCapture(e.pointerId);
+      inicio = { x: e.clientX, largura };
+      el.classList.add('is-arrastando');
+    });
+    el.addEventListener('pointermove', (e) => {
+      if (inicio) definir(inicio.largura + sentido * (inicio.x - e.clientX));
+    });
+    function soltar(e) {
+      if (!inicio) return;
+      inicio = null;
+      el.classList.remove('is-arrastando');
+      if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
+      concluir();
+    }
+    el.addEventListener('pointerup', soltar);
+    el.addEventListener('pointercancel', soltar);
+    el.addEventListener('dblclick', restaurar);
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); restaurar(); return; }
+      const destinos = {
+        ArrowLeft: largura + sentido * PASSO_DO_DIVISOR, ArrowRight: largura - sentido * PASSO_DO_DIVISOR,
+        Home: minimo, End: teto(),
+      };
+      if (!(e.key in destinos)) return;
+      e.preventDefault();
+      definir(destinos[e.key]);
+      concluir();
+    });
+    window.addEventListener('resize', aplicar);
+
+    const salva = lerLargura(chave);
+    definir(Number.isFinite(salva) && salva > 0 ? salva : padrao);
+    return { el, definir, restaurar, ajustar: aplicar, largura: () => largura };
   }
 
   const PAGINAS_SEM_RETICENCIAS = 7;
@@ -2258,5 +2490,6 @@
     toast, faixaAviso, dialogo, tooltip, progresso, skeleton, estadoVazio, upsell,
     descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade, cardAtividade, cardContato, paginacao,
     abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper, painelCriarAtividade,
+    painelDetalhe, divisorRedimensionavel,
   };
 })();
