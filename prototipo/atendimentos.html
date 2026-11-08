@@ -9,45 +9,169 @@
 <script src="componentes.js"></script>
 <script src="dados.js"></script>
 <style>
-  /* A ação de criar fica no topo, à direita, com lista ou sem lista. */
-  .modulo-topo {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-  }
   /* PA-83: o 1º Registro nasce do tamanho de duas linhas e cresce com o texto. */
   .registro-crescente .campo-area {
     field-sizing: content;
     resize: none;
     max-height: calc(var(--component-field-area-min-height) * 4);
   }
+
+  /* Lista: filtros e o botão primário na mesma linha, o botão à direita. */
+  .lista-filtros { margin-bottom: var(--space-4); }
+  .pagina-aviso:empty { display: none; }
+  .pagina-aviso { margin-bottom: var(--space-4); }
+  .tabela a { border-radius: var(--radius); color: var(--color-action); font-weight: var(--font-weight-medium); }
+  .tabela tbody tr.linha-clicavel { cursor: pointer; }
+  .tabela tbody tr.linha-clicavel:hover { background-color: var(--color-bg-hover); }
+  .tabela .numero-processo, .ficha-leitura .numero-processo { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .texto-apagado { color: var(--color-text-muted); }
+
+  /* O status diz o nome; a borda e o fundo reforçam. */
+  .chip-status-andamento { border-color: var(--color-action); }
+  .chip-status-aguardando { background-color: var(--color-bg-warning); border-color: var(--color-text-warning); }
+  .chip-status-concluido { background-color: var(--color-bg-surface); border-color: var(--color-text-success); }
+
+  /* Ficha: cabeçalho de leitura em uma linha que quebra. */
+  .ficha-topo { display: grid; gap: var(--space-3); margin-bottom: var(--space-5); }
+  .ficha-leitura { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); margin: 0; min-width: 0; }
+  .ficha-leitura div { display: grid; gap: var(--space-1); min-width: 0; }
+  .ficha-leitura dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
+  .ficha-leitura dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; overflow-wrap: anywhere; }
+  .ficha-etiquetas { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; }
+  .ficha-etiquetas .tag { padding-right: 0; }
+
+  .ficha-grade { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-5) var(--space-6); align-items: start; }
+  .ficha-coluna { display: grid; gap: var(--space-5); min-width: 0; }
+  .bloco { min-width: 0; }
+  .bloco-cabeca {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: var(--border-width) solid var(--color-border-strong);
+  }
+  .bloco-cabeca h2 { margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+  .bloco-valor { margin: 0; font-size: var(--font-size-dialog); font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; }
+  .bloco-nota { margin: var(--space-1) 0 0; color: var(--color-text-muted); }
+
+  /* Linha do tempo: a mais recente em cima, avatar sobre o trilho. */
+  .anotacoes { display: grid; margin: 0; padding: 0; list-style: none; }
+  .anotacoes li { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-3); }
+  .anotacao-trilho { display: flex; flex-direction: column; align-items: center; }
+  .anotacao-trilho::after { content: ""; flex: 1 1 auto; min-height: var(--space-3); border-left: var(--border-width) solid var(--color-border-default); }
+  .anotacoes li:last-child .anotacao-trilho::after { border-left-color: transparent; }
+  .anotacao-corpo { display: grid; gap: var(--space-1); padding-bottom: var(--space-4); min-width: 0; }
+  .anotacao-cabeca { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; }
+  .anotacao-autor { font-weight: var(--font-weight-semibold); }
+  .anotacao-cabeca time { color: var(--color-text-muted); font-size: var(--font-size-label); font-variant-numeric: tabular-nums; }
+  .anotacao-texto { margin: 0; overflow-wrap: anywhere; }
+  .anotacao-nova .anotacao-autor::after { content: " · agora"; color: var(--color-text-muted); font-weight: var(--font-weight-regular); }
+
+  .compositor { display: grid; gap: var(--space-3); padding-top: var(--space-4); border-top: var(--border-width) solid var(--color-border-default); }
+  .compositor .barra-acoes { position: static; padding: 0; border-top: 0; background-color: transparent; }
+
+  .participantes { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+  .participantes li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); min-width: 0; }
+  .participante-papel { color: var(--color-text-muted); font-size: var(--font-size-label); }
+
+  /* Na coluna estreita, a linha de atividade empilha como no celular. */
+  .ficha-grade .linha-atividade {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "prazo acoes" "principal principal" "pessoa pessoa";
+  }
+  .ficha-grade .linha-prazo { grid-area: prazo; }
+  .ficha-grade .linha-principal { grid-area: principal; }
+  .ficha-grade .linha-processo { display: none; }
+  .ficha-grade .linha-responsavel { grid-area: pessoa; }
+  .ficha-grade .linha-acoes { grid-area: acoes; }
+
+  @media (max-width: 1024px) {
+    .ficha-grade { grid-template-columns: minmax(0, 1fr); }
+  }
 </style>
 </head>
 <body data-pagina="atendimentos.html" data-titulo="Atendimentos">
 <div class="corpo">
-  <main id="conteudo">
-    <div class="modulo-topo" id="topo"></div>
-    <div id="lista"></div>
-  </main>
+  <main id="conteudo"></main>
 </div>
 <script>
 (function () {
-  const { CONTATOS, PROCESSOS } = window.DADOS;
+  window.Moldura.montar();
+  const { CONTATOS, PROCESSOS, RESPONSAVEIS, ATIVIDADES, ATENDIMENTOS, ANOTACOES_DE_ATENDIMENTO } = window.DADOS;
+  const PAGINA = 'atendimentos.html';
+  const MODULO = 'Atendimentos';
+  const EU = window.Moldura.USUARIO || 'Marina Couto';
+  const parametros = new URLSearchParams(location.search);
+  const conteudo = document.getElementById('conteudo');
+
   // Etiquetas inventadas para o protótipo. O Astrea mostra o campo só com o ícone.
   const ETIQUETAS = [['', 'Sem etiqueta'], ['consulta', 'Consulta inicial'], ['retorno', 'Retorno'], ['acordo', 'Acordo']];
   const PROCESSOS_DO_SELETOR = [['', 'Nenhum'], ...PROCESSOS.map((p) => [p.numero, p.numero])];
+  const STATUS = { andamento: 'Em andamento', aguardando: 'Aguardando cliente', concluido: 'Concluído' };
 
-  const atendimentos = [];
+  const atendimentos = ATENDIMENTOS.map((a) => ({ ...a, anotacoes: [...(ANOTACOES_DE_ATENDIMENTO[a.id] || [])] }));
   let criados = 0;
   let painel = null;
   let formulario = null;
+  let botaoAdicionar = null;
+
+  // --- utilidades -----------------------------------------------------------------
+
+  const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
+  const reais = (valor) => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const dataCurta = (iso) => new Date(`${iso.slice(0, 10)}T00:00`).toLocaleDateString('pt-BR');
+  const dataEHora = (iso) => `${dataCurta(iso)} às ${iso.slice(11, 16)}`;
+  const doisDigitos = (n) => String(n).padStart(2, '0');
+  const horas = (h) => {
+    const inteiras = Math.floor(h);
+    const minutos = Math.round((h - inteiras) * 60);
+    return minutos ? `${inteiras}h${doisDigitos(minutos)}` : `${inteiras}h`;
+  };
+  const isoDeAgora = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${doisDigitos(d.getMonth() + 1)}-${doisDigitos(d.getDate())}T${doisDigitos(d.getHours())}:${doisDigitos(d.getMinutes())}`;
+  };
+  const semAcento = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+  function elemento(tag, classe, texto) {
+    const el = document.createElement(tag);
+    if (classe) el.className = classe;
+    if (texto !== undefined) el.textContent = texto;
+    return el;
+  }
+
+  function link(texto, href, classe) {
+    const a = elemento('a', classe, texto);
+    a.href = href;
+    return a;
+  }
+
+  function avisar(tipo, mensagem) {
+    const vaga = document.getElementById('pagina-aviso');
+    if (vaga) vaga.replaceChildren(DS.faixaAviso({ tipo, mensagem, fechar: true }));
+  }
 
   function juntar(nomes) {
     return nomes.length > 1 ? `${nomes.slice(0, -1).join(', ')} e ${nomes.at(-1)}` : nomes[0];
   }
+
+  function chipStatus(status) {
+    const el = DS.tag({ rotulo: STATUS[status] });
+    el.classList.add('chip-status', `chip-status-${status}`);
+    return el;
+  }
+
+  const enderecoDaFicha = (a) => `${PAGINA}?ficha=1&id=${encodeURIComponent(a.id)}`;
+  const fichaDoProcesso = (numero) => `processos.html?ficha=${PROCESSOS.findIndex((p) => p.numero === numero) + 1}`;
+
+  function numeroDoProcesso(numero) {
+    return numero ? elemento('span', 'numero-processo', numero) : elemento('span', 'texto-apagado', 'Sem processo');
+  }
+
+  // --- formulário de adicionar (painel lateral) ----------------------------------
 
   // PA-84: sem Responsável e sem Acesso, como no Astrea, até a regra de negócio ser confirmada.
   function montarFormulario() {
@@ -134,48 +258,299 @@
     const faltam = faltando();
     if (faltam.length) { barra.definirSituacao('erro', `Preencha ${juntar(faltam)}.`); return; }
     const v = formulario.valores;
+    const agora = isoDeAgora();
     atendimentos.unshift({
-      assunto: v.assunto,
-      clientes: nomesDosClientes(v.clientes),
-      processo: v.processo,
-      data: new Date().toLocaleDateString('pt-BR'),
+      id: `novo-${++criados}`, assunto: v.assunto, cliente: nomesDosClientes(v.clientes), processo: v.processo,
+      responsavel: EU, inicio: agora.slice(0, 10), status: 'andamento', area: '', honorarios: 0, horas: 0, documentos: 0,
+      anotacoes: [{ autor: EU, em: agora, texto: v.registro }],
     });
     painel.fechar();
-    desenhar();
+    if (redesenharLista) redesenharLista();
+    avisar('sucesso', `Atendimento "${v.assunto}" adicionado.`);
   }
-
-  const botaoAdicionar = DS.botao({ variante: 'primario', iconeEsquerda: 'mais', rotulo: 'Adicionar atendimento' });
-  botaoAdicionar.setAttribute('data-abre-painel', '');
-  botaoAdicionar.setAttribute('aria-haspopup', 'dialog');
-  botaoAdicionar.addEventListener('click', abrirFormulario);
-  document.getElementById('topo').append(botaoAdicionar);
 
   function abrirFormulario() {
     formulario = montarFormulario();
-    const conteudo = conteudoDoFormulario();
-    if (painel) painel.trocar(conteudo);
-    else painel = DS.painelLateral(conteudo);
+    const conteudoDoPainel = conteudoDoFormulario();
+    if (painel) painel.trocar(conteudoDoPainel);
+    else painel = DS.painelLateral(conteudoDoPainel);
     painel.abrir(botaoAdicionar);
   }
 
-  function desenhar() {
-    const lista = document.getElementById('lista');
-    if (!atendimentos.length) {
-      lista.replaceChildren(DS.estadoVazio({
-        titulo: 'Agilize e organize seus atendimentos',
-        texto: 'Registre conversas com seus clientes, adicione documentos e crie atividades de forma descomplicada.',
-      }));
-      return;
+  // --- lista ----------------------------------------------------------------------
+
+  let redesenharLista = null;
+
+  function montarLista() {
+    const PADRAO = { busca: '', status: 'todos', responsavel: 'todos' };
+    const filtro = { ...PADRAO };
+    const FILTROS = {
+      status: { rotulo: 'Status', opcoes: [['todos', 'Todos os status'], ...Object.entries(STATUS)] },
+      responsavel: { rotulo: 'Responsável', opcoes: [['todos', 'Todas as pessoas'], ...RESPONSAVEIS.map((n) => [n, n])] },
+    };
+    let barra;
+
+    const ativos = () => Object.keys(PADRAO).filter((c) => filtro[c] !== PADRAO[c]).length;
+    const visiveis = () => atendimentos.filter((a) => {
+      const termo = semAcento(filtro.busca.trim());
+      const texto = semAcento(`${a.assunto} ${a.cliente} ${a.processo}`);
+      return (!termo || texto.includes(termo))
+        && (filtro.status === 'todos' || a.status === filtro.status)
+        && (filtro.responsavel === 'todos' || a.responsavel === filtro.responsavel);
+    });
+
+    const lugarDaBarra = elemento('div', 'lista-filtros');
+    const aviso = elemento('div', 'pagina-aviso');
+    aviso.id = 'pagina-aviso';
+    const lugarDaTabela = elemento('div');
+    conteudo.replaceChildren(lugarDaBarra, aviso, lugarDaTabela);
+
+    botaoAdicionar = DS.botao({ variante: 'primario', iconeEsquerda: 'mais', rotulo: 'Adicionar atendimento' });
+    botaoAdicionar.setAttribute('data-abre-painel', '');
+    botaoAdicionar.setAttribute('aria-haspopup', 'dialog');
+    botaoAdicionar.addEventListener('click', abrirFormulario);
+
+    function celulas(a) {
+      return {
+        assunto: link(a.assunto, enderecoDaFicha(a)),
+        cliente: a.cliente,
+        processo: numeroDoProcesso(a.processo),
+        responsavel: DS.avatar({ nome: a.responsavel, mostrarNome: true }),
+        inicio: dataCurta(a.inicio),
+        status: chipStatus(a.status),
+      };
     }
-    lista.replaceChildren(DS.tabela({
-      rotulo: 'Atendimentos',
-      colunas: [['assunto', 'Assunto'], ['clientes', 'Clientes'], ['processo', 'Processo, caso ou atendimento'], ['data', 'Data']],
-      linhas: atendimentos,
-    }));
+
+    function desenhar() {
+      const lista = visiveis();
+      const total = ativos();
+      const resultado = total ? `${lista.length} de ${plural(atendimentos.length, 'atendimento', 'atendimentos')}`
+        : plural(lista.length, 'atendimento', 'atendimentos');
+      barra.atualizar({ resultado, ativos: total });
+      const tabela = DS.tabela({
+        rotulo: 'Atendimentos',
+        colunas: [['assunto', 'Assunto'], ['cliente', 'Cliente'], ['processo', 'Processo'], ['responsavel', 'Responsável'],
+          ['inicio', 'Início'], ['status', 'Status']],
+        linhas: lista.map(celulas),
+        vazio: atendimentos.length
+          ? { titulo: 'Nenhum atendimento com estes filtros.', texto: 'Os filtros escondem o que houver aqui.',
+            acao: { rotulo: 'Limpar filtros', variante: 'secundario', aoClicar: limpar } }
+          : { titulo: 'Agilize e organize seus atendimentos',
+            texto: 'Registre conversas com seus clientes, adicione documentos e crie atividades de forma descomplicada.' },
+      });
+      // A linha inteira abre a ficha; o link do assunto continua sendo o caminho do teclado.
+      if (lista.length) {
+        tabela.querySelectorAll('tbody tr').forEach((tr, i) => {
+          tr.classList.add('linha-clicavel');
+          tr.addEventListener('click', (evento) => {
+            if (evento.target.closest('a, button')) return;
+            location.href = enderecoDaFicha(lista[i]);
+          });
+        });
+      }
+      lugarDaTabela.replaceChildren(tabela);
+    }
+
+    function limpar() {
+      Object.assign(filtro, PADRAO);
+      montarBarra();
+      desenhar();
+      lugarDaBarra.querySelector('input').focus();
+    }
+
+    function montarBarra() {
+      const busca = DS.busca({ rotulo: 'Buscar atendimento', placeholder: 'Assunto, cliente ou processo', valor: filtro.busca,
+        aoMudar: (v) => { filtro.busca = v; desenhar(); } });
+      const seletores = Object.entries(FILTROS).map(([chave, f]) => {
+        const el = DS.seletor({ rotulo: f.rotulo, opcoes: f.opcoes, valor: filtro[chave], largura: 'p',
+          aoEscolher: (valor) => { filtro[chave] = valor; desenhar(); } });
+        el.dataset.filtro = chave;
+        return el;
+      });
+      barra = DS.barraFiltros({ rotulo: 'Filtros de atendimentos', itens: [busca, ...seletores], aoLimpar: limpar });
+      barra.el.querySelector('.barra-filtros-fim').append(botaoAdicionar);
+      lugarDaBarra.replaceChildren(barra.el);
+    }
+
+    redesenharLista = desenhar;
+    montarBarra();
+    desenhar();
   }
 
-  desenhar();
-  if (new URLSearchParams(location.search).get('adicionar') === '1') abrirFormulario();
+  // --- ficha ----------------------------------------------------------------------
+
+  function cabecalhoDeSegundoNivel(titulo) {
+    const lugar = document.querySelector('.titulo-cabecalho');
+    const h1 = lugar.querySelector('h1');
+    lugar.insertBefore(DS.trilha({ itens: [{ rotulo: MODULO, pagina: PAGINA }] }), h1);
+    h1.textContent = titulo;
+    document.title = `${titulo}, Astrea: protótipo`;
+  }
+
+  let blocos = 0;
+  function bloco(titulo, ...corpo) {
+    const sec = elemento('section', 'bloco');
+    const cabeca = elemento('div', 'bloco-cabeca');
+    const h = elemento('h2', null, titulo);
+    h.id = `bloco-${++blocos}`;
+    sec.setAttribute('aria-labelledby', h.id);
+    cabeca.append(h);
+    sec.append(cabeca, ...corpo);
+    return { sec, cabeca };
+  }
+
+  function botaoMais(rotulo, aoClicar) {
+    const el = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'mais', rotulo });
+    el.addEventListener('click', () => aoClicar(el));
+    return DS.tooltip({ alvo: el, rotulo });
+  }
+
+  function itemDeAnotacao(n, nova = false) {
+    const li = elemento('li', nova ? 'anotacao-nova' : null);
+    const trilho = elemento('div', 'anotacao-trilho');
+    const foto = DS.avatar({ nome: n.autor });
+    foto.setAttribute('aria-hidden', 'true');
+    foto.removeAttribute('role');
+    foto.removeAttribute('aria-label');
+    trilho.append(foto);
+    const corpo = elemento('div', 'anotacao-corpo');
+    const cabeca = elemento('p', 'anotacao-cabeca');
+    const quando = elemento('time', null, dataEHora(n.em));
+    quando.dateTime = n.em;
+    cabeca.append(elemento('span', 'anotacao-autor', n.autor), quando);
+    corpo.append(cabeca, elemento('p', 'anotacao-texto', n.texto));
+    li.append(trilho, corpo);
+    return li;
+  }
+
+  function montarFicha(a) {
+    cabecalhoDeSegundoNivel(a.assunto);
+    const foraDoPrototipo = (texto) => () => avisar('info', texto);
+
+    // Cabeçalho: Início, Status, Processo, Responsável; depois a etiqueta de área.
+    const leitura = elemento('dl', 'ficha-leitura');
+    const par = (rotulo, ...valor) => {
+      const div = elemento('div');
+      const dd = elemento('dd');
+      dd.append(...valor);
+      div.append(elemento('dt', null, rotulo), dd);
+      leitura.append(div);
+    };
+    par('Início', dataCurta(a.inicio));
+    par('Status', chipStatus(a.status));
+    par('Processo', a.processo ? link(a.processo, fichaDoProcesso(a.processo), 'numero-processo') : numeroDoProcesso(''));
+    par('Responsável', DS.avatar({ nome: a.responsavel, mostrarNome: true }));
+
+    const etiquetas = elemento('p', 'ficha-etiquetas');
+    if (a.area) {
+      const tag = DS.tag({ rotulo: a.area });
+      const remover = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'fechar', rotulo: `Remover etiqueta ${a.area}` });
+      remover.addEventListener('click', foraDoPrototipo(`Remover a etiqueta "${a.area}" fica fora do protótipo.`));
+      tag.append(remover);
+      etiquetas.append(tag);
+    } else {
+      etiquetas.append(elemento('span', 'texto-apagado', 'Sem etiqueta'));
+    }
+    const topo = elemento('div', 'ficha-topo');
+    topo.append(leitura, etiquetas);
+
+    const aviso = elemento('div', 'pagina-aviso');
+    aviso.id = 'pagina-aviso';
+
+    // Esquerda: linha do tempo e o compositor.
+    const contagem = elemento('p', 'bloco-nota');
+    const linhaDoTempo = elemento('ol', 'anotacoes');
+    linhaDoTempo.setAttribute('aria-label', 'Anotações, da mais recente para a mais antiga');
+    const desenharContagem = () => { contagem.textContent = plural(a.anotacoes.length, 'anotação', 'anotações'); };
+    linhaDoTempo.append(...[...a.anotacoes].reverse().map((n) => itemDeAnotacao(n)));
+    desenharContagem();
+
+    let texto = '';
+    const area = DS.areaTexto({ rotulo: 'Anotação', largura: 'total', linhas: 3,
+      placeholder: 'Escreva o que foi conversado com o cliente', aoMudar: (v) => { texto = v.trim(); } });
+    const barra = DS.barraAcoes({ rotulo: 'Ações da anotação', acoes: [
+      { variante: 'primario', rotulo: 'Salvar', aoClicar: () => {
+        if (!texto) { barra.definirSituacao('erro', 'Escreva a anotação antes de salvar.'); return; }
+        const nova = { autor: EU, em: isoDeAgora(), texto };
+        a.anotacoes.push(nova);
+        linhaDoTempo.prepend(itemDeAnotacao(nova, true));
+        desenharContagem();
+        const entrada = area.querySelector('textarea');
+        entrada.value = '';
+        entrada.dispatchEvent(new Event('input', { bubbles: true }));
+        texto = '';
+        barra.definirSituacao('salvo', 'Anotação salva no topo da linha do tempo.');
+      } },
+    ] });
+    const compositor = elemento('div', 'compositor');
+    compositor.append(area, barra.el);
+    const anotacoes = bloco('Anotações', contagem, linhaDoTempo, compositor);
+
+    const esquerda = elemento('div', 'ficha-coluna');
+    esquerda.append(anotacoes.sec);
+
+    // Direita: participantes, valores e atividades ligadas ao processo.
+    const participantes = elemento('ul', 'participantes');
+    [[a.responsavel, 'Responsável'], [a.cliente, 'Cliente']].forEach(([nome, papel]) => {
+      const li = elemento('li');
+      li.append(DS.avatar({ nome, mostrarNome: true }), elemento('span', 'participante-papel', papel));
+      participantes.append(li);
+    });
+    const valor = (principal, nota) => {
+      const frag = [elemento('p', 'bloco-valor', principal)];
+      if (nota) frag.push(elemento('p', 'bloco-nota', nota));
+      return frag;
+    };
+    const daqui = a.processo ? ATIVIDADES.filter((t) => t.processo === a.processo).sort((x, y) => x.prazoEmDias - y.prazoEmDias) : [];
+    let tarefas;
+    if (daqui.length) {
+      tarefas = elemento('ul', 'lista-atividades');
+      tarefas.append(...daqui.map((t) => {
+        const prazo = DS.descreverPrazo(t.prazoEmDias, t.status === 'concluido');
+        return DS.linhaAtividade({ titulo: t.titulo, tipo: t.tipo, estadoPrazo: prazo.estadoPrazo, prazo: prazo.rotulo,
+          responsavel: t.responsavel, mostrarProcesso: false });
+      }));
+    } else {
+      tarefas = DS.estadoVazio({ titulo: 'Ainda não existem tarefas ou eventos neste atendimento' });
+    }
+
+    const lateral = [
+      ['Participantes', [participantes], 'Adicionar participante', foraDoPrototipo('Adicionar participante fica fora do protótipo.')],
+      ['Honorários', valor(a.honorarios ? reais(a.honorarios) : 'Sem honorários', a.honorarios ? 'Contrato de honorários do atendimento' : ''),
+        'Adicionar honorário', foraDoPrototipo('Lançar honorários fica no Financeiro, fora do protótipo.')],
+      ['Timesheets', valor(a.horas ? horas(a.horas) : '0h', 'Horas lançadas neste atendimento'),
+        'Adicionar timesheet', foraDoPrototipo('Lançar horas fica fora do protótipo.')],
+      ['Documentos', valor(plural(a.documentos, 'documento', 'documentos')),
+        'Adicionar documento', foraDoPrototipo('Enviar documentos fica fora do protótipo.')],
+      ['Tarefas e eventos', [tarefas], 'Adicionar tarefa ou evento', (origem) => DS.painelCriarAtividade({ tipo: 'tarefa' }).abrir(origem)],
+    ];
+    const direita = elemento('div', 'ficha-coluna');
+    lateral.forEach(([titulo, corpo, rotulo, aoClicar]) => {
+      const b = bloco(titulo, ...corpo);
+      const mais = botaoMais(rotulo, aoClicar);
+      if (titulo === 'Tarefas e eventos') {
+        const alvo = mais.querySelector('button');
+        alvo.setAttribute('data-abre-painel', '');
+        alvo.setAttribute('aria-haspopup', 'dialog');
+      }
+      b.cabeca.append(mais);
+      direita.append(b.sec);
+    });
+
+    const grade = elemento('div', 'ficha-grade');
+    grade.append(esquerda, direita);
+    conteudo.replaceChildren(topo, aviso, grade);
+  }
+
+  // --- rota -----------------------------------------------------------------------
+
+  if (parametros.get('ficha') !== null) {
+    const id = parametros.get('id');
+    montarFicha(atendimentos.find((a) => a.id === id) || atendimentos[0]);
+  } else {
+    montarLista();
+    if (parametros.get('adicionar') === '1') abrirFormulario();
+  }
 })();
 </script>
 </body>

@@ -124,4 +124,76 @@ const DOCUMENTOS_DE_CONTATO = {
 };
 
 Object.assign(window.DADOS, { DOCUMENTOS_DE_CONTATO });
+
+// Atendimentos fictícios. Cliente e processo saem pelo índice de NUMEROS; processo vazio é atendimento sem processo.
+const ATENDIMENTOS = [
+  { id: 'at1', assunto: 'Verbas rescisórias não pagas', cliente: CLIENTES[1], processo: NUMEROS[1], responsavel: 'Marina Couto',
+    inicio: '2026-10-27', status: 'andamento', area: 'Trabalhista', honorarios: 4800, horas: 6.5, documentos: 3 },
+  { id: 'at2', assunto: 'Revisão de pensão alimentícia', cliente: CLIENTES[9], processo: NUMEROS[9], responsavel: 'Rafael Antunes',
+    inicio: '2026-10-30', status: 'aguardando', area: 'Família', honorarios: 3200, horas: 2, documentos: 1 },
+  { id: 'at3', assunto: 'Cobrança de aluguéis atrasados', cliente: CLIENTES[0], processo: NUMEROS[0], responsavel: 'Rafael Antunes',
+    inicio: '2026-09-02', status: 'concluido', area: 'Cível', honorarios: 2500, horas: 4.25, documentos: 2 },
+  { id: 'at4', assunto: 'Aposentadoria por tempo de contribuição', cliente: CLIENTES[4], processo: NUMEROS[4], responsavel: 'Rafael Antunes',
+    inicio: '2026-10-14', status: 'andamento', area: 'Previdenciário', honorarios: 6000, horas: 9, documentos: 4 },
+  { id: 'at5', assunto: 'Partilha de bens no inventário', cliente: CLIENTES[8], processo: NUMEROS[8], responsavel: 'Marina Couto',
+    inicio: '2026-06-03', status: 'andamento', area: 'Família', honorarios: 8500, horas: 12.5, documentos: 3 },
+  { id: 'at6', assunto: 'Indenização por avaria no casco', cliente: CLIENTES[5], processo: NUMEROS[5], responsavel: 'Beatriz Lemos',
+    inicio: '2026-10-12', status: 'aguardando', area: 'Cível', honorarios: 12000, horas: 7.75, documentos: 4 },
+  { id: 'at7', assunto: 'Auxílio por incapacidade negado', cliente: CLIENTES[6], processo: '', responsavel: 'Otávio Prado',
+    inicio: '2026-11-03', status: 'andamento', area: 'Previdenciário', honorarios: 3600, horas: 1.5, documentos: 0 },
+  { id: 'at8', assunto: 'Horas extras e adicional noturno', cliente: CLIENTES[3], processo: NUMEROS[3], responsavel: 'Otávio Prado',
+    inicio: '2026-08-19', status: 'concluido', area: 'Trabalhista', honorarios: 5400, horas: 10, documentos: 6 },
+];
+
+// Linha do tempo de cada atendimento, da mais antiga para a mais recente.
+const ANOTACOES_DE_ATENDIMENTO = {
+  at1: [
+    { autor: 'Marina Couto', em: '2026-10-27T09:40', texto: 'Primeira conversa. O cliente saiu da empresa em setembro e não recebeu férias nem a multa do FGTS.' },
+    { autor: 'Marina Couto', em: '2026-10-29T15:10', texto: 'Recebi os holerites dos últimos doze meses. Faltam o termo de rescisão e o extrato do FGTS.' },
+    { autor: 'Beatriz Lemos', em: '2026-11-02T11:25', texto: 'Cálculo preliminar pronto: diferença de R$ 18.420,00 com correção até outubro.' },
+    { autor: 'Marina Couto', em: '2026-11-05T17:05', texto: 'Cliente aprovou o cálculo. Petição em revisão para protocolo nesta semana.' },
+  ],
+  at2: [
+    { autor: 'Rafael Antunes', em: '2026-10-30T10:00', texto: 'O cliente mudou de emprego e a renda caiu pela metade. Quer reduzir o valor da pensão.' },
+    { autor: 'Rafael Antunes', em: '2026-11-01T14:30', texto: 'Pedi a carteira de trabalho e os três últimos contracheques do emprego novo.' },
+    { autor: 'Rafael Antunes', em: '2026-11-06T09:15', texto: 'Sem retorno do cliente. Lembrete enviado por telefone.' },
+  ],
+  at3: [
+    { autor: 'Rafael Antunes', em: '2026-09-02T08:50', texto: 'Inquilino com quatro meses de aluguel em atraso. Contrato com fiador.' },
+    { autor: 'Beatriz Lemos', em: '2026-09-10T16:20', texto: 'Notificação extrajudicial entregue ao inquilino e ao fiador.' },
+    { autor: 'Rafael Antunes', em: '2026-09-24T13:45', texto: 'Acordo fechado: pagamento em três parcelas, a primeira já depositada.' },
+    { autor: 'Rafael Antunes', em: '2026-10-20T10:30', texto: 'Última parcela compensada. Atendimento encerrado.' },
+  ],
+  at4: [
+    { autor: 'Rafael Antunes', em: '2026-10-14T09:00', texto: 'Cliente com 33 anos de contribuição. Parte do período rural não aparece no extrato.' },
+    { autor: 'Otávio Prado', em: '2026-10-21T15:40', texto: 'Separei as declarações do sindicato rural para comprovar o período de 1989 a 1994.' },
+    { autor: 'Rafael Antunes', em: '2026-10-28T11:10', texto: 'Simulação da regra de transição: o pedágio de 50% dá o benefício em março.' },
+    { autor: 'Rafael Antunes', em: '2026-11-04T16:55', texto: 'Requerimento administrativo protocolado. Prazo de análise de 90 dias.' },
+    { autor: 'Beatriz Lemos', em: '2026-11-06T10:20', texto: 'Agendada a perícia documental para o dia 19.' },
+  ],
+  at5: [
+    { autor: 'Marina Couto', em: '2026-06-03T14:00', texto: 'Três herdeiros. Um imóvel no litoral e uma conta poupança.' },
+    { autor: 'Marina Couto', em: '2026-07-18T10:35', texto: 'Avaliação do imóvel recebida. Os herdeiros discordam do valor.' },
+    { autor: 'Otávio Prado', em: '2026-09-09T17:20', texto: 'Proposta de partilha com compensação em dinheiro enviada aos três.' },
+    { autor: 'Marina Couto', em: '2026-10-25T09:50', texto: 'Dois herdeiros aceitaram. O terceiro pediu reunião para a primeira quinzena de novembro.' },
+  ],
+  at6: [
+    { autor: 'Beatriz Lemos', em: '2026-10-12T11:00', texto: 'Avaria no casco depois do reparo feito por terceiro. O estaleiro quer ressarcimento.' },
+    { autor: 'Rafael Antunes', em: '2026-10-19T14:15', texto: 'Laudo de vistoria anexado. O dano foi estimado em R$ 96.000,00.' },
+    { autor: 'Beatriz Lemos', em: '2026-11-04T08:40', texto: 'Aguardando o contrato do reparo e as notas fiscais, pedidos ao financeiro do cliente.' },
+  ],
+  at7: [
+    { autor: 'Otávio Prado', em: '2026-11-03T10:10', texto: 'Benefício negado na perícia. O cliente tem laudo do ortopedista com afastamento de 120 dias.' },
+    { autor: 'Otávio Prado', em: '2026-11-05T15:30', texto: 'Recurso administrativo ou ação judicial: decisão depois da consulta com o médico.' },
+    { autor: 'Beatriz Lemos', em: '2026-11-07T09:05', texto: 'Cliente enviou os exames de imagem por e-mail.' },
+  ],
+  at8: [
+    { autor: 'Otávio Prado', em: '2026-08-19T09:30', texto: 'Jornada de 12 horas sem registro de ponto. Testemunhas disponíveis.' },
+    { autor: 'Marina Couto', em: '2026-08-30T16:45', texto: 'Planilha de horas montada a partir das escalas que o cliente guardou.' },
+    { autor: 'Otávio Prado', em: '2026-09-22T11:15', texto: 'Audiência de conciliação com acordo de R$ 27.500,00.' },
+    { autor: 'Otávio Prado', em: '2026-10-15T14:00', texto: 'Acordo quitado. Atendimento encerrado.' },
+  ],
+};
+
+Object.assign(window.DADOS, { ATENDIMENTOS, ANOTACOES_DE_ATENDIMENTO });
 })();

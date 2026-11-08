@@ -910,7 +910,6 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 
 /* seletor: botão com lista própria, no lugar do select nativo (PA-20) */
 .seletor-gatilho { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding-right: var(--space-2); text-align: start; cursor: pointer; transition: border-color 150ms, background-color 150ms; }
-.seletor-gatilho:hover:not(:disabled), .seletor-gatilho.is-hover { background-color: var(--color-bg-subtle); }
 .seletor-gatilho:disabled { cursor: not-allowed; }
 .seletor-gatilho:active:not(:disabled), .seletor-gatilho.is-active { border-color: var(--color-action); }
 .seletor-gatilho[aria-busy="true"] { cursor: progress; }
