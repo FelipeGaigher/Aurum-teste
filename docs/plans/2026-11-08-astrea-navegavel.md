@@ -880,7 +880,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Produces: `DS.seletor({ id, opcoes, valor, aoEscolher }) -> HTMLElement`, com o valor atual em `data-valor` na raiz.
 - Produces: `DS.data(...)` com `input` de texto `dd/mm/aaaa` e `data-campo="data"` quando a tela pedir.
 
-- [ ] **Step 1: Confirmar o estado vermelho**
+- [x] **Step 1: Confirmar o estado vermelho**
 
 ```bash
 node scripts/verificar-app.js --rf RF-06 --grupos formulario
@@ -888,7 +888,7 @@ node scripts/verificar-app.js --rf RF-06 --grupos formulario
 
 Esperado: `RF-06 FALHOU`.
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 - Rótulo fixo acima do campo em toda peça (PA-21).
 - Seletor segue o padrão ARIA de listbox: setas, Enter, Esc e digitação.
@@ -899,7 +899,7 @@ Esperado: `RF-06 FALHOU`.
 
 Esperado: seção `Formulário` completa, sem controle nativo visível.
 
-- [ ] **Step 3: Executar e confirmar que passa**
+- [x] **Step 3: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/astrea.css prototipo/componentes.js prototipo/design-system.html
@@ -908,7 +908,7 @@ node scripts/verificar-app.js --rf RF-06,RF-07,RF-12 --grupos formulario --pagin
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 4: Entregar**
+- [x] **Step 4: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 

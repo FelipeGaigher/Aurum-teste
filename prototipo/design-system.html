@@ -32,11 +32,29 @@
         <dt><code>carregando</code></dt><dd>troca o ícone pelo giro e bloqueia o clique, sem tirar o foco</dd>
       </dl>
     </section>
+
+    <section class="ds-grupo" id="formulario" aria-labelledby="titulo-formulario">
+      <header>
+        <h2 id="titulo-formulario">Formulário</h2>
+        <p>Uma família de peças com rótulo fixo acima do campo (PA-21). Nenhum controle nativo fica visível: seletor, data, caixa, rádio e chave têm teclado e ARIA próprios. As propriedades abaixo valem para toda peça, com os complementos de cada uma.</p>
+      </header>
+      <dl class="ds-props">
+        <dt><code>rotulo</code></dt><dd>texto fixo acima do campo; obrigatório em toda peça</dd>
+        <dt><code>ajuda</code></dt><dd>linha de apoio abaixo do campo, ligada por <code>aria-describedby</code></dd>
+        <dt><code>obrigatorio</code></dt><dd>marca o rótulo com asterisco e texto para leitor de tela</dd>
+        <dt><code>icone</code></dt><dd>nome do ícone à esquerda, só em <code>campo</code></dd>
+        <dt><code>largura</code></dt><dd><code>p</code>, <code>m</code>, <code>g</code> ou <code>total</code>, por token (PA-67)</dd>
+        <dt><code>erro</code></dt><dd>mensagem abaixo do campo, anunciada e ligada ao controle</dd>
+        <dt><code>opcoes</code></dt><dd>pares <code>[chave, rotulo]</code> de seletor, seletor múltiplo, seletor de pessoas e rádio</dd>
+        <dt><code>valor</code></dt><dd>valor inicial; a raiz da peça guarda o atual em <code>data-valor</code></dd>
+      </dl>
+    </section>
   </main>
 </div>
 <script>
 (function () {
-  const { botao, grupoBotoes, menuAcoes, icone, ICONES } = window.DS;
+  const { botao, grupoBotoes, menuAcoes, icone, ICONES, campo, areaTexto, busca, seletor, seletorMultiplo,
+    seletorPessoas, data, periodo, caixa, radio, chave } = window.DS;
 
   function h(tag, atributos, ...filhos) {
     const el = document.createElement(tag);
@@ -290,6 +308,263 @@
     });
   }
 
+  // --- formulário ------------------------------------------------------------
+
+  function forcar(raiz, seletorCss, classe) {
+    comClasse(raiz.querySelector(seletorCss), classe);
+    return raiz;
+  }
+
+  const TIPOS = [['', 'Selecione o tipo'], ['tarefa', 'Tarefa'], ['prazo', 'Prazo'], ['audiencia', 'Audiência'], ['evento', 'Evento']];
+  const TIPOS_DA_LISTA = TIPOS.slice(1);
+  const PESSOAS = [['rafael', 'Rafael Antunes'], ['marina', 'Marina Couto'], ['beatriz', 'Beatriz Lemos'], ['otavio', 'Otávio Prado']];
+  const NUMERO_FICTICIO = '5004213-75.2025.8.24.0023';
+  const TEXTO_DE_LEITURA = 'Protocolar contestação até o fim do prazo.';
+  const SEM_ESPERA = 'o valor é local e não há espera.';
+
+  // Lista aberta no fluxo da página, para mostrar o estado active.
+  function listaNoFluxo(raiz) {
+    raiz.classList.add('is-estatico');
+    raiz.querySelector('.seletor-gatilho').setAttribute('aria-expanded', 'true');
+    raiz.querySelector('[role="listbox"]').hidden = false;
+    return raiz;
+  }
+
+  function calendarioNoFluxo(raiz) {
+    raiz.classList.add('is-estatico');
+    raiz.querySelector('[aria-controls]').setAttribute('aria-expanded', 'true');
+    const painel = raiz.querySelector('.calendario');
+    painel.hidden = false;
+    painel.querySelectorAll('button').forEach((b) => { b.tabIndex = -1; });
+    return raiz;
+  }
+
+  function pecaCampo() {
+    const base = { rotulo: 'Número do processo', placeholder: 'Digite o número' };
+    const preenchido = { ...base, valor: NUMERO_FICTICIO };
+    return pecaComEstados({
+      id: 'campo', titulo: 'Campo', nota: 'O rótulo fica acima e não some com o valor. A ajuda orienta, o erro explica.',
+      estados: [
+        ['default', campo(preenchido)],
+        ['hover', forcar(campo(preenchido), 'input', 'is-hover')],
+        ['foco', forcar(campo(preenchido), 'input', 'is-foco')],
+        ['disabled', campo({ ...preenchido, desabilitado: true })],
+        ['erro', campo({ ...preenchido, erro: 'Número fora do formato do CNJ.' })],
+        ['vazio', campo(base)],
+      ],
+      ausentes: {
+        active: 'o clique no campo já é o foco.',
+        carregando: SEM_ESPERA,
+      },
+      variacoes: [
+        ['Com ícone', campo({ ...preenchido, icone: 'busca' })],
+        ['Com ajuda', campo({ ...base, ajuda: 'Use a numeração única do CNJ.' })],
+        ['Obrigatório', campo({ ...base, obrigatorio: true })],
+        ['Largura p', campo({ rotulo: 'UF', valor: 'SC', largura: 'p' })],
+        ['Largura g', campo({ ...preenchido, largura: 'g' })],
+        ['Largura total', campo({ ...preenchido, largura: 'total' })],
+      ],
+    });
+  }
+
+  function pecaAreaTexto() {
+    const base = { rotulo: 'Descrição', placeholder: 'Detalhes da atividade' };
+    const preenchido = { ...base, valor: TEXTO_DE_LEITURA };
+    return pecaComEstados({
+      id: 'area-texto', titulo: 'Área de texto', nota: 'Para texto longo. Cresce pela alça, nunca no lugar do conteúdo.',
+      estados: [
+        ['default', areaTexto(preenchido)],
+        ['hover', forcar(areaTexto(preenchido), 'textarea', 'is-hover')],
+        ['foco', forcar(areaTexto(preenchido), 'textarea', 'is-foco')],
+        ['disabled', areaTexto({ ...preenchido, desabilitado: true })],
+        ['erro', areaTexto({ ...preenchido, erro: 'Descreva o que precisa ser feito.' })],
+        ['vazio', areaTexto(base)],
+      ],
+      ausentes: {
+        active: 'o clique na área já é o foco.',
+        carregando: SEM_ESPERA,
+      },
+    });
+  }
+
+  function pecaBusca() {
+    const base = { rotulo: 'Buscar atividade', placeholder: 'Buscar por título ou processo' };
+    const preenchido = { ...base, valor: 'contestação' };
+    return pecaComEstados({
+      id: 'busca', titulo: 'Busca', nota: 'Esc limpa o termo, e o botão de limpar só aparece com texto.',
+      estados: [
+        ['default', busca(preenchido)],
+        ['hover', forcar(busca(preenchido), 'input', 'is-hover')],
+        ['foco', forcar(busca(preenchido), 'input', 'is-foco')],
+        ['disabled', busca({ ...base, desabilitado: true })],
+        ['carregando', busca({ ...preenchido, carregando: true })],
+        ['vazio', busca(base)],
+      ],
+      ausentes: {
+        active: 'o clique no campo já é o foco.',
+        erro: 'toda busca é válida. Sem resultado, a lista mostra o estado vazio.',
+      },
+    });
+  }
+
+  function pecaSeletor() {
+    const base = { rotulo: 'Tipo de atividade', opcoes: TIPOS };
+    const preenchido = { ...base, valor: 'prazo' };
+    return pecaComEstados({
+      id: 'seletor', titulo: 'Seletor', nota: 'Setas, Home e End movem a opção, Enter escolhe, Esc fecha e digitar procura (PA-20).',
+      estados: [
+        ['default', seletor(preenchido)],
+        ['hover', forcar(seletor(preenchido), '.seletor-gatilho', 'is-hover')],
+        ['active', listaNoFluxo(seletor(preenchido))],
+        ['foco', forcar(seletor(preenchido), '.seletor-gatilho', 'is-foco')],
+        ['disabled', seletor({ ...preenchido, desabilitado: true })],
+        ['erro', seletor({ ...base, erro: 'Escolha o tipo da atividade.' })],
+        ['carregando', seletor({ ...preenchido, carregando: true })],
+        ['vazio', seletor(base)],
+      ],
+      ausentes: {},
+    });
+  }
+
+  function pecaSeletorMultiplo() {
+    const base = { rotulo: 'Tipos no filtro', opcoes: TIPOS_DA_LISTA };
+    const preenchido = { ...base, valor: ['prazo', 'audiencia'] };
+    return pecaComEstados({
+      id: 'seletor-multiplo', titulo: 'Seletor múltiplo', nota: 'A lista fica aberta enquanto a pessoa marca. Cada escolha vira um chip removível.',
+      estados: [
+        ['default', seletorMultiplo(preenchido)],
+        ['hover', forcar(seletorMultiplo(preenchido), '.seletor-gatilho', 'is-hover')],
+        ['active', listaNoFluxo(seletorMultiplo(preenchido))],
+        ['foco', forcar(seletorMultiplo(preenchido), '.seletor-gatilho', 'is-foco')],
+        ['disabled', seletorMultiplo({ ...preenchido, desabilitado: true })],
+        ['erro', seletorMultiplo({ ...base, erro: 'Escolha ao menos um tipo.' })],
+        ['carregando', seletorMultiplo({ ...preenchido, carregando: true })],
+        ['vazio', seletorMultiplo(base)],
+      ],
+      ausentes: {},
+    });
+  }
+
+  function pecaSeletorPessoas() {
+    const base = { rotulo: 'Participantes', opcoes: PESSOAS };
+    const preenchido = { ...base, valor: ['rafael', 'marina', 'beatriz'] };
+    const aberto = seletorPessoas(preenchido);
+    aberto.querySelector('.pessoas-mais').click();
+    return pecaComEstados({
+      id: 'seletor-pessoas', titulo: 'Seletor de pessoas', nota: 'Avatar e botão de mais no próprio campo, sem popover (PA-58). A lista abre no fluxo da página.',
+      estados: [
+        ['default', seletorPessoas(preenchido)],
+        ['hover', forcar(seletorPessoas(preenchido), '.pessoas-mais', 'is-hover')],
+        ['active', aberto],
+        ['foco', forcar(seletorPessoas(preenchido), '.pessoas-mais', 'is-foco')],
+        ['disabled', seletorPessoas({ ...preenchido, desabilitado: true })],
+        ['erro', seletorPessoas({ ...base, erro: 'Inclua ao menos uma pessoa.' })],
+        ['vazio', seletorPessoas(base)],
+      ],
+      ausentes: { carregando: 'a equipe já está na página, e a lista abre sem espera.' },
+    });
+  }
+
+  function pecaData() {
+    const base = { rotulo: 'Prazo' };
+    const preenchido = { ...base, valor: '2026-11-20' };
+    return pecaComEstados({
+      id: 'data', titulo: 'Data', nota: 'Texto com máscara dd/mm/aaaa ou calendário próprio. As setas andam pelos dias, Page Up e Page Down trocam o mês.',
+      estados: [
+        ['default', data(preenchido)],
+        ['hover', forcar(data(preenchido), 'input', 'is-hover')],
+        ['active', calendarioNoFluxo(data(preenchido))],
+        ['foco', forcar(data(preenchido), 'input', 'is-foco')],
+        ['disabled', data({ ...preenchido, desabilitado: true })],
+        ['erro', data({ ...preenchido, erro: 'A data não pode ser anterior a hoje.' })],
+        ['vazio', data(base)],
+      ],
+      ausentes: { carregando: SEM_ESPERA },
+    });
+  }
+
+  function pecaPeriodo() {
+    const base = { rotulo: 'Período' };
+    const preenchido = { ...base, inicio: '2026-11-09', fim: '2026-11-20' };
+    return pecaComEstados({
+      id: 'periodo', titulo: 'Período', nota: 'Duas datas sob um rótulo. A data final não pode vir antes da inicial.',
+      estados: [
+        ['default', periodo(preenchido)],
+        ['hover', forcar(periodo(preenchido), 'input', 'is-hover')],
+        ['foco', forcar(periodo(preenchido), 'input', 'is-foco')],
+        ['disabled', periodo({ ...preenchido, desabilitado: true })],
+        ['erro', periodo({ ...base, inicio: '2026-11-20', fim: '2026-11-09', erro: 'A data final vem antes da inicial.' })],
+        ['vazio', periodo(base)],
+      ],
+      ausentes: {
+        active: 'cada data abre o próprio calendário, mostrado na peça Data.',
+        carregando: SEM_ESPERA,
+      },
+    });
+  }
+
+  function pecaCaixa() {
+    const base = { rotulo: 'Incluir atividades concluídas' };
+    return pecaComEstados({
+      id: 'caixa', titulo: 'Caixa', nota: 'O texto ao lado é o próprio rótulo e faz parte da área de clique. Espaço marca e desmarca.',
+      estados: [
+        ['default', caixa(base)],
+        ['hover', forcar(caixa(base), '.caixa', 'is-hover')],
+        ['active', forcar(caixa(base), '.caixa', 'is-active')],
+        ['foco', forcar(caixa(base), '.caixa', 'is-foco')],
+        ['disabled', caixa({ ...base, desabilitado: true })],
+        ['erro', caixa({ rotulo: 'Li e concordo com os termos', erro: 'Confirme para continuar.' })],
+      ],
+      ausentes: {
+        carregando: SEM_ESPERA,
+        vazio: 'a caixa sempre tem valor. Desmarcada é o estado padrão.',
+      },
+      variacoes: [
+        ['Marcada', caixa({ ...base, marcada: true })],
+        ['Indeterminada', caixa({ rotulo: 'Todas as atividades', indeterminada: true })],
+        ['Marcada e desabilitada', caixa({ ...base, marcada: true, desabilitado: true })],
+      ],
+    });
+  }
+
+  function pecaRadio() {
+    const base = { rotulo: 'Visualizar por', opcoes: [['dia', 'Dia'], ['semana', 'Semana'], ['mes', 'Mês']] };
+    const preenchido = { ...base, valor: 'semana' };
+    return pecaComEstados({
+      id: 'radio', titulo: 'Rádio', nota: 'Um ponto de Tab por grupo, e as setas trocam a opção. Para até cinco opções sempre visíveis.',
+      estados: [
+        ['default', radio(preenchido)],
+        ['hover', forcar(radio(preenchido), '.radio', 'is-hover')],
+        ['active', forcar(radio(preenchido), '.radio', 'is-active')],
+        ['foco', forcar(radio(preenchido), '[aria-checked="true"]', 'is-foco')],
+        ['disabled', radio({ ...preenchido, desabilitado: true })],
+        ['erro', radio({ ...base, erro: 'Escolha como visualizar.' })],
+        ['vazio', radio(base)],
+      ],
+      ausentes: { carregando: SEM_ESPERA },
+    });
+  }
+
+  function pecaChave() {
+    const base = { rotulo: 'Recorrência' };
+    return pecaComEstados({
+      id: 'chave', titulo: 'Chave', nota: 'Liga e desliga com efeito imediato. O texto ao lado diz o estado, não só a cor.',
+      estados: [
+        ['default', chave(base)],
+        ['hover', forcar(chave(base), '.chave', 'is-hover')],
+        ['active', forcar(chave(base), '.chave', 'is-active')],
+        ['foco', forcar(chave(base), '.chave', 'is-foco')],
+        ['disabled', chave({ ...base, desabilitado: true })],
+        ['carregando', chave({ ...base, ligada: true, textos: ['Não', 'Salvando'], carregando: true })],
+      ],
+      ausentes: {
+        erro: 'a chave só tem dois valores, e os dois são válidos.',
+        vazio: 'a chave sempre está ligada ou desligada.',
+      },
+      variacoes: [['Ligada', chave({ ...base, ligada: true })]],
+    });
+  }
+
   // --- montagem --------------------------------------------------------------
 
   document.getElementById('fundamentos').append(pecaCor(), pecaTipografia(), pecaEspaco(), pecaRaio(),
@@ -313,6 +588,9 @@
       { variante: 'destrutivo', rotulo: 'Excluir atividade' }),
     pecaGrupo(),
     pecaMenu());
+
+  document.getElementById('formulario').append(pecaCampo(), pecaAreaTexto(), pecaBusca(), pecaSeletor(), pecaSeletorMultiplo(),
+    pecaSeletorPessoas(), pecaData(), pecaPeriodo(), pecaCaixa(), pecaRadio(), pecaChave());
 
   atualizarValores();
   new MutationObserver(atualizarValores).observe(document.documentElement, { attributes: true, attributeFilter: ['data-tema'] });

@@ -10,6 +10,12 @@
     lixeira: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5"/>',
     opcoes: '<circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/>',
     fechar: '<path d="M6 6l12 12M18 6L6 18"/>',
+    busca: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+    calendario: '<rect x="4" y="5" width="16" height="15" rx="1"/><path d="M4 10h16M8 3v4M16 3v4"/>',
+    marca: '<path d="M5 12l5 5 9-10"/>',
+    menos: '<path d="M6 12h12"/>',
+    esquerda: '<path d="M14 8l-4 4 4 4"/>',
+    direita: '<path d="M10 8l4 4-4 4"/>',
   };
   const GIRO = '<circle cx="12" cy="12" r="9" stroke-dasharray="42 15"/>';
 
@@ -177,5 +183,969 @@
     return raiz;
   }
 
-  window.DS = { ICONES: Object.keys(ICONES), icone, botao, grupoBotoes, menuAcoes };
+  // --- formulário ------------------------------------------------------------
+
+  const LARGURAS = ['p', 'm', 'g', 'total'];
+  const TIPOS_DE_TEXTO = ['text', 'email', 'tel', 'url', 'number'];
+  const TEMPO_DE_DIGITACAO_MS = 500;
+  const MARGEM_DA_TELA_PX = 8;
+  const FORMATO_DA_DATA = 'dd/mm/aaaa';
+  const AVISO_DE_DATA = `Data inválida. Use ${FORMATO_DA_DATA}.`;
+  const AVISO_DE_PERIODO = 'A data final vem antes da inicial.';
+
+  function novoId(prefixo) {
+    return `ds-${prefixo}-${++proximoId}`;
+  }
+
+  function criar(tag, classe, texto) {
+    const el = document.createElement(tag);
+    if (classe) el.className = classe;
+    if (texto !== undefined) el.textContent = texto;
+    return el;
+  }
+
+  function criarBotao(classe) {
+    const el = criar('button', classe);
+    el.type = 'button';
+    return el;
+  }
+
+  function marcaObrigatorio() {
+    const marca = criar('span', 'campo-obrigatorio');
+    const asterisco = criar('span', null, '*');
+    asterisco.setAttribute('aria-hidden', 'true');
+    marca.append(asterisco, criar('span', 'visualmente-oculto', ' obrigatório'));
+    return marca;
+  }
+
+  function rotuloDoCampo(texto, obrigatorio, alvo) {
+    const nativo = alvo.matches('input, textarea');
+    const el = criar(nativo ? 'label' : 'span', 'campo-rotulo', texto);
+    el.id = novoId('rotulo');
+    if (nativo) {
+      el.htmlFor = alvo.id;
+    } else {
+      alvo.setAttribute('aria-labelledby', el.id);
+      el.addEventListener('click', () => alvo.focus());
+    }
+    if (obrigatorio) el.append(marcaObrigatorio());
+    return el;
+  }
+
+  // PA-21: o rótulo fica acima do controle em toda peça. A caixa é a exceção:
+  // o texto ao lado dela é o próprio rótulo, e ele também não some.
+  function casco(peca, props, controles, alvo, { rotuloAcima = true } = {}) {
+    const { rotulo, ajuda, obrigatorio, largura = 'm', erro } = props;
+    exigir(rotulo, peca, 'rotulo é obrigatório (PA-21)');
+    exigir(LARGURAS.includes(largura), peca, `largura desconhecida "${largura}"`);
+
+    const raiz = criar('div', `campo campo-${largura}`);
+    const rotuloEl = rotuloAcima ? rotuloDoCampo(rotulo, obrigatorio, alvo) : null;
+    if (rotuloEl) raiz.append(rotuloEl);
+    raiz.append(...controles);
+
+    let ajudaEl = null;
+    if (ajuda) {
+      ajudaEl = criar('p', 'campo-ajuda', ajuda);
+      ajudaEl.id = novoId('ajuda');
+      raiz.append(ajudaEl);
+    }
+
+    function mostrarErro(mensagem) {
+      raiz.querySelector(':scope > .campo-erro')?.remove();
+      raiz.classList.toggle('is-erro', Boolean(mensagem));
+      const descricoes = ajudaEl ? [ajudaEl.id] : [];
+      if (mensagem) {
+        const erroEl = criar('p', 'campo-erro', mensagem);
+        erroEl.id = novoId('erro');
+        erroEl.setAttribute('role', 'alert');
+        raiz.append(erroEl);
+        descricoes.push(erroEl.id);
+        alvo.setAttribute('aria-invalid', 'true');
+      } else {
+        alvo.removeAttribute('aria-invalid');
+      }
+      if (descricoes.length) alvo.setAttribute('aria-describedby', descricoes.join(' '));
+      else alvo.removeAttribute('aria-describedby');
+    }
+
+    mostrarErro(erro);
+    return { raiz, rotuloId: rotuloEl && rotuloEl.id, mostrarErro };
+  }
+
+  function prepararEntrada(entrada, props, prefixo) {
+    entrada.id = props.id || novoId(prefixo);
+    entrada.value = props.valor ?? '';
+    entrada.autocomplete = props.autocomplete || 'off';
+    entrada.disabled = Boolean(props.desabilitado);
+    if (props.placeholder) entrada.placeholder = props.placeholder;
+  }
+
+  function refletirValor(raiz, entrada, aoMudar) {
+    raiz.dataset.valor = entrada.value;
+    entrada.addEventListener('input', () => {
+      raiz.dataset.valor = entrada.value;
+      if (aoMudar) aoMudar(entrada.value);
+    });
+    return raiz;
+  }
+
+  function controleDeTexto(entrada, nomeDoIcone) {
+    const controle = criar('div', 'campo-controle');
+    if (nomeDoIcone) {
+      controle.classList.add('tem-icone');
+      controle.append(icone(nomeDoIcone));
+    }
+    controle.append(entrada);
+    return controle;
+  }
+
+  function campo(props = {}) {
+    const tipo = props.tipo || 'text';
+    exigir(TIPOS_DE_TEXTO.includes(tipo), 'campo', `tipo desconhecido "${tipo}"`);
+    const entrada = criar('input', 'campo-entrada');
+    entrada.type = tipo;
+    prepararEntrada(entrada, props, 'campo');
+    const { raiz } = casco('campo', props, [controleDeTexto(entrada, props.icone)], entrada);
+    return refletirValor(raiz, entrada, props.aoMudar);
+  }
+
+  function areaTexto(props = {}) {
+    const entrada = criar('textarea', 'campo-entrada campo-area');
+    entrada.rows = props.linhas || 3;
+    prepararEntrada(entrada, props, 'area');
+    const { raiz } = casco('areaTexto', props, [controleDeTexto(entrada)], entrada);
+    return refletirValor(raiz, entrada, props.aoMudar);
+  }
+
+  // A classe .busca já é da moldura, por isso esta peça usa .campo-busca.
+  function busca(props = {}) {
+    const entrada = criar('input', 'campo-entrada');
+    entrada.type = 'text';
+    entrada.setAttribute('role', 'searchbox');
+    prepararEntrada(entrada, { placeholder: 'Buscar', ...props }, 'busca');
+
+    const controle = criar('div', 'campo-controle campo-busca tem-icone');
+    controle.append(props.carregando ? svg(GIRO, 'icone botao-giro') : icone('busca'), entrada);
+    const limpar = botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'fechar', rotulo: 'Limpar busca' });
+    limpar.classList.add('campo-acao');
+    controle.append(limpar);
+    if (props.carregando) entrada.setAttribute('aria-busy', 'true');
+
+    const { raiz } = casco('busca', props, [controle], entrada);
+    refletirValor(raiz, entrada, props.aoMudar);
+    const atualizarLimpar = () => { limpar.hidden = !entrada.value || entrada.disabled; };
+    const esvaziar = () => {
+      entrada.value = '';
+      entrada.dispatchEvent(new Event('input', { bubbles: true }));
+      entrada.focus();
+    };
+    entrada.addEventListener('input', atualizarLimpar);
+    limpar.addEventListener('click', esvaziar);
+    entrada.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && entrada.value) { e.stopPropagation(); esvaziar(); }
+      if (e.key === 'Enter') { e.preventDefault(); if (props.aoBuscar) props.aoBuscar(entrada.value); }
+    });
+    atualizarLimpar();
+    return raiz;
+  }
+
+  // Lista ou calendário: um flutuante aberto por vez, na página inteira.
+  let flutuante = null;
+
+  function abrirFlutuante(item) {
+    if (flutuante) flutuante.fechar(false);
+    flutuante = item;
+  }
+
+  function soltarFlutuante(item) {
+    if (flutuante === item) flutuante = null;
+  }
+
+  // Abaixo da âncora; acima só quando embaixo não cabe e em cima há mais espaço.
+  function posicionar({ ancora, painel }) {
+    const caixa = ancora.getBoundingClientRect();
+    const margem = parseFloat(getComputedStyle(painel).marginTop);
+    const altura = painel.offsetHeight + 2 * margem;
+    const cabeAbaixo = caixa.bottom + altura <= window.innerHeight || window.innerHeight - caixa.bottom >= caixa.top;
+    const limite = window.innerWidth - painel.offsetWidth - MARGEM_DA_TELA_PX;
+    painel.style.setProperty('--flutuante-esquerda', `${Math.max(MARGEM_DA_TELA_PX, Math.min(caixa.left, limite))}px`);
+    painel.style.setProperty('--flutuante-largura', `${caixa.width}px`);
+    painel.style.setProperty('--flutuante-topo', `${cabeAbaixo ? caixa.bottom : caixa.top - altura}px`);
+  }
+
+  document.addEventListener('pointerdown', (e) => {
+    if (flutuante && !flutuante.ancora.contains(e.target) && !flutuante.painel.contains(e.target)) flutuante.fechar(false);
+  });
+  document.addEventListener('scroll', (e) => {
+    if (flutuante && !flutuante.painel.contains(e.target)) posicionar(flutuante);
+  }, true);
+  window.addEventListener('resize', () => { if (flutuante) posicionar(flutuante); });
+
+  function semAcento(texto) {
+    return texto.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  }
+
+  // Devolve a função que acha a próxima opção pelo que foi digitado, ou -1.
+  function digitacao(rotulos) {
+    const alvos = rotulos.map(semAcento);
+    let termo = '';
+    let relogio;
+    function buscar(tecla, atual) {
+      clearTimeout(relogio);
+      relogio = setTimeout(() => { termo = ''; }, TEMPO_DE_DIGITACAO_MS);
+      const inicio = termo ? atual : atual + 1;
+      termo += semAcento(tecla);
+      for (let i = 0; i < alvos.length; i++) {
+        const candidato = (inicio + i) % alvos.length;
+        if (alvos[candidato].startsWith(termo)) return candidato;
+      }
+      return -1;
+    }
+    buscar.emCurso = () => termo !== '';
+    return buscar;
+  }
+
+  function validarOpcoes(peca, opcoes) {
+    exigir(Array.isArray(opcoes) && opcoes.length, peca, 'opcoes precisa de ao menos uma opção');
+    exigir(opcoes.every((o) => Array.isArray(o) && o.length === 2), peca, 'cada opção é um par [chave, rotulo]');
+  }
+
+  function validarValor(peca, opcoes, valor) {
+    exigir(opcoes.some(([chave]) => chave === valor), peca, `valor desconhecido "${valor}"`);
+  }
+
+  function montarLista(id, opcoes) {
+    const lista = criar('ul', 'seletor-lista');
+    lista.id = `${id}-lista`;
+    lista.setAttribute('role', 'listbox');
+    lista.tabIndex = -1;
+    lista.hidden = true;
+    const itens = opcoes.map(([, rotulo], indice) => {
+      const opcao = criar('li', 'seletor-opcao');
+      opcao.id = `${id}-opcao-${indice}`;
+      opcao.setAttribute('role', 'option');
+      opcao.append(criar('span', null, rotulo), icone('marca'));
+      return opcao;
+    });
+    lista.append(...itens);
+    return { lista, itens };
+  }
+
+  function montarGatilho(id, lista, { carregando, desabilitado }) {
+    const gatilho = criarBotao('campo-entrada seletor-gatilho');
+    gatilho.id = id;
+    gatilho.setAttribute('aria-haspopup', 'listbox');
+    gatilho.setAttribute('aria-expanded', 'false');
+    gatilho.setAttribute('aria-controls', lista.id);
+    gatilho.disabled = Boolean(desabilitado);
+    gatilho.append(carregando ? svg(GIRO, 'icone botao-giro') : icone('seta'));
+    if (carregando) {
+      gatilho.setAttribute('aria-busy', 'true');
+      gatilho.setAttribute('aria-disabled', 'true');
+      gatilho.addEventListener('click', bloquearClique, true);
+    }
+    return gatilho;
+  }
+
+  const ehDigitacao = (e) => e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey;
+
+  // Padrão ARIA de listbox: o botão abre, o foco vai para a lista e a opção ativa vem por aria-activedescendant.
+  function ligarLista({ gatilho, lista, itens, rotulos, inicial, aoAtivar }) {
+    const item = { ancora: gatilho, painel: lista, fechar };
+    const buscar = digitacao(rotulos);
+    let ativo = 0;
+
+    function marcarAtivo(indice, rolar) {
+      ativo = Math.min(Math.max(indice, 0), itens.length - 1);
+      itens.forEach((opcao, outro) => opcao.toggleAttribute('data-ativa', outro === ativo));
+      lista.setAttribute('aria-activedescendant', itens[ativo].id);
+      if (rolar) itens[ativo].scrollIntoView({ block: 'nearest' });
+    }
+
+    function fechar(devolverFoco) {
+      if (lista.hidden) return;
+      lista.hidden = true;
+      gatilho.setAttribute('aria-expanded', 'false');
+      lista.removeAttribute('aria-activedescendant');
+      soltarFlutuante(item);
+      if (devolverFoco) gatilho.focus();
+    }
+
+    function abrir() {
+      abrirFlutuante(item);
+      lista.hidden = false;
+      gatilho.setAttribute('aria-expanded', 'true');
+      posicionar(item);
+      marcarAtivo(inicial(), true);
+      lista.focus();
+    }
+
+    function digitar(tecla) {
+      const achado = buscar(tecla, ativo);
+      if (achado >= 0) marcarAtivo(achado, true);
+    }
+
+    const MOVER = {
+      ArrowDown: () => ativo + 1,
+      ArrowUp: () => ativo - 1,
+      Home: () => 0,
+      End: () => itens.length - 1,
+    };
+    const ACOES = {
+      Enter: () => aoAtivar(ativo),
+      Escape: () => fechar(true),
+    };
+
+    gatilho.addEventListener('click', () => (lista.hidden ? abrir() : fechar(true)));
+    gatilho.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        abrir();
+      } else if (ehDigitacao(e) && e.key !== ' ') {
+        e.preventDefault();
+        abrir();
+        digitar(e.key);
+      }
+    });
+    lista.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') { fechar(true); return; }
+      if (e.key === ' ' && !buscar.emCurso()) { e.preventDefault(); aoAtivar(ativo); return; }
+      if (MOVER[e.key]) { e.preventDefault(); marcarAtivo(MOVER[e.key](), true); return; }
+      if (ACOES[e.key]) { e.preventDefault(); e.stopPropagation(); ACOES[e.key](); return; }
+      if (ehDigitacao(e)) { e.preventDefault(); digitar(e.key); }
+    });
+    lista.addEventListener('mousemove', (e) => {
+      const opcao = e.target.closest('[role="option"]');
+      if (opcao && itens.indexOf(opcao) !== ativo) marcarAtivo(itens.indexOf(opcao), false);
+    });
+    lista.addEventListener('click', (e) => {
+      const opcao = e.target.closest('[role="option"]');
+      if (opcao) aoAtivar(itens.indexOf(opcao));
+    });
+    return { fechar };
+  }
+
+  function seletor(props = {}) {
+    const { opcoes, valor, aoEscolher } = props;
+    validarOpcoes('seletor', opcoes);
+    if (valor !== undefined) validarValor('seletor', opcoes, valor);
+
+    const id = props.id || novoId('seletor');
+    const { lista, itens } = montarLista(id, opcoes);
+    const gatilho = montarGatilho(id, lista, props);
+    const texto = criar('span', 'seletor-valor');
+    gatilho.prepend(texto);
+    const { raiz, rotuloId } = casco('seletor', props, [gatilho, lista], gatilho);
+    gatilho.setAttribute('aria-labelledby', `${rotuloId} ${id}`);
+    lista.setAttribute('aria-labelledby', rotuloId);
+
+    let selecionado = valor === undefined ? 0 : opcoes.findIndex(([chave]) => chave === valor);
+    function marcarSelecionado() {
+      const [chave, rotulo] = opcoes[selecionado];
+      itens.forEach((opcao, indice) => opcao.setAttribute('aria-selected', String(indice === selecionado)));
+      texto.textContent = rotulo;
+      texto.classList.toggle('is-vazio', chave === '');
+      raiz.dataset.valor = chave;
+    }
+
+    const controle = ligarLista({
+      gatilho, lista, itens,
+      rotulos: opcoes.map(([, rotulo]) => rotulo),
+      inicial: () => selecionado,
+      aoAtivar: (indice) => {
+        const mudou = indice !== selecionado;
+        selecionado = indice;
+        marcarSelecionado();
+        controle.fechar(true);
+        if (mudou && aoEscolher) aoEscolher(opcoes[indice][0]);
+      },
+    });
+    marcarSelecionado();
+    return raiz;
+  }
+
+  function chipRemovivel(rotulo, desabilitado, aoRemover) {
+    const chip = criar('li', 'seletor-chip');
+    const remover = criarBotao();
+    remover.append(icone('fechar'));
+    remover.setAttribute('aria-label', `Remover ${rotulo}`);
+    remover.title = `Remover ${rotulo}`;
+    remover.disabled = Boolean(desabilitado);
+    remover.addEventListener('click', aoRemover);
+    chip.append(criar('span', null, rotulo), remover);
+    return chip;
+  }
+
+  function seletorMultiplo(props = {}) {
+    const { opcoes, valor = [], aoEscolher, desabilitado } = props;
+    validarOpcoes('seletorMultiplo', opcoes);
+    exigir(Array.isArray(valor), 'seletorMultiplo', 'valor é uma lista de chaves');
+    valor.forEach((v) => validarValor('seletorMultiplo', opcoes, v));
+
+    const id = props.id || novoId('seletor');
+    const { lista, itens } = montarLista(id, opcoes);
+    lista.setAttribute('aria-multiselectable', 'true');
+    const gatilho = montarGatilho(id, lista, props);
+    const texto = criar('span', 'seletor-valor');
+    gatilho.prepend(texto);
+    const chips = criar('ul', 'seletor-chips');
+    const { raiz, rotuloId } = casco('seletorMultiplo', props, [gatilho, lista, chips], gatilho);
+    gatilho.setAttribute('aria-labelledby', `${rotuloId} ${id}`);
+    lista.setAttribute('aria-labelledby', rotuloId);
+
+    const selecionados = new Set(valor);
+    function emOrdem() {
+      return opcoes.filter(([chave]) => selecionados.has(chave));
+    }
+
+    function desenhar() {
+      const escolhidas = emOrdem();
+      itens.forEach((opcao, indice) => opcao.setAttribute('aria-selected', String(selecionados.has(opcoes[indice][0]))));
+      texto.textContent = escolhidas.length ? `${escolhidas.length} selecionado${escolhidas.length > 1 ? 's' : ''}` : (props.placeholder || 'Selecione');
+      texto.classList.toggle('is-vazio', !escolhidas.length);
+      raiz.dataset.valor = escolhidas.map(([chave]) => chave).join(',');
+      chips.replaceChildren(...escolhidas.map(([chave, rotulo]) => chipRemovivel(rotulo, desabilitado, () => {
+        alternar(chave);
+        (chips.querySelector('button') || gatilho).focus();
+      })));
+    }
+
+    function alternar(chave) {
+      if (selecionados.has(chave)) selecionados.delete(chave);
+      else selecionados.add(chave);
+      desenhar();
+      if (aoEscolher) aoEscolher(emOrdem().map(([c]) => c));
+    }
+
+    ligarLista({
+      gatilho, lista, itens,
+      rotulos: opcoes.map(([, rotulo]) => rotulo),
+      inicial: () => Math.max(0, opcoes.findIndex(([chave]) => selecionados.has(chave))),
+      aoAtivar: (indice) => alternar(opcoes[indice][0]),
+    });
+    desenhar();
+    return raiz;
+  }
+
+  function iniciais(nome) {
+    const partes = nome.trim().split(/\s+/);
+    return (partes[0][0] + (partes.length > 1 ? partes.at(-1)[0] : '')).toUpperCase();
+  }
+
+  function avatar(nome) {
+    const el = criar('span', 'pessoa-avatar', iniciais(nome));
+    el.setAttribute('aria-hidden', 'true');
+    return el;
+  }
+
+  function avatarRemovivel(nome, desabilitado, aoRemover) {
+    const el = criarBotao('pessoa');
+    el.setAttribute('aria-label', `Remover ${nome}`);
+    el.title = nome;
+    el.disabled = Boolean(desabilitado);
+    el.append(avatar(nome), icone('fechar'));
+    el.addEventListener('click', aoRemover);
+    return el;
+  }
+
+  function opcaoDePessoa(nome, aoAdicionar) {
+    const el = criarBotao('pessoas-opcao');
+    el.append(avatar(nome), criar('span', null, nome));
+    el.addEventListener('click', aoAdicionar);
+    return el;
+  }
+
+  // PA-58: a lista de pessoas abre no próprio campo, no fluxo da página, sem popover.
+  function seletorPessoas(props = {}) {
+    const { opcoes, valor = [], aoEscolher, desabilitado } = props;
+    validarOpcoes('seletorPessoas', opcoes);
+    exigir(Array.isArray(valor), 'seletorPessoas', 'valor é uma lista de chaves');
+    valor.forEach((v) => validarValor('seletorPessoas', opcoes, v));
+
+    const grupo = criar('div', 'pessoas');
+    grupo.setAttribute('role', 'group');
+    const linha = criar('ul', 'pessoas-lista');
+    const mais = botao({ variante: 'icone', iconeEsquerda: 'mais', rotulo: 'Adicionar pessoa' });
+    mais.classList.add('pessoas-mais');
+    mais.setAttribute('aria-expanded', 'false');
+    const disponiveis = criar('ul', 'pessoas-disponiveis');
+    disponiveis.id = novoId('pessoas');
+    disponiveis.hidden = true;
+    mais.setAttribute('aria-controls', disponiveis.id);
+    grupo.append(linha, disponiveis);
+
+    const { raiz } = casco('seletorPessoas', props, [grupo], grupo);
+    const selecionados = new Set(valor);
+
+    function avisar() {
+      raiz.dataset.valor = [...selecionados].join(',');
+      if (aoEscolher) aoEscolher([...selecionados]);
+    }
+
+    function definirAberto(aberto) {
+      disponiveis.hidden = !aberto;
+      mais.setAttribute('aria-expanded', String(aberto));
+    }
+
+    function desenhar() {
+      const presentes = opcoes.filter(([chave]) => selecionados.has(chave));
+      const restantes = opcoes.filter(([chave]) => !selecionados.has(chave));
+      const avatares = presentes.map(([chave, nome]) => {
+        const item = criar('li');
+        item.append(avatarRemovivel(nome, desabilitado, () => {
+          selecionados.delete(chave);
+          desenhar();
+          avisar();
+          mais.focus();
+        }));
+        return item;
+      });
+      const itemMais = criar('li');
+      itemMais.append(mais);
+      linha.replaceChildren(...avatares, itemMais);
+      mais.disabled = Boolean(desabilitado) || !restantes.length;
+      disponiveis.replaceChildren(...restantes.map(([chave, nome], indice) => {
+        const item = criar('li');
+        item.append(opcaoDePessoa(nome, () => {
+          selecionados.add(chave);
+          desenhar();
+          avisar();
+          focarProxima(indice);
+        }));
+        return item;
+      }));
+      if (!restantes.length) definirAberto(false);
+    }
+
+    function focarProxima(indice) {
+      const botoes = disponiveis.querySelectorAll('button');
+      if (botoes.length) botoes[Math.min(indice, botoes.length - 1)].focus();
+      else mais.focus();
+    }
+
+    mais.addEventListener('click', () => {
+      definirAberto(disponiveis.hidden);
+      if (!disponiveis.hidden) focarProxima(0);
+    });
+    disponiveis.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      e.stopPropagation();
+      definirAberto(false);
+      mais.focus();
+    });
+
+    desenhar();
+    raiz.dataset.valor = [...selecionados].join(',');
+    return raiz;
+  }
+
+  const doisDigitos = (n) => String(n).padStart(2, '0');
+  const paraIso = (d) => `${d.getFullYear()}-${doisDigitos(d.getMonth() + 1)}-${doisDigitos(d.getDate())}`;
+  const paraTexto = (d) => `${doisDigitos(d.getDate())}/${doisDigitos(d.getMonth() + 1)}/${d.getFullYear()}`;
+  const mesmoDia = (a, b) => Boolean(a && b) && paraIso(a) === paraIso(b);
+  const somarDias = (d, dias) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + dias);
+
+  function somarMeses(d, meses) {
+    const ultimo = new Date(d.getFullYear(), d.getMonth() + meses + 1, 0).getDate();
+    return new Date(d.getFullYear(), d.getMonth() + meses, Math.min(d.getDate(), ultimo));
+  }
+
+  // Devolve a data, ou null quando o dia não existe no calendário.
+  function dataDe(dia, mes, ano) {
+    const d = new Date(ano, mes - 1, dia);
+    return d.getFullYear() === ano && d.getMonth() === mes - 1 && d.getDate() === dia ? d : null;
+  }
+
+  function deTexto(texto) {
+    const partes = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(texto);
+    return partes ? dataDe(+partes[1], +partes[2], +partes[3]) : null;
+  }
+
+  function deIso(iso) {
+    const partes = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+    return partes ? dataDe(+partes[3], +partes[2], +partes[1]) : null;
+  }
+
+  function aplicarMascara(texto) {
+    const digitos = texto.replace(/\D/g, '').slice(0, 8);
+    return [digitos.slice(0, 2), digitos.slice(2, 4), digitos.slice(4)].filter(Boolean).join('/');
+  }
+
+  // Cada barra entra depois do segundo e do quarto dígito.
+  function posicaoDoDigito(digitos) {
+    return digitos + (digitos > 2 ? 1 : 0) + (digitos > 4 ? 1 : 0);
+  }
+
+  function mascararEntrada(entrada) {
+    const noFim = entrada.selectionStart === entrada.value.length;
+    const digitosAntes = entrada.value.slice(0, entrada.selectionStart).replace(/\D/g, '').length;
+    entrada.value = aplicarMascara(entrada.value);
+    if (!noFim) entrada.setSelectionRange(posicaoDoDigito(digitosAntes), posicaoDoDigito(digitosAntes));
+  }
+
+  const FORMATO_DO_MES = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' });
+  const FORMATO_DO_DIA = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' });
+  const DIAS_DA_SEMANA = [['domingo', 'D'], ['segunda-feira', 'S'], ['terça-feira', 'T'], ['quarta-feira', 'Q'],
+    ['quinta-feira', 'Q'], ['sexta-feira', 'S'], ['sábado', 'S']];
+  const PASSOS_DO_CALENDARIO = {
+    ArrowLeft: (d) => somarDias(d, -1),
+    ArrowRight: (d) => somarDias(d, 1),
+    ArrowUp: (d) => somarDias(d, -7),
+    ArrowDown: (d) => somarDias(d, 7),
+    Home: (d) => somarDias(d, -d.getDay()),
+    End: (d) => somarDias(d, 6 - d.getDay()),
+    PageUp: (d) => somarMeses(d, -1),
+    PageDown: (d) => somarMeses(d, 1),
+  };
+
+  function semanasDoMes(referencia) {
+    const ano = referencia.getFullYear();
+    const mes = referencia.getMonth();
+    const celulas = Array(new Date(ano, mes, 1).getDay()).fill(null);
+    const total = new Date(ano, mes + 1, 0).getDate();
+    for (let dia = 1; dia <= total; dia++) celulas.push(new Date(ano, mes, dia));
+    const semanas = [];
+    for (let i = 0; i < celulas.length; i += 7) semanas.push(celulas.slice(i, i + 7));
+    return semanas;
+  }
+
+  function cabecalhoDoCalendario() {
+    const cabeca = criar('thead');
+    const linha = criar('tr');
+    linha.append(...DIAS_DA_SEMANA.map(([nome, letra]) => {
+      const th = criar('th', null, letra);
+      th.scope = 'col';
+      th.setAttribute('aria-label', nome);
+      return th;
+    }));
+    cabeca.append(linha);
+    return cabeca;
+  }
+
+  function diaDoCalendario(data, foco, selecionada, aoEscolher) {
+    const celula = criar('td');
+    if (!data) return celula;
+    const dia = criarBotao('calendario-dia');
+    dia.textContent = data.getDate();
+    dia.tabIndex = mesmoDia(data, foco) ? 0 : -1;
+    dia.setAttribute('aria-label', FORMATO_DO_DIA.format(data));
+    if (mesmoDia(data, selecionada)) dia.setAttribute('aria-pressed', 'true');
+    if (mesmoDia(data, new Date())) dia.setAttribute('aria-current', 'date');
+    dia.addEventListener('click', () => aoEscolher(data));
+    celula.append(dia);
+    return celula;
+  }
+
+  function criarCalendario({ aoEscolher, aoFechar }) {
+    const painel = criar('div', 'calendario');
+    painel.setAttribute('role', 'group');
+    painel.setAttribute('aria-label', 'Calendário');
+    painel.id = novoId('calendario');
+    painel.hidden = true;
+
+    const titulo = criar('span', 'calendario-titulo');
+    titulo.id = novoId('calendario-titulo');
+    titulo.setAttribute('aria-live', 'polite');
+    const botaoDeMes = (iconeEsquerda, rotulo) => botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda, rotulo });
+    const anterior = botaoDeMes('esquerda', 'Mês anterior');
+    const proximo = botaoDeMes('direita', 'Próximo mês');
+    const topo = criar('div', 'calendario-topo');
+    topo.append(anterior, titulo, proximo);
+
+    const grade = criar('table', 'calendario-grade');
+    grade.setAttribute('role', 'grid');
+    grade.setAttribute('aria-labelledby', titulo.id);
+    const corpo = criar('tbody');
+    grade.append(cabecalhoDoCalendario(), corpo);
+    painel.append(topo, grade);
+
+    let foco = new Date();
+    let selecionada = null;
+
+    function desenhar(focar) {
+      titulo.textContent = FORMATO_DO_MES.format(foco);
+      corpo.replaceChildren(...semanasDoMes(foco).map((semana) => {
+        const linha = criar('tr');
+        linha.append(...semana.map((data) => diaDoCalendario(data, foco, selecionada, aoEscolher)));
+        return linha;
+      }));
+      if (focar) focarDia();
+    }
+
+    function focarDia() {
+      corpo.querySelector('[tabindex="0"]').focus();
+    }
+
+    function mudarMes(passo) {
+      foco = somarMeses(foco, passo);
+      desenhar(false);
+    }
+
+    anterior.addEventListener('click', () => mudarMes(-1));
+    proximo.addEventListener('click', () => mudarMes(1));
+    grade.addEventListener('keydown', (e) => {
+      const passo = PASSOS_DO_CALENDARIO[e.key];
+      if (!passo) return;
+      e.preventDefault();
+      foco = passo(foco);
+      desenhar(true);
+    });
+    // O Tab que sai do calendário fecha e devolve ao botão, e a ordem segue dali.
+    painel.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        aoFechar();
+        return;
+      }
+      const saindo = e.key === 'Tab' && (e.shiftKey ? e.target === anterior : e.target.matches('.calendario-dia'));
+      if (saindo) aoFechar();
+    });
+
+    function mostrar(data) {
+      selecionada = data;
+      foco = data || new Date();
+      desenhar(false);
+    }
+
+    return { painel, mostrar, focarDia };
+  }
+
+  // Máscara e calendário de uma data. O valor de máquina é ISO; a tela mostra dd/mm/aaaa.
+  function controleData({ nome, valor, placeholder, desabilitado, aoMudar, aoSair }) {
+    const inicial = valor ? deIso(valor) : null;
+    const entrada = criar('input', 'campo-entrada');
+    entrada.type = 'text';
+    entrada.inputMode = 'numeric';
+    entrada.maxLength = FORMATO_DA_DATA.length;
+    prepararEntrada(entrada, { valor: inicial ? paraTexto(inicial) : '', placeholder: placeholder || FORMATO_DA_DATA, desabilitado }, 'data');
+    if (nome) entrada.setAttribute('aria-label', nome);
+
+    const alternar = botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'calendario', rotulo: 'Abrir calendário' });
+    alternar.classList.add('campo-acao');
+    alternar.disabled = Boolean(desabilitado);
+    alternar.setAttribute('aria-expanded', 'false');
+
+    const caixa = criar('div', 'campo-controle');
+    const calendario = criarCalendario({
+      aoEscolher: (data) => {
+        entrada.value = paraTexto(data);
+        fechar(false);
+        entrada.focus();
+        notificar();
+        if (aoSair) aoSair();
+      },
+      aoFechar: () => fechar(true),
+    });
+    alternar.setAttribute('aria-controls', calendario.painel.id);
+    caixa.append(entrada, alternar, calendario.painel);
+    const item = { ancora: caixa, painel: calendario.painel, fechar };
+
+    const lerData = () => deTexto(entrada.value);
+    const iso = () => { const d = lerData(); return d ? paraIso(d) : ''; };
+    let ultimo = iso();
+    function notificar() {
+      if (iso() === ultimo) return;
+      ultimo = iso();
+      if (aoMudar) aoMudar(ultimo);
+    }
+
+    function fechar(devolverFoco) {
+      if (calendario.painel.hidden) return;
+      calendario.painel.hidden = true;
+      alternar.setAttribute('aria-expanded', 'false');
+      soltarFlutuante(item);
+      if (devolverFoco) alternar.focus();
+    }
+
+    function abrir() {
+      abrirFlutuante(item);
+      calendario.mostrar(lerData());
+      calendario.painel.hidden = false;
+      alternar.setAttribute('aria-expanded', 'true');
+      posicionar(item);
+      calendario.focarDia();
+    }
+
+    entrada.addEventListener('input', () => { mascararEntrada(entrada); notificar(); });
+    entrada.addEventListener('blur', () => { if (aoSair) aoSair(); });
+    alternar.addEventListener('click', () => (calendario.painel.hidden ? abrir() : fechar(true)));
+    calendario.mostrar(inicial);
+
+    return {
+      caixa, entrada, iso, lerData,
+      invalida: () => entrada.value !== '' && !lerData(),
+    };
+  }
+
+  function validarIso(peca, valor) {
+    exigir(!valor || deIso(valor), peca, `data fora do formato aaaa-mm-dd "${valor}"`);
+  }
+
+  function data(props = {}) {
+    validarIso('data', props.valor);
+    let raiz;
+    let mostrarErro = () => {};
+    const controle = controleData({
+      ...props,
+      aoMudar: (iso) => {
+        raiz.dataset.valor = iso;
+        if (props.aoMudar) props.aoMudar(iso);
+      },
+      aoSair: () => mostrarErro(controle.invalida() ? AVISO_DE_DATA : ''),
+    });
+    if (props.id) controle.entrada.id = props.id;
+    if (props.campo) controle.entrada.dataset.campo = props.campo;
+    ({ raiz, mostrarErro } = casco('data', props, [controle.caixa], controle.entrada));
+    raiz.dataset.valor = controle.iso();
+    return raiz;
+  }
+
+  function periodo(props = {}) {
+    validarIso('periodo', props.inicio);
+    validarIso('periodo', props.fim);
+    let raiz;
+    let mostrarErro = () => {};
+
+    function notificar() {
+      raiz.dataset.valor = `${inicio.iso()}/${fim.iso()}`;
+      if (props.aoMudar) props.aoMudar(inicio.iso(), fim.iso());
+    }
+
+    function validar() {
+      const [de, ate] = [inicio.lerData(), fim.lerData()];
+      if (inicio.invalida() || fim.invalida()) mostrarErro(AVISO_DE_DATA);
+      else mostrarErro(de && ate && ate < de ? AVISO_DE_PERIODO : '');
+    }
+
+    const comuns = { placeholder: props.placeholder, desabilitado: props.desabilitado, aoMudar: notificar, aoSair: validar };
+    const inicio = controleData({ ...comuns, nome: 'Data inicial', valor: props.inicio });
+    const fim = controleData({ ...comuns, nome: 'Data final', valor: props.fim });
+
+    const grupo = criar('div', 'periodo');
+    grupo.setAttribute('role', 'group');
+    grupo.append(inicio.caixa, criar('span', 'periodo-separador', 'até'), fim.caixa);
+    ({ raiz, mostrarErro } = casco('periodo', { largura: 'g', ...props }, [grupo], grupo));
+    raiz.dataset.valor = `${inicio.iso()}/${fim.iso()}`;
+    return raiz;
+  }
+
+  function caixa(props = {}) {
+    const { rotulo, marcada = false, indeterminada = false, desabilitado, obrigatorio, aoMudar } = props;
+    const el = criarBotao('caixa');
+    el.setAttribute('role', 'checkbox');
+    el.disabled = Boolean(desabilitado);
+
+    const marca = criar('span', 'caixa-marca');
+    marca.setAttribute('aria-hidden', 'true');
+    marca.append(icone('marca'), icone('menos'));
+    const texto = criar('span', 'caixa-texto', rotulo);
+    if (obrigatorio) texto.append(marcaObrigatorio());
+    el.append(marca, texto);
+
+    const { raiz } = casco('caixa', props, [el], el, { rotuloAcima: false });
+    let estado = indeterminada ? 'mixed' : String(Boolean(marcada));
+    function aplicar() {
+      el.setAttribute('aria-checked', estado);
+      raiz.dataset.valor = estado;
+    }
+    el.addEventListener('click', () => {
+      estado = estado === 'true' ? 'false' : 'true';
+      aplicar();
+      if (aoMudar) aoMudar(estado === 'true');
+    });
+    aplicar();
+    return raiz;
+  }
+
+  const TECLAS_DE_RADIO = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+
+  function radio(props = {}) {
+    const { opcoes, valor, aoEscolher, desabilitado, grupo: nomeDoGrupo = novoId('radio') } = props;
+    validarOpcoes('radio', opcoes);
+    if (valor !== undefined) validarValor('radio', opcoes, valor);
+
+    const grupo = criar('div', 'radio-grupo');
+    grupo.setAttribute('role', 'radiogroup');
+    const itens = opcoes.map(([chave, rotulo]) => {
+      const el = criarBotao('radio');
+      el.setAttribute('role', 'radio');
+      el.dataset.grupo = nomeDoGrupo;
+      el.dataset.valor = chave;
+      el.disabled = Boolean(desabilitado);
+      el.append(criar('span', 'radio-bola'), criar('span', 'radio-texto', rotulo));
+      return el;
+    });
+    grupo.append(...itens);
+    const { raiz } = casco('radio', props, [grupo], grupo);
+
+    // Tabindex móvel: um ponto de Tab por grupo, na opção marcada ou na primeira.
+    let atual = valor;
+    function aplicar() {
+      itens.forEach((el) => {
+        const marcado = el.dataset.valor === atual;
+        el.setAttribute('aria-checked', String(marcado));
+        el.tabIndex = marcado ? 0 : -1;
+      });
+      if (atual === undefined) itens[0].tabIndex = 0;
+      raiz.dataset.valor = atual ?? '';
+    }
+    function escolher(el) {
+      const mudou = el.dataset.valor !== atual;
+      atual = el.dataset.valor;
+      aplicar();
+      if (mudou && aoEscolher) aoEscolher(atual);
+    }
+    itens.forEach((el) => el.addEventListener('click', () => escolher(el)));
+    grupo.addEventListener('keydown', (e) => {
+      const passo = TECLAS_DE_RADIO[e.key];
+      if (!passo) return;
+      e.preventDefault();
+      const proximo = itens[(itens.indexOf(e.target) + passo + itens.length) % itens.length];
+      escolher(proximo);
+      proximo.focus();
+    });
+    aplicar();
+    return raiz;
+  }
+
+  function chave(props = {}) {
+    const { ligada = false, textos = ['Não', 'Sim'], desabilitado, carregando, aoMudar } = props;
+    exigir(Array.isArray(textos) && textos.length === 2, 'chave', 'textos precisa de [desligada, ligada]');
+
+    const el = criarBotao('chave');
+    el.setAttribute('role', 'switch');
+    el.disabled = Boolean(desabilitado);
+    const trilho = criar('span', 'chave-trilho');
+    trilho.append(criar('span', 'chave-botao'));
+    const estadoEl = criar('span', 'chave-estado');
+    el.append(trilho, estadoEl);
+    if (carregando) {
+      el.append(svg(GIRO, 'icone botao-giro'));
+      el.setAttribute('aria-busy', 'true');
+      el.setAttribute('aria-disabled', 'true');
+      el.addEventListener('click', bloquearClique, true);
+    }
+
+    const { raiz } = casco('chave', { largura: 'p', ...props }, [el], el);
+    let estado = Boolean(ligada);
+    function aplicar() {
+      el.setAttribute('aria-checked', String(estado));
+      estadoEl.textContent = textos[Number(estado)];
+      raiz.dataset.valor = String(estado);
+    }
+    el.addEventListener('click', () => {
+      estado = !estado;
+      aplicar();
+      if (aoMudar) aoMudar(estado);
+    });
+    aplicar();
+    return raiz;
+  }
+
+  window.DS = {
+    ICONES: Object.keys(ICONES), icone, botao, grupoBotoes, menuAcoes,
+    campo, areaTexto, busca, seletor, seletorMultiplo, seletorPessoas, data, periodo, caixa, radio, chave,
+  };
 })();
