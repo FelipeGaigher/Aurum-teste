@@ -27,7 +27,7 @@ function capturar(q, porta) {
     const env = { ...process.env, PORTA: String(porta) };
     if (q.estado) env.ESTADO = JSON.stringify(q.estado);
     if (q.cliques) env.CLIQUES = q.cliques;
-    if (q.css === 'kanban') env.CSS_EXTRA = plano.kanban_css;
+    env.CSS_EXTRA = plano.css_base + (q.css === 'kanban' ? ' ' + plano.kanban_css : '');
     const filho = spawn('node', [path.join(raiz, 'scripts', 'capturar-figma.js'), q.pagina, id, endpoint, String(plano.largura)], { env, cwd: raiz });
     let saida = '';
     filho.stdout.on('data', (d) => { saida += d; });

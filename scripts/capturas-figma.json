@@ -1,66 +1,291 @@
 {
-  "largura": 1440,
+  "largura": 1600,
   "kanban_css": "#quadro { overflow: visible !important; } .coluna { flex: 0 0 var(--component-column-width) !important; }",
   "fluxos": [
-    { "nome": "Fluxo 1 — Gestão de atividades: ver o dia, criar a atividade e acompanhar no quadro", "secao": "23:2", "quadros": [
-      { "titulo": "Agenda, por dia, abre em Hoje", "pagina": "agenda.html" },
-      { "titulo": "Agenda, por semana", "pagina": "agenda.html", "cliques": "texto=Por semana" },
-      { "titulo": "Agenda, por mês", "pagina": "agenda.html", "cliques": "texto=Por mês" },
-      { "titulo": "Agenda vazia, primeiro uso", "pagina": "agenda.html?estado=vazio" },
-      { "titulo": "Criar prazo, painel único sem sair da Agenda", "pagina": "agenda.html?criar=prazo" },
-      { "titulo": "Criar tarefa, o mesmo painel com outros campos", "pagina": "agenda.html?criar=tarefa" },
-      { "titulo": "Área de trabalho, visão Cards", "pagina": "area-de-trabalho.html", "estado": { "astrea-area-visao": "cards" } },
-      { "titulo": "Área de trabalho, visão Lista com o detalhe ao lado", "pagina": "area-de-trabalho.html", "estado": { "astrea-area-visao": "lista", "astrea-area-detalhe-id": "a1" } },
-      { "titulo": "Área de trabalho, visão Kanban", "pagina": "area-de-trabalho.html", "estado": { "astrea-area-visao": "kanban" } },
-      { "titulo": "Área de trabalho, criar atividade", "pagina": "area-de-trabalho.html", "estado": { "astrea-area-visao": "cards" }, "cliques": "#criar-atividade" },
-      { "titulo": "Notificações abertas, pelo sino", "pagina": "area-de-trabalho.html", "estado": { "astrea-area-visao": "cards" }, "cliques": "[aria-label=\"Notificações\"]" },
-      { "titulo": "Gestão kanban, o quadro do escritório, com rolagem lateral", "pagina": "kanban.html", "css": "kanban", "rolagem": true },
-      { "titulo": "Gestão kanban, detalhe da história", "pagina": "kanban.html", "css": "kanban", "rolagem": true, "cliques": "#quadro .card" },
-      { "titulo": "Gestão kanban, criar história", "pagina": "kanban.html", "css": "kanban", "rolagem": true, "cliques": "#criar-atividade" }
-    ]},
-    { "nome": "Fluxo 2 — Processos e casos: listar, abrir a ficha e adicionar", "secao": "23:9", "quadros": [
-      { "titulo": "Lista de processos e casos, com filtros", "pagina": "processos.html" },
-      { "titulo": "Lista com o filtro avançado aberto", "pagina": "processos.html", "cliques": "texto=Filtro avançado" },
-      { "titulo": "Ficha do processo, aba Atividades", "pagina": "processos.html?ficha=1" },
-      { "titulo": "Ficha do processo, aba Histórico", "pagina": "processos.html?ficha=1", "cliques": "texto=Histórico" },
-      { "titulo": "Adicionar processo", "pagina": "processos.html?adicionar=processo" },
-      { "titulo": "Busca de processo automática", "pagina": "processos.html?adicionar=busca" },
-      { "titulo": "Adicionar caso", "pagina": "processos.html?adicionar=caso" }
-    ]},
-    { "nome": "Fluxo 3 — Contatos: listar, abrir a ficha e adicionar", "secao": "23:16", "quadros": [
-      { "titulo": "Lista de contatos, em tabela", "pagina": "contatos.html" },
-      { "titulo": "Lista de contatos, em cards", "pagina": "contatos.html", "cliques": "texto=Cards" },
-      { "titulo": "Ficha do contato", "pagina": "contatos.html?ficha=1&id=c1" },
-      { "titulo": "Ficha do contato, aba Documentos com Mais ações", "pagina": "contatos.html?ficha=1&id=c1", "cliques": "texto=Documentos;;texto=Mais ações" },
-      { "titulo": "Adicionar contato, um formulário só", "pagina": "contatos.html?adicionar=1" },
-      { "titulo": "Nova etiqueta, dentro do formulário do contato", "pagina": "contatos.html?adicionar=1", "cliques": "texto=Nova etiqueta" }
-    ]},
-    { "nome": "Fluxo 4 — Atendimentos: registrar e acompanhar", "secao": "23:23", "quadros": [
-      { "titulo": "Lista de atendimentos", "pagina": "atendimentos.html" },
-      { "titulo": "Ficha do atendimento", "pagina": "atendimentos.html?ficha=1&id=at1" },
-      { "titulo": "Ficha do atendimento, anotação em foco", "pagina": "atendimentos.html?ficha=1&id=at1&anotar=1" },
-      { "titulo": "Adicionar atendimento, no lugar da lista", "pagina": "atendimentos.html?adicionar=1" }
-    ]},
-    { "nome": "Fluxo 5 — Documentos, buscas e alertas", "secao": null, "quadros": [
-      { "titulo": "Documentos", "pagina": "documentos.html" },
-      { "titulo": "Adicionar documento", "pagina": "documentos.html?adicionar=1" },
-      { "titulo": "Buscas, com termo preenchido", "pagina": "buscas.html?q=contesta%C3%A7%C3%A3o" },
-      { "titulo": "Alertas", "pagina": "alertas.html" }
-    ]},
-    { "nome": "Fluxo 6 — Moldura: módulos fora do recorte e painel do redesign", "secao": null, "quadros": [
-      { "titulo": "Administração", "pagina": "administracao.html" },
-      { "titulo": "Administração, aba Plano", "pagina": "administracao.html#plano" },
-      { "titulo": "Painel do redesign", "pagina": "painel-redesign.html" },
-      { "titulo": "Publicações", "pagina": "publicacoes.html" },
-      { "titulo": "Financeiro", "pagina": "financeiro.html" },
-      { "titulo": "Indicadores", "pagina": "indicadores.html" },
-      { "titulo": "Suporte", "pagina": "suporte.html" },
-      { "titulo": "Conheça as IAs", "pagina": "ias.html" }
-    ]},
-    { "nome": "Especialista UX/UI: Questionários", "secao": "62:2", "quadros": [
-      { "titulo": "Questionários, Questão 1", "pagina": "questionarios.html" },
-      { "titulo": "Questionários, Questão 2", "pagina": "questionarios.html?questao=q2" },
-      { "titulo": "Questionários, Questão 3", "pagina": "questionarios.html?questao=q3" }
-    ]}
-  ]
+    {
+      "nome": "Fluxo 1 — Gestão de atividades: ver o dia, criar a atividade e acompanhar no quadro",
+      "secao": "23:2",
+      "quadros": [
+        {
+          "titulo": "Agenda, por dia, abre em Hoje",
+          "pagina": "agenda.html"
+        },
+        {
+          "titulo": "Agenda, por semana",
+          "pagina": "agenda.html",
+          "cliques": "texto=Por semana"
+        },
+        {
+          "titulo": "Agenda, por mês",
+          "pagina": "agenda.html",
+          "cliques": "texto=Por mês"
+        },
+        {
+          "titulo": "Agenda vazia, primeiro uso",
+          "pagina": "agenda.html?estado=vazio"
+        },
+        {
+          "titulo": "Criar prazo, painel único sem sair da Agenda",
+          "pagina": "agenda.html?criar=prazo"
+        },
+        {
+          "titulo": "Criar tarefa, o mesmo painel com outros campos",
+          "pagina": "agenda.html?criar=tarefa"
+        },
+        {
+          "titulo": "Área de trabalho, visão Cards",
+          "pagina": "area-de-trabalho.html",
+          "estado": {
+            "astrea-area-visao": "cards"
+          }
+        },
+        {
+          "titulo": "Área de trabalho, visão Lista com o detalhe ao lado",
+          "pagina": "area-de-trabalho.html",
+          "estado": {
+            "astrea-area-visao": "lista",
+            "astrea-area-detalhe-id": "a1"
+          }
+        },
+        {
+          "titulo": "Área de trabalho, visão Kanban",
+          "pagina": "area-de-trabalho.html",
+          "estado": {
+            "astrea-area-visao": "kanban"
+          }
+        },
+        {
+          "titulo": "Área de trabalho, criar atividade",
+          "pagina": "area-de-trabalho.html",
+          "estado": {
+            "astrea-area-visao": "cards"
+          },
+          "cliques": "#criar-atividade"
+        },
+        {
+          "titulo": "Notificações abertas, pelo sino",
+          "pagina": "area-de-trabalho.html",
+          "estado": {
+            "astrea-area-visao": "cards"
+          },
+          "cliques": "[aria-label=\"Notificações\"]"
+        },
+        {
+          "titulo": "Gestão kanban, o quadro do escritório, com rolagem lateral",
+          "pagina": "kanban.html",
+          "css": "kanban",
+          "rolagem": true
+        },
+        {
+          "titulo": "Gestão kanban, detalhe da história",
+          "pagina": "kanban.html",
+          "css": "kanban",
+          "rolagem": true,
+          "cliques": "#quadro .card"
+        },
+        {
+          "titulo": "Gestão kanban, criar história",
+          "pagina": "kanban.html",
+          "css": "kanban",
+          "rolagem": true,
+          "cliques": "#criar-atividade"
+        }
+      ]
+    },
+    {
+      "nome": "Fluxo 2 — Processos e casos: listar, abrir a ficha e adicionar",
+      "secao": "23:9",
+      "quadros": [
+        {
+          "titulo": "Lista de processos e casos, com filtros",
+          "pagina": "processos.html"
+        },
+        {
+          "titulo": "Lista com o filtro avançado aberto",
+          "pagina": "processos.html",
+          "cliques": "texto=Filtro avançado"
+        },
+        {
+          "titulo": "Ficha do processo, aba Atividades",
+          "pagina": "processos.html?ficha=1"
+        },
+        {
+          "titulo": "Ficha do processo, aba Histórico",
+          "pagina": "processos.html?ficha=1",
+          "cliques": "texto=Histórico"
+        },
+        {
+          "titulo": "Adicionar processo",
+          "pagina": "processos.html?adicionar=processo"
+        },
+        {
+          "titulo": "Busca de processo automática",
+          "pagina": "processos.html?adicionar=busca"
+        },
+        {
+          "titulo": "Adicionar caso",
+          "pagina": "processos.html?adicionar=caso"
+        }
+      ]
+    },
+    {
+      "nome": "Fluxo 3 — Contatos: listar, abrir a ficha e adicionar",
+      "secao": "23:16",
+      "quadros": [
+        {
+          "titulo": "Lista de contatos, em tabela",
+          "pagina": "contatos.html"
+        },
+        {
+          "titulo": "Lista de contatos, em cards",
+          "pagina": "contatos.html",
+          "cliques": "texto=Cards"
+        },
+        {
+          "titulo": "Ficha do contato",
+          "pagina": "contatos.html?ficha=1&id=c1"
+        },
+        {
+          "titulo": "Ficha do contato, aba Documentos com Mais ações",
+          "pagina": "contatos.html?ficha=1&id=c1",
+          "cliques": "texto=Documentos;;texto=Mais ações"
+        },
+        {
+          "titulo": "Adicionar contato, um formulário só",
+          "pagina": "contatos.html?adicionar=1"
+        },
+        {
+          "titulo": "Nova etiqueta, dentro do formulário do contato",
+          "pagina": "contatos.html?adicionar=1",
+          "cliques": "texto=Nova etiqueta"
+        }
+      ]
+    },
+    {
+      "nome": "Fluxo 4 — Atendimentos: registrar e acompanhar",
+      "secao": "23:23",
+      "quadros": [
+        {
+          "titulo": "Lista de atendimentos",
+          "pagina": "atendimentos.html"
+        },
+        {
+          "titulo": "Ficha do atendimento",
+          "pagina": "atendimentos.html?ficha=1&id=at1"
+        },
+        {
+          "titulo": "Ficha do atendimento, anotação em foco",
+          "pagina": "atendimentos.html?ficha=1&id=at1&anotar=1"
+        },
+        {
+          "titulo": "Adicionar atendimento, no lugar da lista",
+          "pagina": "atendimentos.html?adicionar=1"
+        }
+      ]
+    },
+    {
+      "nome": "Fluxo 5 — Documentos, buscas e alertas",
+      "secao": null,
+      "quadros": [
+        {
+          "titulo": "Documentos",
+          "pagina": "documentos.html"
+        },
+        {
+          "titulo": "Adicionar documento",
+          "pagina": "documentos.html?adicionar=1"
+        },
+        {
+          "titulo": "Buscas, com termo preenchido",
+          "pagina": "buscas.html?q=contesta%C3%A7%C3%A3o"
+        },
+        {
+          "titulo": "Alertas",
+          "pagina": "alertas.html"
+        }
+      ]
+    },
+    {
+      "nome": "Fluxo 6 — Moldura: módulos fora do recorte e painel do redesign",
+      "secao": null,
+      "quadros": [
+        {
+          "titulo": "Administração",
+          "pagina": "administracao.html"
+        },
+        {
+          "titulo": "Administração, aba Plano",
+          "pagina": "administracao.html#plano"
+        },
+        {
+          "titulo": "Painel do redesign",
+          "pagina": "painel-redesign.html"
+        },
+        {
+          "titulo": "Publicações",
+          "pagina": "publicacoes.html"
+        },
+        {
+          "titulo": "Financeiro",
+          "pagina": "financeiro.html"
+        },
+        {
+          "titulo": "Indicadores",
+          "pagina": "indicadores.html"
+        },
+        {
+          "titulo": "Suporte",
+          "pagina": "suporte.html"
+        },
+        {
+          "titulo": "Conheça as IAs",
+          "pagina": "ias.html"
+        }
+      ]
+    },
+    {
+      "nome": "Especialista UX/UI: Questionários",
+      "secao": "62:2",
+      "quadros": [
+        {
+          "titulo": "Questionários, Questão 1",
+          "pagina": "questionarios.html"
+        },
+        {
+          "titulo": "Questionários, Questão 2",
+          "pagina": "questionarios.html?questao=q2"
+        },
+        {
+          "titulo": "Questionários, Questão 3",
+          "pagina": "questionarios.html?questao=q3"
+        }
+      ]
+    },
+    {
+      "nome": "Questão 3: a tela em Lista com o detalhe",
+      "secao": "8:2",
+      "quadros": [
+        {
+          "titulo": "Área de trabalho, visão Lista com o detalhe ao lado",
+          "pagina": "area-de-trabalho.html?atividade=a1",
+          "estado": {
+            "astrea-area-visao": "lista"
+          }
+        }
+      ]
+    },
+    {
+      "nome": "Design system",
+      "secao": "22:2",
+      "quadros": [
+        {
+          "titulo": "Design system do Astrea, página inteira",
+          "pagina": "design-system.html"
+        }
+      ]
+    }
+  ],
+  "escala_figma": 0.9,
+  "css_base": "body { zoom: 1 !important; }",
+  "nota": "O protótipo tem zoom 0.9 no body. O conversor HTML→Figma lê a caixa escalada e o tamanho de fonte sem escala, então a captura força zoom 1 em 1600 de largura e o quadro é reduzido a 0.9 no Figma, ficando com 1440."
 }
