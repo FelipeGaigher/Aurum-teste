@@ -118,6 +118,13 @@
   }
   .bloco-cabeca h2, .bloco-cabeca h3 { margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
   .bloco { min-width: 0; padding: var(--space-4) var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
+  /* Documentos da ficha: lista simples, uma linha por arquivo, divisória entre eles. */
+  .ficha-documentos { display: grid; gap: var(--space-3); margin: 0 0 var(--space-4); padding: 0; list-style: none; }
+  .ficha-documentos li { display: grid; gap: var(--space-1); padding-bottom: var(--space-3); border-bottom: var(--border-width) solid var(--color-border-default); }
+  .ficha-documentos li:last-child { padding-bottom: 0; border-bottom: 0; }
+  .ficha-documento-linha { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); min-width: 0; }
+  .ficha-documento-linha > svg { flex: none; color: var(--color-text-muted); }
+  .ficha-documento-nome { padding: 0; min-height: 0; overflow-wrap: anywhere; text-align: start; }
   .dados { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-2) var(--space-4); margin: 0; }
   .contagem { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
   /* Linha do tempo: data, ícone de origem sobre o trilho, descrição. */
@@ -913,17 +920,16 @@
         acao: adicionarDocumentos });
     } else {
       documentos = elemento('div');
-      const ul = elemento('ul', 'lista-atividades');
+      const ul = elemento('ul', 'ficha-documentos');
       ul.append(...arquivos.map((d) => {
-        const li = elemento('li', 'linha-principal');
-        const nome = elemento('a', null, d.nome);
-        nome.href = '#';
-        nome.addEventListener('click', (e) => { e.preventDefault(); foraDoPrototipo(); });
-        const rotulo = elemento('span', 'texto-com-icone');
-        rotulo.append(DS.icone('arquivar'), nome);
+        const li = elemento('li');
+        const nome = DS.botao({ variante: 'texto', rotulo: d.nome });
+        nome.classList.add('ficha-documento-nome');
+        nome.addEventListener('click', foraDoPrototipo);
+        const linha = elemento('div', 'ficha-documento-linha');
+        linha.append(DS.icone('arquivar'), nome, DS.tag({ rotulo: d.tipo }));
         const [ano, mes, dia] = d.enviadoEm.split('-');
-        li.append(rotulo, DS.tag({ rotulo: d.tipo }),
-          elemento('span', 'campo-ajuda', `Enviado por ${d.enviadoPor} em ${dia}/${mes}/${ano}`));
+        li.append(linha, elemento('span', 'campo-ajuda', `Enviado por ${d.enviadoPor} em ${dia}/${mes}/${ano}`));
         return li;
       }));
       const adicionar = DS.botao({ variante: 'secundario', iconeEsquerda: 'mais', rotulo: adicionarDocumentos.rotulo });
