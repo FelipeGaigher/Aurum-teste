@@ -6,12 +6,634 @@
 <title>Contatos, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
+<script src="dados.js"></script>
+<style>
+  /* Adicionar no canto direito, como no Astrea; a barra de filtros e o formato logo abaixo. */
+  .contatos-topo { display: flex; justify-content: flex-end; margin-bottom: var(--space-3); }
+  #conteudo > .barra-filtros { margin-bottom: var(--space-4); }
+  .filtro-grupo { display: grid; justify-items: start; gap: var(--space-1); }
+
+  /* PA-64: formato da lista em controle segmentado; o marcado ganha fundo e peso, nunca só a cor. */
+  .formato {
+    display: inline-flex;
+    gap: var(--border-width);
+    padding: var(--border-width);
+    background-color: var(--color-bg-subtle);
+    border: var(--border-width) solid var(--color-border-default);
+    border-radius: var(--radius);
+  }
+  .formato-opcao {
+    min-height: calc(var(--component-control-height) - var(--space-1));
+    padding: 0 var(--space-3);
+    background: none;
+    border: var(--border-width) solid transparent;
+    border-radius: var(--radius);
+    color: var(--color-text-default);
+    font: inherit;
+    font-size: var(--font-size-button);
+    cursor: pointer;
+  }
+  .formato-opcao:hover { background-color: var(--color-bg-hover); }
+  .formato-opcao[aria-checked="true"] {
+    background-color: var(--color-bg-surface);
+    border-color: var(--color-border-strong);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  /* PA-65: a régua de A a Z só existe a partir de um volume. */
+  .alfabeto { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-bottom: var(--space-3); }
+
+  .contato-nome { color: var(--color-action); font-weight: var(--font-weight-medium); overflow-wrap: anywhere; }
+  .contato-nome:hover { color: var(--color-action-hover); }
+  /* telefone não quebra: a tabela rola dentro do quadro */
+  .contatos-resultado .tabela td:nth-child(3) { white-space: nowrap; }
+
+  .contatos-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--component-column-width)), 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .contatos-cards .card-contato { width: auto; height: 100%; }
+
+  /* Ficha e adicionar: Voltar acima do título, e o título com as tags na mesma linha. */
+  .registro-topo { display: grid; justify-items: start; gap: var(--space-2); margin-bottom: var(--space-4); }
+  .registro-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    border-radius: var(--radius);
+    color: var(--color-action);
+    font-size: var(--font-size-label);
+    font-weight: var(--font-weight-medium);
+  }
+  .registro-voltar:hover { color: var(--color-action-hover); }
+  .registro-linha { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+  .registro-titulo { margin: 0; font-size: var(--font-size-title); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); overflow-wrap: anywhere; }
+
+  /* PA-61 e M1: leitura com um padrão só de rótulo, acima do valor. O vazio some até "Mostrar todos". */
+  .ficha-cadastro { display: grid; justify-items: start; gap: var(--space-3); }
+  .leitura-campos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--component-field-width-p)), 1fr));
+    gap: var(--space-4);
+    width: 100%;
+    margin: 0;
+  }
+  .leitura-campo { display: grid; gap: var(--space-1); min-width: 0; }
+  .leitura-campo dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
+  .leitura-campo dd { margin: 0; overflow-wrap: anywhere; }
+  .leitura-campos:not(.is-todos) [data-campo-leitura=""] { display: none; }
+  .leitura-sem-dado { color: var(--color-text-muted); }
+
+  .ficha-processos { display: grid; justify-items: start; gap: var(--space-3); }
+  .ficha-processos .tabela-quadro { width: 100%; }
+  .ficha-filtro { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
+
+  /* PA-67 e M10: linhas de campos com larguras por token, alinhadas à margem do título. */
+  .cadastro { display: grid; gap: var(--space-4); margin-bottom: var(--space-5); }
+  .form-secao { display: grid; gap: var(--space-4); }
+  .form-linha { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4); }
+  .etiquetas-linha { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); min-height: var(--component-control-height); }
+  .etiquetas-opcoes { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+
+  /* PA-68 e M11: a barra gruda no pé da janela e encosta nas bordas do conteúdo. */
+  .cadastro-barra { margin: auto calc(-1 * var(--space-5)) calc(-1 * var(--space-6)); width: auto; }
+  @media (max-width: 700px) {
+    .cadastro-barra { margin: auto calc(-1 * var(--space-3)) calc(-1 * var(--space-5)); }
+  }
+</style>
 </head>
 <body data-pagina="contatos.html" data-titulo="Contatos">
 <div class="corpo">
-  <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
-  </main>
+  <main id="conteudo"></main>
 </div>
+<script>
+(function () {
+  const CHAVE_VISAO = 'astrea-contatos-visao';
+  const VISOES = [['tabela', 'Tabela'], ['cards', 'Cards']];
+  const MINIMO_DO_ALFABETO = 20;
+  const MOSTRAR = [['todos', 'Todos'], ['clientes', 'Só clientes'], ['contatos', 'Só contatos'], ['usuarios', 'Só usuários']];
+  const NOTIFICACOES = [['todos', 'Todos'], ['com', 'Com notificações'], ['sem', 'Sem notificações']];
+  const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+  const UFS = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
+
+  const CONTATOS = window.DADOS.CONTATOS.map((c) => ({ ...c, perfil: c.processo ? 'clientes' : 'contatos', etiquetas: [] }));
+  const main = document.getElementById('conteudo');
+
+  function criar(tag, classe, texto) {
+    const el = document.createElement(tag);
+    if (classe) el.className = classe;
+    if (texto !== undefined) el.textContent = texto;
+    return el;
+  }
+
+  function lerVisao() {
+    let salva = null;
+    try { salva = localStorage.getItem(CHAVE_VISAO); } catch (e) { salva = null; }
+    return VISOES.some(([chave]) => chave === salva) ? salva : 'tabela';
+  }
+
+  function gravarVisao(visao) {
+    try { localStorage.setItem(CHAVE_VISAO, visao); } catch (e) { /* sem armazenamento */ }
+  }
+
+  function urlDaFicha(contato) {
+    return `contatos.html?ficha=1&id=${encodeURIComponent(contato.id)}`;
+  }
+
+  // --- lista ---------------------------------------------------------------
+
+  // PA-62: abre em Todos. O filtro de entrada fica visível na barra, nunca escondido.
+  const PADRAO = {
+    mostrar: 'todos', inicio: '', fim: '', notificacoes: 'todos',
+    publicacoes: true, andamentos: true, mes: '', uf: '',
+  };
+
+  function montarLista() {
+    const estado = { busca: '', letra: '', visao: lerVisao(), filtro: { ...PADRAO } };
+
+    // Os filtros avançados leem campos que o contato ainda não tem: com valor fora do padrão, nada passa.
+    function passaNoAvancado(f) {
+      if (f.inicio || f.fim || f.mes || f.uf) return false;
+      return f.notificacoes !== 'com';
+    }
+
+    function filtrados() {
+      const termo = estado.busca.trim().toLowerCase();
+      return CONTATOS.filter((c) => (estado.filtro.mostrar === 'todos' || c.perfil === estado.filtro.mostrar)
+        && passaNoAvancado(estado.filtro)
+        && (!termo || c.nome.toLowerCase().includes(termo))
+        && (!estado.letra || c.nome.toUpperCase().startsWith(estado.letra)));
+    }
+
+    function ativos() {
+      return Object.keys(PADRAO).filter((k) => estado.filtro[k] !== PADRAO[k]).length;
+    }
+
+    const resultado = criar('div', 'contatos-resultado');
+    resultado.id = 'contatos-resultado';
+
+    function desenharTabela(itens) {
+      return DS.tabela({
+        rotulo: 'Contatos',
+        colunas: [['nome', 'Nome'], ['tipo', 'Tipo'], ['telefone', 'Telefone'], ['email', 'E-mail'], ['etiquetas', 'Etiquetas']],
+        linhas: itens.map((c) => {
+          const nome = criar('a', 'contato-nome', c.nome);
+          nome.href = urlDaFicha(c);
+          // PA-66: célula sem dado mostra traço, e o leitor de tela ouve "Não informado".
+          const etiquetas = c.etiquetas.length ? c.etiquetas.join(', ') : '';
+          return { nome, tipo: DS.tag({ rotulo: c.tipo }), telefone: c.telefone, email: c.email, etiquetas };
+        }),
+      });
+    }
+
+    function desenharCards(itens) {
+      const ul = criar('ul', 'contatos-cards');
+      ul.setAttribute('aria-label', 'Contatos');
+      ul.append(...itens.map((c) => {
+        const li = criar('li');
+        li.append(DS.cardContato({
+          nome: c.nome, tipo: c.tipo, email: c.email, telefone: c.telefone, processo: c.processo,
+          aoAbrir: () => { location.href = urlDaFicha(c); },
+        }));
+        return li;
+      }));
+      return ul;
+    }
+
+    function desenhar() {
+      const itens = filtrados();
+      const total = itens.length;
+      barra.atualizar({ resultado: `${total} ${total === 1 ? 'contato' : 'contatos'}`, ativos: ativos() });
+      resultado.dataset.visao = estado.visao;
+      if (!total) {
+        resultado.replaceChildren(DS.estadoVazio({
+          titulo: 'Nenhum contato com estes filtros',
+          texto: 'Os filtros avançados leem dados que estes contatos ainda não têm. Limpe os filtros para ver todos.',
+        }));
+        return;
+      }
+      resultado.replaceChildren(estado.visao === 'cards' ? desenharCards(itens) : desenharTabela(itens));
+    }
+
+    // --- formato: radiogroup com foco itinerante (padrão Segmentado) -----------
+
+    const formato = criar('div', 'formato');
+    formato.setAttribute('role', 'radiogroup');
+    formato.setAttribute('aria-label', 'Formato da lista');
+    const opcoesDeFormato = VISOES.map(([chave, rotulo]) => {
+      const el = criar('button', 'formato-opcao', rotulo);
+      el.type = 'button';
+      el.setAttribute('role', 'radio');
+      el.dataset.visao = chave;
+      el.setAttribute('aria-controls', 'contatos-resultado');
+      el.addEventListener('click', () => escolherVisao(chave));
+      return el;
+    });
+    formato.append(...opcoesDeFormato);
+    formato.addEventListener('keydown', (e) => {
+      const passo = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+      if (!passo) return;
+      e.preventDefault();
+      const atual = VISOES.findIndex(([chave]) => chave === estado.visao);
+      escolherVisao(VISOES[(atual + passo + VISOES.length) % VISOES.length][0], true);
+    });
+
+    function marcarVisao() {
+      opcoesDeFormato.forEach((el) => {
+        const marcada = el.dataset.visao === estado.visao;
+        el.setAttribute('aria-checked', String(marcada));
+        el.tabIndex = marcada ? 0 : -1;
+      });
+    }
+
+    function escolherVisao(visao, focar) {
+      estado.visao = visao;
+      gravarVisao(visao);
+      marcarVisao();
+      desenhar();
+      if (focar) opcoesDeFormato.find((el) => el.dataset.visao === visao).focus();
+    }
+
+    // --- barra de filtros ------------------------------------------------------
+
+    const busca = DS.busca({
+      rotulo: 'Buscar contato', largura: 'g', placeholder: 'Procure por nome, apelido ou nome fantasia',
+      aoMudar: (valor) => { estado.busca = valor; desenhar(); },
+    });
+
+    function seletorMostrar() {
+      return DS.seletor({
+        rotulo: 'Mostrar', largura: 'p', opcoes: MOSTRAR, valor: estado.filtro.mostrar,
+        aoEscolher: (valor) => { estado.filtro.mostrar = valor; desenhar(); },
+      });
+    }
+    let mostrar = seletorMostrar();
+
+    const avancado = DS.botao({ variante: 'secundario', rotulo: 'Filtro avançado' });
+    avancado.setAttribute('data-abre-painel', '');
+    avancado.setAttribute('aria-haspopup', 'dialog');
+
+    const barra = DS.barraFiltros({
+      rotulo: 'Filtros de contatos',
+      itens: [busca, mostrar, avancado, formato],
+      aoLimpar: () => aplicarFiltro({ ...PADRAO }),
+    });
+
+    function aplicarFiltro(novo) {
+      estado.filtro = novo;
+      const outro = seletorMostrar();
+      mostrar.replaceWith(outro);
+      mostrar = outro;
+      desenhar();
+    }
+
+    // Filtro avançado na ordem do Astrea: Cadastrados, Mostrar, Notificações,
+    // Tipo de notificações, Mês de aniversário e Estado.
+    function corpoDoAvancado(rascunho) {
+      const tipos = criar('div', 'filtro-grupo');
+      const tituloTipos = criar('p', 'campo-rotulo', 'Tipo de notificações');
+      tituloTipos.id = 'filtro-tipos-titulo';
+      tipos.setAttribute('role', 'group');
+      tipos.setAttribute('aria-labelledby', tituloTipos.id);
+      tipos.append(
+        tituloTipos,
+        DS.caixa({ rotulo: 'Publicações', marcada: rascunho.publicacoes, aoMudar: (v) => { rascunho.publicacoes = v; } }),
+        DS.caixa({ rotulo: 'Andamentos automáticos', marcada: rascunho.andamentos, aoMudar: (v) => { rascunho.andamentos = v; } }),
+      );
+      return [
+        DS.periodo({ rotulo: 'Cadastrados', inicio: rascunho.inicio, fim: rascunho.fim,
+          aoMudar: (de, ate) => { rascunho.inicio = de; rascunho.fim = ate; } }),
+        DS.radio({ rotulo: 'Mostrar', opcoes: MOSTRAR, valor: rascunho.mostrar, aoEscolher: (v) => { rascunho.mostrar = v; } }),
+        DS.radio({ rotulo: 'Notificações', opcoes: NOTIFICACOES, valor: rascunho.notificacoes, aoEscolher: (v) => { rascunho.notificacoes = v; } }),
+        tipos,
+        DS.seletor({ rotulo: 'Mês de aniversário', opcoes: [['', 'Qualquer mês'], ...MESES.map((m, i) => [String(i + 1), m])],
+          valor: rascunho.mes, aoEscolher: (v) => { rascunho.mes = v; } }),
+        DS.seletor({ rotulo: 'Estado', opcoes: [['', 'Todos os estados'], ...UFS.map((uf) => [uf, uf])],
+          valor: rascunho.uf, aoEscolher: (v) => { rascunho.uf = v; } }),
+      ];
+    }
+
+    let painel = null;
+    function abrirAvancado() {
+      const rascunho = { ...estado.filtro };
+      const cancelar = DS.botao({ variante: 'texto', rotulo: 'Cancelar' });
+      cancelar.addEventListener('click', () => painel.fechar());
+      const aplicar = DS.botao({ variante: 'primario', rotulo: 'Aplicar' });
+      aplicar.addEventListener('click', () => { aplicarFiltro(rascunho); painel.fechar(); });
+      const conteudo = { titulo: 'Filtro avançado', corpo: corpoDoAvancado(rascunho), rodape: DS.grupoBotoes([cancelar, aplicar]) };
+      if (!painel) painel = DS.painelLateral(conteudo);
+      else painel.trocar(conteudo);
+      painel.abrir(avancado);
+    }
+    avancado.addEventListener('click', abrirAvancado);
+
+    // --- montagem --------------------------------------------------------------
+
+    const adicionar = DS.botao({ variante: 'primario', iconeEsquerda: 'mais', rotulo: 'Adicionar contato' });
+    adicionar.addEventListener('click', () => { location.href = 'contatos.html?adicionar=1'; });
+
+    const topo = criar('div', 'contatos-topo');
+    topo.append(adicionar);
+    main.append(topo, barra.el);
+
+    if (CONTATOS.length > MINIMO_DO_ALFABETO) main.append(alfabeto(estado, desenhar));
+    main.append(resultado);
+    marcarVisao();
+    desenhar();
+  }
+
+  function alfabeto(estado, desenhar) {
+    const grupo = criar('div', 'alfabeto');
+    grupo.setAttribute('role', 'group');
+    grupo.setAttribute('aria-label', 'Inicial do nome');
+    const letras = ['', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
+    const chips = letras.map((letra) => DS.chipFiltro({
+      rotulo: letra || 'Todos',
+      ativo: letra === estado.letra,
+      aoAlternar: () => {
+        estado.letra = letra;
+        chips.forEach((chip, i) => chip.setAttribute('aria-pressed', String(letras[i] === letra)));
+        desenhar();
+      },
+    }));
+    grupo.append(...chips);
+    return grupo;
+  }
+
+  // --- comuns à ficha e ao adicionar ----------------------------------------
+
+  function linkVoltar() {
+    const voltar = criar('a', 'registro-voltar');
+    voltar.href = 'contatos.html';
+    voltar.append(DS.icone('esquerda'), 'Voltar para contatos');
+    return voltar;
+  }
+
+  function topoDoRegistro(titulo, tags) {
+    const topo = criar('div', 'registro-topo');
+    const linha = criar('div', 'registro-linha');
+    linha.append(criar('h2', 'registro-titulo', titulo), ...tags);
+    topo.append(linkVoltar(), linha);
+    return topo;
+  }
+
+  // --- ficha -----------------------------------------------------------------
+
+  // Ordem da aba Cadastro do Astrea: identificação, documentos e, mais abaixo, os contatos.
+  function camposDaFicha(c) {
+    const juridica = c.tipo === 'Pessoa jurídica';
+    const proprios = juridica
+      ? [['Nome fantasia', ''], ['Etiquetas', c.etiquetas.join(', ')], ['Origem', ''], ['CNPJ', ''], ['Inscrição estadual', '']]
+      : [['Apelido', ''], ['Nascimento', ''], ['Estado civil', ''], ['Etiquetas', c.etiquetas.join(', ')], ['Origem', ''],
+        ['CPF', ''], ['RG', ''], ['CTPS', ''], ['PIS', ''], ['Título de eleitor', '']];
+    return [['Tipo de pessoa', c.tipo], ...proprios, ['Telefone', c.telefone], ['E-mail', c.email]];
+  }
+
+  // PA-61 e M1: a leitura mostra o que existe. O vazio volta só com "Mostrar todos".
+  function leitura(c) {
+    const campos = camposDaFicha(c);
+    const vazios = campos.filter(([, valor]) => !valor).length;
+    const lista = criar('dl', 'leitura-campos');
+    lista.id = 'ficha-campos';
+    lista.append(...campos.map(([rotulo, valor]) => {
+      const item = criar('div', 'leitura-campo');
+      item.setAttribute('data-campo-leitura', valor);
+      const dd = criar('dd');
+      if (valor) dd.textContent = valor;
+      else {
+        const traco = criar('span', 'leitura-sem-dado', '—');
+        traco.setAttribute('aria-hidden', 'true');
+        dd.append(traco, criar('span', 'visualmente-oculto', 'Não informado'));
+      }
+      item.append(criar('dt', null, rotulo), dd);
+      return item;
+    }));
+    const secao = criar('div', 'ficha-cadastro');
+    secao.append(lista);
+    if (!vazios) return secao;
+
+    const alternar = DS.botao({ variante: 'texto', tamanho: 'pequeno', rotulo: `Mostrar todos os campos (${vazios} vazios)` });
+    alternar.setAttribute('aria-controls', lista.id);
+    alternar.setAttribute('aria-expanded', 'false');
+    alternar.addEventListener('click', () => {
+      const todos = lista.classList.toggle('is-todos');
+      alternar.setAttribute('aria-expanded', String(todos));
+      alternar.textContent = todos ? 'Esconder campos vazios' : `Mostrar todos os campos (${vazios} vazios)`;
+    });
+    secao.append(alternar);
+    return secao;
+  }
+
+  // PA-63: o filtro do contato vale só nesta aba. Processos e casos abre sem ele.
+  function processosDoContato(c) {
+    const proprios = window.DADOS.PROCESSOS.filter((p) => p.cliente === c.nome);
+    const secao = criar('div', 'ficha-processos');
+    const filtro = criar('p', 'ficha-filtro');
+    filtro.append(DS.tag({ rotulo: `Contato: ${c.nome}` }), criar('span', null, 'Este filtro vale só nesta aba.'));
+    const todos = criar('a', 'contato-nome', 'Abrir Processos e casos sem filtro');
+    todos.href = 'processos.html';
+    secao.append(filtro, DS.tabela({
+      rotulo: `Processos de ${c.nome}`,
+      colunas: [['numero', 'Número'], ['responsavel', 'Responsável'], ['atividades', 'Atividades']],
+      linhas: proprios.map((p) => ({ numero: p.numero, responsavel: p.responsavel, atividades: String(p.atividades.length) })),
+      vazio: { titulo: 'Nenhum processo deste contato.' },
+    }), todos);
+    return secao;
+  }
+
+  const PLANO = 'administracao.html#plano';
+
+  // PA-71: as abas financeiras mostram o mesmo bloqueio do módulo, com a peça única de upsell.
+  function bloqueio(titulo) {
+    return DS.upsell({
+      titulo, nivel: 3,
+      texto: 'O Financeiro não faz parte do plano Light. Os lançamentos deste contato aparecem aqui quando o plano incluir o módulo.',
+      aoConhecer: () => { location.href = PLANO; },
+    });
+  }
+
+  function vazio(titulo, texto) {
+    return DS.estadoVazio({ titulo, texto });
+  }
+
+  function montarFicha(id) {
+    const c = CONTATOS.find((x) => x.id === id) || CONTATOS[0];
+    main.append(topoDoRegistro(c.nome, [DS.tag({ rotulo: 'Tipo: Cliente' }), DS.tag({ rotulo: c.tipo })]));
+    // Oito abas na ordem do Astrea.
+    main.append(DS.abas({
+      rotulo: 'Seções do contato',
+      itens: [
+        { chave: 'cadastro', rotulo: 'Cadastro', conteudo: leitura(c) },
+        { chave: 'documentos', rotulo: 'Documentos', conteudo: vazio('Nenhum documento deste contato.', 'Documentos anexados ao contato aparecem aqui.') },
+        { chave: 'atendimentos', rotulo: 'Atendimentos', conteudo: vazio('Nenhum atendimento deste contato.', 'Atendimentos registrados com este contato aparecem aqui.') },
+        { chave: 'processos', rotulo: 'Processos', conteudo: processosDoContato(c) },
+        { chave: 'despesas', rotulo: 'Despesas', conteudo: bloqueio('Despesas fazem parte do Financeiro') },
+        { chave: 'honorarios', rotulo: 'Honorários', conteudo: bloqueio('Honorários fazem parte do Financeiro') },
+        { chave: 'timesheets', rotulo: 'Timesheets', conteudo: bloqueio('Timesheets fazem parte do Financeiro') },
+        { chave: 'notificacoes', rotulo: 'Notificações', conteudo: vazio('Nenhuma notificação configurada.', 'E-mails que avisam este contato sobre publicações e andamentos aparecem aqui.') },
+      ],
+    }));
+  }
+
+  // --- adicionar -------------------------------------------------------------
+
+  function linhaDeCampos(...campos) {
+    const linha = criar('div', 'form-linha');
+    linha.append(...campos);
+    return linha;
+  }
+
+  function secaoDeCampos(...linhas) {
+    const secao = criar('div', 'form-secao');
+    secao.append(...linhas);
+    return secao;
+  }
+
+  const ESTADO_CIVIL = [['', 'Não informado'], ['solteiro', 'Solteiro(a)'], ['casado', 'Casado(a)'], ['uniao', 'União estável'], ['divorciado', 'Divorciado(a)'], ['viuvo', 'Viúvo(a)']];
+  const DOCUMENTOS = ['CPF', 'RG', 'CTPS', 'PIS', 'Título de eleitor', 'CNH', 'Passaporte', 'Certificado de reservista'];
+
+  function montarAdicionar() {
+    const etiquetas = [['prazo', 'Prazo'], ['audiencia', 'Audiência']];
+    const marcadas = new Set();
+    let criadas = 0;
+
+    // PA-69: as etiquetas ficam à vista. A nova nasce no painel lateral e volta marcada.
+    const grupoEtiquetas = criar('div', 'etiquetas-opcoes');
+    grupoEtiquetas.setAttribute('role', 'group');
+    function desenharEtiquetas() {
+      grupoEtiquetas.replaceChildren(...etiquetas.map(([chave, rotulo]) => DS.chipFiltro({
+        rotulo, ativo: marcadas.has(chave),
+        aoAlternar: (ativa) => { if (ativa) marcadas.add(chave); else marcadas.delete(chave); },
+      })));
+    }
+    const rotuloEtiquetas = criar('span', 'campo-rotulo', 'Etiquetas');
+    rotuloEtiquetas.id = 'etiquetas-rotulo';
+    grupoEtiquetas.setAttribute('aria-labelledby', rotuloEtiquetas.id);
+    const novaEtiqueta = DS.botao({ variante: 'texto', tamanho: 'pequeno', iconeEsquerda: 'mais', rotulo: 'Nova etiqueta' });
+    novaEtiqueta.setAttribute('data-acao', 'nova-etiqueta');
+    novaEtiqueta.setAttribute('data-abre-painel', '');
+    novaEtiqueta.setAttribute('aria-haspopup', 'dialog');
+    const campoEtiquetas = criar('div', 'campo campo-g etiquetas');
+    const linhaEtiquetas = criar('div', 'etiquetas-linha');
+    linhaEtiquetas.append(grupoEtiquetas, novaEtiqueta);
+    campoEtiquetas.append(rotuloEtiquetas, linhaEtiquetas);
+    desenharEtiquetas();
+
+    let painel = null;
+    function conteudoDoPainel(erro) {
+      const nome = DS.campo({ rotulo: 'Nome da etiqueta', obrigatorio: true, largura: 'total', erro });
+      const entrada = nome.querySelector('input');
+      entrada.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); criarEtiqueta(entrada.value); } });
+      const cancelar = DS.botao({ variante: 'texto', rotulo: 'Cancelar' });
+      cancelar.addEventListener('click', () => painel.fechar());
+      const criarBotao = DS.botao({ variante: 'primario', rotulo: 'Criar etiqueta' });
+      criarBotao.addEventListener('click', () => criarEtiqueta(entrada.value));
+      return { titulo: 'Nova etiqueta', corpo: nome, rodape: DS.grupoBotoes([cancelar, criarBotao]) };
+    }
+    function criarEtiqueta(valor) {
+      const rotulo = valor.trim();
+      if (!rotulo) { painel.trocar(conteudoDoPainel('Dê um nome à etiqueta.')); return; }
+      const existente = etiquetas.find(([, r]) => r.toLowerCase() === rotulo.toLowerCase());
+      const chave = existente ? existente[0] : `nova-${++criadas}`;
+      if (!existente) etiquetas.push([chave, rotulo]);
+      marcadas.add(chave);
+      desenharEtiquetas();
+      painel.fechar();
+    }
+    novaEtiqueta.addEventListener('click', () => {
+      if (!painel) painel = DS.painelLateral(conteudoDoPainel());
+      else painel.trocar(conteudoDoPainel());
+      painel.abrir(novaEtiqueta);
+    });
+
+    // PA-67 e M10: as larguras saem dos tokens p, m, g e total; o bloco começa na margem do título.
+    const nome = DS.campo({ rotulo: 'Nome', obrigatorio: true, largura: 'g', placeholder: 'Digite o nome' });
+    const pessoais = secaoDeCampos(
+      linhaDeCampos(nome),
+      linhaDeCampos(
+        DS.seletor({ rotulo: 'Perfil', largura: 'p', opcoes: [['cliente', 'Cliente'], ['contato', 'Contato']], valor: 'cliente' }),
+        DS.campo({ rotulo: 'Apelido', largura: 'm' }),
+      ),
+      linhaDeCampos(
+        DS.data({ rotulo: 'Nascimento', largura: 'p' }),
+        DS.seletor({ rotulo: 'Estado civil', largura: 'p', opcoes: ESTADO_CIVIL, valor: '' }),
+      ),
+      linhaDeCampos(campoEtiquetas),
+      linhaDeCampos(
+        DS.campo({ rotulo: 'Telefone', tipo: 'tel', largura: 'm', placeholder: '(00) 00000-0000' }),
+        DS.campo({ rotulo: 'E-mail', tipo: 'email', largura: 'g' }),
+      ),
+      linhaDeCampos(DS.campo({ rotulo: 'Site', tipo: 'url', largura: 'g' })),
+    );
+    const complementares = secaoDeCampos(
+      linhaDeCampos(DS.campo({ rotulo: 'CEP', largura: 'p' }), DS.campo({ rotulo: 'Endereço', largura: 'g' })),
+      linhaDeCampos(DS.campo({ rotulo: 'Número', largura: 'p' }), DS.campo({ rotulo: 'Complemento', largura: 'm' })),
+      linhaDeCampos(
+        DS.campo({ rotulo: 'Bairro', largura: 'm' }),
+        DS.campo({ rotulo: 'Cidade', largura: 'm' }),
+        DS.seletor({ rotulo: 'Estado', largura: 'p', opcoes: [['', 'Selecione'], ...UFS.map((uf) => [uf, uf])], valor: '' }),
+      ),
+      linhaDeCampos(DS.areaTexto({ rotulo: 'Observações', largura: 'g' })),
+    );
+    // PA-70: anexar o arquivo exige serviço novo e está no backlog. Por ora, só o número.
+    const documentacao = secaoDeCampos(
+      DS.faixaAviso({ tipo: 'info', mensagem: 'A documentação guarda só o número. Anexar o arquivo do documento fica para uma próxima versão.' }),
+      linhaDeCampos(...DOCUMENTOS.map((d) => DS.campo({ rotulo: d, largura: 'm' }))),
+    );
+
+    const abasDoCadastro = DS.abas({
+      rotulo: 'Seções do cadastro',
+      itens: [
+        { chave: 'pessoais', rotulo: 'Informações pessoais', conteudo: pessoais },
+        { chave: 'complementares', rotulo: 'Informações complementares', conteudo: complementares },
+        { chave: 'documentacao', rotulo: 'Documentação', conteudo: documentacao },
+      ],
+    });
+
+    const form = criar('form', 'cadastro');
+    form.noValidate = true;
+    form.setAttribute('aria-label', 'Adicionar contato');
+    form.addEventListener('submit', (e) => e.preventDefault());
+    form.append(
+      DS.radio({ rotulo: 'Tipo de pessoa', opcoes: [['fisica', 'Pessoa física'], ['juridica', 'Pessoa jurídica']], valor: 'fisica' }),
+      abasDoCadastro,
+    );
+
+    // PA-68 e M11: Salvar e Cancelar ficam numa barra fixa no pé, com o estado da ação ao lado.
+    let barra = null;
+    function salvar() {
+      const entrada = nome.querySelector('input');
+      if (!entrada.value.trim()) {
+        barra.definirSituacao('erro', 'Preencha o nome para salvar.');
+        abasDoCadastro.querySelector('[role="tab"]').click();
+        entrada.focus();
+        return;
+      }
+      barra.definirSituacao('salvando');
+      setTimeout(() => barra.definirSituacao('salvo', 'Salvo neste protótipo. A lista de contatos não muda.'), 600);
+    }
+    barra = DS.barraAcoes({
+      rotulo: 'Ações do cadastro',
+      acoes: [
+        { variante: 'secundario', rotulo: 'Cancelar', aoClicar: () => { location.href = 'contatos.html'; } },
+        { variante: 'primario', rotulo: 'Salvar', aoClicar: salvar },
+      ],
+    });
+    barra.el.classList.add('cadastro-barra');
+
+    main.append(topoDoRegistro('Adicionar contato', []), form, barra.el);
+  }
+
+  const parametros = new URLSearchParams(location.search);
+  if (parametros.has('adicionar')) montarAdicionar();
+  else if (parametros.has('ficha')) montarFicha(parametros.get('id'));
+  else montarLista();
+})();
+</script>
 </body>
 </html>

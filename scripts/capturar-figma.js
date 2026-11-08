@@ -6,7 +6,7 @@
 const { spawn } = require('child_process');
 const { chromium } = require('playwright');
 
-const PORTA = 8765;
+const PORTA = Number(process.env.PORTA) || 8765;
 const [pagina, captureId, endpoint, larguraArg] = process.argv.slice(2);
 if (!pagina || !captureId || !endpoint) {
   console.error('uso: node scripts/capturar-figma.js <pagina.html> <captureId> <endpoint> [largura]');

@@ -1363,7 +1363,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: `DS.tabela`, `DS.cardContato`, `DS.barraFiltros` e `DADOS.CONTATOS`.
 - Produces: `[data-visao="tabela|cards"]` e a chave `astrea-contatos-visao`.
 
-- [ ] **Step 1: Implementar**
+- [x] **Step 1: Implementar**
 
 - Abra em todos os contatos, com o filtro visível (PA-62).
 - Alterne tabela e cards, com a escolha lembrada (PA-64).
@@ -1373,7 +1373,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 Esperado: a lista substitui a casca.
 
-- [ ] **Step 2: Executar e confirmar que passa**
+- [x] **Step 2: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/contatos.html
@@ -1382,7 +1382,7 @@ node scripts/verificar-app.js --rf RF-07,RF-12,RF-15 --paginas contatos.html
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 3: Entregar**
+- [x] **Step 3: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
@@ -1410,7 +1410,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: a lista da Task 14, `DS.abas`, `DS.upsell`, `DS.painelLateral` e `.barra-acoes`.
 - Produces: `?ficha=1`, `?adicionar=1`, `[data-campo-leitura]` e `[data-acao="nova-etiqueta"]`.
 
-- [ ] **Step 1: Confirmar o estado vermelho**
+- [x] **Step 1: Confirmar o estado vermelho**
 
 ```bash
 node scripts/verificar-app.js --rf RF-11
@@ -1418,7 +1418,7 @@ node scripts/verificar-app.js --rf RF-11
 
 Esperado: `RF-11 FALHOU`.
 
-- [ ] **Step 2: Implementar**
+- [x] **Step 2: Implementar**
 
 - Oito abas na ordem do Astrea.
 - Leitura esconde campo vazio, com "Mostrar todos" (PA-61).
@@ -1431,7 +1431,7 @@ Esperado: `RF-11 FALHOU`.
 
 Esperado: os dois modos abrem por parâmetro na mesma página.
 
-- [ ] **Step 3: Executar e confirmar que passa**
+- [x] **Step 3: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/contatos.html
@@ -1440,7 +1440,7 @@ node scripts/verificar-app.js --rf RF-07,RF-11,RF-12,RF-15 --paginas contatos.ht
 
 Esperado: `verificar: 0 erro(s)` e os quatro RF com `ok`.
 
-- [ ] **Step 4: Entregar**
+- [x] **Step 4: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
