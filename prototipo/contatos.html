@@ -576,8 +576,34 @@
   const ESTADO_CIVIL = [['', 'Não informado'], ['solteiro', 'Solteiro(a)'], ['casado', 'Casado(a)'], ['uniao', 'União estável'], ['divorciado', 'Divorciado(a)'], ['viuvo', 'Viúvo(a)']];
   const DOCUMENTOS = ['CPF', 'RG', 'CTPS', 'PIS', 'Título de eleitor', 'CNH', 'Passaporte', 'Certificado de reservista'];
 
+  // A paleta mora nos tokens --color-tag-*; aqui só os nomes que o data-cor aceita.
+  const CORES_DE_ETIQUETA = [['blue', 'Azul'], ['green', 'Verde'], ['yellow', 'Amarelo'], ['orange', 'Laranja'],
+    ['red', 'Vermelho'], ['purple', 'Roxo'], ['teal', 'Turquesa'], ['gray', 'Cinza']];
+
+  function luminancia(hex) {
+    const canais = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+      .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+    return 0.2126 * canais[0] + 0.7152 * canais[1] + 0.0722 * canais[2];
+  }
+
+  // Cor personalizada: o hex fica no data-hex e entra por variável; o texto sai claro ou escuro pela luminância.
+  function pintarPersonalizada(el, hex) {
+    el.dataset.hex = hex;
+    el.style.setProperty('--cor-etiqueta-bg', hex);
+    el.style.setProperty('--cor-etiqueta-text', luminancia(hex) > 0.179 ? 'var(--color-tag-ink-dark)' : 'var(--color-tag-ink-light)');
+  }
+
+  function aplicarCor(el, cor, hex) {
+    el.dataset.cor = cor;
+    el.style.removeProperty('--cor-etiqueta-bg');
+    el.style.removeProperty('--cor-etiqueta-text');
+    delete el.dataset.hex;
+    if (cor === 'custom' && hex) pintarPersonalizada(el, hex);
+  }
+
   function montarAdicionar() {
-    const etiquetas = [['prazo', 'Prazo'], ['audiencia', 'Audiência']];
+    // [chave, rótulo, cor, hex da personalizada, descrição]
+    const etiquetas = [['prazo', 'Prazo', 'orange', '', ''], ['audiencia', 'Audiência', 'purple', '', '']];
     const marcadas = new Set();
     let criadas = 0;
 
@@ -585,10 +611,15 @@
     const grupoEtiquetas = criar('div', 'etiquetas-opcoes');
     grupoEtiquetas.setAttribute('role', 'group');
     function desenharEtiquetas() {
-      grupoEtiquetas.replaceChildren(...etiquetas.map(([chave, rotulo]) => DS.chipFiltro({
-        rotulo, ativo: marcadas.has(chave),
-        aoAlternar: (ativa) => { if (ativa) marcadas.add(chave); else marcadas.delete(chave); },
-      })));
+      grupoEtiquetas.replaceChildren(...etiquetas.map(([chave, rotulo, cor, hex, descricao]) => {
+        const chip = DS.chipFiltro({
+          rotulo, ativo: marcadas.has(chave),
+          aoAlternar: (ativa) => { if (ativa) marcadas.add(chave); else marcadas.delete(chave); },
+        });
+        chip.dataset.etiqueta = chave;
+        aplicarCor(chip, cor, hex);
+        return descricao ? DS.tooltip({ alvo: chip, rotulo: descricao }) : chip;
+      }));
     }
     const rotuloEtiquetas = criar('span', 'campo-rotulo', 'Etiquetas');
     rotuloEtiquetas.id = 'etiquetas-rotulo';
@@ -604,22 +635,123 @@
     desenharEtiquetas();
 
     let painel = null;
-    function conteudoDoPainel(erro) {
-      const nome = DS.campo({ rotulo: 'Nome da etiqueta', obrigatorio: true, largura: 'total', erro });
-      const entrada = nome.querySelector('input');
-      entrada.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); criarEtiqueta(entrada.value); } });
+    function conteudoDoPainel() {
+      const estado = { cor: CORES_DE_ETIQUETA[0][0], hex: '' };
+
+      // Cor: radiogroup de amostras redondas, setas movem e escolhem (padrão ARIA de rádio).
+      const rotuloCor = criar('span', 'campo-rotulo', 'Cor');
+      rotuloCor.id = `cor-rotulo-${criadas + 1}`;
+      const amostras = criar('div', 'cor-amostras');
+      amostras.setAttribute('role', 'radiogroup');
+      amostras.setAttribute('aria-labelledby', rotuloCor.id);
+      function amostra(cor, rotulo) {
+        const b = criar('button', 'cor-amostra');
+        b.type = 'button';
+        b.setAttribute('role', 'radio');
+        b.setAttribute('aria-label', rotulo);
+        b.dataset.cor = cor;
+        b.append(DS.icone('marca'));
+        b.addEventListener('click', () => escolher(cor));
+        return b;
+      }
+      function botoesDeCor() { return [...amostras.querySelectorAll('.cor-amostra')]; }
+      function escolher(cor, focar) {
+        estado.cor = cor;
+        botoesDeCor().forEach((b) => {
+          const sim = b.dataset.cor === cor;
+          b.setAttribute('aria-checked', String(sim));
+          b.tabIndex = sim ? 0 : -1;
+          if (sim && focar) b.focus();
+        });
+        atualizarPrevia();
+      }
+      amostras.addEventListener('keydown', (e) => {
+        const passo = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (!passo) return;
+        e.preventDefault();
+        const lista = botoesDeCor();
+        const i = lista.findIndex((b) => b.dataset.cor === estado.cor);
+        escolher(lista[(i + passo + lista.length) % lista.length].dataset.cor, true);
+      });
+      amostras.append(...CORES_DE_ETIQUETA.map(([cor, rotulo]) => amostra(cor, rotulo)));
+
+      const blocoCor = criar('div', 'cor-etiqueta');
+      // O código só aparece a pedido: a maioria escolhe da paleta, e o campo de nome segue o primeiro campo de texto.
+      let campoHex = DS.botao({ variante: 'texto', tamanho: 'pequeno', iconeEsquerda: 'mais', rotulo: 'Usar código de cor' });
+      campoHex.setAttribute('data-acao', 'codigo-da-cor');
+      campoHex.addEventListener('click', () => desenharHex().focus());
+      let redesenhando = false;
+      function desenharHex(erro) {
+        const novo = DS.campo({ rotulo: 'Código da cor', largura: 'p', placeholder: '#RRGGBB', valor: estado.hexDigitado || '', erro });
+        const entrada = novo.querySelector('input');
+        entrada.addEventListener('change', () => { if (!redesenhando) aplicarHex(entrada.value); });
+        entrada.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); aplicarHex(entrada.value); } });
+        const antigo = campoHex;
+        campoHex = novo;
+        redesenhando = true;
+        antigo.replaceWith(novo);
+        redesenhando = false;
+        return entrada;
+      }
+      function aplicarHex(valor) {
+        const hex = valor.trim();
+        estado.hexDigitado = hex;
+        if (!hex) return;
+        if (!/^#[0-9a-f]{6}$/i.test(hex)) { desenharHex('Use o formato #RRGGBB, com seis dígitos de 0 a 9 e A a F.').focus(); return; }
+        estado.hex = hex;
+        let personalizada = amostras.querySelector('[data-cor="custom"]');
+        if (!personalizada) { personalizada = amostra('custom', 'Personalizada'); amostras.append(personalizada); }
+        pintarPersonalizada(personalizada, hex);
+        if (campoHex.classList.contains('is-erro')) desenharHex();
+        escolher('custom');
+      }
+      blocoCor.append(rotuloCor, amostras, campoHex);
+
+      const nome = DS.campo({ rotulo: 'Nome da etiqueta', obrigatorio: true, largura: 'total', placeholder: 'Ex.: Pagamento pendente', aoMudar: () => atualizarPrevia() });
+      let campoNome = nome;
+      const descricao = DS.areaTexto({ rotulo: 'Descrição', largura: 'total', placeholder: 'Ex.: para atendentes, contatos ou grupos' });
+
+      const previa = criar('div', 'cor-previa');
+      const chipPrevia = DS.tag({ rotulo: 'Nova etiqueta' });
+      previa.append(criar('span', 'campo-rotulo', 'Prévia'), chipPrevia);
+      function atualizarPrevia() {
+        const texto = campoNome.querySelector('input').value.trim();
+        chipPrevia.textContent = texto || 'Nova etiqueta';
+        aplicarCor(chipPrevia, estado.cor, estado.hex);
+      }
+
+      function enviar() {
+        const entrada = campoNome.querySelector('input');
+        const rotulo = entrada.value.trim();
+        if (!rotulo) {
+          const comErro = DS.campo({ rotulo: 'Nome da etiqueta', obrigatorio: true, largura: 'total', placeholder: 'Ex.: Pagamento pendente', erro: 'Dê um nome à etiqueta.', aoMudar: () => atualizarPrevia() });
+          ligarEnter(comErro);
+          campoNome.replaceWith(comErro);
+          campoNome = comErro;
+          comErro.querySelector('input').focus();
+          return;
+        }
+        criarEtiqueta(rotulo, estado.cor, estado.hex, descricao.querySelector('textarea').value.trim());
+      }
+      function ligarEnter(c) {
+        c.querySelector('input').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); enviar(); } });
+      }
+      ligarEnter(nome);
+
+      const corpo = criar('div', 'painel-etiqueta');
+      corpo.append(blocoCor, nome, descricao, previa);
+      escolher(estado.cor);
+
       const cancelar = DS.botao({ variante: 'texto', rotulo: 'Cancelar' });
       cancelar.addEventListener('click', () => painel.fechar());
       const criarBotao = DS.botao({ variante: 'primario', rotulo: 'Criar etiqueta' });
-      criarBotao.addEventListener('click', () => criarEtiqueta(entrada.value));
-      return { titulo: 'Nova etiqueta', corpo: nome, rodape: DS.grupoBotoes([cancelar, criarBotao]) };
+      criarBotao.addEventListener('click', enviar);
+      return { titulo: 'Nova etiqueta', corpo, rodape: DS.grupoBotoes([cancelar, criarBotao]) };
     }
-    function criarEtiqueta(valor) {
-      const rotulo = valor.trim();
-      if (!rotulo) { painel.trocar(conteudoDoPainel('Dê um nome à etiqueta.')); return; }
+    function criarEtiqueta(rotulo, cor, hex, descricao) {
       const existente = etiquetas.find(([, r]) => r.toLowerCase() === rotulo.toLowerCase());
       const chave = existente ? existente[0] : `nova-${++criadas}`;
-      if (!existente) etiquetas.push([chave, rotulo]);
+      if (!existente) etiquetas.push([chave, rotulo, cor, hex, descricao]);
       marcadas.add(chave);
       desenharEtiquetas();
       painel.fechar();
