@@ -143,3 +143,20 @@ com data. O que foi entregue fica no commit, não aqui.
   menu, como os grupos da Náutica. E a sidebar abraçando o conteúdo. A
   largura caiu de 260px para 200px, a do item "Processos e casos" com
   8px de folga. A 192px o item quebrava em duas linhas.
+
+### O plano conferido contra as questões
+
+- Felipe perguntou se o plano do Kanban estava de acordo com as questões.
+  Comparei histórias e subtarefas com os slides 1, 4, 5 e 6 da Q2. E com
+  os cinco problemas da Q1. Fases, ordem de construção e mitigações batiam.
+  Sete divergências, aplicadas com o ok dele:
+- Dono por squad contrariava a decisão de que a divisão sai do discovery.
+  As frentes transversais passaram a dono por perfil do mapa: forte em
+  Figma, perto do código, perto do usuário. O squad só fica quando a
+  entrega é o módulo do próprio roadmap.
+- A Q1 pedia validação de hipóteses antes de seguir e a fase 1 não a
+  tinha. Subtarefa nova na história 1. O P3 da Q1, criar atividade sem
+  interromper, não tinha entrega. Subtarefa nova na história 6.
+- O aviso dentro do produto entrou no piloto. Os líderes entraram no
+  discovery, acordando o tempo. Os agentes gerador e de handoff entraram
+  na entrega de Code Connect. O relatório trimestral ganhou a sprint 6.

@@ -104,8 +104,8 @@ Trello estranha.
 
 > decisão, 07/11, de Felipe: o Kanban abre com o plano do redesign. Quatro
 > fases e oito histórias, cada uma com suas subtarefas, como no Jira. As
-> dezoito entregas viraram subtarefas; o discovery com os designers é uma
-> delas. Coluna de Kanban é situação, não fase. O plano usa o fluxo do
+> entregas viraram subtarefas. São vinte depois da conferência contra as
+> questões. O discovery com os designers é uma delas. Coluna de Kanban é situação, não fase. O plano usa o fluxo do
 > board da Fotus no Jira. Sete colunas com rolagem lateral, de Backlog a
 > Em produção. O board abre na sprint atual, a 2 de 24, e o filtro de
 > sprint lista todas. A fase é tag no card e filtro. Correções de Felipe
