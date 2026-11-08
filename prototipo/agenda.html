@@ -9,13 +9,9 @@
 <script src="componentes.js"></script>
 <script src="dados.js"></script>
 <style>
-  /* Agenda: a grade e a lista de prioridades lado a lado; abaixo de 1180px a lista desce. */
-  .agenda {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--size-column);
-    align-items: start;
-    gap: var(--space-5);
-  }
+  /* Agenda: grade, divisor e coluna da direita no .lista-e-detalhe do DS; o divisor muda a largura da coluna
+     (pedido de Felipe, 08/11). Abaixo de 1180px a coluna desce e o divisor some. */
+  .agenda > .divisor { height: var(--grade-altura, auto); }
   .agenda-barra {
     display: flex;
     flex-wrap: wrap;
@@ -176,25 +172,27 @@
   .hora-botao:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
   .lista-dia + .lista-dia { margin-top: var(--space-4); }
 
-  /* Coluna da direita: o detalhe do item escolhido em cima, as prioridades embaixo, na altura da grade. */
+  /* Coluna da direita: o detalhe do item escolhido em cima, as prioridades embaixo, na altura da grade.
+     Uma rolagem vertical só, a da coluna; o cartão e as prioridades crescem sem rolar por dentro. */
   .agenda-lado {
     position: sticky;
     top: calc(var(--component-header-height) + var(--space-5));
     display: flex;
+    flex: 0 0 var(--largura-redimensionavel, var(--size-column));
     flex-direction: column;
     gap: var(--space-3);
     min-width: 0;
     max-height: var(--grade-altura, calc(100vh - var(--component-header-height) - 2 * var(--space-5)));
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
   }
   .agenda-lado > [hidden] { display: none; }
-  /* O detalhe ocupa a altura que precisa; as prioridades ficam com o resto, com no mínimo quatro linhas. */
-  .agenda-lado .painel-detalhe {
-    position: static;
-    display: flex;
-    flex: none;
-    max-height: calc(var(--grade-altura, 640px) - var(--density-row-compact) * 4 - var(--space-3));
-  }
-  .agenda-lado .painel-detalhe-card { flex: 1 1 auto; max-height: none; min-height: 0; }
+  .agenda-lado .painel-detalhe { position: static; flex: none; }
+  /* Causa do scroll lateral: o cartão é grid de coluna auto, e a coluna não encolhe abaixo do min-content do topo
+     (chip em nowrap mais ‹ › ×). Com a barra vertical do cartão, sobravam 283px para 295px de topo. */
+  .agenda-lado .painel-detalhe-card { grid-template-columns: minmax(0, 1fr); max-height: none; overflow: visible; }
+  .agenda-lado .painel-detalhe-chips > * { max-width: 100%; white-space: normal; }
   .agenda-lado .painel-detalhe-reabrir { display: none; }
   .painel-detalhe-rodape a.botao { text-decoration: none; }
   .detalhe-processo { display: inline-flex; align-items: center; gap: var(--space-1); }
@@ -211,13 +209,11 @@
 
   /* PA-48: prazos a vencer numa lista só, ao lado da grade */
   .prioridades {
-    flex: 1 1 auto;
-    min-height: calc(var(--density-row-compact) * 4);
+    flex: none;
     padding: var(--space-4);
     background-color: var(--component-card-bg);
     border: var(--border-width) solid var(--component-card-border);
     border-radius: var(--radius-card);
-    overflow-y: auto;
   }
   .prioridades-ajuda { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-size: var(--font-size-label); }
   .prioridades ol { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
@@ -242,8 +238,10 @@
   }
 
   @media (max-width: 1180px) {
-    .agenda { grid-template-columns: minmax(0, 1fr); }
-    .agenda-lado { position: static; max-height: none; }
+    .agenda { flex-direction: column; align-items: stretch; gap: var(--space-5); }
+    .agenda > .divisor { display: none; }
+    .agenda > .grade-agenda { flex: none; }
+    .agenda-lado { position: static; flex: none; max-height: none; overflow: visible; }
   }
 </style>
 </head>
@@ -262,7 +260,7 @@
       <p class="agenda-contagem" id="agenda-contagem" role="status"></p>
       <span id="agenda-limpar"></span>
     </div>
-    <div class="agenda">
+    <div class="agenda lista-e-detalhe" id="agenda">
       <section class="grade-agenda" id="grade-agenda" tabindex="-1" role="tabpanel" aria-labelledby="visao-dia"></section>
       <div class="agenda-lado" id="agenda-lado">
         <aside class="prioridades" aria-labelledby="prioridades-titulo">
@@ -796,6 +794,16 @@
   }
   window.addEventListener('resize', ajustarAltura);
   const detalhe = criarDetalhe();
+
+  // Coluna da direita com largura ajustável, como Contatos e Área de trabalho (pedido de Felipe, 08/11).
+  const GRADE_MINIMA = 560;
+  const lado = document.getElementById('agenda-lado');
+  const divisorLado = DS.divisorRedimensionavel({
+    alvo: lado, rotulo: 'Largura da coluna de detalhe e prioridades', minimo: 300, maximo: 560, padrao: 380,
+    chave: 'astrea-agenda-detalhe-largura', reserva: GRADE_MINIMA,
+  });
+  lado.before(divisorLado.el);
+  divisorLado.ajustar();
 
   function desenhar() {
     abas.forEach((aba) => {
