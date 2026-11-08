@@ -100,25 +100,35 @@ const TIPOS_EM_ALERTA = new Set(['tarefa', 'prazo']);
 const emAlerta = (a) => a.status !== 'concluido' && a.prazoEmDias < 0 && TIPOS_EM_ALERTA.has(a.tipo);
 const contarAlertas = () => ATIVIDADES.filter(emAlerta).length;
 
-window.DADOS = { ATIVIDADES, CONTATOS, PROCESSOS, RESPONSAVEIS, RESUMOS_DE_CASO, emAlerta, contarAlertas };
+// A ficha do processo é a posição dele em PROCESSOS, a partir de 1. Número fora da lista abre a primeira ficha.
+function urlDoProcesso(numero) {
+  const i = PROCESSOS.findIndex((p) => p.numero === numero);
+  return `processos.html?ficha=${i + 1 || 1}`;
+}
+const urlDaAtividade = (id) => `area-de-trabalho.html?atividade=${encodeURIComponent(id)}`;
+const urlDoContato = (id) => `contatos.html?ficha=1&id=${encodeURIComponent(id)}`;
+
+window.DADOS = { ATIVIDADES, CONTATOS, PROCESSOS, NUMEROS, RESPONSAVEIS, RESUMOS_DE_CASO, emAlerta, contarAlertas,
+  urlDoProcesso, urlDaAtividade, urlDoContato };
 
 // Avisos fictícios do sino, do mais novo para o mais antigo. Números e nomes saem de NUMEROS e CLIENTES.
 // modulo: processos, publicacoes, portal, integracao ou agenda. em: ISO local.
+// destino leva ao registro com id: a ficha do processo citado, a ficha do contato ou a página do módulo.
 const NOTIFICACOES = [
   { id: 'n1', grupo: 'aviso', modulo: 'processos', titulo: `Novo andamento · ${NUMEROS[0]}`,
-    contexto: `Processos · ${CLIENTES[0]} · despacho publicado`, em: '2026-11-08T08:40', destino: 'processos.html' },
+    contexto: `Processos · ${CLIENTES[0]} · despacho publicado`, em: '2026-11-08T08:40', destino: urlDoProcesso(NUMEROS[0]) },
   { id: 'n2', grupo: 'aviso', modulo: 'publicacoes', titulo: `Publicação capturada no DJE · ${CLIENTES[0]}`,
-    contexto: 'Publicações · 1ª Vara Cível de Porto Lírio · intimação', em: '2026-11-08T07:55', destino: 'publicacoes.html' },
+    contexto: `Publicações · ${NUMEROS[0]} · 1ª Vara Cível de Porto Lírio · intimação`, em: '2026-11-08T07:55', destino: urlDoProcesso(NUMEROS[0]) },
   { id: 'n3', grupo: 'aviso', modulo: 'agenda', titulo: 'Audiência de conciliação em 2 horas',
     contexto: `Agenda · ${NUMEROS[1]} · ${CLIENTES[1]}`, em: '2026-11-08T07:00', destino: 'agenda.html' },
   { id: 'n4', grupo: 'aviso', modulo: 'portal', titulo: 'Cliente visualizou a procuração no Portal',
-    contexto: `Portal do cliente · ${CLIENTES[3]} · procuração ad judicia`, em: '2026-11-07T18:20', destino: 'documentos.html' },
+    contexto: `Portal do cliente · ${CLIENTES[3]} · procuração ad judicia`, em: '2026-11-07T18:20', destino: urlDoContato(CONTATOS[3].id) },
   { id: 'n5', grupo: 'aviso', modulo: 'integracao', titulo: 'Falha de conexão com o tribunal · TJSC',
     contexto: 'Integração · captura de andamentos parada desde 06/11', em: '2026-11-06T22:10', destino: 'administracao.html' },
   { id: 'n6', grupo: 'aviso', modulo: 'publicacoes', titulo: `Publicação capturada no DJE · ${CLIENTES[5]}`,
-    contexto: 'Publicações · 1ª Vara Cível de Serra Alta · despacho', em: '2026-11-05T09:30', destino: 'publicacoes.html' },
+    contexto: `Publicações · ${NUMEROS[5]} · 1ª Vara Cível de Serra Alta · despacho`, em: '2026-11-05T09:30', destino: urlDoProcesso(NUMEROS[5]) },
   { id: 'n7', grupo: 'aviso', modulo: 'processos', titulo: `Novo andamento · ${NUMEROS[6]}`,
-    contexto: `Processos · ${CLIENTES[6]} · sentença publicada`, em: '2026-11-04T16:00', destino: 'processos.html' },
+    contexto: `Processos · ${CLIENTES[6]} · sentença publicada`, em: '2026-11-04T16:00', destino: urlDoProcesso(NUMEROS[6]) },
 ];
 
 const CHAVE_LIDAS = 'astrea-notificacoes-lidas';
@@ -151,7 +161,7 @@ function paraFazer() {
       id: `pf-${a.id}`, grupo: 'para-fazer', modulo: 'atividades', prazo,
       titulo: `${prazo === 'vencido' ? 'Prazo vencido' : 'Vence hoje'} · ${a.titulo}`,
       contexto: `Área de trabalho · ${a.processo} · ${a.responsavel}`,
-      em: isoDoDia(a.prazoEmDias), destino: 'area-de-trabalho.html',
+      em: isoDoDia(a.prazoEmDias), destino: urlDaAtividade(a.id),
     };
   });
 }

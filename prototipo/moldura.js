@@ -247,6 +247,21 @@
     });
   }
 
+  // --- busca global ----------------------------------------------------------
+
+  // Enter leva a Resultados de buscas com o termo em ?q=. Em buscas.html o campo volta preenchido.
+  function ligarBusca(form) {
+    const entrada = form.querySelector('input');
+    const termo = new URLSearchParams(window.location.search).get('q');
+    if (termo && document.body.dataset.pagina === 'buscas.html') entrada.value = termo;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const valor = entrada.value.trim();
+      if (!valor) { entrada.focus(); return; }
+      window.location.href = `buscas.html?q=${encodeURIComponent(valor)}`;
+    });
+  }
+
   // --- HTML ------------------------------------------------------------------
 
   function svg(nome, classe) {
@@ -315,7 +330,7 @@
   </div>
 
   <div class="acoes">
-    <form class="busca" role="search" onsubmit="event.preventDefault()">
+    <form class="busca" role="search" id="form-busca-global">
       <label for="busca-global" class="visualmente-oculto">Pesquisar</label>
       <div class="busca-campo">
         <input id="busca-global" type="search" placeholder="Pesquisar contato, processo ou atividade" autocomplete="off">
@@ -409,6 +424,7 @@
     ligarCriarAtividade(adicionar, listaAdicionar, ligarMenu(adicionar, listaAdicionar));
     ligarMenu(document.getElementById('abrir-usuario'), document.getElementById('menu-usuario'));
     ligarNotificacoes(document.getElementById('abrir-notificacoes'));
+    ligarBusca(document.getElementById('form-busca-global'));
   }
 
   window.Moldura = { MENU, USUARIO, montar, htmlItemMenu, htmlTrilha };

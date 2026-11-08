@@ -131,6 +131,10 @@
   .linha-atividade.is-selecionado { background-color: var(--color-bg-hover); box-shadow: inset calc(var(--focus-width) + var(--border-width)) 0 0 var(--color-action); }
   .painel-detalhe-rodape a.botao { text-decoration: none; }
   .detalhe-processo { display: inline-flex; align-items: center; gap: var(--space-1); }
+  /* O número leva à ficha: cor de ação, sem sublinhado em repouso. O copiar segue ao lado. */
+  .numero-processo-link { border-radius: var(--radius); color: var(--color-action); font-variant-numeric: tabular-nums; text-decoration: none; }
+  .numero-processo-link:hover { text-decoration: underline; }
+  .numero-processo-link:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--border-width); }
 </style>
 </head>
 <body data-pagina="area-de-trabalho.html" data-titulo="Área de trabalho">
@@ -223,6 +227,8 @@
   };
 
   const atividades = window.DADOS.ATIVIDADES.map((a) => ({ ...a }));
+  // Fonte única em dados.js: a ficha é a posição do processo em PROCESSOS.
+  const { urlDoProcesso } = window.DADOS;
   const filtro = lerFiltro();
   let visao = lerVisao();
 
@@ -401,11 +407,6 @@
     return el;
   }
 
-  function urlDoProcesso(numero) {
-    const i = (window.DADOS.PROCESSOS || []).findIndex((p) => p.numero === numero);
-    return `processos.html?ficha=${i + 1 || 1}`;
-  }
-
   function acaoRedonda(acao) {
     const b = DS.botao({ variante: 'icone', iconeEsquerda: acao.icone, rotulo: acao.rotulo });
     b.classList.add('acao-redonda');
@@ -520,7 +521,8 @@
     const prazo = DS.descreverPrazo(a.prazoEmDias, concluida(a));
     const el = DS.linhaAtividade({
       titulo: a.titulo, tipo: a.tipo, estadoPrazo: prazo.estadoPrazo, prazo: prazo.rotulo,
-      processo: a.processo, responsavel: a.responsavel, acoes: acoesDe(a),
+      processo: a.processo, hrefProcesso: a.processo ? urlDoProcesso(a.processo) : undefined,
+      responsavel: a.responsavel, acoes: acoesDe(a),
     });
     el.dataset.id = a.id;
     el.tabIndex = 0;
@@ -532,7 +534,8 @@
     const prazo = DS.descreverPrazo(a.prazoEmDias, concluida(a));
     const el = DS.cardAtividade({
       titulo: a.titulo, tipo: a.tipo, estadoPrazo: prazo.estadoPrazo, prazo: prazo.rotulo,
-      processo: a.processo, responsavel: a.responsavel, copiarNumero: true,
+      processo: a.processo, hrefProcesso: a.processo ? urlDoProcesso(a.processo) : undefined,
+      responsavel: a.responsavel, copiarNumero: true,
     });
     el.dataset.id = a.id;
     const acoes = document.createElement('div');
@@ -543,7 +546,7 @@
       return botao;
     }));
     el.append(acoes);
-    if (visao === 'cards') selecionavel(el, a);
+    selecionavel(el, a);
     const li = document.createElement('li');
     li.append(el);
     return li;
@@ -612,7 +615,25 @@
     const visiveis = SECOES_DA_SITUACAO[filtro.situacao];
     SECOES.forEach((secao) => desenharSecao(secao, lista, visiveis.includes(secao.chave)));
     aplicarDobras();
-    detalhe.sincronizar(visao === 'kanban' ? [] : itensVisiveis(lista, visiveis));
+    detalhe.sincronizar(itensVisiveis(lista, visiveis));
+  }
+
+  // ?atividade=<id> vem de Alertas e do sino: abre com a atividade escolhida e o painel visível, na visão atual.
+  // Filtro ou dobra que a esconde cede só nesta abertura; nada é gravado. Id desconhecido não muda nada.
+  function abrirAtividadeDaUrl() {
+    const id = new URLSearchParams(location.search).get('atividade');
+    const alvo = id && atividades.find((a) => a.id === id);
+    if (!alvo) return;
+    if (!passa(alvo)) ['lista', 'responsavel', 'periodo'].forEach((chave) => { filtro[chave] = PADRAO[chave]; });
+    const secao = SECOES.find((s) => s.pertence(alvo));
+    if (!SECOES_DA_SITUACAO[filtro.situacao].includes(secao.chave)) filtro.situacao = 'todas';
+    fechadas.delete(secao.chave);
+    montarFiltros();
+    desenhar();
+    detalhe.escolher(alvo.id);
+    const el = document.querySelector(`[data-area-principal] [data-id="${alvo.id}"]`);
+    document.querySelector(`[data-secao="${secao.chave}"]`).scrollIntoView({ block: 'start' });
+    if (el) { el.scrollIntoView({ block: 'nearest' }); el.focus({ preventScroll: true }); }
   }
 
 
@@ -636,6 +657,7 @@
   montarFiltros();
   montarFormato();
   desenhar();
+  abrirAtividadeDaUrl();
 })();
 </script>
 </body>

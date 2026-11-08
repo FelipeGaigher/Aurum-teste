@@ -1556,6 +1556,16 @@
     return envolto;
   }
 
+  // Com href, o número vira caminho até a ficha; o copiar continua ao lado (comparativo, "O que ainda falta", 1 e 9).
+  function numeroOuLink(processo, href) {
+    if (!href) return numeroDoProcesso(processo);
+    const el = criar('a', 'numero-processo numero-processo-link');
+    el.href = href;
+    el.dataset.acao = 'abrir-processo';
+    el.append(criar('span', 'visualmente-oculto', 'Abrir processo '), processo);
+    return el;
+  }
+
   function acoesDaLinha(acoes) {
     const grupo = criar('div', 'linha-acoes');
     acoes.forEach((acao) => {
@@ -1574,7 +1584,7 @@
 
   function linhaAtividade(props = {}) {
     const {
-      titulo, tipo, estadoPrazo, prazo, processo, responsavel, acoes = [],
+      titulo, tipo, estadoPrazo, prazo, processo, hrefProcesso, responsavel, acoes = [],
       mostrarProcesso = true, copiarNumero = true, densidade = 'padrao',
     } = props;
     validarAtividade('linhaAtividade', props);
@@ -1591,7 +1601,7 @@
 
     const processoEl = criar('div', 'linha-processo');
     if (mostrarProcesso && processo) {
-      processoEl.append(numeroDoProcesso(processo));
+      processoEl.append(numeroOuLink(processo, hrefProcesso));
       if (copiarNumero) processoEl.append(botaoCopiar(processo));
     }
     const pessoa = criar('div', 'linha-responsavel');
@@ -1602,7 +1612,7 @@
 
   function cardAtividade(props = {}) {
     const {
-      titulo, tipo, estadoPrazo, prazo, processo, responsavel, tags = [], aoAbrir,
+      titulo, tipo, estadoPrazo, prazo, processo, hrefProcesso, responsavel, tags = [], aoAbrir,
       mostrarPrazo = true, mostrarProcesso = true, mostrarResponsavel = true, mostrarTags = true, copiarNumero = false,
     } = props;
     validarAtividade('cardAtividade', props);
@@ -1623,7 +1633,7 @@
     raiz.append(etiquetas);
     if (mostrarProcesso && processo) {
       const numero = criar('div', 'card-atividade-processo');
-      numero.append(numeroDoProcesso(processo));
+      numero.append(numeroOuLink(processo, hrefProcesso));
       if (copiarNumero) numero.append(botaoCopiar(processo));
       raiz.append(numero);
     }
@@ -2503,7 +2513,7 @@
     return nomes.map((nome) => [nome, nome]);
   }
 
-  function camposDaAtividade({ responsavel, pessoas, aoMudarData, aoSalvarConcluida, dataInicial }) {
+  function camposDaAtividade({ responsavel, pessoas, aoMudarData, aoSalvarConcluida, dataInicial, processoInicial }) {
     // PA-57: a data passada avisa no próprio painel, sem segundo diálogo.
     const avisoData = faixaAviso({
       tipo: 'aviso',
@@ -2523,7 +2533,9 @@
       // PA-54: a lista tem um valor só, e ele já vem escolhido.
       lista: seletor({ rotulo: 'Lista de tarefas', obrigatorio: true, opcoes: LISTAS_DE_TAREFAS, valor: 'escritorio' }),
       local: campo({ rotulo: 'Endereço ou local', largura: 'total' }),
-      processo: busca({ rotulo: 'Processo, caso ou atendimento', placeholder: 'Número do processo ou nome do cliente', largura: 'total' }),
+      // Aberto de um processo ou atendimento, o campo já vem com o número de lá (comparativo, item 7).
+      processo: busca({ rotulo: 'Processo, caso ou atendimento', placeholder: 'Número do processo ou nome do cliente', largura: 'total',
+        valor: processoInicial || '' }),
       // PA-58: responsável e envolvidos no mesmo campo, sem popover.
       pessoas: seletorPessoas({
         rotulo: 'Responsável e envolvidos', obrigatorio: true,
@@ -2559,11 +2571,11 @@
   // PA-27, PA-59 e PA-60: um painel só para os quatro tipos. Formulário vazio fecha
   // direto; com dado, a confirmação de saída troca o rodapé, sem outra camada.
   // Salvar dispara "atividade-criada" no document, com a atividade em detail.
-  function montarCriarAtividade({ tipo: tipoInicial, responsavel, pessoas, data: dataInicial }) {
+  function montarCriarAtividade({ tipo: tipoInicial, responsavel, pessoas, data: dataInicial, processo: processoInicial }) {
     let tipo = tipoInicial;
     let painel = null;
     const campos = camposDaAtividade({
-      responsavel, pessoas, dataInicial,
+      responsavel, pessoas, dataInicial, processoInicial,
       aoMudarData: (iso) => { campos.avisoData.hidden = !iso || iso >= paraIso(new Date()); },
       aoSalvarConcluida: () => salvar(true),
     });
@@ -2628,13 +2640,14 @@
   }
 
   // Cada abertura monta um formulário novo. pessoas: os nomes que o seletor oferece;
-  // o responsável padrão é o usuário da moldura.
+  // o responsável padrão é o usuário da moldura. processo: o número que o campo Processo já traz.
   function painelCriarAtividade(props = {}) {
-    const { tipo = 'tarefa', pessoas = (window.DADOS && window.DADOS.RESPONSAVEIS) || [], data } = props;
+    const { tipo = 'tarefa', pessoas = (window.DADOS && window.DADOS.RESPONSAVEIS) || [], data, processo } = props;
     const { responsavel = window.Moldura && window.Moldura.USUARIO } = props;
     exigir(CAMPOS_DO_TIPO[tipo], 'painelCriarAtividade', `tipo desconhecido "${tipo}"`);
     exigir(Array.isArray(pessoas), 'painelCriarAtividade', 'pessoas é uma lista de nomes');
-    return { abrir: (origem) => montarCriarAtividade({ tipo, responsavel, pessoas, data }).abrir(origem) };
+    exigir(processo == null || typeof processo === 'string', 'painelCriarAtividade', 'processo é o número, em texto');
+    return { abrir: (origem) => montarCriarAtividade({ tipo, responsavel, pessoas, data, processo }).abrir(origem) };
   }
 
   // PA-30: o resultado da ação aparece na barra, junto do botão. Toast só para o que está fora da tela.
@@ -2757,6 +2770,6 @@
     toast, faixaAviso, dialogo, tooltip, progresso, skeleton, estadoVazio, upsell,
     descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade, cardAtividade, cardContato, cardRegistro, paginacao,
     abas, trilha, barraFiltros, painelLateral, painelNotificacoes, barraAcoes, stepper, painelCriarAtividade,
-    painelDetalhe, divisorRedimensionavel,
+    painelDetalhe, divisorRedimensionavel, botaoCopiar,
   };
 })();

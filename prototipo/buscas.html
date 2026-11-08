@@ -28,22 +28,28 @@
 </div>
 <script>
 (function () {
-  const { ATIVIDADES, CONTATOS, PROCESSOS, NUMEROS } = window.DADOS;
+  const { ATIVIDADES, CONTATOS, PROCESSOS } = window.DADOS;
   // Inventário, seção 0, ícone 3: três abas. A individual mostra a última busca, as outras seguem vazias.
   const ABAS = [
     { chave: 'individuais', rotulo: 'Buscas individuais', vazio: 'Você ainda não usou a busca individual de processos' },
     { chave: 'lote', rotulo: 'Buscas em lote', vazio: 'Você ainda não usou a busca em lote de processos' },
     { chave: 'vinculos', rotulo: 'Vínculos', vazio: 'Você ainda não vinculou processos encontrados pela busca' },
   ];
-  // A última busca individual: o foro do número, que casa com processos, contatos e atividades dos dados.
-  const TERMO = '8.24.0023';
+  // ?q= vem da busca do cabeçalho. Sem ele, a página mostra a última busca individual:
+  // o foro do número, que casa com processos, contatos e atividades dos dados.
+  const BUSCA_FIXA = '8.24.0023';
+  const termoDaUrl = (new URLSearchParams(location.search).get('q') || '').trim();
+  const TERMO = termoDaUrl || BUSCA_FIXA;
   const TIPOS = { tarefa: 'Tarefa', prazo: 'Prazo', audiencia: 'Audiência', evento: 'Evento' };
-  const numeros = NUMEROS || PROCESSOS.map((p) => p.numero);
-  const urlDoProcesso = (numero) => `processos.html?ficha=${numeros.indexOf(numero) + 1 || 1}`;
-  const casa = (texto) => Boolean(texto) && texto.includes(TERMO);
+  const { urlDoProcesso, urlDaAtividade, urlDoContato } = window.DADOS;
+  // Sem acento e sem maiúscula: "yara" acha "Yara", "audiencia" acha "Audiência".
+  const normalizar = (texto) => String(texto || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const alvo = normalizar(TERMO);
+  const casa = (...campos) => campos.some((texto) => Boolean(texto) && normalizar(texto).includes(alvo));
+  const clienteDo = (numero) => (PROCESSOS.find((p) => p.numero === numero) || {}).cliente;
 
   const resultados = [
-    ...PROCESSOS.filter((p) => casa(p.numero)).map((p) => ({
+    ...PROCESSOS.filter((p) => casa(p.numero, p.cliente, p.responsavel)).map((p) => ({
       id: `p-${p.numero}`, origem: 'Processo', titulo: p.numero, trecho: `Número ${p.numero}`, url: urlDoProcesso(p.numero),
       linhas: [
         { icone: 'pessoa', rotulo: 'Cliente', valor: p.cliente },
@@ -51,17 +57,17 @@
         { icone: 'calendario', rotulo: 'Atividades', valor: String(p.atividades.length) },
       ],
     })),
-    ...CONTATOS.filter((c) => casa(c.processo)).map((c) => ({
+    ...CONTATOS.filter((c) => casa(c.nome, c.processo)).map((c) => ({
       id: `c-${c.id}`, origem: 'Contato', titulo: c.nome, trecho: `Processo ligado ${c.processo}`,
-      url: `contatos.html?ficha=1&id=${encodeURIComponent(c.id)}`,
+      url: urlDoContato(c.id),
       linhas: [
         { icone: 'telefone', rotulo: 'Telefone', valor: c.telefone },
         { icone: 'email', rotulo: 'E-mail', valor: c.email },
         { icone: 'info', rotulo: 'Tipo', valor: c.tipo },
       ],
     })),
-    ...ATIVIDADES.filter((a) => casa(a.processo)).map((a) => ({
-      id: `a-${a.id}`, origem: 'Atividade', titulo: a.titulo, trecho: `Processo ${a.processo}`, url: 'area-de-trabalho.html',
+    ...ATIVIDADES.filter((a) => casa(a.titulo, a.processo, clienteDo(a.processo), a.responsavel)).map((a) => ({
+      id: `a-${a.id}`, origem: 'Atividade', titulo: a.titulo, trecho: `Processo ${a.processo}`, url: urlDaAtividade(a.id),
       linhas: [
         { icone: 'info', rotulo: 'Tipo', valor: TIPOS[a.tipo] },
         { icone: 'pessoa', rotulo: 'Responsável', valor: a.responsavel },
@@ -161,7 +167,9 @@
     termo.className = 'buscas-termo';
     const forte = document.createElement('strong');
     forte.textContent = TERMO;
-    termo.append('Última busca: ', forte, ` · ${resultados.length} resultados`);
+    const total = `${resultados.length} ${resultados.length === 1 ? 'resultado' : 'resultados'}`;
+    if (termoDaUrl) termo.append('Resultados para “', forte, `” · ${total}`);
+    else termo.append('Última busca: ', forte, ` · ${total}`);
     const quadro = DS.tabela({
       rotulo: `Resultados da busca por ${TERMO}`,
       colunas: [['titulo', 'Título'], ['origem', 'Origem'], ['trecho', 'Trecho encontrado']],
@@ -187,7 +195,11 @@
     itens: ABAS.map((aba) => ({
       chave: aba.chave,
       rotulo: aba.rotulo,
-      conteudo: aba.chave === 'individuais' && resultados.length ? tabelaDeResultados() : DS.estadoVazio({
+      conteudo: aba.chave === 'individuais' && resultados.length ? tabelaDeResultados()
+        : aba.chave === 'individuais' && termoDaUrl ? DS.estadoVazio({
+          titulo: `Nenhum resultado para “${termoDaUrl}”`,
+          texto: 'Tente o número do processo, o nome do cliente ou o do responsável.',
+        }) : DS.estadoVazio({
         titulo: aba.vazio,
         texto: 'O resultado aparece nesta aba quando a busca terminar.',
         acao: irParaBusca(),

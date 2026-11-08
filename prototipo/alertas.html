@@ -63,6 +63,7 @@
   .alerta[data-id]:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
   .alerta.is-selecionado { border-color: var(--color-action); box-shadow: inset 0 0 0 var(--border-width) var(--color-action); }
   .alerta-numero { display: inline-flex; align-items: center; gap: var(--space-1); }
+  .alertas a.botao { text-decoration: none; }
 </style>
 </head>
 <body data-pagina="alertas.html" data-titulo="Alertas">
@@ -244,9 +245,22 @@
     return caixa;
   }
 
+  // Link com cara de botão: o destino é uma página, e o navegador oferece abrir em nova aba.
+  function linkBotao(rotulo, href, variante) {
+    const el = document.createElement('a');
+    el.className = `botao botao-${variante}`;
+    el.href = href;
+    el.textContent = rotulo;
+    return el;
+  }
+
+  // "Abrir atividade" chega à Área de trabalho com ela escolhida; "Abrir processo" vai direto à ficha.
+  const linkDaAtividade = (a) => linkBotao('Abrir atividade', window.DADOS.urlDaAtividade(a.id), 'primario');
+  const linkDoProcesso = (a, variante) => linkBotao('Abrir processo', window.DADOS.urlDoProcesso(a.processo), variante);
+
   function dadosDoAlerta(a) {
-    const abrir = DS.botao({ variante: 'primario', rotulo: 'Abrir atividade' });
-    abrir.addEventListener('click', () => { location.href = 'area-de-trabalho.html'; });
+    const abrir = linkDaAtividade(a);
+    const processo = linkDoProcesso(a, 'secundario');
     const descartar = DS.botao({ variante: 'secundario', rotulo: 'Descartar' });
     descartar.dataset.abrePainel = '';
     descartar.addEventListener('click', () => confirmarDescarte(a, descartar));
@@ -259,7 +273,7 @@
         { icone: 'info', rotulo: 'Tipo', valor: TIPO[a.tipo] },
         { icone: 'calendario', rotulo: 'Data', valor: dataDoAlerta(a.prazoEmDias) },
       ],
-      corpo: [], acoes: [descartar, abrir],
+      corpo: [], acoes: [descartar, processo, abrir],
     };
   }
 
@@ -353,7 +367,7 @@
     descartar.dataset.abrePainel = '';
     descartar.addEventListener('click', () => confirmarDescarte(a, descartar));
 
-    raiz.append(topo, corpo, DS.grupoBotoes([ver, concluir, reagendar, descartar]));
+    raiz.append(topo, corpo, DS.grupoBotoes([ver, concluir, reagendar, linkDoProcesso(a, 'texto'), descartar]));
     return raiz;
   }
 
