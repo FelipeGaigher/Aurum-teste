@@ -68,7 +68,7 @@
           "estado": {
             "astrea-area-visao": "cards"
           },
-          "cliques": "[aria-label=\"Notificações\"]"
+          "cliques": "[aria-label^=\"Notificações\"]"
         },
         {
           "titulo": "Gestão kanban, o quadro do escritório, com rolagem lateral",
@@ -148,7 +148,7 @@
         {
           "titulo": "Ficha do contato, aba Documentos com Mais ações",
           "pagina": "contatos.html?ficha=1&id=c1",
-          "cliques": "texto=Documentos;;texto=Mais ações"
+          "cliques": "[role=\"tab\"]:has-text(\"Documentos\");;button:has-text(\"Mais ações\") >> visible=true"
         },
         {
           "titulo": "Adicionar contato, um formulário só",
