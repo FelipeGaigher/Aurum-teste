@@ -99,7 +99,9 @@ Trello estranha.
 > decisão, 07/11, de Felipe: o Kanban abre com o plano do redesign. Quatro
 > fases e oito histórias, cada uma com suas subtarefas, como no Jira. As
 > dezoito entregas viraram subtarefas; o discovery com os designers é uma
-> delas. As
+> delas. As colunas são A fazer, Fazendo e Concluído, as mesmas do
+> escritório: coluna de Kanban é situação, não fase. A fase é tag no card
+> e filtro. Correção de Felipe em 07/11. As
 > atividades de escritório ficam como segundo conjunto, por chave no
 > rodapé. A banca pede uma tela do produto, e esse conjunto prova isso.
 

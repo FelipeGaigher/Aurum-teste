@@ -33,7 +33,7 @@ Estes itens não entram no protótipo:
 - Criar atividade de verdade. O painel abre, mas não salva.
 - Agenda. O item do menu existe, mas não leva a nenhuma tela.
 - Área de trabalho em lista. Só a visão de Kanban existe.
-- Versão para celular.
+- Menu aberto no celular. Abaixo de 700px o menu fica só com ícones. O nome do usuário e três atalhos saem do cabeçalho. O quadro rola na horizontal, uma coluna por tela. Até 1024px as colunas têm 300px e o quadro rola.
 
 ## 4. O que está aberto
 

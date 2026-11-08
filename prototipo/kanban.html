@@ -67,6 +67,7 @@
   --primitive-size-440: 440px;
   --primitive-size-480: 480px;
   --primitive-size-560: 560px;
+  --primitive-size-960: 960px;
 }
 /* fim dos primitivos */
 
@@ -139,6 +140,8 @@
   --size-search: var(--primitive-size-480);
   --size-dialog: var(--primitive-size-440);
   --size-dialog-wide: var(--primitive-size-560);
+  --size-dialog-detail: var(--primitive-size-960);
+  --size-column: var(--primitive-size-300);
 }
 /* fim dos semanticos */
 
@@ -189,7 +192,8 @@
   --component-button-primary-text: var(--color-action-text);
   --component-dialog-bg: var(--color-bg-surface);
   --component-dialog-width: var(--size-dialog);
-  --component-dialog-detail-width: var(--size-dialog-wide);
+  --component-dialog-detail-width: var(--size-dialog-detail);
+  --component-column-width: var(--size-column);
   --component-dialog-radius: var(--radius-dialog);
   --component-dialog-backdrop: var(--color-scrim);
 }
@@ -465,6 +469,8 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 
 /* quadro */
 #quadro {
+  /* posicionado para conter os textos ocultos absolutos dos cards quando o quadro rola na horizontal */
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-4);
@@ -853,20 +859,138 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 }
 .detalhe-dados dd { margin: var(--space-1) 0 0; }
 .detalhe-dados ul { margin: 0; padding-left: var(--space-5); }
+.detalhe-dados ul.card-chips { padding-left: 0; list-style: none; }
 .detalhe-largo { grid-column: 1 / -1; }
-.detalhe-subtarefas { display: grid; gap: var(--space-3); padding-left: 0 !important; list-style: none; }
-.detalhe-subtarefa {
-  display: grid;
-  gap: var(--space-1);
-  padding: var(--space-3);
-  background-color: var(--color-bg-subtle);
-  border-radius: var(--radius-card);
+
+/* tags da história: fase, sprints, dono e situação, com rótulo e valor */
+.detalhe-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: calc(-1 * var(--space-2)) 0 var(--space-5);
+  padding: 0;
+  list-style: none;
 }
-.detalhe-subtarefa-titulo { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-3); margin: 0; }
-.detalhe-subtarefa-titulo b { font-weight: var(--font-weight-semibold); }
-.detalhe-subtarefa-meta { color: var(--color-text-muted); font-size: var(--font-size-label); }
-.detalhe-subtarefa-texto { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
-.detalhe-subtarefa-deveres { font-size: var(--font-size-label); }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--component-control-height);
+  padding: 0 var(--space-3);
+  background-color: var(--color-bg-subtle);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius);
+  font-size: var(--font-size-button);
+  line-height: var(--font-leading-tight);
+}
+.tag-rotulo { color: var(--color-text-muted); font-size: var(--font-size-label); font-weight: var(--font-weight-medium); text-transform: uppercase; letter-spacing: var(--font-tracking-caps); }
+.tag-valor { font-weight: var(--font-weight-semibold); }
+.tag[data-status="fazendo"] { border-color: var(--color-action); }
+.tag[data-status="fazendo"] .tag-valor { color: var(--color-action); }
+.tag[data-status="concluido"] { background-color: var(--color-action); border-color: var(--color-action); }
+.tag[data-status="concluido"] .tag-rotulo, .tag[data-status="concluido"] .tag-valor { color: var(--color-action-text); }
+
+/* duas colunas: a história à esquerda, as subtarefas à direita */
+.detalhe-colunas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+.painel-detalhe .detalhe-dados { grid-template-columns: minmax(0, 1fr); }
+.detalhe-subtarefas h3 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--font-leading-tight);
+  color: var(--color-text-muted);
+}
+.detalhe-progresso { font-weight: var(--font-weight-regular); font-variant-numeric: tabular-nums; }
+.subtarefa {
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  background-color: var(--color-bg-surface);
+}
+.subtarefa + .subtarefa { margin-top: var(--space-2); }
+.subtarefa-resumo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-2);
+  padding: var(--space-3);
+  cursor: pointer;
+  list-style: none;
+}
+.subtarefa-resumo::-webkit-details-marker { display: none; }
+.subtarefa-resumo::after {
+  content: "";
+  flex: none;
+  width: var(--space-2);
+  height: var(--space-2);
+  margin-left: auto;
+  translate: 0 -2px;
+  border-right: var(--focus-width) solid var(--color-text-muted);
+  border-bottom: var(--focus-width) solid var(--color-text-muted);
+  rotate: 45deg;
+  transition: rotate 150ms;
+}
+.subtarefa[open] > .subtarefa-resumo::after { rotate: 225deg; translate: 0 2px; }
+.subtarefa-resumo:hover { background-color: var(--color-bg-subtle); }
+.subtarefa-resumo b { font-weight: var(--font-weight-semibold); }
+.subtarefa-marcador {
+  flex: none;
+  width: var(--space-2);
+  height: var(--space-2);
+  translate: 0 -1px;
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-round);
+}
+.subtarefa[data-status="fazendo"] .subtarefa-marcador { border-color: var(--color-action); }
+.subtarefa[data-status="feito"] .subtarefa-marcador { border-color: var(--color-action); background-color: var(--color-action); }
+.subtarefa-meta { flex-basis: 100%; padding-left: calc(var(--space-2) + var(--space-2)); color: var(--color-text-muted); font-size: var(--font-size-label); }
+.subtarefa-corpo { display: grid; gap: var(--space-2); padding: var(--space-1) var(--space-3) var(--space-3); }
+.subtarefa-texto { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
+.subtarefa-deveres { margin: 0; padding-left: var(--space-5); font-size: var(--font-size-label); }
+@media (max-width: 800px) { .detalhe-colunas { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .subtarefa-resumo::after { transition: none; } }
+
+/* responsivo. Tablet: as colunas ganham largura fixa e o quadro rola na horizontal, com encaixe por coluna. */
+@media (max-width: 1024px) {
+  #quadro {
+    display: flex;
+    gap: var(--space-3);
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--space-3);
+  }
+  .coluna {
+    flex: 0 0 var(--component-column-width);
+    scroll-snap-align: start;
+  }
+}
+
+/* Celular: menu só com ícones, cabeçalho enxuto, uma coluna por tela com a próxima aparecendo na borda. */
+@media (max-width: 700px) {
+  .cabecalho {
+    grid-template-columns: var(--component-sidebar-collapsed-width) minmax(0, 1fr) auto;
+    column-gap: var(--space-3);
+    padding-right: var(--space-3);
+  }
+  .recolher { display: none; }
+  .atalhos li:nth-child(n + 3) { display: none; }
+  .usuario { display: none; }
+  .acoes { gap: var(--space-2); }
+  #conteudo { padding: var(--space-4) var(--space-3) var(--space-5); }
+  .coluna {
+    flex-basis: calc(100vw - var(--component-sidebar-collapsed-width) - var(--space-3) * 2 - var(--space-6));
+  }
+  .painel { padding: var(--space-4); }
+}
 
 /* rodapé da demonstração */
 #rodape-demo {
@@ -1011,8 +1135,8 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
           <div class="seletor-raiz" data-seletor="filtro-dono"></div>
         </div>
         <div class="campo">
-          <span class="campo-rotulo" id="filtro-situacao-rotulo">Situação</span>
-          <div class="seletor-raiz" data-seletor="filtro-situacao"></div>
+          <span class="campo-rotulo" id="filtro-fase-rotulo">Fase</span>
+          <div class="seletor-raiz" data-seletor="filtro-fase"></div>
         </div>
       </div>
       <div class="filtros" role="group" aria-label="Filtros do quadro" data-conjunto="escritorio" hidden>
@@ -1082,16 +1206,19 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 
 <dialog id="painel-detalhe" class="painel painel-detalhe" aria-labelledby="detalhe-titulo">
   <h2 id="detalhe-titulo"></h2>
-  <dl class="detalhe-dados">
-    <div><dt>Fase</dt><dd id="detalhe-fase"></dd></div>
-    <div><dt>Sprints</dt><dd id="detalhe-sprints"></dd></div>
-    <div><dt>Dono</dt><dd id="detalhe-dono"></dd></div>
-    <div><dt>Situação</dt><dd id="detalhe-situacao"></dd></div>
-    <div class="detalhe-largo"><dt>Objetivo</dt><dd id="detalhe-objetivo"></dd></div>
-    <div class="detalhe-largo"><dt>Entregável</dt><dd id="detalhe-entregavel"></dd></div>
-    <div class="detalhe-largo"><dt>Pronto quando</dt><dd id="detalhe-pronto"></dd></div>
-    <div class="detalhe-largo"><dt>Subtarefas</dt><dd><ul id="detalhe-subtarefas" class="detalhe-subtarefas"></ul></dd></div>
-  </dl>
+  <ul id="detalhe-tags" class="detalhe-tags" aria-label="Dados da história"></ul>
+  <div class="detalhe-colunas">
+    <dl class="detalhe-dados">
+      <div><dt>Objetivo</dt><dd id="detalhe-objetivo"></dd></div>
+      <div><dt>Entregável</dt><dd id="detalhe-entregavel"></dd></div>
+      <div><dt>Pronto quando</dt><dd id="detalhe-pronto"></dd></div>
+      <div><dt>Equipes</dt><dd><ul id="detalhe-equipes" class="card-chips" aria-label="Equipes envolvidas"></ul></dd></div>
+    </dl>
+    <section class="detalhe-subtarefas" aria-labelledby="detalhe-subtarefas-titulo">
+      <h3 id="detalhe-subtarefas-titulo">Subtarefas <span id="detalhe-progresso" class="detalhe-progresso"></span></h3>
+      <div id="detalhe-subtarefas"></div>
+    </section>
+  </div>
   <div class="painel-rodape painel-rodape-fim">
     <button type="button" id="fechar-detalhe" class="botao">Fechar</button>
   </div>
@@ -1110,11 +1237,16 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
     };
     let salvo = null;
     try { salvo = localStorage.getItem(CHAVE); } catch (e) { salvo = null; }
-    aplicar(salvo === 'recolhido');
+    // No celular o menu fica sempre recolhido; a escolha salva volta a valer na tela larga.
+    const estreito = window.matchMedia('(max-width: 700px)');
+    const sincronizar = () => aplicar(estreito.matches || salvo === 'recolhido');
+    sincronizar();
+    estreito.addEventListener('change', sincronizar);
     botao.addEventListener('click', () => {
       const recolhido = document.body.getAttribute('data-menu') !== 'recolhido';
+      salvo = recolhido ? 'recolhido' : 'aberto';
       aplicar(recolhido);
-      try { localStorage.setItem(CHAVE, recolhido ? 'recolhido' : 'aberto'); } catch (e) { /* sem armazenamento */ }
+      try { localStorage.setItem(CHAVE, salvo); } catch (e) { /* sem armazenamento */ }
     });
   })();
 const COLUNAS_ESCRITORIO = [
@@ -1154,7 +1286,15 @@ const FASES = [
   { id: 'f4', nome: 'Fase 4. Outros módulos e IA', periodo: 'Meses 6 a 12, sprints 13 a 24' },
 ];
 const EQUIPES = ['Direção do DS', 'Engenharia', 'Designer do squad Atividades', 'Designer do squad Processos', 'Designer do squad Financeiro', 'Designer do squad Clientes', 'Suporte', 'Marketing'];
-const STATUS = { 'feito': 'Feito', 'fazendo': 'Fazendo', 'a-fazer': 'A fazer' };
+const STATUS = { 'feito': 'Feito', 'fazendo': 'Fazendo', 'a-fazer': 'A fazer', 'concluido': 'Concluído' };
+
+function nomeDaFase(id) {
+  const fase = FASES.find((f) => f.id === id);
+  if (!fase) throw new Error('fase desconhecida: ' + id);
+  return fase.nome;
+}
+// "Fase 1. Inventário e discovery" vira "Fase 1" no card.
+const nomeCurtoDaFase = (id) => nomeDaFase(id).split('.')[0];
 
 const CARDS = [
   { id: 'c01', fase: 'f1', sprint: '1', titulo: 'Inventário de componentes em código e no Figma', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia'], status: 'feito',
@@ -1165,7 +1305,7 @@ const CARDS = [
   { id: 'c02', fase: 'f1', sprint: '1 e 2', titulo: 'Discovery com os quatro designers', dono: 'Direção do DS', equipes: ['Direção do DS', 'Designer do squad Atividades', 'Designer do squad Processos', 'Designer do squad Financeiro', 'Designer do squad Clientes'], status: 'fazendo',
     objetivo: 'Entender como cada um trabalha antes de dividir o trabalho. Fluxo, roadmap, Figma, IA e dor.',
     entregavel: 'Mapa de perfil por designer e a frente natural de cada um no DS.',
-    deveres: ['Direção do DS: uma conversa de 45 minutos com cada designer.', 'Cada designer: traz o roadmap dos próximos três meses e uma tela que o frustra.'],
+    deveres: ['Direção do DS: uma conversa de 1 hora com cada designer, para conhecer a pessoa, não só o trabalho.', 'Cada designer: traz o roadmap dos próximos três meses e uma tela que o frustra.'],
     pronto: 'Os quatro mapas estão escritos e cada designer concorda com a própria frente.' },
   { id: 'c03', fase: 'f1', sprint: '2', titulo: 'Linha de base das métricas', dono: 'Direção do DS', equipes: ['Direção do DS', 'Engenharia', 'Suporte'], status: 'a-fazer',
     objetivo: 'Medir antes de mudar. Sem linha de base, a métrica só mostra o número de hoje.',
@@ -1296,9 +1436,10 @@ function subtarefasDe(historia) {
   });
 }
 
+// A história nasce na coluna que as subtarefas pedem. Arrastar a história depois troca a coluna direto.
 function statusDaHistoria(historia) {
   const lista = subtarefasDe(historia).map((s) => s.status);
-  if (lista.every((s) => s === 'feito')) return 'feito';
+  if (lista.every((s) => s === 'feito')) return 'concluido';
   if (lista.some((s) => s !== 'a-fazer')) return 'fazendo';
   return 'a-fazer';
 }
@@ -1314,13 +1455,14 @@ const DONOS = [...new Set(HISTORIAS.map((historia) => historia.dono))]
 const CONJUNTOS = {
   plano: {
     nome: 'Plano do redesign',
-    colunas: FASES.map((fase) => ({ id: fase.id, nome: fase.nome, subtitulo: fase.periodo })),
-    campo: 'fase',
+    // Coluna de Kanban é situação, não fase. A fase é tag no card e filtro. Correção de Felipe em 07/11.
+    colunas: COLUNAS_ESCRITORIO,
+    campo: 'status',
     item: 'história',
-    filtrosIniciais: { equipe: 'todas', dono: 'todos', situacao: 'todas' },
-    passa: (historia, { equipe, dono, situacao }) => (equipe === 'todas' || historia.equipes.includes(equipe))
+    filtrosIniciais: { equipe: 'todas', dono: 'todos', fase: 'todas' },
+    passa: (historia, { equipe, dono, fase }) => (equipe === 'todas' || historia.equipes.includes(equipe))
       && (dono === 'todos' || historia.dono === dono)
-      && (situacao === 'todas' || historia.status === situacao),
+      && (fase === 'todas' || historia.fase === fase),
     ordenar: (a, b) => a.ordem - b.ordem,
     criarCard: criarCardHistoria,
     abreDetalhe: true,
@@ -1482,9 +1624,9 @@ function criarCardHistoria(historia) {
   const [card, titulo] = criarCardBase(historia, 'dica-mover dica-abrir');
 
   const linhaSprint = el('p', 'card-sprint');
-  const situacao = el('span', 'card-situacao');
-  situacao.append(el('span', 'visualmente-oculto', 'Situação: '), STATUS[historia.status]);
-  linhaSprint.append(el('span', null, textoSprint(historia.sprint)), situacao);
+  const fase = el('span', 'card-situacao');
+  fase.append(el('span', 'visualmente-oculto', 'Fase: '), nomeCurtoDaFase(historia.fase));
+  linhaSprint.append(el('span', null, textoSprint(historia.sprint)), fase);
 
   const [subtarefas, progresso] = listaSubtarefas(historia);
 
@@ -1774,34 +1916,47 @@ window.addEventListener('resize', () => {
 const painelDetalhe = document.getElementById('painel-detalhe');
 let detalheAberto = null;
 
+function tag(rotulo, valor, status) {
+  const item = el('li', 'tag');
+  if (status) item.dataset.status = status;
+  item.append(el('span', 'tag-rotulo', rotulo), el('span', 'tag-valor', valor));
+  return item;
+}
+
 function itemSubtarefa(sub) {
-  const item = el('li', 'detalhe-subtarefa');
+  // Cada subtarefa é um acordeão fechado: o título e os dados ficam à vista, o resto abre ao clicar.
+  const item = el('details', 'subtarefa');
   item.dataset.status = sub.status;
-  const cabecalho = el('p', 'detalhe-subtarefa-titulo');
-  cabecalho.append(el('b', null, sub.titulo), el('span', 'detalhe-subtarefa-meta', textoSprint(sub.sprint) + '. ' + sub.dono + '. ' + STATUS[sub.status]));
-  item.append(cabecalho, el('p', 'detalhe-subtarefa-texto', sub.entregavel));
-  const deveres = el('ul', 'detalhe-subtarefa-deveres');
+  const resumo = el('summary', 'subtarefa-resumo');
+  const marcador = el('span', 'subtarefa-marcador');
+  marcador.append(el('span', 'visualmente-oculto', STATUS[sub.status] + ': '));
+  resumo.append(marcador, el('b', null, sub.titulo), el('span', 'subtarefa-meta', textoSprint(sub.sprint) + '. ' + sub.dono));
+  const corpo = el('div', 'subtarefa-corpo');
+  corpo.append(el('p', 'subtarefa-texto', sub.entregavel));
+  const deveres = el('ul', 'subtarefa-deveres');
   for (const dever of sub.deveres) deveres.append(el('li', null, dever));
-  item.append(deveres, el('p', 'detalhe-subtarefa-texto', 'Pronto quando: ' + sub.pronto));
+  corpo.append(deveres, el('p', 'subtarefa-texto', 'Pronto quando: ' + sub.pronto));
+  item.append(resumo, corpo);
   return item;
 }
 
 function abrirDetalhe(id) {
   const historia = acharItem(id);
-  const campos = {
-    titulo: historia.titulo,
-    fase: nomeDaColuna(historia.fase),
-    sprints: historia.sprint,
-    dono: historia.dono,
-    situacao: STATUS[historia.status],
-    objetivo: historia.objetivo,
-    entregavel: historia.entregavel,
-    pronto: historia.pronto,
-  };
+  const campos = { titulo: historia.titulo, objetivo: historia.objetivo, entregavel: historia.entregavel, pronto: historia.pronto };
   for (const [campo, texto] of Object.entries(campos)) {
     document.getElementById('detalhe-' + campo).textContent = texto;
   }
-  document.getElementById('detalhe-subtarefas').replaceChildren(...subtarefasDe(historia).map(itemSubtarefa));
+  document.getElementById('detalhe-tags').replaceChildren(
+    tag('Fase', nomeDaFase(historia.fase).replace(/^Fase \d+\. /, '')),
+    tag('Sprints', historia.sprint),
+    tag('Dono', historia.dono),
+    tag('Situação', STATUS[historia.status], historia.status),
+  );
+  document.getElementById('detalhe-equipes').replaceChildren(...historia.equipes.map((equipe) => { const li = el('li', null); li.append(chipTexto(equipe)); return li; }));
+  const subtarefas = subtarefasDe(historia);
+  const feitas = subtarefas.filter((s) => s.status === 'feito').length;
+  document.getElementById('detalhe-progresso').textContent = feitas + ' de ' + subtarefas.length + ' feitas';
+  document.getElementById('detalhe-subtarefas').replaceChildren(...subtarefas.map(itemSubtarefa));
   detalheAberto = id;
   painelDetalhe.showModal();
 }
@@ -1887,7 +2042,7 @@ const paresResponsavel = pares(RESPONSAVEIS);
 const paresTipo = Object.entries(TIPOS);
 ligarFiltro('plano', 'equipe', 'filtro-equipe', [['todas', 'Todas'], ...pares(EQUIPES)]);
 ligarFiltro('plano', 'dono', 'filtro-dono', [['todos', 'Todos'], ...pares(DONOS)]);
-ligarFiltro('plano', 'situacao', 'filtro-situacao', [['todas', 'Todas'], ...Object.entries(STATUS)]);
+ligarFiltro('plano', 'fase', 'filtro-fase', [['todas', 'Todas'], ...FASES.map((fase) => [fase.id, fase.nome])]);
 ligarFiltro('escritorio', 'responsavel', 'filtro-responsavel', [['todos', 'Todos'], ...paresResponsavel]);
 ligarFiltro('escritorio', 'tipo', 'filtro-tipo', [['todos', 'Todos'], ...paresTipo]);
 ligarFiltro('escritorio', 'periodo', 'filtro-periodo', [['todos', 'Todo o período'], ['vencidas', 'Vencidas'], ['hoje', 'Hoje'], ['proximos-7', 'Próximos 7 dias']]);

@@ -100,3 +100,18 @@ com data. O que foi entregue fica no commit, não aqui.
   Kanban mudou duas vezes durante a montagem do deck. A captura da tela
   foi refeita depois do último commit. Regra que ficou: capturar só com a
   árvore limpa.
+
+### O plano dentro do Kanban, corrigido duas vezes
+
+- Dezoito cards era demais. Viraram oito histórias com subtarefas, como
+  no Jira da Fotus: a história é o card, a entrega é a subtarefa.
+- Primeira versão errou a estrutura: as colunas eram as fases, e cada
+  card dizia "fazendo" ou "a fazer" num canto. Felipe apontou: coluna de
+  Kanban é situação, não fase. As colunas voltaram a ser A fazer, Fazendo
+  e Concluído, as mesmas do escritório. A fase virou tag no card e filtro.
+- O detalhe da história ganhou tags com rótulo e valor. As subtarefas
+  foram para uma coluna ao lado, em acordeão fechado, para caber sem
+  rolar.
+- Felipe pediu o protótipo responsivo. No tablet, as colunas ganham
+  largura fixa e o quadro rola na horizontal com encaixe. No celular, o
+  menu fica só com ícones, o cabeçalho enxuga e cabe uma coluna por tela.
