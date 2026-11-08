@@ -7,15 +7,80 @@
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
 <script src="componentes.js"></script>
+<style>
+.plano-faixa { display: flex; align-items: center; gap: var(--space-5); padding: var(--space-5) var(--space-6); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
+.plano-faixa > svg.icone { flex: none; width: var(--size-icon-nav); height: var(--size-icon-nav); color: var(--color-text-muted); }
+.plano-faixa-texto { display: grid; gap: var(--space-1); flex: 1; min-width: 0; }
+.plano-faixa-texto h2 { margin: 0; font-size: var(--font-size-title); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.plano-faixa-texto p { margin: 0; max-width: 60ch; color: var(--color-text-muted); }
+.plano-faixa-acoes { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.plano-aviso:not(:empty) { margin-top: var(--space-3); }
+.recursos { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4); margin: var(--space-5) 0 0; padding: 0; list-style: none; }
+.recurso { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
+.recurso > svg.icone { width: var(--size-icon-nav); height: var(--size-icon-nav); color: var(--color-text-default); }
+.recurso h3 { margin: var(--space-1) 0 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.recurso p { margin: 0; color: var(--color-text-muted); }
+.recurso-rodape { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); margin-top: auto; padding-top: var(--space-3); }
+.recurso-rodape .tag svg.icone { width: var(--font-size-label); height: var(--font-size-label); }
+@media (max-width: 900px) {
+  .plano-faixa { flex-direction: column; align-items: flex-start; gap: var(--space-4); padding: var(--space-5); }
+}
+</style>
 </head>
 <body data-pagina="indicadores.html" data-titulo="Indicadores">
 <div class="corpo">
   <main id="conteudo">
-    <div id="bloqueio"></div>
+    <section class="plano-faixa" aria-labelledby="plano-titulo">
+      <span id="faixa-icone"></span>
+      <div class="plano-faixa-texto">
+        <h2 id="plano-titulo">Indicadores está em planos superiores</h2>
+        <p>Acompanhe em painéis os números do escritório: prazos, processos e produtividade.</p>
+      </div>
+      <div class="plano-faixa-acoes" id="acoes-plano"></div>
+    </section>
+    <div class="plano-aviso" id="aviso-plano"></div>
+    <ul class="recursos" id="recursos" aria-label="Recursos de Indicadores"></ul>
   </main>
 </div>
 <script>
-document.getElementById('bloqueio').append(DS.upsell({ titulo: 'Indicadores está em planos superiores', texto: 'Acompanhe em painéis os números do escritório: prazos, processos e produtividade.' }));
+const RECURSOS = [
+  {"nome": "Painel de prazos", "texto": "Conta os prazos vencidos, os de hoje e os da semana, por responsável.", "icone": "relogio", "plano": "Up"},
+  {"nome": "Painel de processos", "texto": "Mostra os processos ativos por área, fase e cliente.", "icone": "arquivar", "plano": "Up"},
+  {"nome": "Produtividade da equipe", "texto": "Compara tarefas concluídas e andamentos tratados no mês.", "icone": "pessoa", "plano": "Smart"},
+  {"nome": "Alertas de prazo", "texto": "Os alertas de prazo e de andamento continuam no seu plano.", "icone": "alerta", "pagina": "alertas.html"},
+];
+const lista = document.getElementById('recursos');
+RECURSOS.forEach((r) => {
+  const li = document.createElement('li');
+  li.className = 'recurso';
+  const h = document.createElement('h3');
+  h.textContent = r.nome;
+  const p = document.createElement('p');
+  p.textContent = r.texto;
+  const rodape = document.createElement('div');
+  rodape.className = 'recurso-rodape';
+  const etiqueta = DS.tag({ rotulo: r.pagina ? 'Disponível no seu plano' : 'A partir do plano ' + r.plano });
+  if (r.pagina) etiqueta.dataset.cor = 'green';
+  else etiqueta.prepend(DS.icone('cadeado'));
+  rodape.append(etiqueta);
+  if (r.pagina) {
+    const abrir = document.createElement('a');
+    abrir.className = 'botao botao-texto botao-pequeno';
+    abrir.href = r.pagina;
+    abrir.textContent = 'Abrir';
+    abrir.setAttribute('aria-label', 'Abrir ' + r.nome);
+    rodape.append(abrir);
+  }
+  li.append(DS.icone(r.icone), h, p, rodape);
+  lista.append(li);
+});
+const slotAviso = document.getElementById('aviso-plano');
+const falar = DS.botao({ variante: 'secundario', rotulo: 'Falar com o time' });
+falar.addEventListener('click', () => {
+  slotAviso.replaceChildren(DS.faixaAviso({ tipo: 'info', mensagem: 'Ação simulada: no produto, o time comercial entra em contato pelo e-mail do escritório.', fechar: true }));
+});
+document.getElementById('acoes-plano').append(DS.botao({ variante: 'primario', rotulo: 'Conhecer planos' }), falar);
+document.getElementById('faixa-icone').replaceWith(DS.icone('cadeado'));
 </script>
 </body>
 </html>
