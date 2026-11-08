@@ -33,6 +33,13 @@ function servir() {
       args: ['--disable-gpu', '--disable-dev-shm-usage', '--js-flags=--max-old-space-size=4096'],
     });
     const page = await browser.newPage({ viewport: { width: largura, height: 900 } });
+    // ESTADO='{"chave":"valor"}' grava no localStorage antes da página carregar.
+    // Serve para abrir a tela num estado que o protótipo guarda só no navegador, como a visão Lista.
+    if (process.env.ESTADO) {
+      await page.addInitScript((estado) => {
+        for (const [chave, valor] of Object.entries(estado)) localStorage.setItem(chave, valor);
+      }, JSON.parse(process.env.ESTADO));
+    }
     await page.goto(`http://localhost:${PORTA}/${pagina}`, { waitUntil: 'networkidle' });
     // O protótipo declara Museo Sans e Open Sans antes de Segoe UI. Nenhuma das duas está
     // instalada aqui, e a captura chegava ao Figma em Segoe UI, fonte que o Figma não tem.
