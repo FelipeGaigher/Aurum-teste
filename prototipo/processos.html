@@ -23,28 +23,65 @@
   .link-texto:hover { text-decoration-thickness: calc(2 * var(--border-width)); }
 
   .lista-filtros { margin-bottom: var(--space-4); }
+  /* Barra de uma linha: busca, Tipo, Filtro avançado e os chips à esquerda; contagem e ações à direita.
+     Os chips seguem o botão; quando não cabem, quebram abaixo dele e a linha dos controles não muda. */
+  .lista-filtros .barra-filtros { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
+  .lista-filtros .barra-filtros-itens { align-items: flex-end; }
+  .filtros-controles { display: flex; flex: 0 1 auto; align-items: flex-end; gap: var(--space-3); min-width: 0; }
+  .filtros-controles > .campo { flex: 0 1 auto; min-width: 9rem; }
+  .filtros-controles > .botao { flex: none; }
+  .filtros-controles .seletor-gatilho { white-space: nowrap; }
+  .filtros-controles .seletor-gatilho > :first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .filtros-controles > .campo-p { min-width: 10.5rem; }
+  .lista-filtros .barra-filtros-fim { flex-wrap: nowrap; white-space: nowrap; margin-top: calc(var(--font-size-label) * var(--font-leading-tight) + var(--space-1)); }
+  .lista-filtros .pagina-acoes { flex-wrap: nowrap; gap: var(--space-2); }
+  .filtros-ativos { align-self: center; min-width: 0; }
+  .filtros-ativos .seletor-chip { max-width: 100%; }
+  .filtros-ativos .seletor-chip > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 1100px) {
+    .lista-filtros .barra-filtros { grid-template-columns: minmax(0, 1fr); }
+    .lista-filtros .barra-filtros-fim { flex-wrap: wrap; margin-top: 0; margin-left: 0; }
+    .lista-filtros .pagina-acoes { flex-wrap: wrap; }
+  }
+  .rodape-avancado { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
   .tabela a { border-radius: var(--radius); color: var(--color-action); font-weight: var(--font-weight-medium); }
   .tabela .numero-processo { white-space: nowrap; font-variant-numeric: tabular-nums; }
   .pagina-aviso:empty { display: none; }
   .pagina-aviso { margin-bottom: var(--space-4); }
 
   /* Ficha: cabeçalho de leitura em uma linha que quebra, e as ações à direita. */
+  /* Ficha: o cabeçalho é um bloco como os da ficha, com as ações à direita dentro dele. */
   .ficha-topo {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--space-3) var(--space-5);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "numero acoes" "leitura leitura";
+    align-items: start;
+    gap: var(--space-4) var(--space-5);
     margin-bottom: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background-color: var(--component-card-bg);
+    border: var(--border-width) solid var(--component-card-border);
+    border-radius: var(--radius-card);
   }
-  .ficha-leitura { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); margin: 0; min-width: 0; }
-  .ficha-leitura div { display: grid; gap: var(--space-1); min-width: 0; }
-  .ficha-leitura dt, .dados dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
-  .ficha-leitura dd, .dados dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; overflow-wrap: anywhere; }
-  .ficha-acoes { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
-  .ficha-identidade { display: grid; gap: var(--space-3); min-width: 0; }
-  .ficha-numero { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; color: var(--color-text-muted); }
-  .ficha-numero .numero-processo { color: var(--color-text-default); font-weight: var(--font-weight-medium); }
+  .ficha-leitura { display: grid; grid-area: leitura; grid-template-columns: repeat(auto-fit, minmax(var(--size-sidebar), 1fr)); gap: var(--space-4) var(--space-5); padding-top: var(--space-4); border-top: var(--border-width) solid var(--color-border-default); margin: 0; min-width: 0; }
+  .ficha-leitura div { display: grid; align-content: start; gap: var(--space-1); min-width: 0; }
+  .ficha-leitura dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
+  .ficha-leitura dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-medium); overflow-wrap: anywhere; }
+  .dados dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
+  .dados dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; overflow-wrap: anywhere; }
+  .ficha-acoes { grid-area: acoes; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-2); }
+  .ficha-identidade { display: contents; }
+  .ficha-numero { grid-area: numero; display: grid; gap: var(--space-1); min-width: 0; }
+  .ficha-numero-rotulo { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
+  .ficha-numero-valor { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; font-size: var(--font-size-title); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); }
+  .ficha-numero .ficha-numero-valor .numero-processo { color: var(--color-text-default); font-size: var(--font-size-title); font-weight: var(--font-weight-medium); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  @media (max-width: 1100px) {
+    .ficha-leitura { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 700px) {
+    .ficha-topo { grid-template-columns: minmax(0, 1fr); grid-template-areas: "numero" "acoes" "leitura"; }
+    .ficha-acoes { justify-content: flex-start; }
+  }
   .botao-favorito[aria-pressed="true"] { color: var(--color-action); }
   .botao-favorito[aria-pressed="true"] svg.icone { fill: currentColor; }
   .ficha-acoes .menu-acoes.is-primario > .botao { background-color: var(--component-button-primary-bg); border-color: var(--component-button-primary-bg); color: var(--component-button-primary-text); }
@@ -139,7 +176,10 @@
   .resumo-atores dt, .resumo-rotulo { color: var(--color-text-muted); }
   .resumo-atores dd { margin: 0; overflow-wrap: anywhere; }
   .resumo-local { margin: 0; overflow-wrap: anywhere; }
-  .resumo-origem { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
+  /* Texto corrido: "· Editar" anda junto, e o Editar é botão de texto inline, sem altura de botão. */
+  .resumo-origem { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); line-height: var(--font-leading-base); }
+  .resumo-origem-acao { white-space: nowrap; }
+  .resumo-origem .botao-texto { display: inline; height: auto; padding: 0 var(--space-1); font-size: inherit; line-height: inherit; vertical-align: baseline; }
 
   @media (max-width: 1024px) {
     .ficha-grade { grid-template-columns: minmax(0, 1fr); }
@@ -231,11 +271,15 @@
     const local = elemento('p', 'resumo-local');
     local.append(elemento('span', 'resumo-rotulo', 'Local'), elemento('span', null, resumo.local));
     const [ano, mes, dia] = resumo.atualizadoEm.split('-');
-    const origem = elemento('p', 'resumo-origem', `Resumo gerado pela IA do Astrea em ${dia}/${mes}/${ano} · `);
+    const origem = elemento('p', 'resumo-origem', `Resumo gerado pela IA do Astrea em ${dia}/${mes}/${ano} `);
     const editar = DS.botao({ variante: 'texto', tamanho: 'pequeno', rotulo: 'Editar' });
     editar.setAttribute('aria-label', 'Editar o resumo do caso');
     editar.addEventListener('click', () => avisar('info', 'Editar o resumo fica fora do protótipo.'));
-    origem.append(editar);
+    const acao = elemento('span', 'resumo-origem-acao');
+    const ponto = elemento('span', null, '·');
+    ponto.setAttribute('aria-hidden', 'true');
+    acao.append(ponto, ' ', editar);
+    origem.append(acao);
     return [texto, atores, local, origem];
   }
 
@@ -282,15 +326,31 @@
   };
   const ORDENS = [['movimento', 'Última movimentação'], ['titulo', 'Título']];
   const PADRAO = Object.fromEntries(Object.entries(FILTROS).map(([chave, f]) => [chave, f.opcoes[0][0]]));
+  // Tipo fica na barra; o resto vai para o Filtro avançado, no painel lateral (padrão de Contatos).
+  const AVANCADOS = ['responsavel', 'grau', 'movimento'];
+  const ROTULO_DO_CHIP = { responsavel: 'Responsável', grau: 'Grau', movimento: 'Movimentação' };
+
+  // Busca por título, número ou cliente, sem acento e sem maiúscula. No número vale também só os dígitos.
+  const semAcento = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  function casaComBusca(r, termo) {
+    const t = semAcento(termo).trim();
+    if (!t) return true;
+    if (semAcento(`${r.titulo} ${r.numero || ''} ${r.cliente}`).includes(t)) return true;
+    const digitos = t.replace(/\D/g, '');
+    return digitos.length > 0 && /^[\d.\-\s]+$/.test(t) && (r.numero || '').replace(/\D/g, '').includes(digitos);
+  }
 
   function montarLista() {
     const filtro = { ...PADRAO };
     const chips = new Set();
     let ordem = ORDENS[0][0];
+    let termo = '';
     let barra;
 
-    const ativos = () => Object.keys(FILTROS).filter((c) => filtro[c] !== PADRAO[c]).length + chips.size;
+    const avancados = () => AVANCADOS.filter((c) => filtro[c] !== PADRAO[c]).length + chips.size;
+    const ativos = () => avancados() + (filtro.tipo !== PADRAO.tipo ? 1 : 0) + (termo ? 1 : 0);
     const visiveis = () => REGISTROS
+      .filter((r) => casaComBusca(r, termo))
       .filter((r) => Object.entries(FILTROS).every(([c, f]) => f.aceita(filtro[c], r)))
       .filter((r) => [...chips].every((c) => CHIPS[c].aceita(r)))
       .sort((a, b) => (ordem === 'titulo' ? a.titulo.localeCompare(b.titulo, 'pt-BR') : a.movimentoEmDias - b.movimentoEmDias));
@@ -345,8 +405,9 @@
     function desenhar(carregando = false) {
       const lista = visiveis();
       const total = ativos();
-      const resultado = total ? `${lista.length} de ${plural(REGISTROS.length, 'registro', 'registros')}` : plural(lista.length, 'registro', 'registros');
+      const resultado = plural(lista.length, 'registro', 'registros');
       barra.atualizar({ resultado, ativos: total, carregando });
+      desenharAtivos();
       const tabela = DS.tabela({
         rotulo: 'Processos e casos', carregando,
         colunas: [['titulo', 'Título'], ['tipo', 'Tipo'], ['numero', 'Número'], ['cliente', 'Cliente'],
@@ -416,12 +477,16 @@
       };
     }
 
+    // Limpar tira todos os filtros, a busca e o Tipo inclusive; a ordem fica.
     function limpar() {
       Object.assign(filtro, PADRAO);
       chips.clear();
-      montarBarra();
+      trocarTipo();
+      const entrada = busca.querySelector('input');
+      if (entrada.value) { entrada.value = ''; entrada.dispatchEvent(new Event('input', { bubbles: true })); }
+      termo = '';
       desenhar();
-      lugarDaBarra.querySelector('button').focus();
+      entrada.focus();
     }
 
     // M18: Atualizar fica ao lado da contagem, no fim da barra de filtros.
@@ -430,26 +495,104 @@
       setTimeout(() => desenhar(false), 600);
     }
 
-    function montarBarra() {
-      const seletores = Object.entries(FILTROS).map(([chave, f]) => {
-        const el = DS.seletor({ rotulo: f.rotulo, opcoes: f.opcoes, valor: filtro[chave], largura: 'p',
-          aoEscolher: (valor) => { filtro[chave] = valor; desenhar(); } });
-        el.dataset.filtro = chave;
-        return el;
+    // --- barra de uma linha: busca, Tipo, Filtro avançado e um chip por filtro ativo ---
+
+    const busca = DS.busca({ rotulo: 'Buscar processo', largura: 'm', placeholder: 'Título, nº ou cliente',
+      aoMudar: (valor) => { termo = valor; desenhar(); } });
+    busca.dataset.filtro = 'busca';
+
+    function seletorTipo() {
+      const f = FILTROS.tipo;
+      const el = DS.seletor({ rotulo: f.rotulo, opcoes: f.opcoes, valor: filtro.tipo, largura: 'p',
+        aoEscolher: (valor) => { filtro.tipo = valor; desenhar(); } });
+      el.dataset.filtro = 'tipo';
+      return el;
+    }
+    let tipo = seletorTipo();
+    function trocarTipo() {
+      const outro = seletorTipo();
+      tipo.replaceWith(outro);
+      tipo = outro;
+    }
+
+    const avancado = DS.botao({ variante: 'secundario', rotulo: 'Filtro avançado' });
+    avancado.setAttribute('data-abre-painel', '');
+    avancado.setAttribute('aria-haspopup', 'dialog');
+    avancado.addEventListener('click', abrirAvancado);
+
+    // Busca, Tipo e o botão não quebram entre si; só os chips descem quando não cabem.
+    const controles = elemento('div', 'filtros-controles');
+    controles.append(busca, tipo, avancado);
+    const ativosLista = elemento('ul', 'seletor-chips filtros-ativos');
+    ativosLista.setAttribute('aria-label', 'Filtros ativos');
+
+    // Um chip por filtro do painel; remover o chip limpa só aquele filtro. O chipRemovivel do DS
+    // é interno ao seletor múltiplo, então o chip repete a mesma marcação (.seletor-chip).
+    function chipAtivo(rotulo, aoRemover) {
+      const li = elemento('li', 'seletor-chip');
+      const remover = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'fechar', rotulo: `Remover ${rotulo}` });
+      remover.addEventListener('click', () => { aoRemover(); desenhar(); avancado.focus(); });
+      const texto = elemento('span', null, rotulo);
+      texto.title = rotulo;
+      li.append(texto, remover);
+      return li;
+    }
+
+    function desenharAtivos() {
+      const n = avancados();
+      avancado.textContent = n ? `Filtro avançado · ${n}` : 'Filtro avançado';
+      const itens = AVANCADOS.filter((c) => filtro[c] !== PADRAO[c]).map((c) => {
+        const nome = FILTROS[c].opcoes.find(([v]) => v === filtro[c])[1];
+        return chipAtivo(`${ROTULO_DO_CHIP[c]}: ${nome}`, () => { filtro[c] = PADRAO[c]; });
       });
-      // PA-73: as caixas do filtro avançado viram chips, num grupo com rótulo fixo.
+      [...chips].forEach((c) => itens.push(chipAtivo(CHIPS[c].rotulo, () => { chips.delete(c); })));
+      ativosLista.replaceChildren(...itens);
+    }
+
+    // PA-73: as caixas do filtro avançado viram chips, num grupo com rótulo fixo.
+    function corpoDoAvancado(rascunho) {
+      const seletorDe = (chave) => DS.seletor({ rotulo: FILTROS[chave].rotulo, opcoes: FILTROS[chave].opcoes,
+        valor: rascunho[chave], aoEscolher: (v) => { rascunho[chave] = v; } });
       const marcadores = elemento('div', 'grupo-chips');
       marcadores.setAttribute('role', 'group');
       const rotuloChips = elemento('span', 'campo-rotulo', 'Destaque e vínculo');
       rotuloChips.id = 'rotulo-chips';
       marcadores.setAttribute('aria-labelledby', rotuloChips.id);
       const itensChips = elemento('div', 'grupo-chips-itens');
-      itensChips.append(...Object.entries(CHIPS).map(([chave, c]) => DS.chipFiltro({ rotulo: c.rotulo, ativo: chips.has(chave),
-        aoAlternar: (ligado) => { if (ligado) chips.add(chave); else chips.delete(chave); desenhar(); } })));
+      itensChips.append(...Object.entries(CHIPS).map(([chave, c]) => DS.chipFiltro({ rotulo: c.rotulo, ativo: rascunho.chips.has(chave),
+        aoAlternar: (ligado) => { if (ligado) rascunho.chips.add(chave); else rascunho.chips.delete(chave); } })));
       marcadores.append(rotuloChips, itensChips);
-      const ordenar = DS.seletor({ rotulo: 'Ordenar por', opcoes: ORDENS, valor: ordem, largura: 'p',
-        aoEscolher: (valor) => { ordem = valor; desenhar(); } });
-      barra = DS.barraFiltros({ rotulo: 'Filtros de processos e casos', itens: [...seletores, marcadores, ordenar], aoLimpar: limpar });
+      const ordenar = DS.seletor({ rotulo: 'Ordenar por', opcoes: ORDENS, valor: rascunho.ordem,
+        aoEscolher: (v) => { rascunho.ordem = v; } });
+      return [...AVANCADOS.map(seletorDe), marcadores, ordenar];
+    }
+
+    let painel = null;
+    function abrirAvancado() {
+      const rascunho = { ...filtro, chips: new Set(chips), ordem };
+      const limparTudo = DS.botao({ variante: 'texto', rotulo: 'Limpar filtros' });
+      limparTudo.addEventListener('click', () => { painel.fechar(); limpar(); });
+      const cancelar = DS.botao({ variante: 'texto', rotulo: 'Cancelar' });
+      cancelar.addEventListener('click', () => painel.fechar());
+      const aplicar = DS.botao({ variante: 'primario', rotulo: 'Aplicar' });
+      aplicar.addEventListener('click', () => {
+        AVANCADOS.forEach((c) => { filtro[c] = rascunho[c]; });
+        chips.clear();
+        rascunho.chips.forEach((c) => chips.add(c));
+        ordem = rascunho.ordem;
+        painel.fechar();
+        desenhar();
+      });
+      const rodape = elemento('div', 'rodape-avancado');
+      rodape.append(limparTudo, DS.grupoBotoes([cancelar, aplicar]));
+      const conteudo = { titulo: 'Filtro avançado', corpo: corpoDoAvancado(rascunho), rodape };
+      if (!painel) painel = DS.painelLateral(conteudo);
+      else painel.trocar(conteudo);
+      painel.abrir(avancado);
+    }
+
+    function montarBarra() {
+      barra = DS.barraFiltros({ rotulo: 'Filtros de processos e casos', itens: [controles, ativosLista] });
       const botaoAtualizar = DS.botao({ variante: 'texto', rotulo: 'Atualizar' });
       botaoAtualizar.addEventListener('click', atualizar);
       barra.el.querySelector('.barra-filtros-resultado').after(botaoAtualizar);
@@ -605,9 +748,12 @@
 
     // Cabeçalho: linha do número, depois Cliente, Status, Responsável e Criado por.
     const identidade = elemento('div', 'ficha-identidade');
-    const numero = elemento('p', 'ficha-numero');
-    if (r.numero) numero.append(TIPOS[r.tipo], elemento('span', null, '|'), elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero));
-    else numero.append(TIPOS[r.tipo]);
+    // O tipo é rótulo pequeno acima; o número CNJ vem em tamanho de título, com Copiar ao lado.
+    const numero = elemento('div', 'ficha-numero');
+    const linhaNumero = elemento('p', 'ficha-numero-valor');
+    if (r.numero) linhaNumero.append(elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero));
+    else linhaNumero.append(elemento('span', null, 'Caso, sem número'));
+    numero.append(elemento('p', 'ficha-numero-rotulo', TIPOS[r.tipo]), linhaNumero);
     const leitura = elemento('dl', 'ficha-leitura');
     const par = (rotulo, ...valor) => {
       const div = elemento('div');
@@ -623,6 +769,8 @@
     leitura.append(divSituacao);
     par('Responsável', DS.avatar({ nome: r.responsavel, mostrarNome: true }));
     par('Criado por', EU);
+    if (r.valor) par('Valor da causa', reais(r.valor));
+    if (extra) par('Distribuído em', dataCurta(diaDe(extra.distribuidoHaDias)));
     desenharSituacao();
     identidade.append(numero, leitura);
 
