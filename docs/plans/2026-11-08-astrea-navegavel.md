@@ -1844,8 +1844,8 @@ decisão subiu ao sovereign.
   Kanban mostra as fases da Q2. Base do RF-02 em `e7ee407`.
 - Decisão de Felipe pendente: limpeza das imagens com dado real no histórico,
   push e GitHub Pages. Script pronto fora do repositório.
-- Achados menores sem correção: criar atividade pelo menu Adicionar fora da
-  Agenda fecha o painel sem aviso; "Delegadas" filtra só por responsável.
+- Dois achados menores ficaram sem correção. Criar atividade pelo menu Adicionar
+  fora da Agenda fecha o painel sem aviso. "Delegadas" filtra só por responsável.
 - Suíte final: `test_verificar` com 34 testes OK; `verificar.py --todos
   --base-kanban --sincronia --dados-reais` com 0 erro; `verificar-app.js`
   com RF-01 a RF-15 ok; `detectar.py` com 0.
