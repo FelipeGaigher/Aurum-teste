@@ -517,6 +517,30 @@ svg .verm { fill: var(--color-action); }
   .evid-fig img { max-height: 60vh; }
 }
 @media (max-width: 720px) { .prob-grade { display: flex; flex-direction: column; } }
+
+/* princípio 1: antes e depois na linha da atividade */
+.antes-depois { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: var(--space-3); }
+.antes-depois .secao-titulo + .linha-ativ { margin-bottom: var(--space-5); }
+.linha-ativ { display: flex; align-items: center; gap: var(--space-4); min-height: var(--primitive-size-64); padding: 0 var(--space-5); font-size: var(--deck-item); background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius); }
+.linha-ativ .data-cinza { margin-left: auto; font-size: var(--deck-corpo); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.linha-ativ .chip-prazo { min-height: var(--primitive-size-36); padding: 0 var(--space-3); font-size: var(--deck-corpo); }
+
+/* o que o protótipo já resolve, com status das recomendações da Q1 em questionarios.html */
+.contexto { margin: var(--space-2) 0 0; font-size: var(--deck-contexto); color: var(--color-text-muted); }
+.no-prototipo { font-size: var(--deck-corpo); line-height: var(--font-leading-tight); }
+.no-prototipo b { font-weight: var(--font-weight-semibold); }
+.no-prototipo .tag { vertical-align: middle; }
+.no-prototipo a { color: var(--color-action); font-weight: var(--font-weight-medium); white-space: nowrap; }
+.tag-feito { background-color: var(--color-tag-green-bg); border-color: var(--color-tag-green-bg); color: var(--color-tag-green-text); }
+.tag-parcial { background-color: var(--color-tag-yellow-bg); border-color: var(--color-tag-yellow-bg); color: var(--color-tag-yellow-text); }
+.prob-texto { gap: var(--space-4); }
+
+/* princípios: três blocos de texto, sem cena */
+.painel.principio { justify-content: center; gap: var(--space-6); padding: var(--space-6) var(--space-7); }
+.principio-bloco { display: flex; flex-direction: column; gap: var(--space-2); }
+.principio-frase { font-size: var(--deck-item); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+.principio-teste { font-size: var(--deck-corpo); line-height: var(--font-leading-tight); }
+.principio .no-prototipo { font-size: var(--deck-corpo); }
 </style>
 </head>
 <body>
@@ -529,7 +553,7 @@ svg .verm { fill: var(--color-action); }
     <p class="marca-capa"><span class="logo" aria-label="Astrea"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="logo-marca" x="0" y="4" width="24" height="24" rx="3"/><rect class="logo-recorte" x="14" y="0" width="14" height="14"/><rect class="logo-marca" x="18" y="0" width="10" height="10" rx="2"/></svg><span aria-hidden="true">astrea</span></span></p>
     <p class="item">Os cinco problemas</p>
     <h2>O Astrea sabe o que é prazo. A interface não mostra</h2>
-    <p class="pergunta">Quais são os 5 problemas de experiência mais relevantes, com evidência e por que importam?</p>
+    <p class="contexto">Cinco problemas do Astrea e, para cada um, o que o protótipo já resolve.</p>
   </header>
   <div class="corpo">
     <ol class="problemas lista">
@@ -567,9 +591,9 @@ svg .verm { fill: var(--color-action); }
             <ul class="sintomas">
               <li>Atraso marcado só pela cor da data<span class="tag tag-fonte">Varredura 08/11</span></li>
               <li>Nenhuma seção de atrasadas ao lado de Hoje<span class="tag tag-fonte">Tela</span></li>
-              <li>A Agenda mostra duas semanas do mês<span class="tag tag-fonte">Tela</span></li>
             </ul>
             <p class="importa"><b>Por que importa:</b> perder prazo é o risco mais caro do escritório.</p>
+            <p class="no-prototipo"><b>No protótipo:</b> Seção Atrasadas acima de Hoje, com prazos e audiências na área principal. <span class="tag tag-feito">Feito</span> <a href="prototipo/area-de-trabalho.html">Ver em Área de trabalho</a></p>
           </div>
         </div>
       </div>
@@ -577,16 +601,16 @@ svg .verm { fill: var(--color-action); }
         <p class="so-impressao secao-titulo">Problema 2. Arquitetura de informação, hipótese</p>
         <div class="prob-grade">
           <div class="evid">
-            <div class="evid-figs"><figure class="evid-fig" role="tabpanel" id="q1s2-p1-f0" aria-labelledby="q1s2-p1-m0"><img src="prototipo/prints/p2-tarefa.png" alt="Área de trabalho vazia, com título e botão usando a palavra tarefa"><figcaption><b>Área de trabalho, sem tarefas.</b> Menu Área de trabalho. O título e o botão dizem “tarefa”.</figcaption></figure><figure class="evid-fig" role="tabpanel" id="q1s2-p1-f1" aria-labelledby="q1s2-p1-m1" hidden><img src="prototipo/prints/p2-atividade.png" alt="Agenda vazia, com texto e botão usando a palavra atividade"><figcaption><b>Agenda, sem atividades.</b> Menu Agenda. Para o mesmo objeto, o botão diz “atividade”.</figcaption></figure></div>
-            <div class="miniaturas" role="tablist" aria-orientation="horizontal" aria-label="Prints do problema" data-passos><button type="button" class="miniatura" role="tab" id="q1s2-p1-m0" aria-controls="q1s2-p1-f0" aria-selected="true" aria-label="Área de trabalho, sem tarefas"><img src="prototipo/prints/p2-tarefa.png" alt=""></button><button type="button" class="miniatura" role="tab" id="q1s2-p1-m1" aria-controls="q1s2-p1-f1" aria-selected="false" aria-label="Agenda, sem atividades"><img src="prototipo/prints/p2-atividade.png" alt=""></button></div>
+            <div class="evid-figs"><figure class="evid-fig" role="tabpanel" id="q1s2-p1-f0" aria-labelledby="q1s2-p1-m0"><img src="prototipo/prints/p3-modal.png" alt="Modal Adicionar tarefa, com o título usando a palavra tarefa"><figcaption><b>Modal “Adicionar tarefa”.</b> Modal diz “tarefa”; Agenda e botão dizem “atividade”.</figcaption></figure><figure class="evid-fig" role="tabpanel" id="q1s2-p1-f1" aria-labelledby="q1s2-p1-m1" hidden><img src="prototipo/prints/p2-atividade.png" alt="Agenda vazia, com texto e botão usando a palavra atividade"><figcaption><b>Agenda, sem atividades.</b> Menu Agenda. Para o mesmo objeto, o botão diz “atividade”.</figcaption></figure></div>
+            <div class="miniaturas" role="tablist" aria-orientation="horizontal" aria-label="Prints do problema" data-passos><button type="button" class="miniatura" role="tab" id="q1s2-p1-m0" aria-controls="q1s2-p1-f0" aria-selected="true" aria-label="Modal “Adicionar tarefa”"><img src="prototipo/prints/p3-modal.png" alt=""></button><button type="button" class="miniatura" role="tab" id="q1s2-p1-m1" aria-controls="q1s2-p1-f1" aria-selected="false" aria-label="Agenda, sem atividades"><img src="prototipo/prints/p2-atividade.png" alt=""></button></div>
           </div>
           <div class="prob-texto">
             <ul class="sintomas">
-              <li>“Tarefa” no modal, “atividade” na Agenda<span class="tag tag-fonte">Tela</span></li>
-              <li>A mesma atividade em quatro lugares<span class="tag tag-fonte">Tela</span><span class="tag tag-fonte">Varredura 08/11</span></li>
-              <li>Prazo e audiência existem só como etiqueta<span class="tag tag-fonte">Varredura 08/11</span></li>
+              <li>Os clientes pedem tarefa, prazo, audiência e evento como tipos diferentes (ASTP-I-639, ASTS-I-702)<span class="tag tag-fonte">Planilha</span></li>
+              <li>“Tarefa” na Área de trabalho e no modal, “Atividade” na Agenda e no botão<span class="tag tag-fonte">Tela</span></li>
             </ul>
-            <p class="importa"><b>Por que importa:</b> quem busca precisa saber o nome e o lugar.</p>
+            <p class="importa"><b>Por que importa:</b> quem busca precisa saber onde está e como se chama; o custo em chamados ainda não foi medido.</p>
+            <p class="no-prototipo"><b>No protótipo:</b> “Atividade” como termo geral, com tarefa, prazo, audiência e evento como tipos. <span class="tag tag-parcial">Parcial</span> <a href="prototipo/area-de-trabalho.html">Ver em Área de trabalho</a></p>
           </div>
         </div>
       </div>
@@ -619,10 +643,10 @@ svg .verm { fill: var(--color-action); }
             <p class="cifra"><b>4</b><span>campos obrigatórios numa tarefa simples</span><span class="tag tag-fonte">Tela</span></p>
             <ul class="sintomas">
               <li>“Lista de tarefas” é obrigatório, com um só valor<span class="tag tag-fonte">Tela</span></li>
-              <li>Incluir pessoa abre um popover sobre o modal<span class="tag tag-fonte">Tela</span></li>
               <li>Data passada abre outro diálogo, sem motivo<span class="tag tag-fonte">Tela</span></li>
             </ul>
             <p class="importa"><b>Por que importa:</b> atrito diário leva o prazo para fora do sistema.</p>
+            <p class="no-prototipo"><b>No protótipo:</b> Data passada avisa no próprio painel, com “Salvar como concluída”. <span class="tag tag-feito">Feito</span> <a href="prototipo/area-de-trabalho.html">Ver em Área de trabalho</a></p>
           </div>
         </div>
       </div>
@@ -640,6 +664,7 @@ svg .verm { fill: var(--color-action); }
               <li>Criar em quatro formas, voltar em três<span class="tag tag-fonte">Varredura 08/11</span></li>
             </ul>
             <p class="importa"><b>Por que importa:</b> cada divergência é reaprendizado e manutenção.</p>
+            <p class="no-prototipo"><b>No protótipo:</b> O menu marca o módulo ativo com fundo e cor, em todos os módulos. <span class="tag tag-feito">Feito</span> <a href="prototipo/processos.html?ficha=1">Ver em Processos</a></p>
           </div>
         </div>
       </div>
@@ -657,6 +682,7 @@ svg .verm { fill: var(--color-action); }
               <li>Faixa de campanha com contador, vista em 07/11<span class="tag tag-fonte">Tela</span></li>
             </ul>
             <p class="importa"><b>Por que importa:</b> quem vive no produto lê esse ruído o dia todo.</p>
+            <p class="no-prototipo"><b>No protótipo:</b> A IA usa os mesmos componentes e cores; a busca fica junto das ações. <span class="tag tag-feito">Feito</span> <a href="prototipo/ias.html">Ver em Conheça as IAs</a></p>
           </div>
         </div>
       </div>
@@ -684,49 +710,45 @@ svg .verm { fill: var(--color-action); }
     <div class="paineis" aria-live="polite">
       <div class="painel principio" role="tabpanel" id="q1s4-p0" aria-labelledby="q1s4-t0" tabindex="0">
         <p class="so-impressao secao-titulo">O prazo primeiro</p>
-        <svg class="desfoque" viewBox="0 0 800 560" role="img" aria-label="Teste de desfoque. Uma lista de atividades aparece nítida e depois desfocada. Desfocada, só os prazos vencido e de hoje continuam visíveis">
-        <defs>
-          <filter id="desfoque" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="8"/></filter>
-          <g id="lista">
-            <rect class="fundo-demo" width="385" height="500"/>
-            <text class="linha-demo" x="24" y="74">Contestação</text><rect class="chip-forte" x="228" y="44" width="136" height="44" rx="4"/><text class="chip-txt demo-inv" x="296" y="74">Vencido</text>
-            <text class="linha-demo" x="24" y="194">Audiência</text><rect class="chip-forte" x="228" y="164" width="136" height="44" rx="4"/><text class="chip-txt demo-inv" x="296" y="194">Hoje</text>
-            <text class="linha-demo demo-sutil" x="24" y="314">Réplica</text><rect class="chip-fraco" x="228" y="284" width="136" height="44" rx="4"/><text class="chip-txt demo-sutil" x="296" y="314">Amanhã</text>
-            <text class="linha-demo demo-sutil" x="24" y="434">Recurso</text><rect class="chip-fraco" x="228" y="404" width="136" height="44" rx="4"/><text class="chip-txt demo-sutil" x="296" y="434">Em 5 dias</text>
-          </g>
-        </defs>
-        <text class="tit-demo" x="0" y="30">Nítido</text>
-        <text class="tit-demo verm" x="415" y="30">Desfocado</text>
-        <use href="#lista" x="0" y="56"/>
-        <use href="#lista" x="415" y="56" filter="url(#desfoque)"/>
-      </svg>
-        <p class="por-que">Se o prazo some no desfoque, a tela volta.</p>
-        <p class="tags"><span class="tag">Figura e fundo</span><span class="tag">Visibilidade do estado do sistema</span></p>
+        <div class="principio-bloco"><p class="secao-titulo">O princípio</p><p class="principio-frase">O dado que não pode falhar é o mais visível em toda tela de atividade. Cor e texto, nunca só cor.</p></div>
+        <div class="principio-bloco"><p class="secao-titulo">No protótipo</p><p class="no-prototipo">Seção Atrasadas acima de Hoje, com prazos na área principal. <span class="tag tag-feito">Feito</span> <a href="prototipo/area-de-trabalho.html">Ver em Área de trabalho</a></p></div>
+        <div class="principio-bloco"><p class="secao-titulo">Na revisão</p><p class="principio-teste">Com a tela desfocada, o prazo ainda aparece?</p></div>
+        <p class="tags"><span class="tag">Visibilidade do estado do sistema</span><span class="tag">Figura e fundo</span></p>
       </div>
       <div class="painel principio" role="tabpanel" id="q1s4-p1" aria-labelledby="q1s4-t1" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Uma palavra, um lugar</p>
-        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="traco" x="1" y="1" width="178" height="88" rx="4"/><text class="rotulo-forte" x="12" y="22">Atividade</text><rect class="traco" x="12" y="32" width="72" height="22" rx="3"/><text x="48" y="48" text-anchor="middle">tarefa</text><rect class="alerta" x="96" y="32" width="72" height="22" rx="3"/><text class="verm" x="132" y="48" text-anchor="middle">prazo</text><rect class="traco" x="12" y="60" width="72" height="22" rx="3"/><text x="48" y="76" text-anchor="middle">audiência</text><rect class="traco" x="96" y="60" width="72" height="22" rx="3"/><text x="132" y="76" text-anchor="middle">evento</text></svg>
-          <div class="detalhe"><p class="por-que">Atividade é o termo geral, e o resto são tipos.</p><p class="dia"><b>Na revisão:</b> rótulo novo passa pelo glossário do design system.</p><p class="tags"><span class="tag">Região comum</span><span class="tag">Correspondência com o mundo real</span></p></div></div>
+        <div class="principio-bloco"><p class="secao-titulo">O princípio</p><p class="principio-frase">Cada coisa tem um nome só e um lugar só. “Atividade” é o termo geral; tarefa, prazo, audiência e evento são tipos dela. A Área de trabalho é onde se acha; a Agenda é outra visão da mesma lista.</p></div>
+        <div class="principio-bloco"><p class="secao-titulo">No protótipo</p><p class="no-prototipo">“Atividade” como termo geral, com tarefa, prazo, audiência e evento como tipos. <span class="tag tag-parcial">Parcial</span> <a href="prototipo/area-de-trabalho.html">Ver em Área de trabalho</a></p></div>
+        <div class="principio-bloco"><p class="secao-titulo">Na revisão</p><p class="principio-teste">O rótulo novo já está no glossário do design system?</p></div>
+        <p class="tags"><span class="tag">Correspondência com o mundo real</span><span class="tag">Região comum</span></p>
       </div>
       <div class="painel principio" role="tabpanel" id="q1s4-p2" aria-labelledby="q1s4-t2" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">A moldura é a âncora</p>
-        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="cheio" x="1" y="1" width="178" height="16"/><rect class="cheio" x="1" y="17" width="34" height="72"/><rect class="traco" x="1" y="1" width="178" height="88"/><rect class="apagado" x="44" y="26" width="60" height="54"/><rect class="tracejado" x="112" y="26" width="58" height="54"/></svg>
-          <div class="detalhe"><p class="por-que">Tela nova e legada na mesma casa.</p><p class="dia"><b>Na revisão:</b> a moldura é componente único, e squad não a redesenha.</p><p class="tags"><span class="tag">Proximidade</span><span class="tag">Consistência e padrões</span></p></div></div>
+        <div class="principio-bloco"><p class="secao-titulo">O princípio</p><p class="principio-frase">Cabeçalho, menu e ações ficam no mesmo lugar em tela nova e legada. O conteúdo migra, a casa fica.</p></div>
+        <div class="principio-bloco"><p class="secao-titulo">No protótipo</p><p class="no-prototipo">O menu marca o módulo ativo, e a busca fica junto das ações. <span class="tag tag-feito">Feito</span> <a href="prototipo/processos.html?ficha=1">Ver em Processos</a></p></div>
+        <div class="principio-bloco"><p class="secao-titulo">Na revisão</p><p class="principio-teste">A tela usa a moldura única, sem redesenhar cabeçalho ou menu?</p></div>
+        <p class="tags"><span class="tag">Consistência e padrões</span><span class="tag">Proximidade</span></p>
       </div>
       <div class="painel principio" role="tabpanel" id="q1s4-p3" aria-labelledby="q1s4-t3" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Todo erro tem saída</p>
-        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="alerta" x="1" y="8" width="178" height="32" rx="3"/><text x="12" y="29">01/10/2026</text><text class="verm" x="1" y="60">A data já passou.</text><text class="sublinhado" x="1" y="82">Salvar como concluída</text></svg>
-          <div class="detalhe"><p class="por-que">O aviso fica junto do campo e diz como voltar.</p><p class="dia"><b>Na revisão:</b> o handoff lista cada estado de erro e a saída dele.</p><p class="tags"><span class="tag">Proximidade</span><span class="tag">Ajuda para corrigir erros</span></p></div></div>
+        <div class="principio-bloco"><p class="secao-titulo">O princípio</p><p class="principio-frase">Nenhum botão morre em silêncio. Cada estado de erro diz o que houve e como voltar.</p></div>
+        <div class="principio-bloco"><p class="secao-titulo">No protótipo</p><p class="no-prototipo">Data passada avisa no próprio painel, com “Salvar como concluída”. <span class="tag tag-feito">Feito</span> <a href="prototipo/area-de-trabalho.html">Ver em Área de trabalho</a></p></div>
+        <div class="principio-bloco"><p class="secao-titulo">Na revisão</p><p class="principio-teste">Cada estado de erro do handoff tem uma saída?</p></div>
+        <p class="tags"><span class="tag">Ajuda para corrigir erros</span><span class="tag">Proximidade</span></p>
       </div>
       <div class="painel principio" role="tabpanel" id="q1s4-p4" aria-labelledby="q1s4-t4" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Densidade para quem consulta o dia todo</p>
-        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><g class="apagado"><rect x="28" y="4" width="62" height="9"/><rect x="104" y="4" width="46" height="9"/><rect x="28" y="20" width="62" height="9"/><rect x="104" y="20" width="60" height="9"/><rect x="28" y="36" width="62" height="9"/><rect x="104" y="36" width="38" height="9"/><rect x="28" y="52" width="62" height="9"/><rect x="104" y="52" width="52" height="9"/><rect x="28" y="68" width="62" height="9"/><rect x="104" y="68" width="44" height="9"/></g><g class="cheio"><rect x="4" y="4" width="14" height="9"/><rect x="4" y="20" width="14" height="9"/><rect x="4" y="36" width="14" height="9"/><rect x="4" y="52" width="14" height="9"/><rect x="4" y="68" width="14" height="9"/></g><line class="guia" x1="97" y1="0" x2="97" y2="90"/></svg>
-          <div class="detalhe"><p class="por-que">Compacto por padrão, e o mês cabe na tela.</p><p class="dia"><b>Na revisão:</b> protótipo com volume real de atividades, não com três linhas.</p><p class="tags"><span class="tag">Continuidade</span><span class="tag">Flexibilidade e eficiência</span></p></div></div>
+        <div class="principio-bloco"><p class="secao-titulo">O princípio</p><p class="principio-frase">Compacto por padrão, com modo respirado por escolha. Tabela quando se compara, card quando se age.</p></div>
+        <div class="principio-bloco"><p class="secao-titulo">No protótipo</p><p class="no-prototipo">O mês inteiro cabe na Agenda em 1440; falta o modo respirado. <span class="tag tag-parcial">Parcial</span> <a href="prototipo/agenda.html">Ver em Agenda</a></p></div>
+        <div class="principio-bloco"><p class="secao-titulo">Na revisão</p><p class="principio-teste">O protótipo tem volume real de atividades, não três linhas?</p></div>
+        <p class="tags"><span class="tag">Flexibilidade e eficiência</span><span class="tag">Continuidade</span></p>
       </div>
       <div class="painel principio" role="tabpanel" id="q1s4-p5" aria-labelledby="q1s4-t5" tabindex="0" hidden>
         <p class="so-impressao secao-titulo">Mesmo padrão para tudo, inclusive a IA</p>
-        <div class="principio-detalhe"><svg class="mini" viewBox="0 0 180 90" aria-hidden="true"><rect class="traco" x="1" y="28" width="54" height="34" rx="3"/><text x="28" y="50" text-anchor="middle">Filtrar</text><rect class="alerta" x="63" y="28" width="54" height="34" rx="3"/><text class="verm" x="90" y="50" text-anchor="middle">IA</text><rect class="traco" x="125" y="28" width="54" height="34" rx="3"/><text x="152" y="50" text-anchor="middle">Salvar</text></svg>
-          <div class="detalhe"><p class="por-que">A IA entra como componente, com confirmar e desfazer.</p><p class="dia"><b>Na revisão:</b> recurso de IA usa o mesmo kit e a mesma revisão.</p><p class="tags"><span class="tag">Similaridade</span><span class="tag">Controle e liberdade</span></p></div></div>
+        <div class="principio-bloco"><p class="secao-titulo">O princípio</p><p class="principio-frase">A IA entra como componente do sistema, com confirmar e desfazer. Sem paleta nem ícone à parte.</p></div>
+        <div class="principio-bloco"><p class="secao-titulo">No protótipo</p><p class="no-prototipo">A IA usa os mesmos componentes e cores do resto. <span class="tag tag-feito">Feito</span> <a href="prototipo/ias.html">Ver em Conheça as IAs</a></p></div>
+        <div class="principio-bloco"><p class="secao-titulo">Na revisão</p><p class="principio-teste">O recurso de IA usa o mesmo kit e a mesma revisão?</p></div>
+        <p class="tags"><span class="tag">Controle e liberdade</span><span class="tag">Similaridade</span></p>
       </div>
     </div>
   </div>
