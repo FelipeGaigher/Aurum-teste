@@ -986,11 +986,13 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   background-color: var(--color-bg-surface);
 }
 .subtarefa + .subtarefa { margin-top: var(--space-2); }
+/* Grade de três colunas: marcador, título e seta na primeira linha; a sprint embaixo do título. */
 .subtarefa-resumo {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: var(--space-2);
+  row-gap: var(--space-1);
   align-items: baseline;
-  gap: var(--space-1) var(--space-2);
   padding: var(--space-3);
   cursor: pointer;
   list-style: none;
@@ -998,10 +1000,11 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 .subtarefa-resumo::-webkit-details-marker { display: none; }
 .subtarefa-resumo::after {
   content: "";
-  flex: none;
+  grid-column: 3;
+  grid-row: 1;
+  align-self: center;
   width: var(--space-2);
   height: var(--space-2);
-  margin-left: auto;
   translate: 0 -2px;
   border-right: var(--focus-width) solid var(--color-text-muted);
   border-bottom: var(--focus-width) solid var(--color-text-muted);
@@ -1021,7 +1024,7 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 }
 .subtarefa[data-status="fazendo"] .subtarefa-marcador { border-color: var(--color-action); }
 .subtarefa[data-status="feito"] .subtarefa-marcador { border-color: var(--color-action); background-color: var(--color-action); }
-.subtarefa-meta { flex-basis: 100%; padding-left: calc(var(--space-2) + var(--space-2)); color: var(--color-text-muted); font-size: var(--font-size-label); }
+.subtarefa-meta { grid-column: 2; grid-row: 2; color: var(--color-text-muted); font-size: var(--font-size-label); }
 .subtarefa-corpo { display: grid; gap: var(--space-2); padding: var(--space-1) var(--space-3) var(--space-3); }
 .subtarefa-texto { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
 .subtarefa-deveres { margin: 0; padding-left: var(--space-5); font-size: var(--font-size-label); }
@@ -2188,6 +2191,19 @@ const botaoCriar = document.getElementById('criar-atividade');
 botaoCriar.addEventListener('click', () => painel.showModal());
 document.getElementById('fechar-painel').addEventListener('click', () => painel.close());
 painel.addEventListener('close', () => botaoCriar.focus());
+
+// Clicar fora do diálogo fecha e volta ao quadro. O alvo do clique no backdrop é o próprio dialog,
+// então a conta usa as coordenadas: clique fora da caixa fecha, clique dentro não.
+function fecharAoClicarFora(dialogo) {
+  dialogo.addEventListener('click', (evento) => {
+    if (evento.target !== dialogo) return;
+    const caixa = dialogo.getBoundingClientRect();
+    const fora = evento.clientX < caixa.left || evento.clientX > caixa.right || evento.clientY < caixa.top || evento.clientY > caixa.bottom;
+    if (fora) dialogo.close();
+  });
+}
+fecharAoClicarFora(painel);
+fecharAoClicarFora(painelDetalhe);
 
 document.querySelector('.busca').addEventListener('submit', (evento) => evento.preventDefault());
 

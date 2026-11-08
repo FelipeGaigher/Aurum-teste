@@ -124,3 +124,6 @@ com data. O que foi entregue fica no commit, não aqui.
   é proposta. Superfície mais clara que a página, ação em azul claro com
   texto escuro, vencido e hoje em tons claros. Cada par medido no AA com o
   `contraste.py` da skill. Segue o sistema e a chave do cabeçalho vence.
+- Dois retoques de Felipe no detalhe. A seta do acordeão alinhada ao
+  título da subtarefa, em grade de três colunas. O clique fora do diálogo
+  fecha e devolve o foco ao quadro.
