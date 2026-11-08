@@ -1960,6 +1960,8 @@
     function pedirFechar() {
       if (!antesDeFechar || antesDeFechar() !== false) fechar();
     }
+    // Clicar fora do painel, no fundo escurecido, pede para fechar: a navegação continua (pedido de Felipe, 08/11).
+    el.addEventListener('click', (e) => { if (e.target === el) pedirFechar(); });
 
     // O Esc passa por pedirFechar. Peça interna que trata o próprio Esc chama preventDefault,
     // e o painel fica aberto. O cancel cobre o Esc que chega ao dialog sem passar pelo keydown.
