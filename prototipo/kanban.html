@@ -78,7 +78,7 @@
   --primitive-size-48: 48px;
   --primitive-size-64: 64px;
   --primitive-size-88: 88px;
-  --primitive-size-260: 260px;
+  --primitive-size-200: 200px; /* sidebar que abraca o item mais longo, "Processos e casos", com 8px de folga */
   --primitive-size-300: 300px;
   --primitive-size-440: 440px;
   --primitive-size-480: 480px;
@@ -151,7 +151,7 @@
   --size-shortcut: var(--primitive-size-36);
   --size-search-height: var(--primitive-size-40);
   --size-header: var(--primitive-size-64);
-  --size-sidebar: var(--primitive-size-260);
+  --size-sidebar: var(--primitive-size-200);
   --size-sidebar-recolhida: var(--primitive-size-64);
   --size-search: var(--primitive-size-480);
   --size-dialog: var(--primitive-size-440);
@@ -251,7 +251,6 @@
   --component-dialog-bg: var(--color-bg-surface);
   --component-dialog-width: var(--size-dialog);
   --component-dialog-detail-width: var(--size-dialog-detail);
-  --component-dialog-subtask-width: var(--size-dialog-wide);
   --component-column-width: var(--size-column);
   --component-dialog-radius: var(--radius-dialog);
   --component-dialog-backdrop: var(--color-scrim);
@@ -447,7 +446,21 @@ svg.icone {
   background-color: var(--component-sidebar-bg);
   border-right: var(--border-width) solid var(--color-border-default);
 }
+/* O atributo hidden vence qualquer display de classe. Sem isto, um bloco em grid some do hidden. */
+[hidden] { display: none !important; }
+
 .menu-lateral ul { margin: 0; padding: 0; list-style: none; }
+/* rótulo de grupo do menu, como "Especialista UX/UI" acima do Kanban */
+.menu-grupo {
+  margin: var(--space-2) var(--space-4) var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--font-tracking-caps);
+  line-height: var(--font-leading-tight);
+  text-transform: uppercase;
+}
+body[data-menu="recolhido"] .menu-grupo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .menu-lateral hr {
   margin: var(--space-3) 0;
   border: 0;
@@ -860,7 +873,6 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   cursor: pointer;
 }
 .botao:hover { background-color: var(--color-bg-hover); }
-.botao-compacto { height: var(--size-icon-button); padding: 0 var(--space-3); font-size: var(--font-size-label); }
 .botao-primario {
   padding: 0 var(--space-5);
   background-color: var(--component-button-primary-bg);
@@ -974,10 +986,6 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   align-items: start;
 }
 .painel-detalhe .detalhe-dados { grid-template-columns: minmax(0, 1fr); }
-.painel-subtarefa { width: min(var(--component-dialog-subtask-width), calc(100vw - var(--space-6))); }
-.detalhe-trilha { margin: 0 0 var(--space-2); color: var(--color-text-muted); font-size: var(--font-size-label); }
-.painel-subtarefa .detalhe-dados { grid-template-columns: minmax(0, 1fr); }
-.painel-rodape-acoes { justify-content: flex-end; gap: var(--space-2); }
 .detalhe-subtarefas h3 {
   display: flex;
   align-items: baseline;
@@ -998,22 +1006,22 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 .subtarefa + .subtarefa { margin-top: var(--space-2); }
 /* o hover realça o card inteiro da subtarefa, com o raio do card, e não só o cabeçalho */
 .subtarefa:hover { background-color: var(--color-bg-subtle); border-color: var(--color-border-strong); }
-/* Grade de quatro colunas: marcador, título, botão Ver e seta na primeira linha; a sprint embaixo do título. */
+/* Grade de três colunas: marcador, título e seta na primeira linha; sprint e dono embaixo do título. */
 .subtarefa-resumo {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   column-gap: var(--space-2);
   row-gap: var(--space-1);
   align-items: baseline;
   padding: var(--space-3);
+  border-radius: var(--radius-card);
   cursor: pointer;
   list-style: none;
 }
 .subtarefa-resumo::-webkit-details-marker { display: none; }
-.subtarefa-resumo .botao-compacto { grid-column: 3; grid-row: 1; align-self: center; }
 .subtarefa-resumo::after {
   content: "";
-  grid-column: 4;
+  grid-column: 3;
   grid-row: 1;
   align-self: center;
   width: var(--space-2);
@@ -1025,7 +1033,56 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   transition: rotate 150ms;
 }
 .subtarefa[open] > .subtarefa-resumo::after { rotate: 225deg; translate: 0 2px; }
-.subtarefa-resumo { border-radius: var(--radius-card); }
+@media (prefers-reduced-motion: reduce) { .subtarefa-resumo::after { transition: none; } }
+
+/* As ações só aparecem com o card aberto, numa barra no fim do corpo. Olho leva à subtarefa inteira no mesmo
+   painel, check conclui, balão abre o campo de comentário. Nada abre outro modal. */
+.subtarefa-acoes { display: flex; justify-content: flex-end; gap: var(--space-1); }
+.botao-link { padding: 0; background: none; border: 0; color: var(--color-action); font: inherit; font-size: var(--font-size-label); text-decoration: underline; cursor: pointer; }
+.detalhe-trilha { margin: 0 0 var(--space-2); color: var(--color-text-muted); font-size: var(--font-size-label); }
+.painel-rodape-acoes { justify-content: flex-end; gap: var(--space-2); }
+.acao-icone {
+  display: inline-grid;
+  grid-auto-flow: column;
+  place-items: center;
+  gap: var(--space-0);
+  min-width: var(--size-icon-button);
+  height: var(--size-icon-button);
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--font-size-label);
+  cursor: pointer;
+}
+.acao-icone svg.icone { width: var(--size-icon-nav); height: var(--size-icon-nav); }
+.acao-icone:hover { background-color: var(--color-bg-hover); color: var(--color-text-default); }
+.acao-icone[aria-expanded="true"] { color: var(--color-action); }
+.acao-icone[aria-pressed="true"] { background-color: var(--color-action); color: var(--color-action-text); }
+.acao-icone.com-contagem { padding: 0 var(--space-2) 0 var(--space-1); }
+
+/* comentários da subtarefa, dentro do acordeão, em memória */
+.subtarefa-comentarios { display: grid; gap: var(--space-2); padding-top: var(--space-2); border-top: var(--border-width) solid var(--color-border-default); }
+.subtarefa-comentarios h4 { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); }
+.comentarios-lista { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.comentario { display: grid; gap: var(--space-0); font-size: var(--font-size-label); }
+.comentario p { margin: 0; }
+.comentario b { font-weight: var(--font-weight-semibold); }
+.comentario .quando { color: var(--color-text-muted); }
+.comentario-form { display: grid; gap: var(--space-2); }
+.comentario-form textarea {
+  min-height: calc(var(--size-control) * 2);
+  padding: var(--space-2) var(--space-3);
+  resize: vertical;
+  font: inherit;
+  color: var(--color-text-default);
+  background-color: var(--color-bg-surface);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius);
+}
+.comentario-form .botao { justify-self: end; }
 .subtarefa-resumo b { font-weight: var(--font-weight-semibold); }
 .subtarefa-marcador {
   flex: none;
@@ -1042,7 +1099,6 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 .subtarefa-texto { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
 .subtarefa-deveres { margin: 0; padding-left: var(--space-5); font-size: var(--font-size-label); }
 @media (max-width: 800px) { .detalhe-colunas { grid-template-columns: minmax(0, 1fr); } }
-@media (prefers-reduced-motion: reduce) { .subtarefa-resumo::after { transition: none; } }
 
 /* responsivo. Tablet: as colunas param de crescer e o quadro rola. */
 @media (max-width: 1024px) {
@@ -1154,17 +1210,22 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 </header>
 
 <div class="corpo">
-  <nav class="menu-lateral" aria-label="Menu principal">
-    <ul id="menu-principal">
+  <nav class="menu-lateral" id="menu-principal" aria-label="Menu principal">
+    <!-- O grupo do teste vem primeiro: o rótulo é o cargo da vaga, e o item é o módulo oculto do próprio Astrea. -->
+    <p class="menu-grupo" id="grupo-especialista">Especialista UX/UI</p>
+    <ul aria-labelledby="grupo-especialista">
+      <li><a href="#conteudo" aria-current="page">
+        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v11h-4zM16 4h4v7h-4z"/></svg>
+        <span class="rotulo">Gestão kanban</span></a></li>
+    </ul>
+    <hr>
+    <ul aria-label="Módulos do Astrea">
       <li><a href="#">
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/></svg>
         <span class="rotulo">Área de trabalho</span></a></li>
       <li><a href="#">
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></svg>
         <span class="rotulo">Agenda</span></a></li>
-      <li><a href="#conteudo" aria-current="page">
-        <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h4v16H4zM10 4h4v11h-4zM16 4h4v7h-4z"/></svg>
-        <span class="rotulo">Gestão kanban</span></a></li>
       <li><a href="#">
         <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>
         <span class="rotulo">Contatos</span></a></li>
@@ -1289,39 +1350,43 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 </dialog>
 
 <dialog id="painel-detalhe" class="painel painel-detalhe" aria-labelledby="detalhe-titulo">
-  <h2 id="detalhe-titulo"></h2>
-  <ul id="detalhe-tags" class="detalhe-tags" aria-label="Dados da história"></ul>
-  <div class="detalhe-colunas">
-    <dl class="detalhe-dados">
-      <div><dt>Objetivo</dt><dd id="detalhe-objetivo"></dd></div>
-      <div><dt>Entregável</dt><dd id="detalhe-entregavel"></dd></div>
-      <div><dt>Pronto quando</dt><dd id="detalhe-pronto"></dd></div>
-      <div><dt>Equipes</dt><dd><ul id="detalhe-equipes" class="card-chips" aria-label="Equipes envolvidas"></ul></dd></div>
-    </dl>
-    <section class="detalhe-subtarefas" aria-labelledby="detalhe-subtarefas-titulo">
-      <h3 id="detalhe-subtarefas-titulo">Subtarefas <span id="detalhe-progresso" class="detalhe-progresso"></span></h3>
-      <div id="detalhe-subtarefas"></div>
-    </section>
+  <!-- O painel tem duas vistas no mesmo lugar: a história e, pelo olho, a subtarefa inteira. Nunca um modal sobre o outro. -->
+  <div id="vista-historia">
+    <h2 id="detalhe-titulo"></h2>
+    <ul id="detalhe-tags" class="detalhe-tags" aria-label="Dados da história"></ul>
+    <div class="detalhe-colunas">
+      <dl class="detalhe-dados">
+        <div><dt>Objetivo</dt><dd id="detalhe-objetivo"></dd></div>
+        <div><dt>Entregável</dt><dd id="detalhe-entregavel"></dd></div>
+        <div><dt>Pronto quando</dt><dd id="detalhe-pronto"></dd></div>
+        <div><dt>Equipes</dt><dd><ul id="detalhe-equipes" class="card-chips" aria-label="Equipes envolvidas"></ul></dd></div>
+      </dl>
+      <section class="detalhe-subtarefas" aria-labelledby="detalhe-subtarefas-titulo">
+        <h3 id="detalhe-subtarefas-titulo">Subtarefas <span id="detalhe-progresso" class="detalhe-progresso"></span></h3>
+        <div id="detalhe-subtarefas"></div>
+      </section>
+    </div>
   </div>
-  <div class="painel-rodape painel-rodape-fim">
-    <button type="button" id="fechar-detalhe" class="botao">Fechar</button>
+  <div id="vista-subtarefa" hidden>
+    <p class="detalhe-trilha"><button type="button" id="voltar-historia" class="botao-link">Voltar à história</button> <span id="subtarefa-historia"></span></p>
+    <h2 id="subtarefa-titulo"></h2>
+    <ul id="subtarefa-tags" class="detalhe-tags" aria-label="Dados da subtarefa"></ul>
+    <div class="detalhe-colunas">
+      <dl class="detalhe-dados">
+        <div><dt>Objetivo</dt><dd id="subtarefa-objetivo"></dd></div>
+        <div><dt>Entregável</dt><dd id="subtarefa-entregavel"></dd></div>
+        <div><dt>Deveres</dt><dd><ul id="subtarefa-deveres"></ul></dd></div>
+        <div><dt>Pronto quando</dt><dd id="subtarefa-pronto"></dd></div>
+        <div><dt>Equipes</dt><dd><ul id="subtarefa-equipes" class="card-chips" aria-label="Equipes envolvidas"></ul></dd></div>
+      </dl>
+      <section class="detalhe-subtarefas" aria-label="Comentários da subtarefa">
+        <div id="subtarefa-comentarios"></div>
+      </section>
+    </div>
   </div>
-</dialog>
-
-<dialog id="painel-subtarefa" class="painel painel-subtarefa" aria-labelledby="subtarefa-titulo">
-  <p class="detalhe-trilha" id="subtarefa-historia"></p>
-  <h2 id="subtarefa-titulo"></h2>
-  <ul id="subtarefa-tags" class="detalhe-tags" aria-label="Dados da subtarefa"></ul>
-  <dl class="detalhe-dados">
-    <div><dt>Objetivo</dt><dd id="subtarefa-objetivo"></dd></div>
-    <div><dt>Entregável</dt><dd id="subtarefa-entregavel"></dd></div>
-    <div><dt>Deveres</dt><dd><ul id="subtarefa-deveres"></ul></dd></div>
-    <div><dt>Pronto quando</dt><dd id="subtarefa-pronto"></dd></div>
-    <div><dt>Equipes</dt><dd><ul id="subtarefa-equipes" class="card-chips" aria-label="Equipes envolvidas"></ul></dd></div>
-  </dl>
   <div class="painel-rodape painel-rodape-acoes">
-    <button type="button" id="fechar-subtarefa" class="botao">Fechar</button>
-    <button type="button" id="concluir-subtarefa" class="botao botao-primario">Concluir subtarefa</button>
+    <button type="button" id="fechar-detalhe" class="botao">Fechar</button>
+    <button type="button" id="concluir-subtarefa" class="botao botao-primario" hidden>Concluir subtarefa</button>
   </div>
 </dialog>
 <script>
@@ -2089,39 +2154,134 @@ function tag(rotulo, valor, status) {
   return item;
 }
 
+const ICONES_SUBTAREFA = {
+  olho: 'M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  check: 'M5 12l5 5L20 7',
+  balao: 'M21 12a8 8 0 0 1-8 8H8l-5 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z',
+};
+// Quais acordeões estão abertos, por id, para sobreviverem ao redesenho do detalhe.
+const subtarefasAbertas = new Set();
+
+function acaoIcone(caminho, rotulo) {
+  const botao = el('button', 'acao-icone');
+  botao.type = 'button';
+  botao.setAttribute('aria-label', rotulo);
+  botao.title = rotulo;
+  botao.append(criarIcone(caminho));
+  return botao;
+}
+
+function nomeDoUsuario() {
+  return document.querySelector('.usuario').textContent.trim();
+}
+
+// Formulários de comentário abertos pelo balão, por id de subtarefa, para sobreviverem ao redesenho.
+const comentariosAbertos = new Set();
+
+function blocoComentarios(sub, historia, contexto) {
+  const bloco = el('section', 'subtarefa-comentarios');
+  const comentarios = sub.comentarios || [];
+  const formVisivel = contexto === 'vista' || comentariosAbertos.has(sub.id);
+  if (!comentarios.length && !formVisivel) { bloco.hidden = true; }
+  bloco.append(el('h4', null, comentarios.length ? 'Comentários (' + comentarios.length + ')' : 'Comentários'));
+  if (comentarios.length) {
+    const lista = el('ul', 'comentarios-lista');
+    for (const comentario of comentarios) {
+      const item = el('li', 'comentario');
+      const cabecalho = el('p', null);
+      cabecalho.append(el('b', null, comentario.autor), ' ', el('span', 'quando', comentario.quando));
+      item.append(cabecalho, el('p', null, comentario.texto));
+      lista.append(item);
+    }
+    bloco.append(lista);
+  }
+  const form = el('form', 'comentario-form');
+  form.hidden = !formVisivel;
+  const id = 'comentario-' + sub.id + '-' + contexto;
+  const rotulo = el('label', 'visualmente-oculto', 'Novo comentário');
+  rotulo.htmlFor = id;
+  const campo = el('textarea', null);
+  campo.id = id;
+  campo.rows = 2;
+  campo.placeholder = 'Escreva um comentário';
+  const enviar = el('button', 'botao', 'Comentar');
+  enviar.type = 'submit';
+  form.append(rotulo, campo, enviar);
+  form.addEventListener('submit', (evento) => {
+    evento.preventDefault();
+    const texto = campo.value.trim();
+    if (texto) comentarNaSubtarefa(sub, historia, texto);
+  });
+  bloco.append(form);
+  return bloco;
+}
+
+function barraDeAcoes(sub, historia, aoComentar) {
+  const acoes = el('div', 'subtarefa-acoes');
+  const olho = acaoIcone(ICONES_SUBTAREFA.olho, 'Ver a subtarefa inteira: ' + sub.titulo);
+  olho.dataset.acao = 'ver';
+  olho.addEventListener('click', () => abrirVistaSubtarefa(sub, historia));
+  const feita = sub.status === 'feito';
+  const concluir = acaoIcone(ICONES_SUBTAREFA.check, (feita ? 'Reabrir subtarefa: ' : 'Concluir subtarefa: ') + sub.titulo);
+  concluir.dataset.acao = 'concluir';
+  concluir.setAttribute('aria-pressed', String(feita));
+  concluir.addEventListener('click', () => alternarConclusao(sub, historia));
+  const comentarios = sub.comentarios || [];
+  const quantos = comentarios.length ? '. ' + comentarios.length + (comentarios.length === 1 ? ' comentário' : ' comentários') : '';
+  const comentar = acaoIcone(ICONES_SUBTAREFA.balao, 'Comentar na subtarefa: ' + sub.titulo + quantos);
+  comentar.dataset.acao = 'comentar';
+  if (comentarios.length) {
+    comentar.classList.add('com-contagem');
+    comentar.append(el('span', 'contagem', String(comentarios.length)));
+  }
+  comentar.addEventListener('click', aoComentar);
+  acoes.append(olho, concluir, comentar);
+  return acoes;
+}
+
 function itemSubtarefa(sub, historia) {
-  // Cada subtarefa é um acordeão fechado: o título e os dados ficam à vista, o resto abre ao clicar.
-  // O botão Ver abre a subtarefa no próprio painel, sem alternar o acordeão.
+  // Cada subtarefa é um acordeão: título e dados à vista, o resto abre no lugar. As ações só aparecem aberto.
   const item = el('details', 'subtarefa');
   item.dataset.status = sub.status;
+  item.dataset.id = sub.id;
+  item.open = subtarefasAbertas.has(sub.id);
   const resumo = el('summary', 'subtarefa-resumo');
   const marcador = el('span', 'subtarefa-marcador');
   marcador.append(el('span', 'visualmente-oculto', STATUS[sub.status] + ': '));
-  const ver = el('button', 'botao botao-compacto', 'Ver');
-  ver.type = 'button';
-  ver.setAttribute('aria-label', 'Ver subtarefa: ' + sub.titulo);
-  ver.addEventListener('click', (evento) => { evento.preventDefault(); abrirSubtarefa(sub, historia, ver); });
-  resumo.append(marcador, el('b', null, sub.titulo), ver, el('span', 'subtarefa-meta', textoSprint(sub.sprint) + '. ' + sub.dono));
+  resumo.append(marcador, el('b', null, sub.titulo), el('span', 'subtarefa-meta', textoSprint(sub.sprint) + '. ' + sub.dono));
+  item.addEventListener('toggle', () => { if (item.open) subtarefasAbertas.add(sub.id); else subtarefasAbertas.delete(sub.id); });
+
   const corpo = el('div', 'subtarefa-corpo');
   corpo.append(el('p', 'subtarefa-texto', sub.entregavel));
   const deveres = el('ul', 'subtarefa-deveres');
   for (const dever of sub.deveres) deveres.append(el('li', null, dever));
-  corpo.append(deveres, el('p', 'subtarefa-texto', 'Pronto quando: ' + sub.pronto));
+  const comentarios = blocoComentarios(sub, historia, 'lista');
+  const aoComentar = () => {
+    comentariosAbertos.add(sub.id);
+    comentarios.hidden = false;
+    comentarios.querySelector('form').hidden = false;
+    comentarios.querySelector('textarea').focus();
+  };
+  corpo.append(deveres, el('p', 'subtarefa-texto', 'Pronto quando: ' + sub.pronto), barraDeAcoes(sub, historia, aoComentar), comentarios);
   item.append(resumo, corpo);
   return item;
 }
 
-const painelSubtarefa = document.getElementById('painel-subtarefa');
-const botaoConcluir = document.getElementById('concluir-subtarefa');
-let subtarefaAberta = null;
-let subtarefaOrigem = null;
+// A vista da subtarefa troca o conteúdo do mesmo painel, com o caminho de volta para a história.
+const vistaHistoria = document.getElementById('vista-historia');
+const vistaSubtarefa = document.getElementById('vista-subtarefa');
+const botaoConcluirVista = document.getElementById('concluir-subtarefa');
+let subtarefaEmVista = null;
 
-function listaDeChips(nomes) {
-  return nomes.map((nome) => { const li = el('li', null); li.append(chipTexto(nome)); return li; });
+function mostrarVista(qual) {
+  vistaHistoria.hidden = qual !== 'historia';
+  vistaSubtarefa.hidden = qual !== 'subtarefa';
+  botaoConcluirVista.hidden = qual !== 'subtarefa';
+  painelDetalhe.setAttribute('aria-labelledby', qual === 'historia' ? 'detalhe-titulo' : 'subtarefa-titulo');
 }
 
-function preencherSubtarefa(sub, historia) {
-  document.getElementById('subtarefa-historia').textContent = 'História: ' + historia.titulo;
+function preencherVistaSubtarefa(sub, historia) {
+  document.getElementById('subtarefa-historia').textContent = historia.titulo;
   const campos = { titulo: sub.titulo, objetivo: sub.objetivo, entregavel: sub.entregavel, pronto: sub.pronto };
   for (const [campo, texto] of Object.entries(campos)) document.getElementById('subtarefa-' + campo).textContent = texto;
   document.getElementById('subtarefa-tags').replaceChildren(
@@ -2132,36 +2292,64 @@ function preencherSubtarefa(sub, historia) {
   );
   document.getElementById('subtarefa-deveres').replaceChildren(...sub.deveres.map((dever) => el('li', null, dever)));
   document.getElementById('subtarefa-equipes').replaceChildren(...listaDeChips(sub.equipes));
+  document.getElementById('subtarefa-comentarios').replaceChildren(blocoComentarios(sub, historia, 'vista'));
   const feita = sub.status === 'feito';
-  botaoConcluir.textContent = feita ? 'Reabrir subtarefa' : 'Concluir subtarefa';
-  botaoConcluir.classList.toggle('botao-primario', !feita);
+  botaoConcluirVista.textContent = feita ? 'Reabrir subtarefa' : 'Concluir subtarefa';
+  botaoConcluirVista.classList.toggle('botao-primario', !feita);
 }
 
-function abrirSubtarefa(sub, historia, origem) {
-  subtarefaAberta = { sub, historia };
-  subtarefaOrigem = origem;
-  preencherSubtarefa(sub, historia);
-  painelSubtarefa.showModal();
+function abrirVistaSubtarefa(sub, historia) {
+  subtarefaEmVista = { sub, historia };
+  preencherVistaSubtarefa(sub, historia);
+  mostrarVista('subtarefa');
+  document.getElementById('voltar-historia').focus();
 }
 
-// Concluir marca a subtarefa como feita e atualiza o card da história e o detalhe. Reabrir volta para "a fazer".
-botaoConcluir.addEventListener('click', () => {
-  const { sub, historia } = subtarefaAberta;
+document.getElementById('voltar-historia').addEventListener('click', () => {
+  const id = subtarefaEmVista ? subtarefaEmVista.sub.id : null;
+  subtarefaEmVista = null;
+  mostrarVista('historia');
+  const resumo = id ? document.querySelector('#detalhe-subtarefas [data-id="' + id + '"] summary') : null;
+  (resumo || document.getElementById('detalhe-titulo')).focus();
+});
+botaoConcluirVista.addEventListener('click', () => { if (subtarefaEmVista) alternarConclusao(subtarefaEmVista.sub, subtarefaEmVista.historia); });
+
+function botaoDaSubtarefa(id, acao) {
+  return document.querySelector('#detalhe-subtarefas [data-id="' + id + '"] .acao-icone[data-acao="' + acao + '"]');
+}
+
+// Concluir marca a subtarefa como feita e redesenha o detalhe e o card da história. Reabrir volta para "a fazer".
+function alternarConclusao(sub, historia) {
   sub.status = sub.status === 'feito' ? 'a-fazer' : 'feito';
   preencherDetalhe(historia);
   render();
-  anunciar(sub.status === 'feito' ? 'Subtarefa concluída: ' + sub.titulo : 'Subtarefa reaberta: ' + sub.titulo);
-  painelSubtarefa.close();
-});
-document.getElementById('fechar-subtarefa').addEventListener('click', () => painelSubtarefa.close());
-painelSubtarefa.addEventListener('close', () => {
-  // O botão Ver foi recriado pelo preencherDetalhe; o foco vai para o Ver da mesma subtarefa.
-  const { sub } = subtarefaAberta || {};
-  const alvo = sub ? [...document.querySelectorAll('#detalhe-subtarefas .botao-compacto')].find((b) => b.getAttribute('aria-label') === 'Ver subtarefa: ' + sub.titulo) : null;
-  (alvo || subtarefaOrigem)?.focus();
-  subtarefaAberta = null;
-  subtarefaOrigem = null;
-});
+  anunciar((sub.status === 'feito' ? 'Subtarefa concluída: ' : 'Subtarefa reaberta: ') + sub.titulo);
+  if (subtarefaEmVista && subtarefaEmVista.sub === sub) {
+    preencherVistaSubtarefa(sub, historia);
+    botaoConcluirVista.focus();
+  } else {
+    botaoDaSubtarefa(sub.id, 'concluir')?.focus();
+  }
+}
+
+function comentarNaSubtarefa(sub, historia, texto) {
+  const quando = 'hoje, ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  (sub.comentarios ||= []).push({ autor: nomeDoUsuario(), quando, texto });
+  subtarefasAbertas.add(sub.id);
+  comentariosAbertos.add(sub.id);
+  preencherDetalhe(historia);
+  anunciar('Comentário adicionado em ' + sub.titulo);
+  if (subtarefaEmVista && subtarefaEmVista.sub === sub) {
+    preencherVistaSubtarefa(sub, historia);
+    document.querySelector('#subtarefa-comentarios textarea')?.focus();
+  } else {
+    document.querySelector('#detalhe-subtarefas [data-id="' + sub.id + '"] textarea')?.focus();
+  }
+}
+
+function listaDeChips(nomes) {
+  return nomes.map((nome) => { const li = el('li', null); li.append(chipTexto(nome)); return li; });
+}
 
 function preencherDetalhe(historia) {
   const campos = { titulo: historia.titulo, objetivo: historia.objetivo, entregavel: historia.entregavel, pronto: historia.pronto };
@@ -2183,6 +2371,8 @@ function preencherDetalhe(historia) {
 
 function abrirDetalhe(id) {
   const historia = acharItem(id);
+  subtarefaEmVista = null;
+  mostrarVista('historia');
   preencherDetalhe(historia);
   detalheAberto = id;
   painelDetalhe.showModal();
@@ -2295,7 +2485,6 @@ function fecharAoClicarFora(dialogo) {
 }
 fecharAoClicarFora(painel);
 fecharAoClicarFora(painelDetalhe);
-fecharAoClicarFora(painelSubtarefa);
 
 document.querySelector('.busca').addEventListener('submit', (evento) => evento.preventDefault());
 

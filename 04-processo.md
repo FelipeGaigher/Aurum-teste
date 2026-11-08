@@ -131,3 +131,15 @@ com data. O que foi entregue fica no commit, não aqui.
   abre a subtarefa num painel por cima da história, com trilha, tags,
   deveres e equipes. Concluir marca feita e atualiza o card e o detalhe.
   Reabrir desfaz. O foco volta ao Ver da mesma subtarefa ao fechar.
+- Felipe barrou o painel sobre painel: "não se faz modal sobre modal". O
+  botão Ver saiu. As ações da subtarefa ficaram no card aberto, em três
+  ícones: olho, check e balão. O olho troca a vista do mesmo painel para
+  a subtarefa inteira, com volta à história, como o Jira faz. O check
+  conclui e reabre. O balão abre o campo de comentário, em memória.
+- Um bug meu no caminho: `display: grid` na classe vencia o atributo
+  `hidden`, e o campo de comentário aparecia antes da hora. Regra global
+  `[hidden] { display: none !important; }` resolveu.
+- Felipe pediu o item do Kanban num grupo "Especialista UX/UI" no topo do
+  menu, como os grupos da Náutica. E a sidebar abraçando o conteúdo: a
+  largura caiu de 260px para 200px, a do item "Processos e casos" com
+  8px de folga. A 192px o item quebrava em duas linhas.

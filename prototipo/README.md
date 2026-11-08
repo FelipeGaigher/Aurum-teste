@@ -44,7 +44,7 @@ Dois pontos de `03-tela.md` seguem em aberto.
 
 A fonte segue o produto. O CSS do Astrea logado declara `--primary-font: museo-sans`, e o `--font-sans` do protótipo começa por Museo Sans. O protótipo não carrega a fonte pela rede. Ela só aparece quando estiver instalada na máquina. Sem ela, a tela cai para Open Sans, a fonte do site, e depois para a fonte do sistema.
 
-A moldura copia a do Astrea logado: logo, busca, cinco atalhos, usuário e menu lateral de dez itens. Ela não traz o selo "1 ano grátis", o botão "Contratar" nem a faixa de campanha. A decisão vem do contrato em `03-tela.md`: a moldura do Kanban não tem chamada comercial. O item ativo do menu tem fundo e cor de ação. O Astrea de hoje não marca o item ativo, e a marca é melhoria nossa.
+A moldura copia a do Astrea logado: logo, busca, cinco atalhos, usuário e menu lateral com os dez módulos. Acima deles, o grupo "Especialista UX/UI" guarda o item "Gestão kanban", o módulo oculto do produto. A sidebar tem a largura do item mais longo, 200px. Ela não traz o selo "1 ano grátis", o botão "Contratar" nem a faixa de campanha. A decisão vem do contrato em `03-tela.md`: a moldura do Kanban não tem chamada comercial. O item ativo do menu tem fundo e cor de ação. O Astrea de hoje não marca o item ativo, e a marca é melhoria nossa.
 
 ## 5. Como verificar
 

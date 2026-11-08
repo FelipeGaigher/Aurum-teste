@@ -95,6 +95,12 @@ Trello estranha.
 > `#/main/kanban`, travada por flag de plano. O protótipo mostra esse item
 > no menu, ativo, e o título da página é "Gestão kanban". O seletor de
 > visão saiu.
+>
+> decisão, 07/11, de Felipe: o item fica num grupo próprio no topo do
+> menu. O rótulo do grupo é "Especialista UX/UI", o cargo da vaga. Os dez módulos
+> do Astrea vêm abaixo, depois de um divisor. O nome do item segue o do
+> produto, "Gestão kanban". A sidebar abraça o conteúdo: 200px, a largura
+> de "Processos e casos" com 8px de folga.
 
 > decisão, 07/11, de Felipe: o Kanban abre com o plano do redesign. Quatro
 > fases e oito histórias, cada uma com suas subtarefas, como no Jira. As
