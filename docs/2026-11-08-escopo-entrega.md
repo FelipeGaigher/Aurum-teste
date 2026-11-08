@@ -77,12 +77,12 @@ Fonte: documento da Aurum, relido em 08/11 às 12h55.
 |---|---|---|
 | Q1: 5 problemas com evidência, princípios, o que validar, até 5 páginas | `01-slides-q1.html`, `01-diagnostico.md` | Pronto |
 | Q2: arquitetura, governança, fases, time, riscos e métricas, até 6 páginas | Deck de 6 slides, `02-plano-ds.md` | Pronto |
-| Q3: tela em alta fidelidade no Figma | Área de trabalho do protótipo, depois o Figma | Em construção |
-| Q3: 3 a 5 componentes com estados | `design-system.html` e `03-slides-q3.html` | Em construção |
-| Q3: uma decisão difícil | `03-tela.md` | Em reescrita |
-| Parágrafo de uso de IA | `04-uso-de-ia.md`, fim de `index.html` | Pronto, revisar no fim |
+| Q3: tela em alta fidelidade no Figma | Área de trabalho do protótipo, importada para o Figma, nó `26-2` | Pronto |
+| Q3: 3 a 5 componentes com estados | `design-system.html` e `03-slides-q3.html` | Pronto; captura do DS no Figma em conversão |
+| Q3: uma decisão difícil | `03-tela.md` | Pronto |
+| Parágrafo de uso de IA | `04-uso-de-ia.md`, fim de `index.html` | Pronto |
 | Um único link com visualização | `index.html` no GitHub Pages | Depende do push |
-| Parte B, 30 minutos de apresentação | Deck da Q2 e protótipo navegável | Material pronto no fim |
+| Parte B, 30 minutos de apresentação | Deck da Q2, protótipo navegável, `04-processo.html` | Pronto |
 
 O enunciado diz que a Aurum prototipa no Figma. A tela da Q3 precisa existir lá, não só no protótipo.
 
@@ -107,8 +107,8 @@ O enunciado diz que a Aurum prototipa no Figma. A tela da Q3 precisa existir lá
 
 | Decisão | Default |
 |---|---|
-| Incluir as 5 imagens com dado real na limpeza do histórico | Sem push até a resposta |
-| Confirmar a Área de trabalho como tela da Q3 | Seguir com ela |
+| Incluir as 5 imagens com dado real na limpeza do histórico, publicar e ligar o Pages | Sem push até a resposta. Script e tarjas prontos às 13h50 |
+| Confirmar a Área de trabalho como tela da Q3 | Seguiu com ela; entregue |
 | Levar a tela ao Figma, com a cota do MCP esgotada | Resolvido às 13h27: `generate_figma_design` passou pela cota, e a Área de trabalho está no arquivo, nó `24-2` |
 | Localizar assinatura, aprovações e pagamentos no produto | Manter na fase 3 da Q2 |
 | Marcação preta no print de Processos | Nenhuma alteração |

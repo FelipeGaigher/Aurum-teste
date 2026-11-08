@@ -1834,3 +1834,18 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - [x] Todo bloco de codigo usa cerca, nunca indentacao de quatro espacos.
 - [x] Toda task tem `Interfaces`, com `Consumes` e `Produces`.
 - [x] Nenhuma task depende de arquivo que nenhuma task anterior criou.
+
+## Relatório final
+
+Executado em 08/11/2026, das 12h12 às 13h50. Nenhuma task travada e nenhuma
+decisão subiu ao sovereign.
+
+- Task 9b, fora do plano original: pedido de Felipe às 12h55. O quadro do
+  Kanban mostra as fases da Q2. Base do RF-02 em `e7ee407`.
+- Decisão de Felipe pendente: limpeza das imagens com dado real no histórico,
+  push e GitHub Pages. Script pronto fora do repositório.
+- Achados menores sem correção: criar atividade pelo menu Adicionar fora da
+  Agenda fecha o painel sem aviso; "Delegadas" filtra só por responsável.
+- Suíte final: `test_verificar` com 34 testes OK; `verificar.py --todos
+  --base-kanban --sincronia --dados-reais` com 0 erro; `verificar-app.js`
+  com RF-01 a RF-15 ok; `detectar.py` com 0.
