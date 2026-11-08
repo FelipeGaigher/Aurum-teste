@@ -1128,8 +1128,9 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
   flex: none;
   width: var(--component-switch-width);
   height: var(--component-switch-height);
-  background-color: var(--color-border-strong);
+  background-color: var(--color-bg-hover);
   border-radius: var(--radius-round);
+  transition: background-color 150ms;
 }
 .chave-botao {
   position: absolute;
@@ -1137,19 +1138,31 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
   left: var(--component-switch-inset);
   width: calc(var(--component-switch-height) - 2 * var(--component-switch-inset));
   height: calc(var(--component-switch-height) - 2 * var(--component-switch-inset));
+  aspect-ratio: 1;
   background-color: var(--color-bg-surface);
   border-radius: var(--radius-round);
+  box-shadow: var(--shadow-card);
   transition: transform 150ms;
 }
 .chave[aria-checked="true"] .chave-trilho { background-color: var(--color-action); }
 .chave[aria-checked="true"] .chave-botao { transform: translateX(calc(var(--component-switch-width) - var(--component-switch-height))); }
-/* Hover desligado: o trilho anda metade do caminho até o texto. No claro escurece, no escuro clareia,
-   e nunca coincide com o default, que é a borda forte. */
-.chave:hover:not(:disabled) .chave-trilho, .chave.is-hover .chave-trilho { background-color: color-mix(in srgb, var(--color-border-strong), var(--color-text-default)); }
+/* Desligada: trilho claro, que escurece um passo no hover e outro no active. Ligada: azul de ação. */
+.chave:hover:not(:disabled) .chave-trilho, .chave.is-hover .chave-trilho { background-color: var(--color-border-strong); }
 .chave[aria-checked="true"]:hover:not(:disabled) .chave-trilho, .chave[aria-checked="true"].is-hover .chave-trilho { background-color: var(--color-action-hover); }
-.chave:active:not(:disabled) .chave-trilho, .chave.is-active .chave-trilho { background-color: var(--color-text-default); }
-.chave:disabled .chave-trilho { background-color: var(--color-bg-hover); }
+.chave:active:not(:disabled) .chave-trilho, .chave.is-active .chave-trilho { background-color: var(--color-text-muted); }
+.chave:disabled { opacity: 0.6; }
+/* Carregando: o anel gira dentro do botão, e o ícone solto some. */
 .chave[aria-busy="true"] { cursor: progress; }
+.chave[aria-busy="true"] > svg.botao-giro { display: none; }
+.chave[aria-busy="true"] .chave-botao::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--border-width) * 2);
+  border: calc(var(--border-width) * 2) solid var(--color-action);
+  border-top-color: transparent;
+  border-radius: var(--radius-round);
+  animation: botao-girar 800ms linear infinite;
+}
 @media (prefers-reduced-motion: reduce) { .chave-botao, .seletor-gatilho > svg.icone { transition: none; } }
 
 /* feedback: toast e faixa de aviso. O tipo vem do ícone e do prefixo lido, e a cor reforça. */
