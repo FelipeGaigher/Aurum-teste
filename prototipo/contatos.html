@@ -334,7 +334,8 @@
 
     const barra = DS.barraFiltros({
       rotulo: 'Filtros de contatos',
-      itens: [busca, mostrar, avancado, formato],
+      itens: [busca, mostrar, avancado],
+      visao: formato,
       aoLimpar: () => aplicarFiltro({ ...PADRAO }),
     });
 

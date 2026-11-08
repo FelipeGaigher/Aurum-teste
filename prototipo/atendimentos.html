@@ -542,8 +542,7 @@
       avancado.setAttribute('data-abre-painel', '');
       avancado.setAttribute('aria-haspopup', 'dialog');
       avancado.addEventListener('click', () => abrirAvancado(avancado));
-      barra = DS.barraFiltros({ rotulo: 'Filtros de atendimentos', itens: [busca, status, avancado], aoLimpar: limpar });
-      barra.el.querySelector('.barra-filtros-fim').append(formato, botaoAdicionar);
+      barra = DS.barraFiltros({ rotulo: 'Filtros de atendimentos', itens: [busca, status, avancado], aoLimpar: limpar, visao: formato, acoes: [botaoAdicionar] });
       lugarDaBarra.replaceChildren(barra.el);
     }
 

@@ -303,10 +303,7 @@
     if (focar) opcoesDeFormato.find((el) => el.dataset.visao === visao).focus();
   }
 
-  const barra = DS.barraFiltros({ rotulo: 'Filtros de documentos', itens: [busca, tipo] });
-  const fimDaBarra = barra.el.querySelector('.barra-filtros-fim');
-  fimDaBarra.prepend(formato);
-  fimDaBarra.append(atalhoModelos, menuAdicionar);
+  const barra = DS.barraFiltros({ rotulo: 'Filtros de documentos', itens: [busca, tipo], visao: formato, acoes: [atalhoModelos, menuAdicionar] });
   document.getElementById('topo').replaceWith(barra.el);
   marcarVisao();
 

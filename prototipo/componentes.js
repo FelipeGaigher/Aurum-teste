@@ -2185,7 +2185,8 @@
 
   // itens: as peças de filtro já montadas. O resultado é lido pelo leitor de tela quando muda.
   function barraFiltros(props = {}) {
-    const { rotulo, itens, aoLimpar } = props;
+    // Ordem fixa do fim da barra: alternância de visão, contagem, limpar e ações, com a primária por último.
+    const { rotulo, itens, aoLimpar, visao, acoes = [] } = props;
     exigir(rotulo, 'barraFiltros', 'rotulo é obrigatório');
     const filtros = elementos('barraFiltros', itens, 'itens');
     exigir(filtros.length, 'barraFiltros', 'itens precisa de ao menos um filtro');
@@ -2198,12 +2199,14 @@
     const resultado = criar('p', 'barra-filtros-resultado');
     resultado.setAttribute('role', 'status');
     const fim = criar('div', 'barra-filtros-fim');
+    if (visao) fim.append(visao);
     fim.append(resultado);
     const limpar = aoLimpar ? botao({ variante: 'texto', rotulo: 'Limpar filtros' }) : null;
     if (limpar) {
       limpar.addEventListener('click', aoLimpar);
       fim.append(limpar);
     }
+    fim.append(...elementos('barraFiltros', acoes, 'acoes'));
     el.append(grupo, fim);
 
     function atualizar({ resultado: texto = '', ativos = 0, carregando = false } = {}) {
