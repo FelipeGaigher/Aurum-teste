@@ -63,7 +63,7 @@
     border: var(--border-width) solid var(--component-card-border);
     border-radius: var(--radius-card);
   }
-  .ficha-leitura { display: grid; grid-area: leitura; grid-template-columns: repeat(auto-fit, minmax(var(--size-sidebar), 1fr)); gap: var(--space-4) var(--space-5); padding-top: var(--space-4); border-top: var(--border-width) solid var(--color-border-default); margin: 0; min-width: 0; }
+  .ficha-leitura { display: grid; grid-area: leitura; grid-template-columns: repeat(auto-fit, minmax(calc(var(--size-sidebar) * 0.8), 1fr)); gap: var(--space-4) var(--space-5); padding-top: var(--space-4); border-top: var(--border-width) solid var(--color-border-default); margin: 0; min-width: 0; }
   .ficha-leitura div { display: grid; align-content: start; gap: var(--space-1); min-width: 0; }
   .ficha-leitura dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
   .ficha-leitura dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-medium); overflow-wrap: anywhere; }
