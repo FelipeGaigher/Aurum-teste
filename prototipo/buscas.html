@@ -7,11 +7,15 @@
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
 <script src="componentes.js"></script>
+<script src="dados.js"></script>
 <style>
 /* PA-05: a página sai do ícone de nuvem e mora em Processos e casos, com texto.
    A trilha do cabeçalho leva de volta ao módulo, no lugar do VOLTAR. */
-.buscas { display: grid; gap: var(--space-4); max-width: var(--size-dialog-detail); min-width: 0; }
-.buscas-intro { margin: 0; color: var(--color-text-muted); }
+.buscas { display: grid; gap: var(--space-4); min-width: 0; }
+.buscas-intro { max-width: var(--size-dialog-detail); margin: 0; color: var(--color-text-muted); }
+.buscas-termo { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-size: var(--font-size-label); }
+.buscas-termo strong { color: var(--color-text-default); font-weight: var(--font-weight-semibold); }
+.buscas-trecho { overflow-wrap: anywhere; }
 </style>
 </head>
 <body data-pagina="buscas.html" data-titulo="Resultados de buscas">
@@ -23,34 +27,185 @@
   </main>
 </div>
 <script>
-// Inventário, seção 0, ícone 3: três abas, o mesmo estado vazio em cada uma.
-const ABAS = [
-  { chave: 'individuais', rotulo: 'Buscas individuais', vazio: 'Você ainda não usou a busca individual de processos' },
-  { chave: 'lote', rotulo: 'Buscas em lote', vazio: 'Você ainda não usou a busca em lote de processos' },
-  { chave: 'vinculos', rotulo: 'Vínculos', vazio: 'Você ainda não vinculou processos encontrados pela busca' },
-];
+(function () {
+  const { ATIVIDADES, CONTATOS, PROCESSOS, NUMEROS } = window.DADOS;
+  // Inventário, seção 0, ícone 3: três abas. A individual mostra a última busca, as outras seguem vazias.
+  const ABAS = [
+    { chave: 'individuais', rotulo: 'Buscas individuais', vazio: 'Você ainda não usou a busca individual de processos' },
+    { chave: 'lote', rotulo: 'Buscas em lote', vazio: 'Você ainda não usou a busca em lote de processos' },
+    { chave: 'vinculos', rotulo: 'Vínculos', vazio: 'Você ainda não vinculou processos encontrados pela busca' },
+  ];
+  // A última busca individual: o foro do número, que casa com processos, contatos e atividades dos dados.
+  const TERMO = '8.24.0023';
+  const TIPOS = { tarefa: 'Tarefa', prazo: 'Prazo', audiencia: 'Audiência', evento: 'Evento' };
+  const numeros = NUMEROS || PROCESSOS.map((p) => p.numero);
+  const urlDoProcesso = (numero) => `processos.html?ficha=${numeros.indexOf(numero) + 1 || 1}`;
+  const casa = (texto) => Boolean(texto) && texto.includes(TERMO);
 
-function irParaBusca() {
-  const link = document.createElement('a');
-  link.className = 'botao botao-secundario';
-  link.href = 'processos.html';
-  link.textContent = 'Busca de processo automática';
-  return link;
-}
+  const resultados = [
+    ...PROCESSOS.filter((p) => casa(p.numero)).map((p) => ({
+      id: `p-${p.numero}`, origem: 'Processo', titulo: p.numero, trecho: `Número ${p.numero}`, url: urlDoProcesso(p.numero),
+      linhas: [
+        { icone: 'pessoa', rotulo: 'Cliente', valor: p.cliente },
+        { icone: 'pessoa', rotulo: 'Responsável', valor: p.responsavel },
+        { icone: 'calendario', rotulo: 'Atividades', valor: String(p.atividades.length) },
+      ],
+    })),
+    ...CONTATOS.filter((c) => casa(c.processo)).map((c) => ({
+      id: `c-${c.id}`, origem: 'Contato', titulo: c.nome, trecho: `Processo ligado ${c.processo}`,
+      url: `contatos.html?ficha=1&id=${encodeURIComponent(c.id)}`,
+      linhas: [
+        { icone: 'telefone', rotulo: 'Telefone', valor: c.telefone },
+        { icone: 'email', rotulo: 'E-mail', valor: c.email },
+        { icone: 'info', rotulo: 'Tipo', valor: c.tipo },
+      ],
+    })),
+    ...ATIVIDADES.filter((a) => casa(a.processo)).map((a) => ({
+      id: `a-${a.id}`, origem: 'Atividade', titulo: a.titulo, trecho: `Processo ${a.processo}`, url: 'area-de-trabalho.html',
+      linhas: [
+        { icone: 'info', rotulo: 'Tipo', valor: TIPOS[a.tipo] },
+        { icone: 'pessoa', rotulo: 'Responsável', valor: a.responsavel },
+        { icone: 'relogio', rotulo: 'Prazo', valor: DS.descreverPrazo(a.prazoEmDias, a.status === 'concluido').rotulo },
+      ],
+    })),
+  ];
 
-const abas = DS.abas({
-  rotulo: 'Tipos de busca',
-  itens: ABAS.map((aba) => ({
-    chave: aba.chave,
-    rotulo: aba.rotulo,
-    conteudo: DS.estadoVazio({
-      titulo: aba.vazio,
-      texto: 'O resultado aparece nesta aba quando a busca terminar.',
-      acao: irParaBusca(),
-    }),
-  })),
-});
-document.getElementById('buscas').append(abas);
+  function irParaBusca() {
+    const link = document.createElement('a');
+    link.className = 'botao botao-secundario';
+    link.href = 'processos.html';
+    link.textContent = 'Busca de processo automática';
+    return link;
+  }
+
+  // --- detalhe ao lado da lista (o mesmo arranjo de contatos.html) ----------
+
+  function detalheAoLado(cfg) {
+    const { pagina, lista, rotulo, rotulos, dadosDe, aoEstreita } = cfg;
+    const chave = (s) => `astrea-${pagina}-detalhe-${s}`;
+    const ler = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    const gravar = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* sem armazenamento */ } };
+    const estreita = window.matchMedia('(max-width: 1100px)');
+    let escolhido = ler(chave('id'));
+    let itens = [];
+    const atual = () => itens.find((x) => x.id === escolhido) || itens[0];
+    const andar = (passo) => {
+      const i = itens.indexOf(atual());
+      escolher(itens[(i + passo + itens.length) % itens.length].id);
+    };
+    const detalhe = DS.painelDetalhe({
+      rotulo, rotulos,
+      aoAnterior: () => andar(-1),
+      aoProximo: () => andar(1),
+      aoFechar: () => { gravar(chave('oculto'), '1'); divisor.el.hidden = true; },
+      aoReabrir: () => { gravar(chave('oculto'), ''); divisor.el.hidden = false; },
+    });
+    detalhe.el.id = `${pagina}-detalhe`;
+    const divisor = DS.divisorRedimensionavel({
+      alvo: detalhe.el, rotulo: 'Largura do painel de detalhe', minimo: 300, maximo: 560, padrao: 380,
+      chave: chave('largura'), reserva: 480,
+    });
+    const casca = document.createElement('div');
+    casca.className = 'lista-e-detalhe';
+    casca.append(lista, divisor.el, detalhe.el);
+    if (ler(chave('oculto')) === '1') { detalhe.esconder(); divisor.el.hidden = true; }
+
+    function marcar(id) {
+      lista.querySelectorAll('[data-id]').forEach((el) => {
+        const sim = el.dataset.id === id;
+        if (el.tagName === 'TR') { el.setAttribute('aria-selected', String(sim)); return; }
+        el.classList.toggle('is-selecionado', sim);
+        if (sim) el.setAttribute('aria-current', 'true'); else el.removeAttribute('aria-current');
+      });
+    }
+    function sincronizar(novos) {
+      itens = novos;
+      const x = atual();
+      detalhe.el.hidden = !x;
+      divisor.el.hidden = !x || detalhe.oculto();
+      marcar(x ? x.id : '');
+      if (x) detalhe.mostrar({ ...dadosDe(x), navegavel: itens.length > 1 });
+    }
+    function escolher(id) {
+      const x = itens.find((i) => i.id === id);
+      if (!x) return;
+      if (estreita.matches) { if (aoEstreita) aoEstreita(x); return; }
+      escolhido = id;
+      gravar(chave('id'), id);
+      if (detalhe.oculto()) { detalhe.reabrir(); divisor.el.hidden = false; gravar(chave('oculto'), ''); }
+      sincronizar(itens);
+    }
+    // O botão e o link de dentro do item seguem a própria ação; o resto do item escolhe.
+    lista.addEventListener('click', (e) => {
+      const alvo = e.target.closest('[data-id]');
+      if (alvo && lista.contains(alvo) && !e.target.closest('a, button, [role="menu"]')) escolher(alvo.dataset.id);
+    });
+    lista.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.matches('[data-id]')) { e.preventDefault(); escolher(e.target.dataset.id); }
+    });
+    return { casca, sincronizar };
+  }
+
+  function dadosDoResultado(r) {
+    const abrir = DS.botao({ variante: 'primario', rotulo: 'Abrir' });
+    abrir.addEventListener('click', () => { location.href = r.url; });
+    return {
+      titulo: r.titulo, chips: [r.origem],
+      destaque: { rotulo: 'Trecho encontrado', valor: r.trecho },
+      linhas: r.linhas, corpo: [], acoes: [abrir],
+    };
+  }
+
+  function tabelaDeResultados() {
+    const termo = document.createElement('p');
+    termo.className = 'buscas-termo';
+    const forte = document.createElement('strong');
+    forte.textContent = TERMO;
+    termo.append('Última busca: ', forte, ` · ${resultados.length} resultados`);
+    const quadro = DS.tabela({
+      rotulo: `Resultados da busca por ${TERMO}`,
+      colunas: [['titulo', 'Título'], ['origem', 'Origem'], ['trecho', 'Trecho encontrado']],
+      linhas: resultados.map((r) => {
+        const trecho = document.createElement('span');
+        trecho.className = 'buscas-trecho';
+        trecho.textContent = r.trecho;
+        return { titulo: r.titulo, origem: DS.tag({ rotulo: r.origem }), trecho };
+      }),
+    });
+    quadro.querySelectorAll('tbody tr').forEach((tr, i) => {
+      tr.dataset.id = resultados[i].id;
+      tr.dataset.selecionavel = '';
+      tr.tabIndex = 0;
+    });
+    const caixa = document.createElement('div');
+    caixa.append(termo, quadro);
+    return caixa;
+  }
+
+  const abas = DS.abas({
+    rotulo: 'Tipos de busca',
+    itens: ABAS.map((aba) => ({
+      chave: aba.chave,
+      rotulo: aba.rotulo,
+      conteudo: aba.chave === 'individuais' && resultados.length ? tabelaDeResultados() : DS.estadoVazio({
+        titulo: aba.vazio,
+        texto: 'O resultado aparece nesta aba quando a busca terminar.',
+        acao: irParaBusca(),
+      }),
+    })),
+    aoMudar: (chave) => detalhe.sincronizar(chave === 'individuais' ? resultados : []),
+  });
+
+  // Abaixo de 1100px o painel some e o resultado leva direto à página de origem.
+  const detalhe = detalheAoLado({
+    pagina: 'buscas', lista: abas, rotulo: 'Resultado escolhido', dadosDe: dadosDoResultado,
+    rotulos: { anterior: 'Resultado anterior da lista', proximo: 'Próximo resultado da lista',
+      esconder: 'Esconder o painel do resultado', mostrar: 'Mostrar o painel do resultado' },
+    aoEstreita: (r) => { location.href = r.url; },
+  });
+  document.getElementById('buscas').append(detalhe.casca);
+  detalhe.sincronizar(resultados);
+})();
 </script>
 </body>
 </html>

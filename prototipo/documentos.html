@@ -23,12 +23,15 @@
   .resumo dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
   .resumo dd { margin: 0; overflow-wrap: anywhere; }
   .passo-nota { margin: 0; color: var(--color-text-muted); }
+  .documentos-aviso:empty { display: none; }
+  .documentos-aviso { margin-bottom: var(--space-4); }
 </style>
 </head>
 <body data-pagina="documentos.html" data-titulo="Documentos">
 <div class="corpo">
   <main id="conteudo">
     <div class="modulo-topo" id="topo"></div>
+    <div class="documentos-aviso" id="documentos-aviso"></div>
     <div id="lista"></div>
   </main>
 </div>
@@ -55,7 +58,12 @@
   };
   const rotuloDe = (campo, chave) => opcoes[campo].find(([c]) => c === chave)[1];
 
-  const documentos = [];
+  // Os documentos que já existem moram nas fichas de contato. O criado aqui entra no topo.
+  const documentos = Object.entries(window.DADOS.DOCUMENTOS_DE_CONTATO || {}).flatMap(([idContato, lista]) => {
+    const contato = CONTATOS.find((c) => c.id === idContato);
+    return lista.map((d) => ({ ...d, contato: contato ? contato.nome : '', origem: contato ? `Ficha de ${contato.nome}` : '' }));
+  }).sort((x, y) => y.enviadoEm.localeCompare(x.enviadoEm));
+  let criados = 0;
   let painel = null;
   let formulario = null;
   let origem = null;
@@ -145,11 +153,16 @@
 
   function concluir() {
     const v = formulario.valores;
+    criados += 1;
     documentos.unshift({
-      titulo: v.titulo,
-      cliente: rotuloDe('cliente', v.cliente),
-      modelo: rotuloDe('modelo', v.modelo),
-      data: new Date().toLocaleDateString('pt-BR'),
+      id: `novo-${criados}`,
+      nome: v.titulo,
+      tipo: '',
+      enviadoEm: new Date().toISOString().slice(0, 10),
+      enviadoPor: v.responsavel,
+      processo: v.processo,
+      contato: rotuloDe('cliente', v.cliente),
+      origem: `Modelo ${rotuloDe('modelo', v.modelo)}`,
     });
     painel.fechar();
     desenhar();
@@ -192,20 +205,134 @@
   origem = menuAdicionar.querySelector('button');
   document.getElementById('topo').append(atalhoModelos, menuAdicionar);
 
+  // --- detalhe ao lado da lista (o mesmo arranjo de contatos.html) ----------
+
+  function detalheAoLado(cfg) {
+    const { pagina, lista, rotulo, rotulos, dadosDe, aoEstreita } = cfg;
+    const chave = (s) => `astrea-${pagina}-detalhe-${s}`;
+    const ler = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    const gravar = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* sem armazenamento */ } };
+    const estreita = window.matchMedia('(max-width: 1100px)');
+    let escolhido = ler(chave('id'));
+    let itens = [];
+    const atual = () => itens.find((x) => x.id === escolhido) || itens[0];
+    const andar = (passo) => {
+      const i = itens.indexOf(atual());
+      escolher(itens[(i + passo + itens.length) % itens.length].id);
+    };
+    const detalhe = DS.painelDetalhe({
+      rotulo, rotulos,
+      aoAnterior: () => andar(-1),
+      aoProximo: () => andar(1),
+      aoFechar: () => { gravar(chave('oculto'), '1'); divisor.el.hidden = true; },
+      aoReabrir: () => { gravar(chave('oculto'), ''); divisor.el.hidden = false; },
+    });
+    detalhe.el.id = `${pagina}-detalhe`;
+    const divisor = DS.divisorRedimensionavel({
+      alvo: detalhe.el, rotulo: 'Largura do painel de detalhe', minimo: 300, maximo: 560, padrao: 380,
+      chave: chave('largura'), reserva: 480,
+    });
+    const casca = document.createElement('div');
+    casca.className = 'lista-e-detalhe';
+    casca.append(lista, divisor.el, detalhe.el);
+    if (ler(chave('oculto')) === '1') { detalhe.esconder(); divisor.el.hidden = true; }
+
+    function marcar(id) {
+      lista.querySelectorAll('[data-id]').forEach((el) => {
+        const sim = el.dataset.id === id;
+        if (el.tagName === 'TR') { el.setAttribute('aria-selected', String(sim)); return; }
+        el.classList.toggle('is-selecionado', sim);
+        if (sim) el.setAttribute('aria-current', 'true'); else el.removeAttribute('aria-current');
+      });
+    }
+    function sincronizar(novos) {
+      itens = novos;
+      const x = atual();
+      detalhe.el.hidden = !x;
+      divisor.el.hidden = !x || detalhe.oculto();
+      marcar(x ? x.id : '');
+      if (x) detalhe.mostrar({ ...dadosDe(x), navegavel: itens.length > 1 });
+    }
+    function escolher(id) {
+      const x = itens.find((i) => i.id === id);
+      if (!x) return;
+      if (estreita.matches) { if (aoEstreita) aoEstreita(x); return; }
+      escolhido = id;
+      gravar(chave('id'), id);
+      if (detalhe.oculto()) { detalhe.reabrir(); divisor.el.hidden = false; gravar(chave('oculto'), ''); }
+      sincronizar(itens);
+    }
+    // O botão e o link de dentro do item seguem a própria ação; o resto do item escolhe.
+    lista.addEventListener('click', (e) => {
+      const alvo = e.target.closest('[data-id]');
+      if (alvo && lista.contains(alvo) && !e.target.closest('a, button, [role="menu"]')) escolher(alvo.dataset.id);
+    });
+    lista.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.matches('[data-id]')) { e.preventDefault(); escolher(e.target.dataset.id); }
+    });
+    return { casca, sincronizar };
+  }
+
+  const dataBr = (iso) => (iso ? iso.split('-').reverse().join('/') : '');
+  const tamanho = (kb) => {
+    if (!kb) return '';
+    return kb >= 1024 ? `${(kb / 1024).toLocaleString('pt-BR', { maximumFractionDigits: 1 })} MB` : `${kb} KB`;
+  };
+
+  function avisar(mensagem) {
+    document.getElementById('documentos-aviso').replaceChildren(DS.faixaAviso({ tipo: 'info', mensagem, fechar: true }));
+  }
+
+  function dadosDoDocumento(d) {
+    const baixar = DS.botao({ variante: 'secundario', iconeEsquerda: 'arquivar', rotulo: 'Baixar' });
+    baixar.addEventListener('click', () => avisar(`O protótipo não guarda o arquivo ${d.nome}. Baixar fica para a versão com armazenamento.`));
+    const mais = DS.botao({ variante: 'secundario', iconeEsquerda: 'opcoes', rotulo: 'Mais ações' });
+    mais.addEventListener('click', () => avisar('Renomear, mover e excluir o documento ficam para uma próxima versão.'));
+    return {
+      titulo: d.nome, chips: d.tipo ? [d.tipo] : [],
+      destaque: d.processo ? { rotulo: 'Processo ligado', valor: d.processo } : { rotulo: 'Contato ligado', valor: d.contato },
+      linhas: [
+        { icone: 'pessoa', rotulo: 'Enviado por', valor: d.enviadoPor },
+        { icone: 'calendario', rotulo: 'Data', valor: dataBr(d.enviadoEm) },
+        { icone: 'info', rotulo: 'Tamanho', valor: tamanho(d.tamanhoKb) },
+        { icone: 'arquivar', rotulo: 'Pasta ou origem', valor: d.origem },
+      ],
+      corpo: [], acoes: [mais, baixar],
+    };
+  }
+
+  const vagaDaLista = document.createElement('div');
+  const detalhe = detalheAoLado({
+    pagina: 'documentos', lista: vagaDaLista, rotulo: 'Documento escolhido', dadosDe: dadosDoDocumento,
+    rotulos: { anterior: 'Documento anterior da lista', proximo: 'Próximo documento da lista',
+      esconder: 'Esconder o painel do documento', mostrar: 'Mostrar o painel do documento' },
+  });
+  document.getElementById('lista').append(detalhe.casca);
+
   function desenhar() {
-    const lista = document.getElementById('lista');
     if (!documentos.length) {
-      lista.replaceChildren(DS.estadoVazio({
+      vagaDaLista.replaceChildren(DS.estadoVazio({
         titulo: 'Crie, padronize e gerencie seus documentos',
         texto: 'Use Adicionar documento e escolha Documento padrão para gerar um contrato ou uma procuração a partir dos modelos.',
       }));
+      detalhe.sincronizar([]);
       return;
     }
-    lista.replaceChildren(DS.tabela({
+    const quadro = DS.tabela({
       rotulo: 'Documentos',
-      colunas: [['titulo', 'Título'], ['cliente', 'Cliente'], ['modelo', 'Modelo'], ['data', 'Data']],
-      linhas: documentos,
-    }));
+      colunas: [['nome', 'Nome'], ['tipo', 'Tipo'], ['ligado', 'Processo ou contato'], ['enviadoPor', 'Enviado por'], ['data', 'Data']],
+      linhas: documentos.map((d) => ({
+        nome: d.nome, tipo: d.tipo ? DS.tag({ rotulo: d.tipo }) : '', ligado: d.processo || d.contato,
+        enviadoPor: d.enviadoPor, data: dataBr(d.enviadoEm),
+      })),
+    });
+    quadro.querySelectorAll('tbody tr').forEach((tr, i) => {
+      tr.dataset.id = documentos[i].id;
+      tr.dataset.selecionavel = '';
+      tr.tabIndex = 0;
+    });
+    vagaDaLista.replaceChildren(quadro);
+    detalhe.sincronizar(documentos);
   }
 
   desenhar();

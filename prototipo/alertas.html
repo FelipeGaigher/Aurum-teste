@@ -56,6 +56,13 @@
   .detalhes dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
   .detalhes dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); min-width: 0; margin: 0; }
   .alerta .grupo-botoes { flex-wrap: wrap; }
+
+  /* Lista à esquerda, detalhe ao lado: o card escolhido ganha a borda de ação. */
+  .alerta[data-id] { cursor: pointer; }
+  .alerta[data-id]:hover { background-color: var(--color-bg-subtle); }
+  .alerta[data-id]:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: calc(-1 * var(--focus-width)); }
+  .alerta.is-selecionado { border-color: var(--color-action); box-shadow: inset 0 0 0 var(--border-width) var(--color-action); }
+  .alerta-numero { display: inline-flex; align-items: center; gap: var(--space-1); }
 </style>
 </head>
 <body data-pagina="alertas.html" data-titulo="Alertas">
@@ -145,6 +152,117 @@
 
   let painel = null;
 
+  // --- detalhe ao lado da lista (o mesmo arranjo de contatos.html) ------------
+
+  function detalheAoLado(cfg) {
+    const { pagina, lista, rotulo, rotulos, dadosDe, aoEstreita } = cfg;
+    const chave = (s) => `astrea-${pagina}-detalhe-${s}`;
+    const ler = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    const gravar = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* sem armazenamento */ } };
+    const estreita = window.matchMedia('(max-width: 1100px)');
+    let escolhido = ler(chave('id'));
+    let itens = [];
+    const atual = () => itens.find((x) => x.id === escolhido) || itens[0];
+    const andar = (passo) => {
+      const i = itens.indexOf(atual());
+      escolher(itens[(i + passo + itens.length) % itens.length].id);
+    };
+    const detalhe = DS.painelDetalhe({
+      rotulo, rotulos,
+      aoAnterior: () => andar(-1),
+      aoProximo: () => andar(1),
+      aoFechar: () => { gravar(chave('oculto'), '1'); divisor.el.hidden = true; },
+      aoReabrir: () => { gravar(chave('oculto'), ''); divisor.el.hidden = false; },
+    });
+    detalhe.el.id = `${pagina}-detalhe`;
+    const divisor = DS.divisorRedimensionavel({
+      alvo: detalhe.el, rotulo: 'Largura do painel de detalhe', minimo: 300, maximo: 560, padrao: 380,
+      chave: chave('largura'), reserva: 480,
+    });
+    const casca = document.createElement('div');
+    casca.className = 'lista-e-detalhe';
+    casca.append(lista, divisor.el, detalhe.el);
+    if (ler(chave('oculto')) === '1') { detalhe.esconder(); divisor.el.hidden = true; }
+
+    function marcar(id) {
+      lista.querySelectorAll('[data-id]').forEach((el) => {
+        const sim = el.dataset.id === id;
+        if (el.tagName === 'TR') { el.setAttribute('aria-selected', String(sim)); return; }
+        el.classList.toggle('is-selecionado', sim);
+        if (sim) el.setAttribute('aria-current', 'true'); else el.removeAttribute('aria-current');
+      });
+    }
+    function sincronizar(novos) {
+      itens = novos;
+      const x = atual();
+      detalhe.el.hidden = !x;
+      divisor.el.hidden = !x || detalhe.oculto();
+      marcar(x ? x.id : '');
+      if (x) detalhe.mostrar({ ...dadosDe(x), navegavel: itens.length > 1 });
+    }
+    function escolher(id) {
+      const x = itens.find((i) => i.id === id);
+      if (!x) return;
+      if (estreita.matches) { if (aoEstreita) aoEstreita(x); return; }
+      escolhido = id;
+      gravar(chave('id'), id);
+      if (detalhe.oculto()) { detalhe.reabrir(); divisor.el.hidden = false; gravar(chave('oculto'), ''); }
+      sincronizar(itens);
+    }
+    // O botão e o link de dentro do item seguem a própria ação; o resto do item escolhe.
+    lista.addEventListener('click', (e) => {
+      const alvo = e.target.closest('[data-id]');
+      if (alvo && lista.contains(alvo) && !e.target.closest('a, button, [role="menu"]')) escolher(alvo.dataset.id);
+    });
+    lista.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.matches('[data-id]')) { e.preventDefault(); escolher(e.target.dataset.id); }
+    });
+    return { casca, sincronizar };
+  }
+
+  function dataDoAlerta(dias) {
+    const d = new Date();
+    d.setDate(d.getDate() + dias);
+    return d.toLocaleDateString('pt-BR');
+  }
+
+  function numeroComCopiar(numero) {
+    const caixa = document.createElement('span');
+    caixa.className = 'alerta-numero';
+    const texto = document.createElement('span');
+    texto.className = 'numero-processo';
+    texto.textContent = numero;
+    const copiar = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
+    copiar.addEventListener('click', () => {
+      const vaga = document.getElementById('alertas-aviso');
+      const dizer = (mensagem, tipo) => vaga.replaceChildren(DS.faixaAviso({ tipo, mensagem, fechar: true }));
+      const area = navigator.clipboard;
+      if (!area) { dizer('Não foi possível copiar o número.', 'erro'); return; }
+      area.writeText(numero).then(() => dizer(`Número ${numero} copiado.`, 'sucesso'), () => dizer('Não foi possível copiar o número.', 'erro'));
+    });
+    caixa.append(texto, copiar);
+    return caixa;
+  }
+
+  function dadosDoAlerta(a) {
+    const abrir = DS.botao({ variante: 'primario', rotulo: 'Abrir atividade' });
+    abrir.addEventListener('click', () => { location.href = 'area-de-trabalho.html'; });
+    const descartar = DS.botao({ variante: 'secundario', rotulo: 'Descartar' });
+    descartar.dataset.abrePainel = '';
+    descartar.addEventListener('click', () => confirmarDescarte(a, descartar));
+    return {
+      titulo: a.titulo, chips: [TIPO[a.tipo]],
+      destaque: { rotulo: 'Prazo', valor: DS.chipPrazo(DS.descreverPrazo(a.prazoEmDias)) },
+      linhas: [
+        { icone: 'arquivar', rotulo: 'Processo', valor: numeroComCopiar(a.processo) },
+        { icone: 'pessoa', rotulo: 'Responsável', valor: a.responsavel },
+        { icone: 'info', rotulo: 'Tipo', valor: TIPO[a.tipo] },
+        { icone: 'calendario', rotulo: 'Data', valor: dataDoAlerta(a.prazoEmDias) },
+      ],
+      corpo: [], acoes: [descartar, abrir],
+    };
+  }
+
   function linhaDeDetalhe(lista, rotulo, ...conteudo) {
     const dt = document.createElement('dt');
     dt.textContent = rotulo;
@@ -184,6 +302,7 @@
     const raiz = document.createElement('li');
     raiz.className = 'alerta';
     raiz.dataset.id = a.id;
+    raiz.tabIndex = 0;
 
     const titulo = document.createElement('h2');
     titulo.className = 'alerta-titulo';
@@ -255,10 +374,17 @@
   const abas = DS.abas({
     rotulo: 'Tipos de alerta', valor: abaAtual,
     itens: ABAS.map(([chave, rotulo]) => ({ chave, rotulo, conteudo: conteudos[chave] })),
-    aoMudar: (chave) => { abaAtual = chave; atualizarBarra(); },
+    aoMudar: (chave) => { abaAtual = chave; atualizarBarra(); detalhe.sincronizar(alertasDa(abaAtual)); },
   });
   abas.querySelector('.abas-lista').after(barra.el);
-  document.getElementById('alertas').append(abas);
+  // Abaixo de 1100px o painel some e o item abre o painel lateral de Visualizar.
+  const detalhe = detalheAoLado({
+    pagina: 'alertas', lista: abas, rotulo: 'Alerta escolhido', dadosDe: dadosDoAlerta,
+    rotulos: { anterior: 'Alerta anterior da lista', proximo: 'Próximo alerta da lista',
+      esconder: 'Esconder o painel do alerta', mostrar: 'Mostrar o painel do alerta' },
+    aoEstreita: (a) => visualizar(a, document.activeElement),
+  });
+  document.getElementById('alertas').append(detalhe.casca);
   const botoesDeAba = [...abas.querySelectorAll('[role="tab"]')];
 
   function atualizarBarra() {
@@ -283,6 +409,7 @@
       conteudos[chave].replaceChildren(ul);
     });
     atualizarBarra();
+    detalhe.sincronizar(alertasDa(abaAtual));
   }
 
   desenhar();
