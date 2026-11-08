@@ -5,6 +5,7 @@ Documentos-fonte da atividade prática. Cada questão tem um arquivo.
 - `00-briefing.md` — o enunciado
 - `01-telas-observadas.md` — registro bruto das telas do Astrea, com prints em `evidencias/`
 - `01-inventario-ui.md` — cores, componentes e vocabulário da interface atual
+- `01-inventario-css-astrea.md` — o produto logado lido pelo Chrome: telas, CSS, tokens do Nectar e o Kanban oculto, com capturas em `evidencias/chrome/`
 - `01-melhorias.md` — backlog de ideias de melhoria, com tela de origem e questão que alimentam
 - `referencias/` — telas de outros produtos e resumos usados como referência, não como evidência
 - `01-diagnostico.md` — Q1, derivada do registro de telas e do inventário
