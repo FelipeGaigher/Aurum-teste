@@ -519,8 +519,12 @@ body[data-menu="recolhido"] .recolher svg { transform: rotate(180deg); }
 body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 @media (prefers-reduced-motion: reduce) { .recolher, .logo, .recolher svg, .seletor svg { transition: none; } }
 
+/* O conteúdo é uma coluna da altura da tela: o quadro cresce até o rodapé, e as colunas esticam com ele. */
 #conteudo {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  min-height: calc(100vh - var(--component-header-height));
   padding: var(--space-5) var(--space-5) var(--space-6);
 }
 
@@ -544,9 +548,10 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
    Posicionado para conter os textos ocultos absolutos dos cards. */
 #quadro {
   position: relative;
+  flex: 1;
   display: flex;
   gap: var(--space-4);
-  align-items: start;
+  align-items: stretch;
   overflow-x: auto;
   padding-bottom: var(--space-2);
   scroll-snap-type: x proximity;
@@ -1131,7 +1136,7 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4) var(--space-6);
-  margin-top: var(--space-6);
+  margin-top: var(--space-5);
   padding-top: var(--space-4);
   border-top: var(--border-width) solid var(--color-border-default);
 }
