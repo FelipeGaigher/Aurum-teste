@@ -673,8 +673,9 @@ body[data-menu="recolhido"] .logo span { position: absolute; width: 1px; height:
 }
 .trilha ol { display: flex; flex-wrap: wrap; margin: 0; padding: 0; list-style: none; }
 .trilha li + li::before { content: "/" / ""; padding: 0 var(--space-1); }
-.trilha a { border-radius: var(--radius); color: inherit; }
-.trilha a:hover, .trilha a.is-hover { color: var(--color-action); }
+.trilha a { display: inline-flex; align-items: center; gap: var(--space-1); border-radius: var(--radius); color: var(--color-action); }
+.trilha a:hover, .trilha a.is-hover { color: var(--color-action-hover); }
+.trilha li + li a { color: inherit; }
 
 .atalhos li, .usuario-area { position: relative; }
 

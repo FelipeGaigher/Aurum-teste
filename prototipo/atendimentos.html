@@ -674,7 +674,7 @@
   function cabecalhoDeSegundoNivel(titulo) {
     const lugar = document.querySelector('.titulo-cabecalho');
     const h1 = lugar.querySelector('h1');
-    lugar.insertBefore(DS.trilha({ itens: [{ rotulo: MODULO, pagina: PAGINA }] }), h1);
+    h1.after(DS.trilha({ itens: [{ rotulo: MODULO, pagina: PAGINA }] }));
     h1.textContent = titulo;
     document.title = `${titulo}, Astrea: protótipo`;
   }

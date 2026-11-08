@@ -29,6 +29,7 @@
     cadeado: '<rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
     lua: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
     seta: '<path d="M8 10l4 4 4-4"/>',
+    esquerda: '<path d="M14 6l-6 6 6 6"/>',
     questionario: '<path d="M8 4h8v3H8zM6 5.5H4V21h16V5.5h-2M8 12h8M8 16h8"/>',
   };
 
@@ -238,8 +239,9 @@
 
   // Os níveis acima da página, do mais alto ao mais próximo. A página atual é o título.
   // DS.trilha usa esta mesma função.
+  // A trilha é o caminho de volta padrão das páginas de segundo nível: seta e nome do módulo, no cabeçalho.
   function htmlTrilha(niveis) {
-    const itens = niveis.map((n) => `<li><a href="${escapar(n.pagina)}">${escapar(n.rotulo)}</a></li>`);
+    const itens = niveis.map((n, i) => `<li><a href="${escapar(n.pagina)}">${i === 0 ? svg('esquerda') : ''}${escapar(n.rotulo)}</a></li>`);
     return `<nav class="trilha" aria-label="Trilha"><ol>${itens.join('')}</ol></nav>`;
   }
 
@@ -264,8 +266,8 @@
   </div>
 
   <div class="titulo-cabecalho">
-    ${htmlTrilhaDaPagina(pagina)}
     <h1></h1>
+    ${htmlTrilhaDaPagina(pagina)}
   </div>
 
   <div class="acoes">

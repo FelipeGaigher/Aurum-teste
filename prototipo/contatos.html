@@ -69,18 +69,7 @@
 
   /* Ficha e adicionar: Voltar acima do título, e o título com as tags na mesma linha. */
   .registro-topo { display: grid; justify-items: start; gap: var(--space-2); margin-bottom: var(--space-4); }
-  .registro-voltar {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    border-radius: var(--radius);
-    color: var(--color-action);
-    font-size: var(--font-size-label);
-    font-weight: var(--font-weight-medium);
-  }
-  .registro-voltar:hover { color: var(--color-action-hover); }
   .registro-linha { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
-  .registro-titulo { margin: 0; font-size: var(--font-size-title); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); overflow-wrap: anywhere; }
 
   /* PA-61 e M1: leitura com um padrão só de rótulo, acima do valor. O vazio some até "Mostrar todos". */
   .ficha-cadastro { display: grid; justify-items: start; gap: var(--space-3); }
@@ -550,18 +539,23 @@
 
   // --- comuns à ficha e ao adicionar ----------------------------------------
 
-  function linkVoltar() {
-    const voltar = criar('a', 'registro-voltar');
-    voltar.href = 'contatos.html';
-    voltar.append(DS.icone('esquerda'), 'Voltar para contatos');
-    return voltar;
-  }
-
+  // Padrão das páginas de segundo nível: trilha com seta e título no cabeçalho, como Processos e Atendimentos.
   function topoDoRegistro(titulo, tags) {
+    // A moldura monta o cabeçalho no DOMContentLoaded; esta função pode rodar antes.
+    const aplicarCabecalho = () => {
+      const lugar = document.querySelector('.titulo-cabecalho');
+      const h1 = lugar.querySelector('h1');
+      if (!lugar.querySelector('.trilha')) h1.after(DS.trilha({ itens: [{ rotulo: 'Contatos', pagina: 'contatos.html' }] }));
+      h1.textContent = titulo;
+    };
+    if (document.querySelector('.titulo-cabecalho')) aplicarCabecalho();
+    else document.addEventListener('DOMContentLoaded', aplicarCabecalho);
     const topo = criar('div', 'registro-topo');
-    const linha = criar('div', 'registro-linha');
-    linha.append(criar('h2', 'registro-titulo', titulo), ...tags);
-    topo.append(linkVoltar(), linha);
+    if (tags.length) {
+      const linha = criar('div', 'registro-linha');
+      linha.append(...tags);
+      topo.append(linha);
+    }
     return topo;
   }
 

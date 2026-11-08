@@ -302,7 +302,7 @@
   function cabecalhoDeSegundoNivel(titulo) {
     const lugar = document.querySelector('.titulo-cabecalho');
     const h1 = lugar.querySelector('h1');
-    lugar.insertBefore(DS.trilha({ itens: [{ rotulo: MODULO, pagina: PAGINA }] }), h1);
+    h1.after(DS.trilha({ itens: [{ rotulo: MODULO, pagina: PAGINA }] }));
     h1.textContent = titulo;
     document.title = `${titulo}, Astrea: protótipo`;
   }
@@ -799,7 +799,6 @@
     ] });
     mais.querySelector('.menu-suspenso').classList.add('is-direita');
 
-    const voltar = botaoDeIcone('Voltar para Processos e casos', 'esquerda', () => { location.href = PAGINA; });
     let favorito = Boolean(r.importante);
     const favoritar = botaoDeIcone('Favoritar', iconeDaFicha('estrela'), () => {
       favorito = !favorito;
@@ -871,7 +870,7 @@
     adicionar.querySelector('.menu-suspenso').classList.add('is-direita');
 
     const acoes = elemento('div', 'ficha-acoes');
-    acoes.append(voltar.el, favoritar.el, etiqueta, mais, adicionar);
+    acoes.append(favoritar.el, etiqueta, mais, adicionar);
     const topo = elemento('div', 'ficha-topo');
     topo.append(identidade, acoes);
 
