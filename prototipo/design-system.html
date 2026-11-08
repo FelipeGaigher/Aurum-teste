@@ -75,6 +75,25 @@
   .ds-nav-grupo + .ds-nav-grupo { margin-top: 0; margin-left: var(--space-3); }
   .ds-nav a { white-space: nowrap; }
 }
+
+/* amostras de lista e detalhe: no fluxo da célula, sem a altura da tela */
+.ds-estado:has(> .painel-detalhe) { flex: 0 1 var(--size-dialog); }
+.ds-estado > .painel-detalhe { position: static; width: 100%; }
+.ds-estado:has(> .ds-divisor-demo) { flex: 0 1 var(--size-search); }
+.ds-divisor-demo {
+  display: flex;
+  width: 100%;
+  height: calc(var(--space-7) * 3);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-card);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-muted);
+}
+.ds-divisor-lista { flex: 1 1 0; min-width: 0; padding: var(--space-3); }
+.ds-divisor-alvo { flex: 0 1 var(--largura-redimensionavel); min-width: 0; padding: var(--space-3); background-color: var(--color-bg-subtle); }
+.ds-divisor-demo > .divisor { position: static; height: auto; }
+.divisor.is-hover::before, .divisor.is-foco::before { width: calc(var(--border-width) * 3); background-color: var(--color-action); }
+.divisor.is-foco { outline-offset: calc(-1 * var(--focus-width)); }
 </style>
 </head>
 <body data-pagina="design-system.html" data-titulo="Design system">
@@ -174,7 +193,8 @@
   const { botao, grupoBotoes, menuAcoes, icone, ICONES, campo, areaTexto, busca, seletor, seletorMultiplo,
     seletorPessoas, data, periodo, caixa, radio, chave, toast, faixaAviso, dialogo, tooltip, progresso, skeleton,
     estadoVazio, upsell, descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade,
-    cardAtividade, cardContato, paginacao, abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper } = window.DS;
+    cardAtividade, cardContato, paginacao, abas, trilha, barraFiltros, painelLateral, barraAcoes, stepper,
+    painelDetalhe, divisorRedimensionavel } = window.DS;
   const { ATIVIDADES, CONTATOS } = window.DADOS;
 
   function h(tag, atributos, ...filhos) {
@@ -312,7 +332,7 @@
 
   const NOME_DO_ESTADO = {
     default: 'Padrão', hover: 'Hover', active: 'Ativo', foco: 'Foco',
-    disabled: 'Desabilitado', erro: 'Erro', carregando: 'Carregando', vazio: 'Vazio',
+    disabled: 'Desabilitado', erro: 'Erro', carregando: 'Carregando', vazio: 'Vazio', oculto: 'Oculto',
   };
 
   function comClasse(el, classe) {
@@ -326,12 +346,15 @@
   }
 
   // estados: lista de [estado, elemento]. Variações: lista de [rótulo, elemento], sem data-estado.
-  function pecaComEstados({ id, titulo, nota, estados, ausentes, variacoes }) {
+  // props: lista de [nome, descrição], para a peça cujas propriedades não estão no cabeçalho do grupo.
+  function pecaComEstados({ id, titulo, nota, estados, ausentes, variacoes, props }) {
     const celula = (nome, el, atributos) => h('div', { class: 'ds-estado', ...atributos },
       h('span', { class: 'ds-estado-nome' }, nome), el);
     const blocos = [h('div', { class: 'ds-estados' },
       ...estados.map(([estado, el]) => celula(NOME_DO_ESTADO[estado], el, { 'data-estado': estado })))];
     if (variacoes) blocos.push(h('div', { class: 'ds-estados' }, ...variacoes.map(([nome, el]) => celula(nome, el))));
+    if (props) blocos.push(h('dl', { class: 'ds-props' }, ...props.flatMap(([nome, descricao]) =>
+      [h('dt', null, h('code', null, nome)), h('dd', null, descricao)])));
     blocos.push(h('ul', { class: 'ds-ausentes' }, ...Object.entries(ausentes).map(([estado, motivo]) =>
       h('li', { 'data-ausente': estado }, h('b', null, NOME_DO_ESTADO[estado]), `: ${motivo}`))));
     return fundamento(id, titulo, nota, ...blocos);
@@ -648,11 +671,18 @@
     });
   }
 
+  // Variante com ícones: cada opção é um círculo com ícone (icones: { chave: nomeDoIcone }).
+  const RADIO_DE_ICONES = {
+    rotulo: 'Canal de contato',
+    opcoes: [['telefone', 'Telefone'], ['email', 'E-mail'], ['pessoa', 'Presencial']],
+    icones: { telefone: 'telefone', email: 'email', pessoa: 'pessoa' },
+  };
+
   function pecaRadio() {
     const base = { rotulo: 'Visualizar por', opcoes: [['dia', 'Dia'], ['semana', 'Semana'], ['mes', 'Mês']] };
     const preenchido = { ...base, valor: 'semana' };
     return pecaComEstados({
-      id: 'radio', titulo: 'Rádio', nota: 'Um ponto de Tab por grupo, e as setas trocam a opção. Para até cinco opções sempre visíveis.',
+      id: 'radio', titulo: 'Rádio', nota: 'Um ponto de Tab por grupo, e as setas trocam a opção. Para até cinco opções sempre visíveis. Na variante com ícones, o texto da opção marcada aparece ao lado.',
       estados: [
         ['default', radio(preenchido)],
         ['hover', forcar(radio(preenchido), '.radio', 'is-hover')],
@@ -663,6 +693,10 @@
         ['vazio', radio(base)],
       ],
       ausentes: { carregando: SEM_ESPERA },
+      variacoes: [
+        ['Com ícones', radio(RADIO_DE_ICONES)],
+        ['Com ícones, marcado', radio({ ...RADIO_DE_ICONES, valor: 'email' })],
+      ],
     });
   }
 
@@ -1444,6 +1478,119 @@
     });
   }
 
+  // --- lista e detalhe -------------------------------------------------------
+
+  const semAcao = () => {};
+  const ITENS_DO_DETALHE = [
+    {
+      titulo: 'Marina Couto', avatar: 'Marina Couto', chips: ['Cliente', 'Pessoa física'],
+      destaque: { rotulo: 'Processos ativos', valor: '3' },
+      linhas: [
+        { icone: 'telefone', rotulo: 'Telefone', valor: '(48) 3333-0102' },
+        { icone: 'email', rotulo: 'E-mail', valor: 'marina.couto@exemplo.com.br' },
+        { icone: 'pessoa', rotulo: 'Responsável', valor: 'Rafael Antunes' },
+      ],
+      acoes: [{ rotulo: 'Editar', iconeEsquerda: 'editar', aoClicar: semAcao }, { variante: 'primario', rotulo: 'Nova atividade', aoClicar: semAcao }],
+    },
+    {
+      titulo: 'Otávio Lins', avatar: 'Otávio Lins', chips: ['Parte contrária'],
+      destaque: { rotulo: 'Processos ativos', valor: '1' },
+      linhas: [
+        { icone: 'telefone', rotulo: 'Telefone', valor: '(48) 3333-0207' },
+        { icone: 'email', rotulo: 'E-mail', valor: '' },
+        { icone: 'pessoa', rotulo: 'Responsável', valor: 'Rafael Antunes' },
+      ],
+      acoes: [{ rotulo: 'Editar', iconeEsquerda: 'editar', aoClicar: semAcao }, { variante: 'primario', rotulo: 'Nova atividade', aoClicar: semAcao }],
+    },
+  ];
+
+  function detalheDemo(dados, transformar) {
+    const painel = painelDetalhe({ rotulo: 'Detalhe do contato', ...dados });
+    if (transformar) transformar(painel);
+    return painel.el;
+  }
+
+  // As setas do topo trocam entre os dois itens de exemplo, como na lista real.
+  function detalheVivo() {
+    let indice = 0;
+    let painel;
+    const ir = (passo) => {
+      indice = (indice + passo + ITENS_DO_DETALHE.length) % ITENS_DO_DETALHE.length;
+      painel.mostrar(ITENS_DO_DETALHE[indice]);
+    };
+    painel = painelDetalhe({ rotulo: 'Detalhe do contato', ...ITENS_DO_DETALHE[0], aoAnterior: () => ir(-1), aoProximo: () => ir(1) });
+    return painel.el;
+  }
+
+  function pecaPainelDetalhe() {
+    const [item] = ITENS_DO_DETALHE;
+    const so = { titulo: item.titulo, avatar: item.avatar, chips: item.chips };
+    return pecaComEstados({
+      id: 'painel-detalhe', titulo: 'Painel de detalhe', nota: 'Lista à esquerda, detalhe ao lado. Entra em toda tela com tabela ou cards; o Kanban fica de fora. Referência: Cotação e Náutica.',
+      estados: [
+        ['default', detalheVivo()],
+        ['foco', detalheDemo(item, (p) => comClasse(p.card.querySelector('[data-acao="esconder"]'), 'is-foco'))],
+        ['carregando', detalheDemo({ ...so, corpo: [skeleton({ rotulo: 'Carregando o contato' })] })],
+        ['vazio', detalheDemo({ ...so, corpo: [estadoVazio({ titulo: 'Sem dados cadastrados.', texto: 'Telefone, e-mail e processos aparecem aqui depois do cadastro.' })] })],
+        ['oculto', detalheDemo(item, (p) => p.esconder())],
+      ],
+      ausentes: {
+        hover: 'o cartão não reage ao cursor. Setas, esconder e ações reagem sozinhos.',
+        active: 'o cartão não reage ao clique. Cada botão reage sozinho.',
+        disabled: 'não existe painel desabilitado. Sem item escolhido, ele não é desenhado.',
+        erro: 'o cartão mostra o item que a lista já carregou. A falha de carregar aparece na faixa de aviso da lista.',
+      },
+      props: [
+        ['rotulo', 'nome acessível do cartão; obrigatório'],
+        ['titulo', 'nome do item; obrigatório, e anunciado na troca de item'],
+        ['avatar', 'nome que vira a inicial ao lado do título'],
+        ['chips', 'textos ou elementos de etiqueta abaixo do título'],
+        ['destaque', '{ rotulo, valor }: o número que a pessoa procura primeiro'],
+        ['linhas', '{ icone, rotulo, valor }: pares de rótulo e dado; sem valor, aparece o traço'],
+        ['corpo', 'elementos extras, um por seção'],
+        ['acoes', 'props de botão com aoClicar; a última fica à direita e é a primária'],
+        ['aoAnterior, aoProximo', 'as setas do topo trocam o item sem sair do painel'],
+        ['aoFechar', 'chamado depois de esconder; o foco vai para o botão › de reabrir'],
+        ['aoReabrir', 'chamado depois de reabrir; o foco volta ao botão de esconder'],
+        ['retorno', '{ el, card, mostrar(dados), esconder(), reabrir(), oculto() }'],
+      ],
+    });
+  }
+
+  function divisorDemo(classe) {
+    const alvo = h('div', { class: 'ds-divisor-alvo' }, 'Detalhe');
+    const divisor = divisorRedimensionavel({ alvo, rotulo: 'Largura do detalhe de exemplo', minimo: 120, maximo: 240, padrao: 160 });
+    if (classe) divisor.el.classList.add(classe);
+    return h('div', { class: 'ds-divisor-demo' }, h('div', { class: 'ds-divisor-lista' }, 'Lista'), divisor.el, alvo);
+  }
+
+  function pecaDivisor() {
+    return pecaComEstados({
+      id: 'divisor-redimensionavel', titulo: 'Divisor redimensionável', nota: 'Padrão separator da WAI-ARIA: setas mudam a largura, Home vai ao mínimo, End ao máximo, e duplo clique ou Enter volta ao padrão. A largura persiste por chave.',
+      estados: [
+        ['default', divisorDemo()],
+        ['hover', divisorDemo('is-hover')],
+        ['foco', divisorDemo('is-foco')],
+        ['active', divisorDemo('is-arrastando')],
+      ],
+      ausentes: {
+        disabled: 'não existe divisor desabilitado. Sem espaço para o detalhe, o divisor sai da tela.',
+        erro: 'o valor fica sempre entre o mínimo e o máximo, e não há valor inválido.',
+        carregando: 'a largura muda na hora, sem espera.',
+        vazio: 'a peça exige o alvo que muda de largura.',
+      },
+      props: [
+        ['alvo', 'o elemento que muda de largura, pela variável --largura-redimensionavel; obrigatório'],
+        ['minimo', 'largura mínima em px; padrão 300'],
+        ['maximo', 'largura máxima em px; padrão 560'],
+        ['padrao', 'largura inicial e a do duplo clique; padrão 380'],
+        ['chave', 'chave do localStorage; grava só no fim do gesto'],
+        ['reserva', 'o mínimo em px que sobra para a lista vizinha'],
+        ['lado', 'direita ou esquerda: onde o alvo fica em relação ao divisor'],
+      ],
+    });
+  }
+
   // --- montagem --------------------------------------------------------------
 
   document.getElementById('fundamentos').append(pecaCor(), pecaTipografia(), pecaEspaco(), pecaRaio(),
@@ -1480,7 +1627,8 @@
   document.getElementById('navegacao').append(pecaNavbar(),
     pecaMenuLateral('sidebar-expandida', 'Sidebar expandida', 'Ícone e nome de cada módulo. O item do módulo aberto tem fundo próprio e texto de ação, não só cor.', false),
     pecaMenuLateral('sidebar-recolhida', 'Sidebar recolhida', 'Só o ícone. O nome continua como nome acessível e vira dica. A escolha persiste entre páginas.', true),
-    pecaAbas(), pecaTrilha(), pecaBarraFiltros(), pecaPainelLateral(), pecaBarraAcoes(), pecaStepper());
+    pecaAbas(), pecaTrilha(), pecaBarraFiltros(), pecaPainelLateral(), pecaBarraAcoes(), pecaStepper(),
+    pecaPainelDetalhe(), pecaDivisor());
 
   // --- navegação da página ---------------------------------------------------
 
