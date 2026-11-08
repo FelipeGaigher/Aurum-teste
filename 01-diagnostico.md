@@ -62,8 +62,9 @@ Sintoma:
 
 - O produto chama de "tarefa" na Área de trabalho e no modal, e de
   "atividade" na Agenda e no botão. Telas 11, 13 e 14.
-- O onboarding promete "quadros Kanban". O Kanban não está no menu nem na
-  Agenda. Telas 06 e 11.
+- O onboarding promete "quadros Kanban". O item de menu "Gestão kanban"
+  existe no código, oculto por flag de plano. A rota redireciona para a
+  Área de trabalho. Telas 06 e 11, e `01-inventario-css-astrea.md`.
 - A mesma atividade vive em Área de trabalho, Agenda e lista lateral de
   "Tarefas sem data". Tela 18.
 
@@ -149,7 +150,7 @@ Pergunta da banca: "quais princípios guiariam a sua proposta de redesign".
 | Princípio | O que ele decide |
 |---|---|
 | O prazo primeiro | O dado que não pode falhar é o mais visível em toda tela de atividade. Cor e texto, nunca só cor |
-| Uma palavra, um lugar | Um nome para cada objeto e um caminho para cada ação. Atividade, com tipos. Kanban como visão, não como módulo |
+| Uma palavra, um lugar | Um nome para cada objeto e um caminho para cada ação. Atividade, com tipos. O Kanban prometido aparece no menu, em todo plano |
 | A moldura é a âncora | Cabeçalho, menu e ações no mesmo lugar em tela nova e legada. O conteúdo migra, a casa fica |
 | Todo erro tem saída | Nenhum botão morre em silêncio. Cada estado de erro diz o que houve e como voltar |
 | Densidade de quem olha trinta vezes por dia | Compacto por padrão, com modo respirado por escolha. Tabela quando se compara, card quando se age |

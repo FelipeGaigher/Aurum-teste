@@ -78,13 +78,28 @@ Trello estranha.
 
 ## Direção visual
 
-> decisão: tipografia séria, sem arredondado de produto de consumo. Cores a
-> partir do azul do Astrea, `#008fd5`, como primitivo. Um raio só. Densidade
-> de quem olha trinta cards por dia.
+> decisão, 07/11, de Felipe: o protótipo segue o visual atual do Astrea.
+> Logo, navbar e sidebar iguais ao produto, raio 8, tema claro só, fonte
+> `museo-sans` com reserva Open Sans. Os primitivos espelham as variáveis
+> reais do CSS do Astrea. O fundo de ação usa `#1D6BB7`, porque o
+> `#228BE6` reprova no AA com texto branco. A direção visual própria que
+> existia aqui foi descartada: a tela tem que parecer Astrea, não produto
+> novo.
 
-> aberto: a família tipográfica. Candidatas: IBM Plex Sans, Source Sans 3,
-> Inter Tight. Decidir depois de ver a fonte que o produto usa hoje, pelo
-> snippet de console.
+> decisão: densidade de quem olha trinta cards por dia. Corpo 13px, título
+> 20px, controles 36px. É a resposta ao problema P1 da Q1, a Agenda que não
+> cabe na tela.
+
+> decisão, 07/11: o Kanban é módulo, como no próprio Astrea. A leitura do
+> produto achou o item de menu oculto "Gestão kanban". Rota
+> `#/main/kanban`, travada por flag de plano. O protótipo mostra esse item
+> no menu, ativo, e o título da página é "Gestão kanban". O seletor de
+> visão saiu.
+
+> decisão, 07/11, de Felipe: o Kanban abre com o plano do redesign. Quatro
+> fases e dezoito entregas, com o discovery com os designers entre elas. As
+> atividades de escritório ficam como segundo conjunto, por chave no
+> rodapé. A banca pede uma tela do produto, e esse conjunto prova isso.
 
 ## Fontes deste documento
 
