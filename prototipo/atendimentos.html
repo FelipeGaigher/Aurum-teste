@@ -20,7 +20,46 @@
   .lista-filtros { margin-bottom: var(--space-4); }
   .pagina-aviso:empty { display: none; }
   .pagina-aviso { margin-bottom: var(--space-4); }
-  .tabela a { border-radius: var(--radius); color: var(--color-action); font-weight: var(--font-weight-medium); }
+  .tabela a, .atendimentos-cards .card-contato-nome a { border-radius: var(--radius); color: var(--color-action); font-weight: var(--font-weight-medium); }
+
+  /* Formato da lista no controle segmentado de contatos.html: o marcado ganha fundo e peso, nunca só a cor. */
+  .formato {
+    display: inline-flex;
+    gap: var(--border-width);
+    padding: var(--border-width);
+    background-color: var(--color-bg-subtle);
+    border: var(--border-width) solid var(--color-border-default);
+    border-radius: var(--radius);
+  }
+  .formato-opcao {
+    min-height: calc(var(--component-control-height) - var(--space-1));
+    padding: 0 var(--space-3);
+    background: none;
+    border: var(--border-width) solid transparent;
+    border-radius: var(--radius);
+    color: var(--color-text-default);
+    font: inherit;
+    font-size: var(--font-size-button);
+    cursor: pointer;
+  }
+  .formato-opcao:hover { background-color: var(--color-bg-hover); }
+  .formato-opcao[aria-checked="true"] {
+    background-color: var(--color-bg-surface);
+    border-color: var(--color-border-strong);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  /* Cards: a grade de contatos.html; o status no canto do topo. */
+  .atendimentos-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--component-column-width)), 1fr));
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .atendimentos-cards .card-contato { width: auto; height: 100%; }
+  .atendimentos-cards .card-contato-topo { align-self: stretch; justify-content: space-between; align-items: flex-start; }
   .detalhe-numero { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); }
   .detalhe-anotacoes-titulo { margin: 0 0 var(--space-2); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
   .tabela .numero-processo, .ficha-leitura .numero-processo { white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -320,7 +359,9 @@
     const lugarDaBarra = elemento('div', 'lista-filtros');
     const aviso = elemento('div', 'pagina-aviso');
     aviso.id = 'pagina-aviso';
-    const lugarDaTabela = elemento('div');
+    const lugarDaTabela = elemento('div', 'atendimentos-resultado');
+    lugarDaTabela.id = 'atendimentos-resultado';
+    let visao = lerVisao();
     const detalhe = detalheAoLado({
       prefixo: 'astrea-atendimentos', lista: lugarDaTabela, dados: dadosDoDetalhe, urlDaFicha: enderecoDaFicha,
       rotulo: 'Atendimento escolhido',
@@ -352,20 +393,100 @@
       const resultado = total ? `${lista.length} de ${plural(atendimentos.length, 'atendimento', 'atendimentos')}`
         : plural(lista.length, 'atendimento', 'atendimentos');
       barra.atualizar({ resultado, ativos: total });
-      const tabela = DS.tabela({
-        rotulo: 'Atendimentos',
-        colunas: [['assunto', 'Assunto'], ['cliente', 'Cliente'], ['processo', 'Processo'], ['responsavel', 'Responsável'],
-          ['inicio', 'Início'], ['status', 'Status']],
-        linhas: lista.map(celulas),
-        vazio: atendimentos.length
-          ? { titulo: 'Nenhum atendimento com estes filtros.', texto: 'Os filtros escondem o que houver aqui.',
-            acao: { rotulo: 'Limpar filtros', variante: 'secundario', aoClicar: limpar } }
-          : { titulo: 'Agilize e organize seus atendimentos',
-            texto: 'Registre conversas com seus clientes, adicione documentos e crie atividades de forma descomplicada.' },
-      });
-      if (lista.length) linhasSelecionaveis(tabela, lista);
-      lugarDaTabela.replaceChildren(tabela);
+      const vazio = atendimentos.length
+        ? { titulo: 'Nenhum atendimento com estes filtros.', texto: 'Os filtros escondem o que houver aqui.',
+          acao: { rotulo: 'Limpar filtros', variante: 'secundario', aoClicar: limpar } }
+        : { titulo: 'Agilize e organize seus atendimentos',
+          texto: 'Registre conversas com seus clientes, adicione documentos e crie atividades de forma descomplicada.' };
+      lugarDaTabela.dataset.visao = visao;
+      if (visao === 'cards') {
+        lugarDaTabela.replaceChildren(lista.length ? desenharCards(lista) : DS.estadoVazio(vazio));
+      } else {
+        const tabela = DS.tabela({
+          rotulo: 'Atendimentos',
+          colunas: [['assunto', 'Assunto'], ['cliente', 'Cliente'], ['processo', 'Processo'], ['responsavel', 'Responsável'],
+            ['inicio', 'Início'], ['status', 'Status']],
+          linhas: lista.map(celulas),
+          vazio,
+        });
+        if (lista.length) linhasSelecionaveis(tabela, lista);
+        lugarDaTabela.replaceChildren(tabela);
+      }
       detalhe.sincronizar(lista);
+    }
+
+    // Card do atendimento na peça de contatos.html: o assunto segue para a ficha, o resto do card escolhe.
+    function cardDoAtendimento(a) {
+      const card = elemento('article', 'card-contato');
+      card.tabIndex = 0;
+      const topo = elemento('div', 'card-contato-topo');
+      const titulo = elemento('h3', 'card-contato-nome');
+      titulo.id = `card-atendimento-${a.id}`;
+      titulo.append(link(a.assunto, enderecoDaFicha(a)));
+      card.setAttribute('aria-labelledby', titulo.id);
+      topo.append(titulo, chipStatus(a.status));
+      const dados = elemento('dl', 'card-contato-dados');
+      [['Cliente', a.cliente], ['Processo', numeroDoProcesso(a.processo)],
+        ['Responsável', DS.avatar({ nome: a.responsavel, mostrarNome: true })], ['Início', dataCurta(a.inicio)]]
+        .forEach(([rotulo, valor]) => {
+          const dd = elemento('dd');
+          dd.append(valor);
+          dados.append(elemento('dt', null, rotulo), dd);
+        });
+      card.append(topo, dados);
+      if (a.area) card.append(DS.tag({ rotulo: a.area }));
+      return card;
+    }
+
+    function desenharCards(itens) {
+      const ul = elemento('ul', 'atendimentos-cards');
+      ul.setAttribute('aria-label', 'Atendimentos');
+      ul.append(...itens.map((a) => {
+        const li = elemento('li');
+        li.dataset.id = String(a.id);
+        li.append(cardDoAtendimento(a));
+        return li;
+      }));
+      return ul;
+    }
+
+    // --- formato: radiogroup com foco itinerante (o mesmo de contatos.html) -------
+
+    const formato = elemento('div', 'formato');
+    formato.setAttribute('role', 'radiogroup');
+    formato.setAttribute('aria-label', 'Formato da lista');
+    const opcoesDeFormato = VISOES.map(([chave, rotulo]) => {
+      const el = elemento('button', 'formato-opcao', rotulo);
+      el.type = 'button';
+      el.setAttribute('role', 'radio');
+      el.dataset.visao = chave;
+      el.setAttribute('aria-controls', 'atendimentos-resultado');
+      el.addEventListener('click', () => escolherVisao(chave));
+      return el;
+    });
+    formato.append(...opcoesDeFormato);
+    formato.addEventListener('keydown', (e) => {
+      const passo = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+      if (!passo) return;
+      e.preventDefault();
+      const atual = VISOES.findIndex(([chave]) => chave === visao);
+      escolherVisao(VISOES[(atual + passo + VISOES.length) % VISOES.length][0], true);
+    });
+
+    function marcarVisao() {
+      opcoesDeFormato.forEach((el) => {
+        const marcada = el.dataset.visao === visao;
+        el.setAttribute('aria-checked', String(marcada));
+        el.tabIndex = marcada ? 0 : -1;
+      });
+    }
+
+    function escolherVisao(nova, focar) {
+      visao = nova;
+      gravar(CHAVE_VISAO, nova);
+      marcarVisao();
+      desenhar();
+      if (focar) opcoesDeFormato.find((el) => el.dataset.visao === nova).focus();
     }
 
     function anotacoesRecentes(a) {
@@ -421,19 +542,42 @@
     function montarBarra() {
       const busca = DS.busca({ rotulo: 'Buscar atendimento', placeholder: 'Assunto, cliente ou processo', valor: filtro.busca,
         aoMudar: (v) => { filtro.busca = v; desenhar(); } });
-      const seletores = Object.entries(FILTROS).map(([chave, f]) => {
-        const el = DS.seletor({ rotulo: f.rotulo, opcoes: f.opcoes, valor: filtro[chave], largura: 'p',
-          aoEscolher: (valor) => { filtro[chave] = valor; desenhar(); } });
-        el.dataset.filtro = chave;
-        return el;
-      });
-      barra = DS.barraFiltros({ rotulo: 'Filtros de atendimentos', itens: [busca, ...seletores], aoLimpar: limpar });
-      barra.el.querySelector('.barra-filtros-fim').append(botaoAdicionar);
+      const status = DS.seletor({ rotulo: FILTROS.status.rotulo, opcoes: FILTROS.status.opcoes, valor: filtro.status, largura: 'p',
+        aoEscolher: (valor) => { filtro.status = valor; desenhar(); } });
+      status.dataset.filtro = 'status';
+      // Responsável vai para o Filtro avançado, para a barra caber numa linha (padrão de contatos.html).
+      const avancado = DS.botao({ variante: 'secundario', rotulo: 'Filtro avançado' });
+      avancado.setAttribute('data-abre-painel', '');
+      avancado.setAttribute('aria-haspopup', 'dialog');
+      avancado.addEventListener('click', () => abrirAvancado(avancado));
+      barra = DS.barraFiltros({ rotulo: 'Filtros de atendimentos', itens: [busca, status, avancado], aoLimpar: limpar });
+      barra.el.querySelector('.barra-filtros-fim').append(formato, botaoAdicionar);
       lugarDaBarra.replaceChildren(barra.el);
+    }
+
+    let painelDoFiltro = null;
+    function abrirAvancado(origem) {
+      const rascunho = { responsavel: filtro.responsavel };
+      const cancelar = DS.botao({ variante: 'texto', rotulo: 'Cancelar' });
+      cancelar.addEventListener('click', () => painelDoFiltro.fechar());
+      const aplicar = DS.botao({ variante: 'primario', rotulo: 'Aplicar' });
+      aplicar.addEventListener('click', () => {
+        filtro.responsavel = rascunho.responsavel;
+        painelDoFiltro.fechar();
+        desenhar();
+      });
+      const responsavel = DS.seletor({ rotulo: FILTROS.responsavel.rotulo, opcoes: FILTROS.responsavel.opcoes,
+        valor: rascunho.responsavel, aoEscolher: (v) => { rascunho.responsavel = v; } });
+      responsavel.dataset.filtro = 'responsavel';
+      const conteudoDoFiltro = { titulo: 'Filtro avançado', corpo: [responsavel], rodape: DS.grupoBotoes([cancelar, aplicar]) };
+      if (!painelDoFiltro) painelDoFiltro = DS.painelLateral(conteudoDoFiltro);
+      else painelDoFiltro.trocar(conteudoDoFiltro);
+      painelDoFiltro.abrir(origem);
     }
 
     redesenharLista = desenhar;
     montarBarra();
+    marcarVisao();
     desenhar();
     detalhe.divisor.ajustar();
   }
@@ -442,6 +586,13 @@
 
   const ESTREITA = window.matchMedia('(max-width: 1100px)');
   const LISTA_MINIMA = 480;
+  const CHAVE_VISAO = 'astrea-atendimentos-visao';
+  const VISOES = [['tabela', 'Tabela'], ['cards', 'Cards']];
+
+  function lerVisao() {
+    const salva = ler(CHAVE_VISAO);
+    return VISOES.some(([chave]) => chave === salva) ? salva : 'tabela';
+  }
 
   function ler(chave) {
     try { return localStorage.getItem(chave); } catch (e) { return null; }
@@ -495,6 +646,12 @@
       divisor.el.hidden = !x || painel.oculto();
       const id = x ? String(x.id) : '';
       lista.querySelectorAll('tbody tr[data-id]').forEach((tr) => tr.setAttribute('aria-selected', String(tr.dataset.id === id)));
+      lista.querySelectorAll('li[data-id] > .card-contato').forEach((card) => {
+        const sim = card.parentElement.dataset.id === id;
+        card.classList.toggle('is-selecionado', sim);
+        if (sim) card.setAttribute('aria-current', 'true');
+        else card.removeAttribute('aria-current');
+      });
       if (x) painel.mostrar({ ...dados(x), navegavel: itens.length > 1 });
     }
 
@@ -508,12 +665,15 @@
       sincronizar(itens);
     }
 
+    // Linha da tabela ou card: o mesmo clique e o mesmo Enter escolhem o item do painel.
     lista.addEventListener('click', (e) => {
-      const tr = e.target.closest('tr[data-id]');
-      if (tr && !e.target.closest('a, button')) escolher(tr.dataset.id);
+      const item = e.target.closest('tr[data-id], li[data-id]');
+      if (item && !e.target.closest('a, button')) escolher(item.dataset.id);
     });
     lista.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && e.target.matches('tr[data-id]')) { e.preventDefault(); escolher(e.target.dataset.id); }
+      if (e.key !== 'Enter' || !e.target.matches('tr[data-id], li[data-id] > .card-contato')) return;
+      e.preventDefault();
+      escolher(e.target.closest('[data-id]').dataset.id);
     });
     return { casca, divisor, sincronizar };
   }
