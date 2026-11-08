@@ -121,3 +121,11 @@ O enunciado diz que a Aurum prototipa no Figma. A tela da Q3 precisa existir lá
 | Levar a tela ao Figma, com a cota do MCP esgotada | Resolvido às 13h27: `generate_figma_design` passou pela cota, e a Área de trabalho está no arquivo, nó `24-2` |
 | Localizar assinatura, aprovações e pagamentos no produto | Manter na fase 3 da Q2 |
 | Marcação preta no print de Processos | Nenhuma alteração |
+
+### Pasta no Google Drive como caixa de resposta, pedido de 08/11 às 15h20
+
+A plataforma do teste exige uma pasta no Google Drive com as respostas e
+os arquivos de apoio. O compartilhamento é "todos com o link podem ver".
+A pasta reúne um Leia-me com todos os links e cinco PDFs. Os PDFs são as
+três questões, o processo e os ajustes na plataforma. O Figma e o protótipo entram como
+link. Os PDFs saem de `slides/` e das páginas HTML, sem a chave de tema.
