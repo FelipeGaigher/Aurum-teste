@@ -193,6 +193,7 @@
         <text class="nota-svg" x="548" y="288">O legado consome como variável CSS,</text>
         <text class="nota-svg" x="548" y="305">sem reescrever componente</text>
       </svg>
+      <p class="nota">O protótipo já tem essa arquitetura: 9 fundamentos e 49 componentes em cinco grupos. São 211 estados desenhados e 185 ausências explicadas. Nenhuma cor da tela fica fora de token.</p>
     </div>
     <div class="col fill">
       <div class="decisao"><span class="carimbo">Decisão</span><p>Tokens semânticos antes de qualquer componente.</p></div>
@@ -205,6 +206,8 @@
         <li><div><b>Padrões e templates por módulo</b><span>Lista, filtro, formulário de prazo, estado vazio.</span></div></li>
         <li><div><b>Padrões para funcionalidade com IA</b><span>Como o sistema sugere, como o usuário confirma, como desfaz, e como aparece quando a IA erra. Mesmos componentes, mesma moldura.</span></div></li>
       </ol>
+      <h3>Os estados de cada componente</h3>
+      <p class="nota">Default, hover, active, foco, disabled, erro, carregando e vazio são a matriz base. Algumas peças pedem mais três: selecionado, sem-destaque e oculto. Cada peça mostra só os estados que tem e escreve por que os outros faltam.</p>
     </div>
   </div>
   <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>1 de 6</span></footer>
@@ -355,6 +358,7 @@
         <li><div>A direção decide. A Engenharia veta por motivo técnico, com justificativa.</div></li>
         <li><div>Versão nova do pacote, com changelog.</div></li>
       </ol>
+      <p class="nota">No protótipo, a regra funcionou três vezes em um dia. O botão de copiar nasceu local e foi para o DS quando a quarta página o usou. O painel de detalhe nasceu em Contatos e hoje serve sete telas. Um card de registro substituiu três cards parecidos.</p>
       <div class="decisao"><span class="carimbo">Decisão</span><p>O kit de IA é parte do DS, não um extra. O padrão se mantém por ferramenta, não por cobrança.</p></div>
       <table>
         <thead><tr><th>Peça do kit</th><th>O que faz</th></tr></thead>
@@ -406,6 +410,8 @@
         <h3>Critério de priorização</h3>
         <p class="formula">Frequência de uso × dor relatada × onde a migração do front já está acontecendo</p>
         <p class="texto">Pegar carona na migração custa menos. A tela já vai ser reescrita, então nasce no padrão novo sem trabalho dobrado. A gestão de atividades vem primeiro: é o fluxo diário de prazo, onde a dor é maior e a migração começa.</p>
+        <h3>Fases 1 e 2 em protótipo</h3>
+        <p class="texto">O protótipo antecipa em HTML o inventário do Astrea, os tokens semânticos e uma moldura única para 17 páginas. Discovery e linha de base ficam para o time. O protótipo não prova a convivência com o legado. Essa prova só existe atrás da flag, em produção.</p>
       </div>
       <div class="col fill">
         <div class="decisao"><span class="carimbo">Decisão</span><p>O que é moldura fica fixo. O que é conteúdo migra.</p></div>
@@ -502,6 +508,16 @@
         <li><div><b>Ruptura visual para quem vive no produto o dia inteiro</b><p>Mitigação: moldura fixa primeiro. Cor, tipografia e fluxos principais mudam o mínimo. Feature flag e grupo beta na primeira tela nova. Chamados de suporte por módulo acompanhados semana a semana.</p></div></li>
         <li><div><b>O roadmap dos squads toma o tempo dos designers</b><p>Mitigação: líderes como patrocinadores, com o tempo acordado no discovery. A tese: com skills e agentes o tempo de produção cai, e o DS devolve mais tempo do que toma. A métrica de eficiência prova ou derruba isso.</p></div></li>
       </ol>
+      <h3>No protótipo, o padrão já se mantém por ferramenta</h3>
+      <table>
+        <thead><tr><th>Portão</th><th>O que barra</th></tr></thead>
+        <tbody>
+          <tr><td>verificar.py</td><td>Cor fora do bloco de primitivos, primitivo fora do semântico, Kanban fora de sincronia com a moldura</td></tr>
+          <tr><td>verificar-app.js</td><td>Os requisitos RF-01 a RF-15 no navegador: moldura, telas, teclado, contraste AA e controle nativo visível</td></tr>
+          <tr><td>detectar.py</td><td>A cara de IA: grid de cards iguais, ícone em caixinha, gradiente</td></tr>
+          <tr><td>Revisão ao vivo</td><td>Quatro rodadas minhas. Cada correção está registrada em 04-processo.html</td></tr>
+        </tbody>
+      </table>
     </div>
     <div class="col fill">
       <h3>Como medir</h3>
@@ -516,9 +532,11 @@
           <tr><td>Experiência</td><td>Chamados de suporte por módulo</td><td class="muted">Suporte</td></tr>
           <tr><td>Experiência</td><td>Tempo para criar um prazo</td><td class="muted">Analytics do produto</td></tr>
           <tr><td>Experiência</td><td>Sucesso na tarefa e CSAT nos fluxos principais</td><td class="muted">Pesquisa recorrente</td></tr>
+          <tr><td>Experiência</td><td>Cliques por tarefa-chave, no Astrea e na tela nova, antes do beta</td><td class="muted">Teste de tarefa</td></tr>
         </tbody>
       </table>
       <p class="nota">A linha de base das três frentes sai no mês 1. Sem ela, a métrica só mostra o número de hoje, não o que mudou.</p>
+      <p class="nota">O protótipo já mostrou a ruptura em tela pequena. Abaixo de 1100px, o painel ao lado some, e a Área de trabalho fica sem detalhe.</p>
     </div>
   </div>
   <footer class="rodape"><span>Astrea. Design system e redesign incremental. Questão 2</span><span>6 de 6</span></footer>
