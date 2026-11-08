@@ -6,12 +6,380 @@
 <title>Administração, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
+<script src="dados.js"></script>
+<style>
+  .admin { display: grid; gap: var(--space-6); min-width: 0; }
+  .admin-bloco { display: grid; gap: var(--space-3); justify-items: start; min-width: 0; }
+  .admin-bloco h2,
+  .admin-bloco h3 { margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+  .admin-painel { display: grid; gap: var(--space-6); min-width: 0; padding-top: var(--space-2); }
+  .admin-texto { margin: 0; max-width: 70ch; color: var(--color-text-muted); }
+  .admin-cabeca { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-4); width: 100%; }
+  .admin-status:empty { display: none; }
+  .admin-status { margin: 0; color: var(--color-text-success); }
+
+  /* Dados lidos em pares rótulo e valor, sem campo vazio na leitura. */
+  .admin-dados { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-2) var(--space-5); margin: 0; }
+  .admin-dados dt { color: var(--color-text-muted); }
+  .admin-dados dd { margin: 0; overflow-wrap: anywhere; }
+  .admin-tabela { width: 100%; }
+
+  /* PA-88: limpar a conta fica numa zona própria, longe dos dados cadastrais. */
+  .zona-perigo {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+    width: 100%;
+    padding: var(--space-5);
+    border: var(--border-width) solid var(--color-text-danger);
+    border-radius: var(--radius-card);
+  }
+  .zona-perigo h3 { color: var(--color-text-danger); }
+  .zona-acao { display: grid; gap: var(--space-2); justify-items: start; }
+
+  /* PA-90: os dois limites do plano, cada um com o que ele conta. */
+  .plano { scroll-margin-top: calc(var(--size-header) + var(--space-3)); }
+  .plano h2:focus { outline: none; }
+  .limites { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--size-column)), 1fr)); gap: var(--space-4); width: 100%; margin: 0; padding: 0; list-style: none; }
+  .limite { display: grid; gap: var(--space-2); align-content: start; padding: var(--space-4); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); }
+  .limite-numero { margin: 0; font-size: var(--font-size-title); font-weight: var(--font-weight-semibold); font-variant-numeric: tabular-nums; line-height: var(--font-leading-tight); }
+  .limite-nome { margin: 0; font-weight: var(--font-weight-semibold); }
+  .limite p { margin: 0; }
+  .limite .admin-texto { font-size: var(--font-size-label); }
+  .admin-aviso:empty { display: none; }
+</style>
 </head>
 <body data-pagina="administracao.html" data-titulo="Administração">
 <div class="corpo">
   <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
+    <div class="admin">
+      <div class="admin-aviso" id="admin-aviso"></div>
+      <div id="admin-abas"></div>
+      <section class="admin-bloco plano" id="plano" aria-labelledby="titulo-plano">
+        <h2 id="titulo-plano" tabindex="-1">Meu plano</h2>
+        <p class="admin-texto" id="plano-resumo"></p>
+        <ul class="limites" id="plano-limites" aria-label="Limites do plano"></ul>
+        <h3 id="titulo-comparar">Outros planos</h3>
+        <div class="admin-tabela" id="plano-comparar"></div>
+      </section>
+    </div>
   </main>
 </div>
+<script>
+(function () {
+  // Dados fictícios. O plano Light e os limites vêm de 01-varredura-modulos.md, seção 0.
+  const USUARIO = { nome: 'Marina Couto', email: 'marina.couto@exemplo.invalid' };
+  const PLANO = { nome: 'Light', vigencia: 'gratuito por um ano, em teste', monitorados: 40, creditos: 35, usuarios: 1, nuvem: '1 GB' };
+  const OUTROS_PLANOS = [
+    ['Up', 150, 2], ['Smart', 500, 5], ['Company', '1.000', 10], ['Vip', '2.000', 30],
+  ];
+  const escritorio = {
+    nome: 'Couto Advocacia', documento: '00.000.000/0001-00',
+    telefone: '(48) 90000-0000', email: 'contato@exemplo.invalid',
+  };
+  const CAMPOS_DO_ESCRITORIO = [
+    ['nome', 'Nome do escritório', 'text'], ['documento', 'CNPJ', 'text'],
+    ['telefone', 'Telefone', 'tel'], ['email', 'E-mail', 'email'],
+  ];
+  const modelos = ['Contrato de Honorários PF', 'Contrato de Honorários PJ', 'Procuração PF', 'Procuração PJ']
+    .map((titulo, i) => ({ id: `m${i + 1}`, titulo, data: '07/11/2026' }));
+  const criar = (tag, classe, texto) => {
+    const el = document.createElement(tag);
+    if (classe) el.className = classe;
+    if (texto !== undefined) el.textContent = texto;
+    return el;
+  };
+  const bloco = (titulo, ...filhos) => {
+    const el = criar('section', 'admin-bloco');
+    el.append(criar('h2', null, titulo), ...filhos);
+    return el;
+  };
+  const texto = (conteudo) => criar('p', 'admin-texto', conteudo);
+
+  // O que este protótipo não executa avisa no topo, sem fingir que executou.
+  function avisar(mensagem) {
+    const vaga = document.getElementById('admin-aviso');
+    const faixa = DS.faixaAviso({ tipo: 'info', mensagem, fechar: true });
+    vaga.replaceChildren(faixa);
+    faixa.querySelector('button').focus();
+  }
+  const foraDoPrototipo = (acao) => () => avisar(`${acao} fica fora deste protótipo. Nada foi alterado.`);
+
+  // Ação destrutiva: diálogo com o que acontece, e o foco nasce em Cancelar.
+  function confirmar({ titulo, texto: frase, rotulo, depois }, origem) {
+    let confirmado = false;
+    const dialogo = DS.dialogo({
+      titulo, texto: frase,
+      acoes: [
+        { variante: 'secundario', rotulo: 'Cancelar' },
+        { variante: 'destrutivo', rotulo, aoClicar: () => { confirmado = true; } },
+      ],
+      aoFechar: () => {
+        dialogo.el.remove();
+        if (confirmado) depois();
+      },
+    });
+    dialogo.abrir(origem);
+  }
+
+  function irParaPlano() {
+    const titulo = document.getElementById('titulo-plano');
+    titulo.scrollIntoView({ block: 'start' });
+    titulo.focus({ preventScroll: true });
+  }
+
+  // --- Escritório ---------------------------------------------------------------
+
+  function listaDeDados(pares) {
+    const dl = criar('dl', 'admin-dados');
+    pares.filter(([, valor]) => valor).forEach(([rotulo, valor]) => dl.append(criar('dt', null, rotulo), criar('dd', null, valor)));
+    return dl;
+  }
+
+  function dadosDoEscritorio() {
+    return listaDeDados(CAMPOS_DO_ESCRITORIO.map(([chave, rotulo]) => [rotulo, escritorio[chave]]));
+  }
+
+  function painelDoEscritorio(secao, status, origem) {
+    const rascunho = { ...escritorio };
+    const campos = CAMPOS_DO_ESCRITORIO.map(([chave, rotulo, tipo]) => DS.campo({
+      rotulo, tipo, valor: rascunho[chave], largura: 'total', obrigatorio: chave === 'nome',
+      aoMudar: (valor) => { rascunho[chave] = valor.trim(); },
+    }));
+    const barra = DS.barraAcoes({
+      rotulo: 'Ações dos dados do escritório',
+      acoes: [
+        { variante: 'secundario', rotulo: 'Cancelar', aoClicar: () => painel.fechar() },
+        { variante: 'primario', rotulo: 'Salvar', aoClicar: salvar },
+      ],
+    });
+    const painel = DS.painelLateral({
+      titulo: 'Editar dados do escritório', corpo: campos, rodape: barra.el,
+      aoFechar: () => painel.el.remove(),
+    });
+    function salvar() {
+      if (!rascunho.nome) {
+        barra.definirSituacao('erro', 'O nome do escritório é obrigatório.');
+        campos[0].querySelector('input').focus();
+        return;
+      }
+      Object.assign(escritorio, rascunho);
+      secao.querySelector('.admin-dados').replaceWith(dadosDoEscritorio());
+      status.textContent = 'Dados do escritório salvos.';
+      painel.fechar();
+    }
+    painel.abrir(origem);
+  }
+
+  function zonaDePerigo() {
+    const zona = criar('section', 'zona-perigo');
+    zona.setAttribute('aria-labelledby', 'titulo-manutencao');
+    const titulo = criar('h3', null, 'Manutenção de conta');
+    titulo.id = 'titulo-manutencao';
+    zona.append(titulo, texto('As duas ações apagam dados de todos os usuários e não têm desfazer.'));
+    const ACOES = [
+      { rotulo: 'Limpar a conta', descricao: 'Apaga processos, atividades, contatos, documentos e lançamentos financeiros. Os usuários e o plano ficam.',
+        dialogo: 'Tudo o que o escritório cadastrou some: processos, atividades, contatos, documentos e lançamentos financeiros. Usuários e plano continuam. Não há como desfazer.' },
+      { rotulo: 'Limpar dados do financeiro', descricao: 'Apaga só os lançamentos do Financeiro. Processos e contatos ficam.',
+        dialogo: 'Todos os lançamentos do Financeiro somem. Processos, atividades e contatos continuam. Não há como desfazer.' },
+    ];
+    ACOES.forEach((acao) => {
+      const linha = criar('div', 'zona-acao');
+      const botao = DS.botao({ variante: 'destrutivo', rotulo: acao.rotulo });
+      botao.dataset.abrePainel = '';
+      botao.addEventListener('click', () => confirmar({
+        titulo: `${acao.rotulo}?`, texto: acao.dialogo, rotulo: acao.rotulo,
+        depois: foraDoPrototipo(acao.rotulo),
+      }, botao));
+      linha.append(texto(acao.descricao), botao);
+      zona.append(linha);
+    });
+    return zona;
+  }
+
+  function abaEscritorio() {
+    const status = criar('p', 'admin-status');
+    status.setAttribute('role', 'status');
+    const editar = DS.botao({ variante: 'secundario', iconeEsquerda: 'editar', rotulo: 'Editar dados' });
+    editar.dataset.abrePainel = '';
+    const cabeca = criar('div', 'admin-cabeca');
+    cabeca.append(criar('h2', null, 'Dados do escritório'), editar);
+    const dados = criar('section', 'admin-bloco');
+    dados.append(cabeca, dadosDoEscritorio(), status);
+    editar.addEventListener('click', () => {
+      status.textContent = '';
+      painelDoEscritorio(dados, status, editar);
+    });
+
+    const faturamento = bloco('Dados de faturamento', listaDeDados([
+      ['Retenção de PCC', 'Não'], ['Retenção de IRRF', 'Não'], ['Tipo de serviço', 'Serviços advocatícios'],
+      ['Próxima fatura', `Sem cobrança: plano ${PLANO.nome} ${PLANO.vigencia}`],
+    ]));
+    return [dados, faturamento, zonaDePerigo()];
+  }
+
+  // --- Grupo de envolvidos ------------------------------------------------------
+
+  function abaGrupos() {
+    return DS.upsell({
+      titulo: 'Grupo de envolvidos não faz parte do plano Light',
+      texto: 'O grupo reúne pessoas do escritório para envolver todas de uma vez num processo ou atividade. O recurso existe em outro plano.',
+      aoConhecer: irParaPlano,
+    });
+  }
+
+  // --- Acesso -------------------------------------------------------------------
+
+  function abaAcesso() {
+    const usuarios = [{ ...USUARIO, admin: 'Sim', honorarios: 'Sim', ativo: true }];
+    let termo = '';
+    let soAtivos = false;
+    const vaga = criar('div', 'admin-tabela');
+    function desenhar() {
+      const linhas = usuarios
+        .filter((u) => (!soAtivos || u.ativo) && `${u.nome} ${u.email}`.toLowerCase().includes(termo))
+        .map((u) => {
+          const nome = criar('div');
+          nome.append(criar('div', null, u.nome), criar('div', 'admin-texto', u.email));
+          return { nome, admin: u.admin, honorarios: u.honorarios, status: DS.tag({ rotulo: u.ativo ? 'Ativo' : 'Inativo' }) };
+        });
+      vaga.replaceChildren(DS.tabela({
+        rotulo: 'Usuários do escritório',
+        colunas: [['nome', 'Nome e e-mail'], ['admin', 'Admin'], ['honorarios', 'Honorários'], ['status', 'Status']],
+        linhas, vazio: { titulo: 'Nenhum usuário encontrado.', texto: 'Confira o nome ou o e-mail digitado.' },
+      }));
+    }
+    const busca = DS.busca({ rotulo: 'Buscar usuário', placeholder: 'Nome ou e-mail', aoMudar: (valor) => { termo = valor.trim().toLowerCase(); desenhar(); } });
+    const ativos = DS.caixa({ rotulo: 'Mostrar apenas usuários ativos', aoMudar: (marcada) => { soAtivos = marcada; desenhar(); } });
+    const filtros = criar('div', 'admin-cabeca');
+    filtros.append(busca, ativos);
+    desenhar();
+
+    // PA-89: o rádio segue como no Astrea, sem Salvar, até o teste no trial dizer se ele grava ao clicar.
+    const permissao = DS.radio({
+      rotulo: 'Permissão para excluir processos e atendimentos',
+      opcoes: [['criador', 'Somente quem criou'], ['todos', 'Todos que possuem acesso']],
+      valor: 'criador',
+    });
+    return [bloco('Usuários', filtros, vaga), bloco('Permissões', permissao)];
+  }
+
+  // --- Modelos de documento -----------------------------------------------------
+
+  function abaModelos() {
+    const vaga = criar('div', 'admin-tabela');
+    function desenhar(focoEm) {
+      const linhas = modelos.map((m) => {
+        const menu = DS.menuAcoes({
+          rotulo: 'Ações',
+          itens: [
+            { rotulo: 'Editar', aoClicar: foraDoPrototipo('O editor de modelos') },
+            { rotulo: 'Excluir', destrutivo: true, aoClicar: () => confirmar({
+              titulo: 'Excluir modelo?', rotulo: 'Excluir',
+              texto: `O modelo "${m.titulo}" sai da lista de Documento padrão. Documentos já gerados com ele continuam. Não há como desfazer.`,
+              depois: () => {
+                modelos.splice(modelos.indexOf(m), 1);
+                desenhar(true);
+              },
+            }, menu.querySelector('button')) },
+          ],
+        });
+        menu.querySelector('button').setAttribute('aria-label', `Ações do modelo ${m.titulo}`);
+        // Os quatro modelos de fábrica vêm sem autor no Astrea; a leitura diz de onde vieram.
+        return { titulo: m.titulo, autor: 'Modelo padrão', data: m.data, acoes: menu };
+      });
+      vaga.replaceChildren(DS.tabela({
+        rotulo: 'Modelos de documento',
+        colunas: [['titulo', 'Título'], ['autor', 'Autor'], ['data', 'Data'], ['acoes', 'Ações']],
+        linhas, vazio: { titulo: 'Nenhum modelo de documento.', texto: 'O modelo criado aqui aparece em Documentos, no Documento padrão.' },
+      }));
+      if (focoEm) adicionar.focus();
+    }
+    const adicionar = DS.botao({ variante: 'primario', iconeEsquerda: 'mais', rotulo: 'Adicionar modelo' });
+    adicionar.addEventListener('click', foraDoPrototipo('O editor de modelos'));
+    const cabeca = criar('div', 'admin-cabeca');
+    cabeca.append(criar('h2', null, 'Modelos de documento'), adicionar);
+    const secao = criar('section', 'admin-bloco');
+    secao.append(cabeca, texto('Os modelos alimentam o Documento padrão, no módulo Documentos.'), vaga);
+    desenhar(false);
+    return secao;
+  }
+
+  // --- Certificado digital ------------------------------------------------------
+
+  function abaCertificado() {
+    return bloco('Certificado digital',
+      DS.estadoVazio({
+        titulo: 'Nenhum certificado digital cadastrado.',
+        texto: 'O certificado do escritório fica guardado aqui para uso no Astrea.',
+        acao: { variante: 'primario', rotulo: 'Adicionar certificado', aoClicar: foraDoPrototipo('Adicionar certificado') },
+      }),
+      texto('Ainda sem certificado? A Certisign oferece 30% de desconto para clientes do Astrea.'));
+  }
+
+  // --- Segurança ----------------------------------------------------------------
+
+  function abaSeguranca() {
+    // PA-89: mesmo caso do rádio de Acesso. O aviso do Astrea fica visível, junto das opções.
+    return bloco('Autenticação em dois fatores', DS.radio({
+      rotulo: 'Autenticação em dois fatores',
+      ajuda: 'Obrigatório para todos desconecta todos os usuários, que entram de novo com o segundo fator.',
+      opcoes: [['obrigatorio', 'Obrigatório para todos'], ['opcional', 'Opcional']],
+      valor: 'opcional', largura: 'total',
+    }));
+  }
+
+  // --- Meu plano ----------------------------------------------------------------
+
+  function limite(numero, nome, explicacao, extra) {
+    const item = criar('li', 'limite');
+    item.append(criar('p', 'limite-numero', numero), criar('p', 'limite-nome', nome), criar('p', 'admin-texto', explicacao));
+    if (extra) item.append(extra);
+    return item;
+  }
+
+  function montarPlano() {
+    document.getElementById('plano-resumo').textContent =
+      `Você está no plano ${PLANO.nome}, ${PLANO.vigencia}. O plano tem dois limites que contam coisas diferentes.`;
+    const monitorados = window.DADOS.PROCESSOS.length;
+    document.getElementById('plano-limites').replaceChildren(
+      limite(String(PLANO.monitorados), 'Processos monitorados',
+        'Processos que o Astrea acompanha no tribunal e avisa quando há andamento. Cadastrar processo não tem limite: o limite é de quantos ficam em monitoramento.',
+        DS.progresso({ rotulo: 'Em monitoramento', valor: monitorados, maximo: PLANO.monitorados })),
+      limite(String(PLANO.creditos), 'Créditos de busca automática',
+        'Usados pela busca automática de processos. Contam à parte: gastar crédito não ocupa vaga de monitoramento.'),
+      limite(PLANO.nuvem, 'Nuvem e usuários',
+        `${PLANO.nuvem} para documentos e ${PLANO.usuarios} usuário. Kanban e Workflows não fazem parte do ${PLANO.nome}.`));
+    document.getElementById('plano-comparar').replaceChildren(DS.tabela({
+      rotulo: 'Comparação dos planos',
+      colunas: [['plano', 'Plano'], ['monitorados', 'Processos monitorados'], ['usuarios', 'Usuários']],
+      linhas: [[PLANO.nome + ' (atual)', PLANO.monitorados, PLANO.usuarios], ...OUTROS_PLANOS]
+        .map(([plano, monitoradosDoPlano, usuarios]) => ({ plano, monitorados: String(monitoradosDoPlano), usuarios: String(usuarios) })),
+    }));
+  }
+
+  // --- montagem -----------------------------------------------------------------
+
+  // As seis abas na ordem do Astrea (01-varredura-modulos.md, seção 10).
+  const ABAS = [
+    ['escritorio', 'Escritório', abaEscritorio], ['grupos', 'Grupo de envolvidos', abaGrupos],
+    ['acesso', 'Acesso', abaAcesso], ['modelos', 'Modelos de documento', abaModelos],
+    ['certificado', 'Certificado digital', abaCertificado], ['seguranca', 'Segurança', abaSeguranca],
+  ];
+  const itens = ABAS.map(([chave, rotulo, montar]) => {
+    const painel = criar('div', 'admin-painel');
+    painel.append(...[].concat(montar()));
+    return { chave, rotulo, conteudo: painel };
+  });
+  document.getElementById('admin-abas').replaceWith(DS.abas({ rotulo: 'Seções da administração', itens }));
+  montarPlano();
+
+  // "Meu plano", no menu do usuário, chega por administracao.html#plano.
+  const seguirHash = () => { if (location.hash === '#plano') irParaPlano(); };
+  window.addEventListener('hashchange', seguirHash);
+  seguirHash();
+})();
+</script>
 </body>
 </html>

@@ -1651,7 +1651,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: `DS.abas`, `DS.tabela`, `DS.radio`, `DS.dialogo`, `DS.upsell` e `.barra-acoes`.
 - Produces: `administracao.html#plano`, destino de "Meu plano".
 
-- [ ] **Step 1: Implementar**
+- [x] **Step 1: Implementar**
 
 - Seis abas na ordem do Astrea.
 - Limpar a conta fica em zona separada, com confirmação (PA-88).
@@ -1661,7 +1661,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 Esperado: as seis abas trocam sem recarregar.
 
-- [ ] **Step 2: Executar e confirmar que passa**
+- [x] **Step 2: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/administracao.html
@@ -1670,7 +1670,7 @@ node scripts/verificar-app.js --rf RF-07,RF-12,RF-15 --paginas administracao.htm
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 3: Entregar**
+- [x] **Step 3: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
