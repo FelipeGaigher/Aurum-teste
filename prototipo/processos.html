@@ -121,6 +121,26 @@
   .detalhe-atividade + .detalhe-atividade { border-top: var(--border-width) solid var(--color-border-default); }
   .detalhe-atividade-titulo { overflow-wrap: anywhere; }
 
+  /* Resumo do caso: card no painel, bloco na ficha. Papel apagado, nome ao lado. */
+  .resumo-caso {
+    display: grid;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    border: var(--border-width) solid var(--component-card-border);
+    border-radius: var(--component-card-radius);
+    background-color: var(--component-card-bg);
+  }
+  .resumo-caso-titulo { margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+  .resumo-texto { margin: 0; overflow-wrap: anywhere; }
+  .bloco .resumo-texto, .bloco .resumo-atores, .bloco .resumo-local { margin-bottom: var(--space-3); }
+  .resumo-atores { display: grid; gap: var(--space-1); margin: 0; }
+  .resumo-atores div, .resumo-local { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-2); min-width: 0; }
+  .resumo-atores dt, .resumo-rotulo { color: var(--color-text-muted); }
+  .resumo-atores dd { margin: 0; overflow-wrap: anywhere; }
+  .resumo-local { margin: 0; overflow-wrap: anywhere; }
+  .resumo-origem { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
+
   @media (max-width: 1024px) {
     .ficha-grade { grid-template-columns: minmax(0, 1fr); }
   }
@@ -160,12 +180,12 @@
       id: i + 1, tipo: 'processo', titulo: `${ACOES[i]}, ${p.cliente}`, acao: ACOES[i], numero: p.numero,
       cliente: p.cliente, responsavel: p.responsavel, grau: GRAU_DE[i], movimentoEmDias: MOVIMENTO_DE[i],
       vinculo: VINCULO_DE[i], importante: i === 0 || i === 4, juizo: JUIZOS[i % JUIZOS.length],
-      valor: (i + 2) * 7350, atividades: p.atividades,
+      valor: (i + 2) * 7350, atividades: p.atividades, resumo: p.resumo,
     })),
     { id: 11, tipo: 'caso', titulo: 'Consultoria societária, Estaleiro Três Marés Ltda', cliente: 'Estaleiro Três Marés Ltda',
-      responsavel: 'Otávio Prado', movimentoEmDias: 6, importante: false, atividades: [] },
+      responsavel: 'Otávio Prado', movimentoEmDias: 6, importante: false, atividades: [], resumo: window.DADOS.RESUMOS_DE_CASO[0] },
     { id: 12, tipo: 'caso', titulo: 'Planejamento sucessório, Iolanda Prestes Vidal', cliente: 'Iolanda Prestes Vidal',
-      responsavel: 'Beatriz Lemos', movimentoEmDias: 15, importante: true, atividades: [] },
+      responsavel: 'Beatriz Lemos', movimentoEmDias: 15, importante: true, atividades: [], resumo: window.DADOS.RESUMOS_DE_CASO[1] },
   ];
   // PA-77 aguarda dado: os rótulos seguem o Astrea, "Processo" e "Caso".
   const TIPOS = { processo: 'Processo', caso: 'Caso' };
@@ -196,6 +216,27 @@
   function avisar(tipo, mensagem) {
     const vaga = document.getElementById('pagina-aviso');
     vaga.replaceChildren(DS.faixaAviso({ tipo, mensagem, fechar: true }));
+  }
+
+  // Resumo do caso escrito pela IA: texto, atores, local e a linha de origem com Editar.
+  // A data ISO vira dd/mm/aaaa sem passar por Date, para o fuso não mudar o dia.
+  function conteudoDoResumo(resumo) {
+    const texto = elemento('p', 'resumo-texto', resumo.texto);
+    const atores = elemento('dl', 'resumo-atores');
+    resumo.atores.forEach(({ papel, nome }) => {
+      const par = elemento('div');
+      par.append(elemento('dt', null, papel), elemento('dd', null, nome));
+      atores.append(par);
+    });
+    const local = elemento('p', 'resumo-local');
+    local.append(elemento('span', 'resumo-rotulo', 'Local'), elemento('span', null, resumo.local));
+    const [ano, mes, dia] = resumo.atualizadoEm.split('-');
+    const origem = elemento('p', 'resumo-origem', `Resumo gerado pela IA do Astrea em ${dia}/${mes}/${ano} · `);
+    const editar = DS.botao({ variante: 'texto', tamanho: 'pequeno', rotulo: 'Editar' });
+    editar.setAttribute('aria-label', 'Editar o resumo do caso');
+    editar.addEventListener('click', () => avisar('info', 'Editar o resumo fica fora do protótipo.'));
+    origem.append(editar);
+    return [texto, atores, local, origem];
   }
 
   // PA-11 e PA-38: o número é texto, e copiar é um botão de ícone com dica.
@@ -319,6 +360,16 @@
       detalhe.sincronizar(carregando ? [] : lista);
     }
 
+    function resumoDoRegistro(r) {
+      if (!r.resumo) return null;
+      const secao = elemento('section', 'resumo-caso');
+      const titulo = elemento('h3', 'resumo-caso-titulo', 'Resumo do caso');
+      titulo.id = `resumo-caso-${r.id}`;
+      secao.setAttribute('aria-labelledby', titulo.id);
+      secao.append(titulo, ...conteudoDoResumo(r.resumo));
+      return secao;
+    }
+
     function atividadesDoRegistro(r) {
       const daqui = window.DADOS.ATIVIDADES
         .filter((a) => r.numero && a.processo === r.numero && a.status !== 'concluido')
@@ -360,7 +411,7 @@
           { icone: 'relogio', rotulo: 'Última movimentação', valor: `${movimento(r.movimentoEmDias)}, ${dataCurta(diaDe(r.movimentoEmDias))}` },
           { icone: 'marca', rotulo: 'Valor da causa', valor: r.valor ? reais(r.valor) : '' },
         ],
-        corpo: [atividadesDoRegistro(r)],
+        corpo: [resumoDoRegistro(r), atividadesDoRegistro(r)].filter(Boolean),
         acoes: [adicionarAtividade, { variante: 'primario', rotulo: 'Abrir ficha', aoClicar: () => { location.href = `${PAGINA}?ficha=${r.id}`; } }],
       };
     }
@@ -717,6 +768,7 @@
       texto: 'Junte petições, procurações e contratos para achar tudo pela ficha. Arquivos PDF, DOCX e imagens.',
       acao: { rotulo: 'Adicionar documentos', variante: 'secundario', iconeEsquerda: 'mais', aoClicar: foraDoPrototipo } });
     const esquerda = elemento('div', 'ficha-coluna');
+    if (r.resumo) esquerda.append(bloco('Resumo do caso', 2, ...conteudoDoResumo(r.resumo)).sec);
     esquerda.append(bloco(extra ? 'Dados do processo' : 'Dados do caso', 2, listaDeDados(dados)).sec);
     const direita = elemento('div', 'ficha-coluna');
     direita.append(blocoProximas.sec, bloco('Documentos', 2, documentos).sec);

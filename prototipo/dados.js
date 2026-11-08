@@ -24,9 +24,66 @@ const CLIENTES = [
   'Oficina Rosa dos Ventos Ltda', 'Dalva Figueiró Castanho', 'Heitor Valadão Nogueira',
 ];
 
+// Resumo do caso, como a IA do Astrea o escreveria, na ordem de NUMEROS. Pessoas, empresas e varas inventadas.
+// texto: o que se discute, a fase e o próximo passo. atores: papel e nome. local: vara e foro.
+const RESUMOS = [
+  { texto: 'A Comercial Pedra Alva cobra de Yara um saldo de R$ 21.300,00 de um contrato de fornecimento. Yara diz que pagou parte em espécie e guarda os recibos. O escritório protocola a contestação com os recibos em anexo.',
+    atores: [{ papel: 'Autora', nome: 'Comercial Pedra Alva Ltda' }, { papel: 'Ré', nome: 'Yara Monteverde' },
+      { papel: 'Advogada da autora', nome: 'Lívia Sarmento Brandão' }, { papel: 'Juiz', nome: 'Ernesto Valadares Pinho' }],
+    local: '1ª Vara Cível, Foro da Comarca de Porto Lírio', atualizadoEm: '2026-11-06' },
+  { texto: 'Caetano trabalhou seis anos como motorista e saiu em setembro sem receber férias nem a multa do FGTS. O cálculo do escritório chega a R$ 18.420,00. A audiência de conciliação é hoje, e a empresa sinalizou proposta de parcelamento.',
+    atores: [{ papel: 'Reclamante', nome: 'Caetano Bittencourt Lins' }, { papel: 'Reclamada', nome: 'Transportadora Vento Sul Ltda' },
+      { papel: 'Advogado da reclamada', nome: 'Gustavo Peixoto Lacerda' }, { papel: 'Juíza do Trabalho', nome: 'Rosana Melgaço Freire' }],
+    local: '2ª Vara do Trabalho, Foro Regional de Ilha Mansa', atualizadoEm: '2026-11-07' },
+  { texto: 'Iolanda pede indenização por infiltrações no apartamento que comprou na planta. A sentença deu R$ 34.000,00, e a construtora recorreu. Enquanto o recurso aguarda julgamento, as partes negociam um acordo.',
+    atores: [{ papel: 'Autora', nome: 'Iolanda Prestes Vidal' }, { papel: 'Ré', nome: 'Construtora Morro Azul S.A.' },
+      { papel: 'Advogada da ré', nome: 'Helena Viegas Tavares' }, { papel: 'Relator', nome: 'Desembargador Álvaro Recktenvald' }],
+    local: '3ª Vara Cível, Foro da Comarca de Serra Alta, em recurso no 2º grau', atualizadoEm: '2026-11-05' },
+  { texto: 'Nestor executa o acordo em que o banco se comprometeu a devolver tarifas cobradas a mais. O juiz rejeitou a defesa do banco, mas não disse nada sobre os juros de mora. O escritório opõe embargos de declaração para corrigir a omissão.',
+    atores: [{ papel: 'Exequente', nome: 'Nestor Arruda Fontes' }, { papel: 'Executado', nome: 'Banco Fictício do Litoral S.A.' },
+      { papel: 'Advogado do executado', nome: 'Rodrigo Albuquerque Mendes' }],
+    local: 'Vara de Execuções, Foro da Comarca de Porto Lírio', atualizadoEm: '2026-11-04' },
+  { texto: 'Tereza contesta os juros do financiamento rural com a cooperativa. O perito contábil concluiu que a taxa aplicada passou da contratada. O escritório se manifesta sobre o laudo e pede a devolução da diferença.',
+    atores: [{ papel: 'Autora', nome: 'Tereza Quintanilha Dorneles' }, { papel: 'Ré', nome: 'Cooperativa Serra Clara' },
+      { papel: 'Advogada da ré', nome: 'Patrícia Lobato Rangel' }, { papel: 'Perito contábil', nome: 'Jairo Fontoura Lemes' }],
+    local: '1ª Câmara de Direito Civil, Foro Regional de Ilha Mansa', atualizadoEm: '2026-11-03' },
+  { texto: 'A Naval Insumos executa duplicatas de tinta para casco. O estaleiro embargou: a tinta descascou e causou avaria em duas embarcações. O juiz pediu a procuração atualizada do estaleiro antes de marcar a perícia.',
+    atores: [{ papel: 'Embargante', nome: 'Estaleiro Três Marés Ltda' }, { papel: 'Embargada', nome: 'Naval Insumos Baía Norte Ltda' },
+      { papel: 'Advogado da embargada', nome: 'Fábio Caldeira Moura' }],
+    local: '1ª Vara Cível, Foro da Comarca de Serra Alta', atualizadoEm: '2026-11-02' },
+  { texto: 'A imobiliária pede o despejo de Lauro por três meses de aluguel atrasado. A sentença decretou o despejo em 30 dias. O escritório prepara a apelação, com o comprovante de que Lauro depositou o valor antes da sentença.',
+    atores: [{ papel: 'Autora', nome: 'Imobiliária Ponta do Sal Ltda' }, { papel: 'Réu', nome: 'Lauro Sampaio Neves' },
+      { papel: 'Advogada da autora', nome: 'Simone Ribas Coutinho' }],
+    local: 'Vara Cível, Foro da Comarca de Porto Lírio, em apelação', atualizadoEm: '2026-11-06' },
+  { texto: 'A oficina contesta a cassação do alvará de funcionamento, feita sem processo administrativo. A liminar manteve a oficina aberta, e a sentença confirmou a segurança. Falta calcular as custas finais para encerrar o processo.',
+    atores: [{ papel: 'Impetrante', nome: 'Oficina Rosa dos Ventos Ltda' }, { papel: 'Impetrado', nome: 'Secretário de Urbanismo de Vale Encantado' },
+      { papel: 'Representante do município', nome: 'Procuradoria do Município' }],
+    local: '3ª Vara Cível, Foro Regional de Ilha Mansa', atualizadoEm: '2026-10-31' },
+  { texto: 'Inventário de Aurélio Castanho, com três herdeiros, um imóvel no litoral e uma poupança. Dois herdeiros aceitaram a partilha com compensação em dinheiro. O terceiro discorda do valor do imóvel, e o juiz marcou audiência com testemunhas.',
+    atores: [{ papel: 'Inventariante', nome: 'Dalva Figueiró Castanho' }, { papel: 'Herdeiro que discorda', nome: 'Rui Castanho Albernaz' },
+      { papel: 'Advogado do espólio', nome: 'Vinícius Teles Barreto' }, { papel: 'Juíza', nome: 'Cecília Paranhos Brito' }],
+    local: 'Vara de Família e Sucessões, Foro da Comarca de Serra Alta', atualizadoEm: '2026-10-28' },
+  { texto: 'Heitor pede a redução da pensão do filho Gilberto, porque a renda de Heitor caiu pela metade. A sentença reduziu o valor, e Gilberto recorreu. O escritório já protocolou as contrarrazões e aguarda o julgamento do recurso.',
+    atores: [{ papel: 'Autor', nome: 'Heitor Valadão Nogueira' }, { papel: 'Réu', nome: 'Gilberto Nogueira Paes' },
+      { papel: 'Advogada do réu', nome: 'Camila Junqueira Assis' }],
+    local: 'Vara de Família, Foro da Comarca de Porto Lírio', atualizadoEm: '2026-10-30' },
+];
+
+// Os dois casos sem número de processo, na ordem em que processos.html os lista.
+const RESUMOS_DE_CASO = [
+  { texto: 'Os três sócios do estaleiro querem a entrada de um investidor sem perder o controle. O escritório revisa o contrato social e prepara um acordo de sócios com direito de preferência. A minuta vai para os sócios na próxima semana.',
+    atores: [{ papel: 'Cliente', nome: 'Estaleiro Três Marés Ltda' }, { papel: 'Sócio-administrador', nome: 'Amaro Teixeira Bastos' },
+      { papel: 'Investidor', nome: 'Fundo Maré Alta Participações' }, { papel: 'Contadora', nome: 'Luíza Prates Damasceno' }],
+    local: 'Extrajudicial, sede do cliente em Serra Alta', atualizadoEm: '2026-11-02' },
+  { texto: 'Iolanda quer organizar a herança dos dois filhos ainda em vida. A proposta é uma holding familiar com doação das cotas e usufruto para ela. O escritório aguarda a avaliação dos imóveis para levar a escritura ao tabelionato.',
+    atores: [{ papel: 'Cliente', nome: 'Iolanda Prestes Vidal' }, { papel: 'Filho', nome: 'Davi Prestes Vidal' },
+      { papel: 'Filha', nome: 'Marta Prestes Vidal' }, { papel: 'Tabeliã', nome: 'Odete Campello Ruas' }],
+    local: 'Extrajudicial, 1º Tabelionato de Notas de Serra Alta', atualizadoEm: '2026-10-24' },
+];
+
 const PROCESSOS = NUMEROS.map((numero, i) => {
   const daqui = ATIVIDADES.filter((a) => a.processo === numero);
-  return { numero, cliente: CLIENTES[i], responsavel: daqui[0].responsavel, atividades: daqui.map((a) => a.id) };
+  return { numero, cliente: CLIENTES[i], responsavel: daqui[0].responsavel, atividades: daqui.map((a) => a.id), resumo: RESUMOS[i] };
 });
 
 const CONTATOS = PROCESSOS.map((p, i) => ({
@@ -38,7 +95,7 @@ const CONTATOS = PROCESSOS.map((p, i) => ({
   processo: p.numero,
 }));
 
-window.DADOS = { ATIVIDADES, CONTATOS, PROCESSOS, RESPONSAVEIS };
+window.DADOS = { ATIVIDADES, CONTATOS, PROCESSOS, RESPONSAVEIS, RESUMOS_DE_CASO };
 
 // Ficha do processo: parte contrária, advogado dela e valores, na ordem de NUMEROS.
 // Nomes, foros e escritórios inventados. Link no tribunal é só texto.
