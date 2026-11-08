@@ -6,12 +6,51 @@
 <title>Resultados de buscas, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
+<style>
+/* PA-05: a página sai do ícone de nuvem e mora em Processos e casos, com texto.
+   A trilha do cabeçalho leva de volta ao módulo, no lugar do VOLTAR. */
+.buscas { display: grid; gap: var(--space-4); max-width: var(--size-dialog-detail); min-width: 0; }
+.buscas-intro { margin: 0; color: var(--color-text-muted); }
+</style>
 </head>
 <body data-pagina="buscas.html" data-titulo="Resultados de buscas">
 <div class="corpo">
   <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
+    <div class="buscas" id="buscas">
+      <p class="buscas-intro">Os processos que a busca automática encontra aparecem aqui, separados pelo tipo de busca.</p>
+    </div>
   </main>
 </div>
+<script>
+// Inventário, seção 0, ícone 3: três abas, o mesmo estado vazio em cada uma.
+const ABAS = [
+  { chave: 'individuais', rotulo: 'Buscas individuais', vazio: 'Você ainda não usou a busca individual de processos' },
+  { chave: 'lote', rotulo: 'Buscas em lote', vazio: 'Você ainda não usou a busca em lote de processos' },
+  { chave: 'vinculos', rotulo: 'Vínculos', vazio: 'Você ainda não vinculou processos encontrados pela busca' },
+];
+
+function irParaBusca() {
+  const link = document.createElement('a');
+  link.className = 'botao botao-secundario';
+  link.href = 'processos.html';
+  link.textContent = 'Busca de processo automática';
+  return link;
+}
+
+const abas = DS.abas({
+  rotulo: 'Tipos de busca',
+  itens: ABAS.map((aba) => ({
+    chave: aba.chave,
+    rotulo: aba.rotulo,
+    conteudo: DS.estadoVazio({
+      titulo: aba.vazio,
+      texto: 'O resultado aparece nesta aba quando a busca terminar.',
+      acao: irParaBusca(),
+    }),
+  })),
+});
+document.getElementById('buscas').append(abas);
+</script>
 </body>
 </html>

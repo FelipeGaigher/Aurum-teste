@@ -6,12 +6,81 @@
 <title>Suporte, Astrea: protótipo</title>
 <link rel="stylesheet" href="astrea.css">
 <script src="moldura.js"></script>
+<script src="componentes.js"></script>
+<style>
+/* Inventário, seção 11: dois blocos. O carrossel vira lista, e os seis vídeos ficam à vista. */
+.suporte { display: grid; gap: var(--space-5); max-width: var(--size-dialog-wide); }
+.suporte-bloco { display: grid; justify-items: start; gap: var(--space-3); min-width: 0; }
+.suporte-bloco h2 { margin: 0; font-size: var(--font-size-dialog); font-weight: var(--font-weight-medium); }
+.suporte-bloco > p { margin: 0; color: var(--color-text-muted); }
+.suporte-aviso:empty { display: none; }
+.videos { justify-self: stretch; margin: 0; padding: 0; list-style: none; border-top: var(--border-width) solid var(--color-border-default); }
+.video {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: var(--border-width) solid var(--color-border-default);
+}
+.video-titulo { flex: 1 1 calc(var(--size-column) / 2); min-width: 0; margin: 0; overflow-wrap: anywhere; }
+</style>
 </head>
 <body data-pagina="suporte.html" data-titulo="Suporte">
 <div class="corpo">
   <main id="conteudo">
-    <p>Esta tela entra numa próxima onda.</p>
+    <div class="suporte">
+      <section class="suporte-bloco" aria-labelledby="titulo-ajuda">
+        <h2 id="titulo-ajuda">Preciso de ajuda com o Astrea</h2>
+        <p>A central de ajuda reúne os artigos de cada módulo e o contato com o atendimento.</p>
+        <div id="acao-ajuda"></div>
+        <div class="suporte-aviso" id="aviso-ajuda"></div>
+      </section>
+
+      <section class="suporte-bloco" aria-labelledby="titulo-videos">
+        <h2 id="titulo-videos">Aprenda mais sobre o Astrea</h2>
+        <p>Seis vídeos curtos, um por tarefa do dia a dia. Eles abrem na central de ajuda.</p>
+        <ul class="videos" id="lista-videos"></ul>
+        <div class="suporte-aviso" id="aviso-videos"></div>
+      </section>
+    </div>
   </main>
 </div>
+<script>
+// Legendas do Astrea em 08/11 (varredura, seção 9; inventário, seção 11).
+const VIDEOS = [
+  'Como adicionar seus processos no Astrea',
+  'Gerencie prazos e audiências',
+  'Gerenciando suas atividades e otimizando tempo com o Astrea',
+  'Gestão financeira de ponta a ponta',
+  'Gerenciando seus atendimentos',
+  'Gerenciando seus documentos',
+];
+
+// O protótipo não sai da máquina: o aviso diz onde a ação levaria.
+function avisar(alvo, mensagem) {
+  const lugar = document.getElementById(alvo);
+  lugar.replaceChildren(DS.faixaAviso({ mensagem, fechar: true }));
+}
+
+const central = DS.botao({ variante: 'primario', rotulo: 'Acessar a central de ajuda' });
+central.addEventListener('click', () => avisar('aviso-ajuda', 'A central de ajuda abre fora do protótipo.'));
+document.getElementById('acao-ajuda').append(central);
+
+const lista = document.getElementById('lista-videos');
+VIDEOS.forEach((titulo) => {
+  const item = document.createElement('li');
+  item.className = 'video';
+  const nome = document.createElement('p');
+  nome.className = 'video-titulo';
+  nome.textContent = titulo;
+  const assistir = DS.botao({ variante: 'secundario', tamanho: 'pequeno', rotulo: 'Assistir' });
+  assistir.setAttribute('aria-label', `Assistir: ${titulo}`);
+  assistir.addEventListener('click', () => avisar('aviso-videos', `"${titulo}" abre na central de ajuda, fora do protótipo.`));
+  item.append(nome, assistir);
+  lista.append(item);
+});
+</script>
 </body>
 </html>

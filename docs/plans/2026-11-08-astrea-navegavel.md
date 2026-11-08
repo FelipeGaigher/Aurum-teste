@@ -1698,7 +1698,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 - Consumes: `DS.abas`, `DS.estadoVazio` e `DS.trilha`.
 - Produces: as duas páginas completas.
 
-- [ ] **Step 1: Implementar**
+- [x] **Step 1: Implementar**
 
 - Suporte: acesso à central de ajuda e seis vídeos em lista.
 - Buscas: três abas, Buscas individuais, Buscas em lote e Vínculos.
@@ -1707,7 +1707,7 @@ Liste na resposta os caminhos da seção Files. Não marque checkbox, não execu
 
 Esperado: as duas páginas substituem as cascas.
 
-- [ ] **Step 2: Executar e confirmar que passa**
+- [x] **Step 2: Executar e confirmar que passa**
 
 ```bash
 python prototipo/verificar.py prototipo/suporte.html prototipo/buscas.html
@@ -1716,7 +1716,7 @@ node scripts/verificar-app.js --rf RF-07,RF-12,RF-15 --paginas suporte.html,busc
 
 Esperado: `verificar: 0 erro(s)` e os três RF com `ok`.
 
-- [ ] **Step 3: Entregar**
+- [x] **Step 3: Entregar**
 
 Liste na resposta os caminhos da seção Files. Não marque checkbox, não execute `git add` nem `git commit`.
 
