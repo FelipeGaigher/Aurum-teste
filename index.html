@@ -67,7 +67,49 @@ body { font-size: var(--font-size-emphasis); }
 .chave-tema:has(input:focus-visible) { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }
 .chave-tema:has(input:focus-visible) ~ .dica { visibility: visible; }
 
-.hub { max-width: 1180px; margin: 0 auto; padding: var(--space-6) var(--space-5) var(--space-7); display: grid; gap: var(--space-6); }
+.hub-layout {
+  --nav-largura: calc(var(--size-sidebar) + var(--space-5));
+  --nav-topo: calc(var(--component-header-height) + var(--space-5));
+  display: grid;
+  grid-template-columns: var(--nav-largura) minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+  max-width: calc(1180px + var(--nav-largura) + var(--space-5) * 3);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5) var(--space-7);
+}
+.hub { min-width: 0; display: grid; gap: var(--space-6); }
+
+/* sumário da página: fixo enquanto o conteúdo rola, mesmo desenho do design system */
+.hub-nav {
+  position: sticky;
+  top: var(--nav-topo);
+  max-height: calc(var(--altura-da-tela) - var(--nav-topo) - var(--space-5));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: var(--space-2);
+  border-right: var(--border-width) solid var(--color-border-default);
+}
+.hub-nav ul { margin: 0; padding: 0; list-style: none; display: block; }
+.hub-nav a {
+  display: flex;
+  align-items: center;
+  min-height: var(--size-option);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius);
+  color: var(--color-text-default);
+  font-size: var(--font-size-body);
+  line-height: var(--font-leading-tight);
+  text-decoration: none;
+}
+.hub-nav a:focus-visible { outline-offset: calc(-1 * var(--focus-width)); }
+.hub-nav a:hover { background-color: var(--color-bg-hover); color: var(--color-text-default); }
+.hub-nav a[aria-current="location"] {
+  background-color: var(--component-menu-item-active-bg);
+  color: var(--component-menu-item-active-text);
+  font-weight: var(--font-weight-medium);
+}
+.hub-alvo { scroll-margin-top: calc(var(--component-header-height) + var(--space-5)); }
 .card { min-width: 0; padding: var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); box-shadow: var(--component-card-shadow); }
 .card > :last-child, .card-corpo > :last-child { margin-bottom: 0; }
 h2 { margin: 0 0 var(--space-3); font-size: var(--font-size-dialog); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
@@ -135,6 +177,25 @@ li::marker { color: var(--color-text-muted); }
 .ia { margin: 0; padding: var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-left: calc(var(--focus-width) * 2) solid var(--color-action); box-shadow: var(--component-card-shadow); }
 .ia p { max-width: 80ch; margin: 0; }
 
+@media (max-width: 1099px) {
+  html { scroll-padding-top: calc(var(--component-header-height) + var(--size-option) + var(--space-5)); }
+  .hub-layout { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+  .hub-nav {
+    top: var(--component-header-height);
+    z-index: 1;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: var(--space-2) 0;
+    border-right: 0;
+    border-bottom: var(--border-width) solid var(--color-border-default);
+    background-color: var(--color-bg-page);
+  }
+  .hub-nav ul { display: flex; }
+  .hub-nav li { flex: none; }
+  .hub-nav a { white-space: nowrap; }
+  .hub-alvo { scroll-margin-top: calc(var(--component-header-height) + var(--size-option) + var(--space-5)); }
+}
 @media (max-width: 900px) {
   .abertura, .questoes, .prototipo, .apoio { grid-template-columns: minmax(0, 1fr); }
   .como-ler { padding-left: 0; padding-top: var(--space-5); border-left: 0; border-top: var(--border-width) solid var(--color-border-default); }
@@ -143,7 +204,8 @@ li::marker { color: var(--color-text-muted); }
 @media (max-width: 700px) {
   .cabecalho { grid-template-columns: auto minmax(0, 1fr) auto; }
   .marca { padding-left: var(--space-4); }
-  .hub { padding: var(--space-4) var(--space-4) var(--space-6); gap: var(--space-5); }
+  .hub-layout { padding: var(--space-4) var(--space-4) var(--space-6); }
+  .hub { gap: var(--space-5); }
   .abertura { padding: var(--space-4); gap: var(--space-5); }
   .card { padding: var(--space-4); }
   .questao, .prototipo { padding: 0; }
@@ -180,6 +242,21 @@ li::marker { color: var(--color-text-muted); }
   </div>
 </header>
 
+<div class="hub-layout">
+<nav class="hub-nav" aria-label="Seções desta página">
+  <ul>
+    <li><a href="#como-ler">Como ler</a></li>
+    <li><a href="#entregar">O que entregar</a></li>
+    <li><a href="#questao-1">Questão 1</a></li>
+    <li><a href="#questao-2">Questão 2</a></li>
+    <li><a href="#questao-3">Questão 3</a></li>
+    <li><a href="#prototipo">Protótipo navegável</a></li>
+    <li><a href="#ajustes">Ajustes e processo</a></li>
+    <li><a href="#evidencia">Evidência</a></li>
+    <li><a href="#repositorio">Repositório</a></li>
+    <li><a href="#ia">Uso de IA</a></li>
+  </ul>
+</nav>
 <main class="hub" id="conteudo">
 
 <section class="card abertura" aria-labelledby="titulo">
@@ -197,14 +274,14 @@ li::marker { color: var(--color-text-muted); }
       <a class="botao botao-secundario" href="https://www.figma.com/design/OT2rzDJHctCE9WSfR19c2g/">Arquivo do Figma</a>
     </div>
   </div>
-  <div class="como-ler">
+  <div class="como-ler hub-alvo" id="como-ler">
     <h2>Como ler</h2>
     <p>A entrega segue a ordem do enunciado. Vêm as três questões, o protótipo navegável, os documentos de apoio e, no fim, o parágrafo de uso de IA. Cada questão tem os slides e o documento-fonte. A tela da Questão 3 está no Figma e no protótipo, que abre no navegador.</p>
     <p class="decisao">O <a href="https://www.figma.com/design/OT2rzDJHctCE9WSfR19c2g/">arquivo do Figma</a> reúne a entrega inteira: briefing, as três questões, o design system e o protótipo, uma página por bloco. Ele é a porta de entrada da apresentação. Esta página é o índice dos links.</p>
   </div>
 </section>
 
-<section aria-labelledby="entregar">
+<section class="hub-alvo" aria-labelledby="entregar">
   <h2 class="secao-titulo" id="entregar">O que entregar, e onde</h2>
   <div class="tabela-quadro resumo">
     <table class="tabela">
@@ -220,7 +297,7 @@ li::marker { color: var(--color-text-muted); }
   </div>
 
   <div class="questoes">
-    <article class="card questao">
+    <article class="card questao hub-alvo" id="questao-1">
       <img class="miniatura" src="slides/q1-01-q1s1.png" width="1920" height="1080" loading="lazy" alt="Primeiro slide da Questão 1, com o diagnóstico de prazo da interface do Astrea">
       <div class="card-corpo">
         <span class="tag" data-cor="blue">Questão 1</span>
@@ -245,7 +322,7 @@ li::marker { color: var(--color-text-muted); }
       </div>
     </article>
 
-    <article class="card questao">
+    <article class="card questao hub-alvo" id="questao-2">
       <img class="miniatura" src="slides/q2-01-s1.png" width="1920" height="1080" loading="lazy" alt="Primeiro slide da Questão 2, sobre o design system que nasce do roadmap dos squads">
       <div class="card-corpo">
         <span class="tag" data-cor="teal">Questão 2</span>
@@ -270,7 +347,7 @@ li::marker { color: var(--color-text-muted); }
       </div>
     </article>
 
-    <article class="card questao questao-q3">
+    <article class="card questao questao-q3 hub-alvo" id="questao-3">
       <img class="miniatura" src="slides/q3-01-q3tela.png" width="1920" height="1080" loading="lazy" alt="A tela da Área de trabalho redesenhada, com a seção Atrasadas acima de Hoje e o chip de prazo em cada atividade">
       <div class="card-corpo">
         <span class="tag" data-cor="purple">Questão 3</span>
@@ -302,7 +379,7 @@ li::marker { color: var(--color-text-muted); }
   </div>
 </section>
 
-<section class="card prototipo" aria-labelledby="titulo-prototipo">
+<section class="card prototipo hub-alvo" id="prototipo" aria-labelledby="titulo-prototipo">
   <img class="captura" src="prototipo/capturas/area-de-trabalho-1920.png" width="1920" height="1080" loading="lazy" alt="Captura do protótipo na Área de trabalho, com o menu lateral, o seletor de listas e as atividades agrupadas por prazo">
   <div class="card-corpo">
     <h2 id="titulo-prototipo">Protótipo navegável</h2>
@@ -329,7 +406,7 @@ li::marker { color: var(--color-text-muted); }
 </section>
 
 <div class="apoio">
-  <section class="card" aria-labelledby="titulo-ajustes">
+  <section class="card hub-alvo" id="ajustes" aria-labelledby="titulo-ajustes">
     <h2 id="titulo-ajustes">Ajustes e processo</h2>
     <ul class="lista-icone">
       <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/></svg><span><a href="05-ajustes-plataforma.html">Ajustes na plataforma</a>: fluxos alterados e recursos sem efeito visual, mas com peso no dia a dia.</span></li>
@@ -340,14 +417,14 @@ li::marker { color: var(--color-text-muted); }
   </section>
 
   <div class="apoio-lado">
-    <section class="card" aria-labelledby="titulo-evidencia">
+    <section class="card hub-alvo" id="evidencia" aria-labelledby="titulo-evidencia">
       <h2 id="titulo-evidencia">Evidência</h2>
       <ul class="lista-icone">
         <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v3H8zM6 5.5H4V21h16V5.5h-2M8 12h8M8 16h8"/></svg><span><a href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/01-pontos-de-atencao.md">Pontos de atenção</a>: o catálogo de 97 pontos, base do diagnóstico e do protótipo.</span></li>
         <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H10l-6 4z"/></svg><span><a href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/01-pedidos-clientes.md">Pedidos de clientes</a>: 80 sugestões e 407 votos sobre a Área de trabalho.</span></li>
       </ul>
     </section>
-    <section class="card" aria-labelledby="titulo-repositorio">
+    <section class="card hub-alvo" id="repositorio" aria-labelledby="titulo-repositorio">
       <h2 id="titulo-repositorio">Repositório</h2>
       <ul class="lista-icone">
         <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"/></svg><span><a href="https://github.com/FelipeGaigher/Aurum-teste">github.com/FelipeGaigher/Aurum-teste</a>. Os arquivos de texto e HTML do repositório são a fonte. O Figma e o protótipo são a entrega.</span></li>
@@ -356,7 +433,7 @@ li::marker { color: var(--color-text-muted); }
   </div>
 </div>
 
-<section id="ia" aria-labelledby="titulo-ia">
+<section class="hub-alvo" id="ia" aria-labelledby="titulo-ia">
   <h2 class="secao-titulo" id="titulo-ia">Uso de IA</h2>
   <div class="ia">
     <p>Usei o Claude Code como par de trabalho durante toda a atividade. A IA não escreveu a estratégia. Ela recebeu as minhas decisões em conversa e as transformou em documento-fonte, que eu iterei linha a linha. Um exemplo: apontei que a Área de trabalho abre numa lista só e esconde a tarefa atrasada das outras. A IA catalogou a observação como ponto de atenção, o PA-31, com tela e evidência. No protótipo isso virou a seção Atrasadas acima de Hoje. O comparativo de 08/11 mediu o resultado contra o produto. O protótipo saiu de uma spec e de um plano de 23 tasks. Cada subagente recebeu uma task e os arquivos dela, até sete em paralelo. Antes do commit, cada task passou por portões automáticos. Eles barram cor solta, referência de rede, dado real, cara de interface gerada por IA, frase longa e voz passiva. Um revisor em contexto limpo julgou cada onda contra a spec. Os decks nasceram em HTML, viraram PNG pelo Playwright e entraram no Figma. A IA também percorreu o Astrea em produção, só com leitura, e comparou cada fluxo com o protótipo. O comparativo achou quatro caminhos em que o protótipo perdia cliques, e eu mandei corrigir os quatro. A direção visual, os cinco problemas, o trade-off, o escopo e cada correção ao vivo foram decisões minhas.</p>
@@ -364,6 +441,31 @@ li::marker { color: var(--color-text-muted); }
 </section>
 
 </main>
+</div>
 
+<script>
+(() => {
+  const nav = document.querySelector('.hub-nav');
+  const alvos = [...nav.querySelectorAll('a')].map((a) => [document.getElementById(a.hash.slice(1)), a]);
+  const marcar = (a) => {
+    if (!a || a.getAttribute('aria-current') === 'location') return;
+    nav.querySelectorAll('[aria-current]').forEach((el) => el.removeAttribute('aria-current'));
+    a.setAttribute('aria-current', 'location');
+    const n = nav.getBoundingClientRect();
+    const r = a.getBoundingClientRect();
+    if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 2;
+    if (r.left < n.left || r.right > n.right) nav.scrollLeft += r.left - n.left - n.width / 2;
+  };
+  nav.addEventListener('click', (e) => marcar(e.target.closest('a')));
+  const visiveis = new Set();
+  const topo = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+  const observador = new IntersectionObserver((entradas) => {
+    entradas.forEach((e) => (e.isIntersecting ? visiveis.add(e.target) : visiveis.delete(e.target)));
+    const atual = alvos.find(([el]) => visiveis.has(el));
+    if (atual) marcar(atual[1]);
+  }, { rootMargin: `-${Math.round(topo)}px 0px -60% 0px` });
+  alvos.forEach(([el]) => observador.observe(el));
+})();
+</script>
 </body>
 </html>
