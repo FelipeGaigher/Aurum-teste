@@ -127,3 +127,7 @@ com data. O que foi entregue fica no commit, não aqui.
 - Dois retoques de Felipe no detalhe. A seta do acordeão alinhada ao
   título da subtarefa, em grade de três colunas. O clique fora do diálogo
   fecha e devolve o foco ao quadro.
+- Felipe pediu um botão na subtarefa para ver ou concluir. O botão Ver
+  abre a subtarefa num painel por cima da história, com trilha, tags,
+  deveres e equipes. Concluir marca feita e atualiza o card e o detalhe.
+  Reabrir desfaz. O foco volta ao Ver da mesma subtarefa ao fechar.
