@@ -39,4 +39,54 @@ const CONTATOS = PROCESSOS.map((p, i) => ({
 }));
 
 window.DADOS = { ATIVIDADES, CONTATOS, PROCESSOS, RESPONSAVEIS };
+
+// Ficha do processo: parte contrária, advogado dela e valores, na ordem de NUMEROS.
+// Nomes, foros e escritórios inventados. Link no tribunal é só texto.
+const PARTES_CONTRARIAS = [
+  ['Comercial Pedra Alva Ltda', 'Lívia Sarmento Brandão'], ['Transportadora Vento Sul Ltda', 'Gustavo Peixoto Lacerda'],
+  ['Construtora Morro Azul S.A.', 'Helena Viegas Tavares'], ['Banco Fictício do Litoral S.A.', 'Rodrigo Albuquerque Mendes'],
+  ['Cooperativa Serra Clara', 'Patrícia Lobato Rangel'], ['Naval Insumos Baía Norte Ltda', 'Fábio Caldeira Moura'],
+  ['Imobiliária Ponta do Sal Ltda', 'Simone Ribas Coutinho'], ['Município de Vale Encantado', 'Procuradoria do Município'],
+  ['Espólio de Aurélio Castanho', 'Vinícius Teles Barreto'], ['Gilberto Nogueira Paes', 'Camila Junqueira Assis'],
+];
+const FICHAS = NUMEROS.map((numero, i) => ({
+  numero,
+  reu: PARTES_CONTRARIAS[i][0],
+  advogadoContrario: PARTES_CONTRARIAS[i][1],
+  foro: ['Foro da Comarca de Porto Lírio', 'Foro Regional de Ilha Mansa', 'Foro da Comarca de Serra Alta'][i % 3],
+  linkNoTribunal: `Portal do tribunal, consulta ${numero}`,
+  valorCondenacao: i % 3 === 0 ? 0 : (i + 1) * 4120,
+  distribuidoHaDias: 380 + i * 47,
+  criadoHaDias: 85 + i * 6,
+  documentos: [],
+}));
+
+// Comentário de cada atividade, pela id de ATIVIDADES.
+const COMENTARIOS_DE_ATIVIDADE = {
+  a1: 'Aguardando a cópia integral dos autos para fechar a peça.',
+  a2: 'Cliente confirmou presença. Levar proposta de parcelamento.',
+  a3: 'Pauta: valor mínimo aceito e prazo de pagamento.',
+  a4: 'Omissão sobre os juros de mora na sentença.',
+  a5: 'Assistente técnico enviou o parecer na sexta.',
+  a6: 'A procuração anterior venceu no mês passado.',
+  a7: 'Preparo recolhido. Falta revisar as razões.',
+  a8: 'Conferir a planilha do contador antes de protocolar.',
+  a9: 'Três testemunhas confirmadas.',
+  a10: 'Protocoladas dentro do prazo.',
+};
+
+// Movimentações fictícias do tribunal, da mais nova para a mais antiga.
+// origem: tribunal (captura automática) ou manual (registrada no escritório).
+const MOVIMENTACOES_MODELO = [
+  { haDias: 1, origem: 'tribunal', descricao: 'Publicado despacho de mero expediente no diário eletrônico.' },
+  { haDias: 4, origem: 'tribunal', descricao: 'Conclusos para despacho.' },
+  { haDias: 9, origem: 'manual', descricao: 'Juntada de petição intermediária pelo escritório.' },
+  { haDias: 15, origem: 'tribunal', descricao: 'Expedida intimação eletrônica da parte ré.' },
+  { haDias: 23, origem: 'tribunal', descricao: 'Decisão interlocutória: deferida a produção de prova pericial.' },
+  { haDias: 37, origem: 'manual', descricao: 'Reunião com o cliente registrada na ficha.' },
+  { haDias: 52, origem: 'tribunal', descricao: 'Juntada de contestação pela parte ré.' },
+  { haDias: 70, origem: 'tribunal', descricao: 'Citação da parte ré cumprida.' },
+];
+
+Object.assign(window.DADOS, { FICHAS, COMENTARIOS_DE_ATIVIDADE, MOVIMENTACOES_MODELO });
 })();

@@ -41,7 +41,30 @@
   .ficha-leitura div { display: grid; gap: var(--space-1); min-width: 0; }
   .ficha-leitura dt, .dados dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
   .ficha-leitura dd, .dados dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; overflow-wrap: anywhere; }
-  .ficha-acoes { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .ficha-acoes { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+  .ficha-identidade { display: grid; gap: var(--space-3); min-width: 0; }
+  .ficha-numero { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; color: var(--color-text-muted); }
+  .ficha-numero .numero-processo { color: var(--color-text-default); font-weight: var(--font-weight-medium); }
+  .botao-favorito[aria-pressed="true"] { color: var(--color-action); }
+  .botao-favorito[aria-pressed="true"] svg.icone { fill: currentColor; }
+  .ficha-acoes .menu-acoes.is-primario > .botao { background-color: var(--component-button-primary-bg); border-color: var(--component-button-primary-bg); color: var(--component-button-primary-text); }
+  .ficha-acoes .menu-acoes.is-primario > .botao:hover { background-color: var(--component-button-primary-bg-hover); border-color: var(--component-button-primary-bg-hover); }
+  .ficha-acoes .menu-acoes.is-primario > .botao:active { background-color: var(--component-button-primary-bg-active); }
+  .texto-com-icone { display: inline-flex; align-items: center; gap: var(--space-1); }
+  .linha-comentario { flex: 1 1 100%; margin: 0; color: var(--color-text-muted); }
+  .ficha-grau {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border: var(--border-width) solid var(--component-card-border);
+    border-radius: var(--component-card-radius);
+    background-color: var(--component-card-bg);
+    box-shadow: var(--component-card-shadow);
+  }
+  .ficha-grau-cabeca { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-4); }
+  .ficha-grau-cabeca h3 { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
+  .ficha-grau-nome { margin: 0; font-weight: var(--font-weight-medium); overflow-wrap: anywhere; }
+  .ficha-grau-acoes { display: flex; gap: var(--space-1); }
 
   .ficha-grade { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--space-5) var(--space-6); align-items: start; }
   .ficha-coluna { display: grid; gap: var(--space-5); min-width: 0; }
@@ -59,9 +82,15 @@
   .bloco-cabeca h2, .bloco-cabeca h3 { margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
   .dados { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-2) var(--space-4); margin: 0; }
   .contagem { margin: 0 0 var(--space-3); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
-  .andamentos { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
-  .andamentos li { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: var(--space-3); }
-  .andamentos time { color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+  /* Linha do tempo: data, ícone de origem sobre o trilho, descrição. */
+  .andamentos { display: grid; margin: 0; padding: 0; list-style: none; }
+  .andamentos li { display: grid; grid-template-columns: max-content max-content minmax(0, 1fr); gap: var(--space-3); align-items: start; }
+  .andamentos time { padding-block: var(--space-2); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+  .andamentos-origem { display: flex; flex-direction: column; align-items: center; align-self: stretch; color: var(--color-text-muted); }
+  .andamentos-origem svg.icone { flex: none; margin-top: var(--space-2); }
+  .andamentos-origem::after { content: ""; flex: 1 1 auto; min-height: var(--space-3); border-left: var(--border-width) solid var(--color-border-default); }
+  .andamentos li:last-child .andamentos-origem::after { border-left-color: transparent; }
+  .andamentos-texto { padding-block: var(--space-2); overflow-wrap: anywhere; }
   .painel-campos { display: grid; gap: var(--space-4); width: 100%; }
   /* Na coluna estreita do Resumo, a linha de atividade empilha como no celular. */
   .ficha-grade .linha-atividade {
@@ -339,19 +368,47 @@
     return dl;
   }
 
+  // Ícones só da ficha, no mesmo traço de componentes.js.
+  const ICONES_DA_FICHA = {
+    estrela: '<path d="M12 4l2.4 5 5.4.6-4 3.7 1.1 5.3L12 16l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z"/>',
+    vinculo: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+    tribunal: '<path d="M4 20h16M5 10h14M12 4l8 4H4zM7 10v8M12 10v8M17 10v8"/>',
+    manual: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+  };
+  function iconeDaFicha(nome) {
+    const modelo = document.createElement('template');
+    modelo.innerHTML = `<svg class="icone" viewBox="0 0 24 24" aria-hidden="true">${ICONES_DA_FICHA[nome]}</svg>`;
+    return modelo.content.firstElementChild;
+  }
+  function botaoDeIcone(rotulo, icone, aoClicar) {
+    const b = DS.botao({ variante: 'icone', iconeEsquerda: typeof icone === 'string' ? icone : 'mais', rotulo });
+    if (typeof icone !== 'string') b.firstElementChild.replaceWith(icone);
+    if (aoClicar) b.addEventListener('click', aoClicar);
+    return { botao: b, el: DS.tooltip({ alvo: b, rotulo }) };
+  }
+  const ORIGENS = { tribunal: 'Capturada do tribunal', manual: 'Registrada no escritório' };
+
   function montarFicha(r) {
-    cabecalhoDeSegundoNivel(r.titulo);
-    const atividades = window.DADOS.ATIVIDADES.filter((a) => r.atividades.includes(a.id)).map((a) => ({ ...a }));
+    const extra = window.DADOS.FICHAS.find((f) => f.numero === r.numero);
+    cabecalhoDeSegundoNivel(extra ? `${r.cliente} x ${extra.reu}` : r.titulo);
+    const comentarios = window.DADOS.COMENTARIOS_DE_ATIVIDADE;
+    const atividades = window.DADOS.ATIVIDADES.filter((a) => r.atividades.includes(a.id))
+      .map((a) => ({ ...a, comentario: comentarios[a.id] }));
     let encerrado = false;
     const situacao = elemento('dd');
+    const grau = r.grau ? GRAUS[r.grau] : 'Caso';
 
     function desenharSituacao() {
-      const grau = r.grau ? GRAUS[r.grau] : 'Caso';
       situacao.replaceChildren(encerrado
         ? DS.selo({ rotulo: 'Encerrado', descricao: 'Fora da lista de ativos; dá para reabrir' })
         : DS.selo({ rotulo: 'Ativo', descricao: `Em andamento, ${grau}` }), grau);
     }
 
+    // Cabeçalho: linha do número, depois Cliente, Status, Responsável e Criado por.
+    const identidade = elemento('div', 'ficha-identidade');
+    const numero = elemento('p', 'ficha-numero');
+    if (r.numero) numero.append(TIPOS[r.tipo], elemento('span', null, '|'), elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero));
+    else numero.append(TIPOS[r.tipo]);
     const leitura = elemento('dl', 'ficha-leitura');
     const par = (rotulo, ...valor) => {
       const div = elemento('div');
@@ -361,15 +418,14 @@
       leitura.append(div);
       return div;
     };
-    if (r.numero) par(TIPOS[r.tipo], elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero));
-    else par('Tipo', TIPOS[r.tipo]);
     par('Cliente', r.cliente);
     const divSituacao = elemento('div');
-    divSituacao.append(elemento('dt', null, 'Situação'), situacao);
+    divSituacao.append(elemento('dt', null, 'Status'), situacao);
     leitura.append(divSituacao);
     par('Responsável', DS.avatar({ nome: r.responsavel, mostrarNome: true }));
     par('Criado por', EU);
     desenharSituacao();
+    identidade.append(numero, leitura);
 
     // PA-76: Encerrar e Excluir ficam no grupo destrutivo, separado das ações comuns.
     const confirmar = (titulo, texto, rotulo, aoConfirmar) => DS.dialogo({ titulo, texto, acoes: [
@@ -395,15 +451,25 @@
         () => { location.href = PAGINA; }) },
     ] });
     mais.querySelector('.menu-suspenso').classList.add('is-direita');
-    const acoes = elemento('div', 'ficha-acoes');
-    acoes.append(mais);
-    const topo = elemento('div', 'ficha-topo');
-    topo.append(leitura, acoes);
+
+    const voltar = botaoDeIcone('Voltar para Processos e casos', 'esquerda', () => { location.href = PAGINA; });
+    let favorito = Boolean(r.importante);
+    const favoritar = botaoDeIcone('Favoritar', iconeDaFicha('estrela'), () => {
+      favorito = !favorito;
+      favoritar.botao.setAttribute('aria-pressed', String(favorito));
+      avisar('sucesso', favorito ? 'Marcado como favorito.' : 'Removido dos favoritos.');
+    });
+    favoritar.botao.classList.add('botao-favorito');
+    favoritar.botao.setAttribute('aria-pressed', String(favorito));
+    const etiquetar = (nome) => () => avisar('sucesso', `Etiqueta "${nome}" aplicada.`);
+    const etiqueta = DS.menuAcoes({ rotulo: 'Etiqueta', itens: ['Urgente', 'Recurso', 'Acordo em negociação']
+      .map((nome) => ({ rotulo: nome, aoClicar: etiquetar(nome) })) });
+    etiqueta.querySelector('.menu-suspenso').classList.add('is-direita');
 
     const aviso = elemento('div', 'pagina-aviso');
     aviso.id = 'pagina-aviso';
 
-    // Painel único de atividade: abre do Resumo e da aba Atividades (PA-27).
+    // Painel único de atividade: abre do Resumo, da aba Atividades e do botão Adicionar (PA-27).
     const listasDeAtividade = [];
     function desenharAtividades() {
       listasDeAtividade.forEach((desenhar) => desenhar());
@@ -439,90 +505,134 @@
       painel.trocar({ titulo: 'Adicionar atividade', corpo: [campos], rodape: [barraDoPainel.el] });
       painel.abrir(origem);
     }
-    function botaoDoPainel() {
-      const b = DS.botao({ variante: 'secundario', tamanho: 'pequeno', iconeEsquerda: 'mais', rotulo: 'Adicionar atividade' });
+    function botaoDoPainel(rotulo = 'Adicionar atividade') {
+      const b = DS.botao({ variante: 'secundario', tamanho: 'pequeno', iconeEsquerda: 'mais', rotulo });
       b.dataset.abrePainel = 'atividade';
       b.addEventListener('click', () => abrirPainel(b));
       return b;
     }
 
-    const linha = (a) => {
+    // O botão primário "+" do cabeçalho: um menu do que dá para adicionar a esta ficha.
+    const adicionar = DS.menuAcoes({ rotulo: 'Adicionar', itens: [
+      { rotulo: 'Atividade', aoClicar: () => abrirPainel(adicionar.querySelector('button')) },
+      { rotulo: 'Documento', aoClicar: foraDoPrototipo },
+      { rotulo: 'Atendimento', aoClicar: foraDoPrototipo },
+      { rotulo: 'Honorário', aoClicar: foraDoPrototipo },
+    ] });
+    adicionar.classList.add('is-primario');
+    adicionar.querySelector('button').prepend(DS.icone('mais'));
+    adicionar.querySelector('.menu-suspenso').classList.add('is-direita');
+
+    const acoes = elemento('div', 'ficha-acoes');
+    acoes.append(voltar.el, favoritar.el, etiqueta, mais, adicionar);
+    const topo = elemento('div', 'ficha-topo');
+    topo.append(identidade, acoes);
+
+    const linha = (a, comComentario) => {
       const prazo = DS.descreverPrazo(a.prazoEmDias, a.status === 'concluido');
-      return DS.linhaAtividade({ titulo: a.titulo, tipo: a.tipo, estadoPrazo: prazo.estadoPrazo, prazo: prazo.rotulo,
+      const li = DS.linhaAtividade({ titulo: a.titulo, tipo: a.tipo, estadoPrazo: prazo.estadoPrazo, prazo: prazo.rotulo,
         responsavel: a.responsavel, mostrarProcesso: false });
+      if (comComentario && a.comentario) li.querySelector('.linha-principal').append(elemento('p', 'linha-comentario', a.comentario));
+      return li;
     };
-    function listaDeAtividades(lugar, filtro, vazio) {
+    function listaDeAtividades(lugar, filtro, vazio, comComentario) {
       listasDeAtividade.push(() => {
         const daqui = atividades.filter(filtro).sort((x, y) => x.prazoEmDias - y.prazoEmDias);
         if (!daqui.length) { lugar.replaceChildren(DS.estadoVazio({ titulo: vazio })); return; }
         const ul = elemento('ul', 'lista-atividades');
-        ul.append(...daqui.map(linha));
+        ul.append(...daqui.map((a) => linha(a, comComentario)));
         lugar.replaceChildren(ul);
       });
     }
 
-    // Resumo
+    // Resumo: Dados do processo à esquerda; Próximas atividades e Documentos à direita.
     const abertas = (a) => a.status !== 'concluido';
     const proximas = elemento('div');
-    listaDeAtividades(proximas, abertas, 'Nenhuma atividade em aberto.');
+    listaDeAtividades(proximas, abertas, 'Nenhuma atividade em aberto.', false);
     const blocoProximas = bloco('Próximas atividades', 2, proximas);
-    blocoProximas.cabeca.append(botaoDoPainel());
-    const dados = r.tipo === 'processo'
+    blocoProximas.cabeca.append(botaoDoPainel('Adicionar'));
+    const linkNoTribunal = (texto) => {
+      const span = elemento('span', 'texto-com-icone');
+      span.append(iconeDaFicha('vinculo'), elemento('span', null, texto));
+      return span;
+    };
+    const dados = extra
       ? [['Ação', r.acao], ['Número', [elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero)]],
-        ['Juízo', r.juizo], ['Valor da causa', reais(r.valor)], ['Distribuído em', dataCurta(diaDe(400 + r.id * 30))],
-        ['Criado em', dataCurta(diaDe(90 + r.id))]]
+        ['Juízo', `${r.juizo}, ${extra.foro}`], ['Link no tribunal', linkNoTribunal(extra.linkNoTribunal)],
+        ['Valor da causa', reais(r.valor)],
+        ['Valor da condenação', extra.valorCondenacao ? reais(extra.valorCondenacao) : 'Sem condenação até agora'],
+        ['Distribuído em', dataCurta(diaDe(extra.distribuidoHaDias))], ['Criado em', dataCurta(diaDe(extra.criadoHaDias))]]
       : [['Cliente', r.cliente], ['Criado em', dataCurta(diaDe(90 + r.id))]];
-    const historicos = elemento('ol', 'andamentos');
-    const ANDAMENTOS = r.tipo === 'processo'
-      ? ['Publicado despacho de mero expediente', 'Conclusos para despacho', 'Juntada de petição intermediária']
-      : ['Reunião registrada com o cliente', 'Documentos recebidos por e-mail'];
-    ANDAMENTOS.forEach((texto, i) => {
-      const li = elemento('li');
-      const d = diaDe(r.movimentoEmDias + i * 9);
-      const quando = elemento('time', null, dataCurta(d));
-      quando.dateTime = d.toISOString().slice(0, 10);
-      li.append(quando, elemento('span', null, texto));
-      historicos.append(li);
-    });
-    const vazioCom = (titulo, rotulo) => DS.estadoVazio({ titulo, acao: { rotulo, variante: 'secundario', aoClicar: foraDoPrototipo } });
+    // O protótipo não traz documento: a ficha mostra o estado vazio.
+    const documentos = DS.estadoVazio({
+      titulo: 'Nenhum documento neste processo.',
+      texto: 'Junte petições, procurações e contratos para achar tudo pela ficha. Arquivos PDF, DOCX e imagens.',
+      acao: { rotulo: 'Adicionar documentos', variante: 'secundario', iconeEsquerda: 'mais', aoClicar: foraDoPrototipo } });
     const esquerda = elemento('div', 'ficha-coluna');
-    esquerda.append(bloco(r.tipo === 'processo' ? 'Dados do processo' : 'Dados do caso', 2, listaDeDados(dados)).sec,
-      bloco('Últimos históricos', 2, historicos).sec);
+    esquerda.append(bloco(extra ? 'Dados do processo' : 'Dados do caso', 2, listaDeDados(dados)).sec);
     const direita = elemento('div', 'ficha-coluna');
-    direita.append(blocoProximas.sec,
-      bloco('Documentos', 2, vazioCom('Nenhum documento.', 'Adicionar documento')).sec,
-      bloco('Atendimentos', 2, vazioCom('Nenhum atendimento.', 'Adicionar atendimento')).sec,
-      bloco('Honorários', 2, listaDeDados([['Faturado', reais(0)], ['A faturar', reais(0)], ['Total lançado', reais(0)]])).sec);
+    direita.append(blocoProximas.sec, bloco('Documentos', 2, documentos).sec);
     const resumo = elemento('div', 'ficha-grade');
     resumo.append(esquerda, direita);
 
-    // Atividades
+    // Atividades: contadores, e cada linha com tipo, título, prazo, comentário e responsável.
     const contagem = elemento('p', 'contagem');
+    let abaAtividades;
     listasDeAtividade.push(() => {
       const n = atividades.filter(abertas).length;
       contagem.textContent = `${plural(n, 'aberta', 'abertas')} | ${plural(atividades.length - n, 'concluída', 'concluídas')}`;
+      if (abaAtividades) abaAtividades.textContent = `Atividades (${atividades.length})`;
     });
     const todas = elemento('div');
-    listaDeAtividades(todas, () => true, `Não há atividades neste ${TIPOS[r.tipo].toLowerCase()}.`);
+    listaDeAtividades(todas, () => true, `Não há atividades neste ${TIPOS[r.tipo].toLowerCase()}.`, true);
     const blocoAtividades = bloco('Atividades', 2, contagem, todas);
     blocoAtividades.cabeca.append(botaoDoPainel());
 
-    // Histórico
-    const instancia = r.tipo === 'processo'
-      ? listaDeDados([['Instância', GRAUS[r.grau]], ['Número', elemento('span', 'numero-processo', r.numero)],
-        ['Juízo', r.juizo], ['Situação', DS.selo({ rotulo: 'Ativo', descricao: 'Instância em andamento' })]])
-      : elemento('p', null, 'Caso sem instância no tribunal.');
-    const andamentos = historicos.cloneNode(true);
+    // Histórico: o card do grau, e a linha do tempo das movimentações, da mais nova para a mais antiga.
     const historico = elemento('div', 'ficha-coluna');
-    historico.append(bloco(r.tipo === 'processo' ? 'Instância atual' : 'Instância', 2, instancia).sec,
-      bloco('Andamentos', 2, andamentos).sec);
+    if (extra) {
+      const grauCard = elemento('section', 'ficha-grau');
+      const cabeca = elemento('div', 'ficha-grau-cabeca');
+      const h3 = elemento('h3', null, grau);
+      h3.id = `bloco-${++blocos}`;
+      grauCard.setAttribute('aria-labelledby', h3.id);
+      h3.append(DS.selo({ rotulo: 'Ativo', descricao: `Instância em andamento, ${grau}` }));
+      const icones = elemento('div', 'ficha-grau-acoes');
+      icones.append(botaoDeIcone(`Editar ${grau}`, 'editar', foraDoPrototipo).el,
+        botaoDeIcone(`Atualizar ${grau} pelo tribunal`, iconeDaFicha('tribunal'), foraDoPrototipo).el,
+        botaoDeIcone(`Desvincular ${grau}`, 'lixeira', foraDoPrototipo).el);
+      cabeca.append(h3, icones);
+      grauCard.append(cabeca, elemento('p', 'ficha-grau-nome', r.titulo), listaDeDados([
+        ['Número', [elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero)]],
+        ['Juízo', `${r.juizo}, ${extra.foro}`], ['Réu', extra.reu], ['Advogado da outra parte', extra.advogadoContrario],
+        ['Distribuído em', dataCurta(diaDe(extra.distribuidoHaDias))]]));
+      historico.append(grauCard);
+    }
+    const movimentacoes = window.DADOS.MOVIMENTACOES_MODELO
+      .filter((m) => extra || m.origem === 'manual')
+      .map((m) => ({ ...m, haDias: m.haDias + r.movimentoEmDias }))
+      .sort((x, y) => x.haDias - y.haDias);
+    const linhaDoTempo = elemento('ol', 'andamentos');
+    movimentacoes.forEach((m) => {
+      const li = elemento('li');
+      const d = diaDe(m.haDias);
+      const quando = elemento('time', null, dataCurta(d));
+      quando.dateTime = d.toISOString().slice(0, 10);
+      const origem = elemento('span', 'andamentos-origem');
+      origem.append(iconeDaFicha(m.origem), elemento('span', 'visualmente-oculto', ORIGENS[m.origem]));
+      origem.title = ORIGENS[m.origem];
+      li.append(quando, origem, elemento('span', 'andamentos-texto', m.descricao));
+      linhaDoTempo.append(li);
+    });
+    historico.append(bloco('Movimentações', 2, linhaDoTempo).sec);
 
-    desenharAtividades();
     const abas = DS.abas({ rotulo: `Ficha do ${TIPOS[r.tipo].toLowerCase()}`, itens: [
       { chave: 'resumo', rotulo: 'Resumo', conteudo: resumo },
-      { chave: 'atividades', rotulo: 'Atividades', conteudo: blocoAtividades.sec },
+      { chave: 'atividades', rotulo: `Atividades (${atividades.length})`, conteudo: blocoAtividades.sec },
       { chave: 'historico', rotulo: 'Histórico', conteudo: historico },
     ] });
+    abaAtividades = abas.querySelectorAll('[role="tab"]')[1];
+    desenharAtividades();
     conteudo.replaceChildren(topo, aviso, abas);
   }
 
