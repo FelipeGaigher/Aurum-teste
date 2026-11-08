@@ -113,6 +113,14 @@
   .grupo-chips { display: grid; gap: var(--space-1); }
   .grupo-chips-itens { display: flex; flex-wrap: wrap; gap: var(--space-2); min-height: var(--component-control-height); align-items: center; }
 
+  /* Painel de detalhe ao lado da lista: atividades do processo escolhido. */
+  .detalhe-numero { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); }
+  .detalhe-atividades-titulo { margin: 0 0 var(--space-2); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
+  .detalhe-atividades-lista { margin: 0; padding: 0; list-style: none; }
+  .detalhe-atividade { display: grid; justify-items: start; gap: var(--space-1); padding: var(--space-2) 0; }
+  .detalhe-atividade + .detalhe-atividade { border-top: var(--border-width) solid var(--color-border-default); }
+  .detalhe-atividade-titulo { overflow-wrap: anywhere; }
+
   @media (max-width: 1024px) {
     .ficha-grade { grid-template-columns: minmax(0, 1fr); }
   }
@@ -272,7 +280,14 @@
     const aviso = elemento('div', 'pagina-aviso');
     aviso.id = 'pagina-aviso';
     const lugarDaTabela = elemento('div');
-    conteudo.replaceChildren(lugarDaBarra, aviso, lugarDaTabela);
+    const detalhe = detalheAoLado({
+      prefixo: 'astrea-processos', lista: lugarDaTabela, dados: dadosDoDetalhe, urlDaFicha: (r) => `${PAGINA}?ficha=${r.id}`,
+      rotulo: 'Processo ou caso escolhido',
+      rotulos: { anterior: 'Registro anterior da lista', proximo: 'Próximo registro da lista',
+        esconder: 'Esconder o painel do registro', mostrar: 'Mostrar o painel do registro' },
+      largura: 'Largura do painel do registro',
+    });
+    conteudo.replaceChildren(lugarDaBarra, aviso, detalhe.casca);
 
     function celulas(r) {
       const responsavel = DS.avatar({ nome: r.responsavel, mostrarNome: true });
@@ -291,14 +306,63 @@
       const total = ativos();
       const resultado = total ? `${lista.length} de ${plural(REGISTROS.length, 'registro', 'registros')}` : plural(lista.length, 'registro', 'registros');
       barra.atualizar({ resultado, ativos: total, carregando });
-      lugarDaTabela.replaceChildren(DS.tabela({
+      const tabela = DS.tabela({
         rotulo: 'Processos e casos', carregando,
         colunas: [['titulo', 'Título'], ['tipo', 'Tipo'], ['numero', 'Número'], ['cliente', 'Cliente'],
           ['responsavel', 'Responsável'], ['movimento', 'Últ. mov.']],
         linhas: lista.map(celulas),
         vazio: { titulo: 'Nenhum processo ou caso com estes filtros.', texto: 'Os filtros escondem o que houver aqui.',
           acao: { rotulo: 'Limpar filtros', variante: 'secundario', aoClicar: limpar } },
+      });
+      if (!carregando) linhasSelecionaveis(tabela, lista);
+      lugarDaTabela.replaceChildren(tabela);
+      detalhe.sincronizar(carregando ? [] : lista);
+    }
+
+    function atividadesDoRegistro(r) {
+      const daqui = window.DADOS.ATIVIDADES
+        .filter((a) => r.numero && a.processo === r.numero && a.status !== 'concluido')
+        .sort((x, y) => x.prazoEmDias - y.prazoEmDias);
+      const secao = elemento('section', 'detalhe-atividades');
+      const titulo = elemento('h3', 'detalhe-atividades-titulo', `Próximas atividades (${daqui.length})`);
+      if (!daqui.length) {
+        secao.append(titulo, DS.estadoVazio({ titulo: 'Nenhuma atividade pendente.',
+          texto: r.numero ? 'Prazos, tarefas e audiências deste processo aparecem aqui.' : 'Casos sem número ainda não têm atividades no protótipo.' }));
+        return secao;
+      }
+      const ul = elemento('ul', 'detalhe-atividades-lista');
+      ul.append(...daqui.map((a) => {
+        const li = elemento('li', 'detalhe-atividade');
+        li.append(DS.chipPrazo(DS.descreverPrazo(a.prazoEmDias, false)), elemento('span', 'detalhe-atividade-titulo', a.titulo));
+        return li;
       }));
+      secao.append(titulo, ul);
+      return secao;
+    }
+
+    function dadosDoDetalhe(r) {
+      let destaque = { rotulo: 'Número CNJ', valor: 'Caso, sem número' };
+      if (r.numero) {
+        const valor = elemento('span', 'detalhe-numero');
+        valor.append(elemento('span', 'numero-processo', r.numero), copiarNumero(r.numero));
+        destaque = { rotulo: 'Número CNJ', valor };
+      }
+      const adicionarAtividade = DS.botao({ variante: 'secundario', iconeEsquerda: 'mais', rotulo: 'Adicionar atividade' });
+      adicionarAtividade.dataset.abrePainel = 'atividade';
+      adicionarAtividade.setAttribute('aria-haspopup', 'dialog');
+      adicionarAtividade.addEventListener('click', () => DS.painelCriarAtividade({ tipo: 'tarefa' }).abrir(adicionarAtividade));
+      return {
+        titulo: r.titulo, chips: [TIPOS[r.tipo], 'Ativo'], destaque,
+        linhas: [
+          { icone: 'pessoa', rotulo: 'Cliente', valor: r.cliente },
+          { icone: 'pessoa', rotulo: 'Responsável', valor: DS.avatar({ nome: r.responsavel, mostrarNome: true }) },
+          { icone: 'info', rotulo: 'Juízo', valor: r.juizo || '' },
+          { icone: 'relogio', rotulo: 'Última movimentação', valor: `${movimento(r.movimentoEmDias)}, ${dataCurta(diaDe(r.movimentoEmDias))}` },
+          { icone: 'marca', rotulo: 'Valor da causa', valor: r.valor ? reais(r.valor) : '' },
+        ],
+        corpo: [atividadesDoRegistro(r)],
+        acoes: [adicionarAtividade, { variante: 'primario', rotulo: 'Abrir ficha', aoClicar: () => { location.href = `${PAGINA}?ficha=${r.id}`; } }],
+      };
     }
 
     function limpar() {
@@ -345,6 +409,87 @@
 
     montarBarra();
     desenhar();
+    detalhe.divisor.ajustar();
+  }
+
+  // --- detalhe ao lado da lista (mesmo padrão de contatos.html) -------------------
+
+  const ESTREITA = window.matchMedia('(max-width: 1100px)');
+  const LISTA_MINIMA = 480;
+
+  function ler(chave) {
+    try { return localStorage.getItem(chave); } catch (e) { return null; }
+  }
+
+  function gravar(chave, valor) {
+    try { localStorage.setItem(chave, valor); } catch (e) { /* sem armazenamento */ }
+  }
+
+  // O link da primeira coluna segue para a ficha; o resto da linha escolhe o item do painel.
+  function linhasSelecionaveis(tabela, itens) {
+    tabela.querySelectorAll('tbody tr').forEach((tr, i) => {
+      if (!itens[i]) return;
+      tr.dataset.id = String(itens[i].id);
+      tr.dataset.selecionavel = '';
+      tr.tabIndex = 0;
+    });
+  }
+
+  // Sem escolha gravada, o primeiro da lista. Se o filtro tira o escolhido, mostra o primeiro.
+  function detalheAoLado({ prefixo, lista, dados, urlDaFicha, rotulo, rotulos, largura }) {
+    const CHAVE_ID = `${prefixo}-detalhe-id`;
+    const CHAVE_OCULTO = `${prefixo}-detalhe-oculto`;
+    let escolhido = ler(CHAVE_ID);
+    let itens = [];
+    const atual = () => itens.find((x) => String(x.id) === escolhido) || itens[0];
+    function andar(passo) {
+      const i = itens.indexOf(atual());
+      escolher(String(itens[(i + passo + itens.length) % itens.length].id));
+    }
+    const painel = DS.painelDetalhe({
+      rotulo, rotulos,
+      aoAnterior: () => andar(-1),
+      aoProximo: () => andar(1),
+      aoFechar: () => { gravar(CHAVE_OCULTO, '1'); divisor.el.hidden = true; },
+      aoReabrir: () => { gravar(CHAVE_OCULTO, ''); divisor.el.hidden = false; },
+    });
+    painel.el.id = `${prefixo.replace('astrea-', '')}-detalhe`;
+    const divisor = DS.divisorRedimensionavel({
+      alvo: painel.el, rotulo: largura, minimo: 300, maximo: 560, padrao: 380,
+      chave: `${prefixo}-detalhe-largura`, reserva: LISTA_MINIMA,
+    });
+    const casca = elemento('div', 'lista-e-detalhe');
+    casca.append(lista, divisor.el, painel.el);
+    if (ler(CHAVE_OCULTO) === '1') { painel.esconder(); divisor.el.hidden = true; }
+
+    function sincronizar(novos) {
+      itens = novos;
+      const x = atual();
+      painel.el.hidden = !x;
+      divisor.el.hidden = !x || painel.oculto();
+      const id = x ? String(x.id) : '';
+      lista.querySelectorAll('tbody tr[data-id]').forEach((tr) => tr.setAttribute('aria-selected', String(tr.dataset.id === id)));
+      if (x) painel.mostrar({ ...dados(x), navegavel: itens.length > 1 });
+    }
+
+    function escolher(id) {
+      const x = itens.find((item) => String(item.id) === id);
+      if (!x) return;
+      if (ESTREITA.matches) { location.href = urlDaFicha(x); return; }
+      escolhido = id;
+      gravar(CHAVE_ID, id);
+      if (painel.oculto()) { painel.reabrir(); divisor.el.hidden = false; gravar(CHAVE_OCULTO, ''); }
+      sincronizar(itens);
+    }
+
+    lista.addEventListener('click', (e) => {
+      const tr = e.target.closest('tr[data-id]');
+      if (tr && !e.target.closest('a, button')) escolher(tr.dataset.id);
+    });
+    lista.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.matches('tr[data-id]')) { e.preventDefault(); escolher(e.target.dataset.id); }
+    });
+    return { casca, divisor, sincronizar };
   }
 
   // --- ficha ----------------------------------------------------------------------

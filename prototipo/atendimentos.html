@@ -21,8 +21,8 @@
   .pagina-aviso:empty { display: none; }
   .pagina-aviso { margin-bottom: var(--space-4); }
   .tabela a { border-radius: var(--radius); color: var(--color-action); font-weight: var(--font-weight-medium); }
-  .tabela tbody tr.linha-clicavel { cursor: pointer; }
-  .tabela tbody tr.linha-clicavel:hover { background-color: var(--color-bg-hover); }
+  .detalhe-numero { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); }
+  .detalhe-anotacoes-titulo { margin: 0 0 var(--space-2); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
   .tabela .numero-processo, .ficha-leitura .numero-processo { white-space: nowrap; font-variant-numeric: tabular-nums; }
   .texto-apagado { color: var(--color-text-muted); }
 
@@ -169,6 +169,22 @@
   const enderecoDaFicha = (a) => `${PAGINA}?ficha=1&id=${encodeURIComponent(a.id)}`;
   const fichaDoProcesso = (numero) => `processos.html?ficha=${PROCESSOS.findIndex((p) => p.numero === numero) + 1}`;
 
+  // PA-11 e PA-38: o número é texto, e copiar é um botão de ícone com dica.
+  function copiarNumero(numero) {
+    const botao = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'copiar', rotulo: 'Copiar número' });
+    const envolto = DS.tooltip({ alvo: botao, rotulo: 'Copiar número' });
+    const anuncio = elemento('span', 'visualmente-oculto');
+    anuncio.setAttribute('role', 'status');
+    botao.addEventListener('click', () => {
+      const area = navigator.clipboard;
+      const dizer = (texto) => { anuncio.textContent = texto; envolto.querySelector('.dica').textContent = texto; };
+      if (!area) { dizer('Não foi possível copiar'); return; }
+      area.writeText(numero).then(() => dizer('Número copiado'), () => dizer('Não foi possível copiar'));
+    });
+    envolto.append(anuncio);
+    return envolto;
+  }
+
   function numeroDoProcesso(numero) {
     return numero ? elemento('span', 'numero-processo', numero) : elemento('span', 'texto-apagado', 'Sem processo');
   }
@@ -305,7 +321,14 @@
     const aviso = elemento('div', 'pagina-aviso');
     aviso.id = 'pagina-aviso';
     const lugarDaTabela = elemento('div');
-    conteudo.replaceChildren(lugarDaBarra, aviso, lugarDaTabela);
+    const detalhe = detalheAoLado({
+      prefixo: 'astrea-atendimentos', lista: lugarDaTabela, dados: dadosDoDetalhe, urlDaFicha: enderecoDaFicha,
+      rotulo: 'Atendimento escolhido',
+      rotulos: { anterior: 'Atendimento anterior da lista', proximo: 'Próximo atendimento da lista',
+        esconder: 'Esconder o painel do atendimento', mostrar: 'Mostrar o painel do atendimento' },
+      largura: 'Largura do painel do atendimento',
+    });
+    conteudo.replaceChildren(lugarDaBarra, aviso, detalhe.casca);
 
     botaoAdicionar = DS.botao({ variante: 'primario', iconeEsquerda: 'mais', rotulo: 'Adicionar atendimento' });
     botaoAdicionar.setAttribute('data-abre-painel', '');
@@ -340,17 +363,52 @@
           : { titulo: 'Agilize e organize seus atendimentos',
             texto: 'Registre conversas com seus clientes, adicione documentos e crie atividades de forma descomplicada.' },
       });
-      // A linha inteira abre a ficha; o link do assunto continua sendo o caminho do teclado.
-      if (lista.length) {
-        tabela.querySelectorAll('tbody tr').forEach((tr, i) => {
-          tr.classList.add('linha-clicavel');
-          tr.addEventListener('click', (evento) => {
-            if (evento.target.closest('a, button')) return;
-            location.href = enderecoDaFicha(lista[i]);
-          });
-        });
-      }
+      if (lista.length) linhasSelecionaveis(tabela, lista);
       lugarDaTabela.replaceChildren(tabela);
+      detalhe.sincronizar(lista);
+    }
+
+    function anotacoesRecentes(a) {
+      const secao = elemento('section', 'detalhe-anotacoes');
+      const recentes = [...a.anotacoes].sort((x, y) => y.em.localeCompare(x.em)).slice(0, 2);
+      const titulo = elemento('h3', 'detalhe-anotacoes-titulo', 'Anotações mais recentes');
+      if (!recentes.length) {
+        secao.append(titulo, DS.estadoVazio({ titulo: 'Nenhuma anotação ainda.', texto: 'O registro das conversas aparece aqui.' }));
+        return secao;
+      }
+      const ol = elemento('ol', 'anotacoes');
+      ol.setAttribute('aria-label', 'As duas anotações mais recentes');
+      ol.append(...recentes.map((n) => itemDeAnotacao(n)));
+      secao.append(titulo, ol);
+      return secao;
+    }
+
+    function dadosDoDetalhe(a) {
+      let processo = '';
+      if (a.processo) {
+        processo = elemento('span', 'detalhe-numero');
+        processo.append(link(a.processo, fichaDoProcesso(a.processo), 'numero-processo'), copiarNumero(a.processo));
+      }
+      const ficha = enderecoDaFicha(a);
+      return {
+        titulo: a.assunto, chips: [chipStatus(a.status)],
+        destaque: { rotulo: 'Cliente', valor: a.cliente },
+        linhas: [
+          { icone: 'info', rotulo: 'Processo', valor: processo },
+          { icone: 'pessoa', rotulo: 'Responsável', valor: DS.avatar({ nome: a.responsavel, mostrarNome: true }) },
+          { icone: 'calendario', rotulo: 'Início', valor: dataCurta(a.inicio) },
+          { icone: 'marca', rotulo: 'Etiqueta', valor: a.area || '' },
+          { icone: 'info', rotulo: 'Honorários', valor: a.honorarios ? reais(a.honorarios) : 'Sem honorários' },
+          { icone: 'relogio', rotulo: 'Timesheets', valor: a.horas ? horas(a.horas) : '0h' },
+          { icone: 'arquivar', rotulo: 'Documentos', valor: plural(a.documentos || 0, 'documento', 'documentos') },
+          { icone: 'editar', rotulo: 'Anotações', valor: plural(a.anotacoes.length, 'anotação', 'anotações') },
+        ],
+        corpo: [anotacoesRecentes(a)],
+        acoes: [
+          { variante: 'secundario', iconeEsquerda: 'mais', rotulo: 'Nova anotação', aoClicar: () => { location.href = `${ficha}&anotar=1`; } },
+          { variante: 'primario', rotulo: 'Abrir ficha', aoClicar: () => { location.href = ficha; } },
+        ],
+      };
     }
 
     function limpar() {
@@ -377,6 +435,87 @@
     redesenharLista = desenhar;
     montarBarra();
     desenhar();
+    detalhe.divisor.ajustar();
+  }
+
+  // --- detalhe ao lado da lista (mesmo padrão de contatos.html) -------------------
+
+  const ESTREITA = window.matchMedia('(max-width: 1100px)');
+  const LISTA_MINIMA = 480;
+
+  function ler(chave) {
+    try { return localStorage.getItem(chave); } catch (e) { return null; }
+  }
+
+  function gravar(chave, valor) {
+    try { localStorage.setItem(chave, valor); } catch (e) { /* sem armazenamento */ }
+  }
+
+  // O link da primeira coluna segue para a ficha; o resto da linha escolhe o item do painel.
+  function linhasSelecionaveis(tabela, itens) {
+    tabela.querySelectorAll('tbody tr').forEach((tr, i) => {
+      if (!itens[i]) return;
+      tr.dataset.id = String(itens[i].id);
+      tr.dataset.selecionavel = '';
+      tr.tabIndex = 0;
+    });
+  }
+
+  // Sem escolha gravada, o primeiro da lista. Se o filtro tira o escolhido, mostra o primeiro.
+  function detalheAoLado({ prefixo, lista, dados, urlDaFicha, rotulo, rotulos, largura }) {
+    const CHAVE_ID = `${prefixo}-detalhe-id`;
+    const CHAVE_OCULTO = `${prefixo}-detalhe-oculto`;
+    let escolhido = ler(CHAVE_ID);
+    let itens = [];
+    const atual = () => itens.find((x) => String(x.id) === escolhido) || itens[0];
+    function andar(passo) {
+      const i = itens.indexOf(atual());
+      escolher(String(itens[(i + passo + itens.length) % itens.length].id));
+    }
+    const painel = DS.painelDetalhe({
+      rotulo, rotulos,
+      aoAnterior: () => andar(-1),
+      aoProximo: () => andar(1),
+      aoFechar: () => { gravar(CHAVE_OCULTO, '1'); divisor.el.hidden = true; },
+      aoReabrir: () => { gravar(CHAVE_OCULTO, ''); divisor.el.hidden = false; },
+    });
+    painel.el.id = `${prefixo.replace('astrea-', '')}-detalhe`;
+    const divisor = DS.divisorRedimensionavel({
+      alvo: painel.el, rotulo: largura, minimo: 300, maximo: 560, padrao: 380,
+      chave: `${prefixo}-detalhe-largura`, reserva: LISTA_MINIMA,
+    });
+    const casca = elemento('div', 'lista-e-detalhe');
+    casca.append(lista, divisor.el, painel.el);
+    if (ler(CHAVE_OCULTO) === '1') { painel.esconder(); divisor.el.hidden = true; }
+
+    function sincronizar(novos) {
+      itens = novos;
+      const x = atual();
+      painel.el.hidden = !x;
+      divisor.el.hidden = !x || painel.oculto();
+      const id = x ? String(x.id) : '';
+      lista.querySelectorAll('tbody tr[data-id]').forEach((tr) => tr.setAttribute('aria-selected', String(tr.dataset.id === id)));
+      if (x) painel.mostrar({ ...dados(x), navegavel: itens.length > 1 });
+    }
+
+    function escolher(id) {
+      const x = itens.find((item) => String(item.id) === id);
+      if (!x) return;
+      if (ESTREITA.matches) { location.href = urlDaFicha(x); return; }
+      escolhido = id;
+      gravar(CHAVE_ID, id);
+      if (painel.oculto()) { painel.reabrir(); divisor.el.hidden = false; gravar(CHAVE_OCULTO, ''); }
+      sincronizar(itens);
+    }
+
+    lista.addEventListener('click', (e) => {
+      const tr = e.target.closest('tr[data-id]');
+      if (tr && !e.target.closest('a, button')) escolher(tr.dataset.id);
+    });
+    lista.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.matches('tr[data-id]')) { e.preventDefault(); escolher(e.target.dataset.id); }
+    });
+    return { casca, divisor, sincronizar };
   }
 
   // --- ficha ----------------------------------------------------------------------
@@ -486,6 +625,8 @@
     ] });
     const compositor = elemento('div', 'compositor');
     compositor.append(area, barra.el);
+    // "Nova anotação" do painel da lista chega aqui com o foco no compositor.
+    if (parametros.get('anotar') === '1') requestAnimationFrame(() => area.querySelector('textarea').focus());
     const anotacoes = bloco('Anotações', contagem, linhaDoTempo, compositor);
 
     const esquerda = elemento('div', 'ficha-coluna');
