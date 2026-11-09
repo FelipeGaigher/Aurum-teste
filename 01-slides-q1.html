@@ -214,6 +214,56 @@
   --size-column: var(--primitive-size-300);
 }
 
+/* Tema escuro, igual ao de prototipo/astrea.css. Um bloco atende o sistema, o outro a chave. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    color-scheme: dark;
+    --color-bg-page: var(--primitive-dark-900);
+    --color-bg-surface: var(--primitive-dark-700);
+    --color-bg-subtle: var(--primitive-dark-800);
+    --color-bg-hover: var(--primitive-dark-600);
+    --color-text-default: var(--primitive-dark-100);
+    --color-text-muted: var(--primitive-dark-300);
+    --color-text-danger: var(--primitive-danger-300);
+    --color-text-warning: var(--primitive-warning-300);
+    --color-text-success: var(--primitive-success-300);
+    --color-bg-danger: var(--primitive-danger-dark-100);
+    --color-bg-warning: var(--primitive-warning-dark-100);
+    --color-border-default: var(--primitive-dark-500);
+    --color-border-strong: var(--primitive-dark-400);
+    --color-border-accent: var(--primitive-dark-400);
+    --color-action: var(--primitive-blue-400);
+    --color-action-hover: var(--primitive-blue-300);
+    --color-action-text: var(--primitive-dark-950);
+    --color-focus: var(--primitive-blue-400);
+    --color-scrim: color-mix(in srgb, var(--primitive-dark-950) 70%, transparent);
+    --shadow-card: var(--primitive-shadow-2);
+  }
+}
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+  --color-bg-page: var(--primitive-dark-900);
+  --color-bg-surface: var(--primitive-dark-700);
+  --color-bg-subtle: var(--primitive-dark-800);
+  --color-bg-hover: var(--primitive-dark-600);
+  --color-text-default: var(--primitive-dark-100);
+  --color-text-muted: var(--primitive-dark-300);
+  --color-text-danger: var(--primitive-danger-300);
+  --color-text-warning: var(--primitive-warning-300);
+  --color-text-success: var(--primitive-success-300);
+  --color-bg-danger: var(--primitive-danger-dark-100);
+  --color-bg-warning: var(--primitive-warning-dark-100);
+  --color-border-default: var(--primitive-dark-500);
+  --color-border-strong: var(--primitive-dark-400);
+  --color-border-accent: var(--primitive-dark-400);
+  --color-action: var(--primitive-blue-400);
+  --color-action-hover: var(--primitive-blue-300);
+  --color-action-text: var(--primitive-dark-950);
+  --color-focus: var(--primitive-blue-400);
+  --color-scrim: color-mix(in srgb, var(--primitive-dark-950) 70%, transparent);
+  --shadow-card: var(--primitive-shadow-2);
+}
+
 /* componentes do DS usados no deck, copiados de prototipo/astrea.css */
 :root {
   --component-logo-mark: var(--color-logo);
@@ -547,9 +597,37 @@ html.so-um body { box-sizing: border-box; min-height: 100vh; margin: 0; padding:
 html.so-um .capa, html.so-um .slide[hidden] { display: none; }
 html.so-um .palco { position: relative; overflow: visible; }
 html.so-um .palco .slide { position: absolute; top: 0; left: 0; width: 1600px; height: 900px; aspect-ratio: auto; margin: 0; transform-origin: top left; }
+/* chave de tema: o checkbox fica oculto sobre o ícone, como no hub; o script marca data-tema no <html> */
+.barra-tema { display: flex; justify-content: flex-end; }
+.chave-tema { position: relative; display: inline-grid; place-items: center; width: var(--size-shortcut); height: var(--size-shortcut); border-radius: var(--radius); color: var(--color-text-muted); cursor: pointer; }
+.chave-tema:hover { background-color: var(--color-bg-hover); color: var(--color-action); }
+.chave-tema input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.chave-tema:has(input:focus-visible) { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }
+.chave-tema svg { width: var(--size-icon-nav); height: var(--size-icon-nav); fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+html.so-um .barra-tema { display: none; }
+@media print { .barra-tema { display: none; } }
 </style>
+<script>
+/* Tema: ?tema=escuro|claro força ao carregar; a chave inverte o tema do sistema e marca data-tema no <html>. */
+(() => {
+  const raiz = document.documentElement;
+  const sistema = matchMedia('(prefers-color-scheme: dark)');
+  const pedido = new URLSearchParams(location.search).get('tema');
+  if (pedido === 'escuro' || pedido === 'claro') raiz.dataset.tema = pedido;
+  const escuro = () => raiz.dataset.tema ? raiz.dataset.tema === 'escuro' : sistema.matches;
+  addEventListener('DOMContentLoaded', () => {
+    const chave = document.getElementById('tema');
+    if (!chave) return;
+    chave.checked = escuro() !== sistema.matches;
+    chave.addEventListener('change', () => {
+      raiz.dataset.tema = chave.checked !== sistema.matches ? 'escuro' : 'claro';
+    });
+  });
+})();
+</script>
 </head>
 <body>
+<div class="barra-tema"><label class="chave-tema" for="tema"><input type="checkbox" id="tema" aria-label="Trocar tema"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></label></div>
 
 <p class="capa"><strong>Questão 1.</strong> Cinco slides de 16 por 9, dentro do limite de cinco páginas.</p>
 

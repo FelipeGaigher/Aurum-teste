@@ -536,6 +536,7 @@ html:has(.hub-deck[open]) { overflow: hidden; }
 <dialog class="dialogo hub-deck" id="hub-deck" aria-labelledby="hub-deck-titulo">
   <div class="hub-deck-topo">
     <h2 id="hub-deck-titulo">Slides</h2>
+    <button class="botao botao-texto" type="button" id="hub-deck-tema"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>Tema</button>
     <a class="botao botao-secundario" id="hub-deck-aba" href="01-slides-q1.html" target="_blank" rel="noopener">Abrir em nova aba</a>
     <button class="botao botao-texto" type="button" id="hub-deck-fechar">Fechar</button>
   </div>
@@ -559,11 +560,16 @@ html:has(.hub-deck[open]) { overflow: hidden; }
   const aba = document.getElementById('hub-deck-aba');
   const fechar = document.getElementById('hub-deck-fechar');
   const miniaturas = document.getElementById('hub-deck-miniaturas');
+  const botaoTema = document.getElementById('hub-deck-tema');
+  const chaveTema = document.getElementById('tema');
+  // Tema efetivo do hub: o do sistema, invertido quando a chave está marcada. O deck recebe por ?tema=.
+  const tema = () => (matchMedia('(prefers-color-scheme: dark)').matches !== chaveTema.checked ? 'escuro' : 'claro');
   let gatilho = null, deck = '', atual = 1, total = 0;
   const ehDeck = (href) => /^0[1-3]-slides-q[1-3]\.html$/.test(href || '');
   function mostrar(k) {
     atual = Math.min(Math.max(k, 1), total);
-    quadro.src = `${deck}?slide=${atual}`;
+    quadro.src = `${deck}?slide=${atual}&tema=${tema()}`;
+    aba.href = `${deck}?tema=${tema()}`;
     quadro.title = `${titulo.textContent}, slide ${atual} de ${total}`;
     miniaturas.querySelectorAll('button').forEach((b, i) => b.setAttribute('aria-current', i + 1 === atual ? 'true' : 'false'));
   }
@@ -572,7 +578,6 @@ html:has(.hub-deck[open]) { overflow: hidden; }
     deck = a.getAttribute('href');
     total = SLIDES[n].length;
     titulo.textContent = 'Slides da Questão ' + n;
-    aba.href = deck;
     miniaturas.replaceChildren(...SLIDES[n].map((nome, i) => {
       const li = document.createElement('li');
       const b = document.createElement('button');
@@ -601,6 +606,11 @@ html:has(.hub-deck[open]) { overflow: hidden; }
   modal.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); mostrar(atual + 1); }
     if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); mostrar(atual - 1); }
+  });
+  botaoTema.addEventListener('click', () => {
+    chaveTema.checked = !chaveTema.checked;
+    chaveTema.dispatchEvent(new Event('change', { bubbles: true }));
+    mostrar(atual);
   });
   fechar.addEventListener('click', () => modal.close());
   modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
