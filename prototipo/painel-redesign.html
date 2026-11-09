@@ -48,6 +48,11 @@
   .titulo p { margin: 0; color: var(--muted); max-width: 62ch; }
   .acoes { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
   .campo { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+  .campo .campo-botao {
+    display: inline-flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 160px;
+    padding: 7px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); color: var(--fg); cursor: pointer;
+  }
+  .campo .campo-botao svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.75; }
   .campo select {
     appearance: none; -webkit-appearance: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
     padding: 7px 32px 7px 10px; min-width: 160px; color: var(--fg);
@@ -116,15 +121,10 @@
   </div>
   <div class="acoes">
     <label class="campo">Equipe
-      <select id="f-equipe"><option value="todas">Todas</option></select>
+      <button type="button" class="campo-botao" id="f-equipe" data-valor="todas" aria-haspopup="listbox" aria-label="Equipe: Todas. Clique para trocar"><span>Todas</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
     </label>
     <label class="campo">Situação
-      <select id="f-status">
-        <option value="todas">Todas</option>
-        <option value="feito">Feito</option>
-        <option value="fazendo">Fazendo</option>
-        <option value="a-fazer">A fazer</option>
-      </select>
+      <button type="button" class="campo-botao" id="f-status" data-valor="todas" aria-haspopup="listbox" aria-label="Situação: Todas. Clique para trocar"><span>Todas</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
     </label>
     <a class="btn primario" href="prototipo/kanban.html" target="_blank" rel="noopener">Abrir o Astrea com as melhorias</a>
   </div>
@@ -340,10 +340,20 @@
   $('#d-fechar-2').addEventListener('click', fechar);
   $('#detalhe').addEventListener('cancel', (e) => { e.preventDefault(); fechar(); });
 
-  const selEquipe = $('#f-equipe');
-  for (const e of EQUIPES) selEquipe.append(el('option', { value: e, text: e }));
-  selEquipe.addEventListener('change', () => { estado.equipe = selEquipe.value; render(); });
-  $('#f-status').addEventListener('change', (ev) => { estado.status = ev.target.value; render(); });
+  // Os filtros são botões que percorrem as opções: a captura para o Figma não desenha <select> nativo.
+  function filtroCiclico(botao, rotulo, opcoes, aoMudar) {
+    let i = 0;
+    const aplicar = () => {
+      const [valor, texto] = opcoes[i];
+      botao.dataset.valor = valor;
+      botao.querySelector('span').textContent = texto;
+      botao.setAttribute('aria-label', `${rotulo}: ${texto}. Clique para trocar`);
+      aoMudar(valor);
+    };
+    botao.addEventListener('click', () => { i = (i + 1) % opcoes.length; aplicar(); render(); });
+  }
+  filtroCiclico($('#f-equipe'), 'Equipe', [['todas', 'Todas'], ...EQUIPES.map((e) => [e, e])], (v) => { estado.equipe = v; });
+  filtroCiclico($('#f-status'), 'Situação', [['todas', 'Todas'], ['feito', 'Feito'], ['fazendo', 'Fazendo'], ['a-fazer', 'A fazer']], (v) => { estado.status = v; });
 
   render();
 </script>
