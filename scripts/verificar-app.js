@@ -249,6 +249,11 @@ async function checarItemAtivo(page, nome) {
     exigir(noUsuario > 0, 'sem [aria-current="page"] no menu do usuário (.cabecalho)');
     return;
   }
+  if (nome === 'questionarios.html') {
+    // Os Questionários saíram do menu a pedido de Felipe (08/11): a página existe, mas nenhum item fica ativo.
+    exigir(total === 0, `${total} item(ns) do menu lateral com aria-current="page"`);
+    return;
+  }
   exigir(total === 1, `${total} itens com aria-current="page"`);
   const modulo = MODULO_DA_PAGINA[nome] || nome;
   const alvoAtivo = arquivoDe(await ativos.first().getAttribute('href'));

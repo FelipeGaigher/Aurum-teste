@@ -34,7 +34,6 @@
   };
 
   const MENU = [
-    { rotulo: 'Questionários', pagina: 'questionarios.html', icone: 'questionario', grupo: GRUPO_ESPECIALISTA },
     { rotulo: 'Gestão kanban', pagina: 'kanban.html', icone: 'kanban', grupo: GRUPO_ESPECIALISTA },
     { rotulo: 'Design system', pagina: 'design-system.html', icone: 'camadas', grupo: GRUPO_ESPECIALISTA },
     { rotulo: 'Área de trabalho', pagina: 'area-de-trabalho.html', icone: 'lista' },
