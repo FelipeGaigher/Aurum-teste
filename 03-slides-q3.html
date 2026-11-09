@@ -527,6 +527,11 @@ figcaption { font-size: var(--font-size-label); color: var(--color-text-muted); 
 .slide .passo { padding: var(--space-2) var(--space-3); }
 .slide .painel .estados { gap: var(--space-2) var(--space-3); }
 .col-tela figcaption { max-width: 100%; }
+
+/* ?slide=N mostra um slide só, ajustado à altura da janela: é como o hub exibe o deck no modal. */
+html.so-um body { box-sizing: border-box; min-height: 100vh; margin: 0; padding: var(--space-3); display: grid; place-items: center; }
+html.so-um .capa, html.so-um .slide[hidden] { display: none; }
+html.so-um .slide { width: min(100%, calc((100vh - 2 * var(--space-3)) * 16 / 9)); margin: 0; }
 </style>
 </head>
 <body>
@@ -797,6 +802,14 @@ figcaption { font-size: var(--font-size-label); color: var(--color-text-muted); 
     g.addEventListener('keydown', teclas(g));
     selecionar(g, 0, false);
   });
+})();
+</script>
+<script>
+(() => {
+  const k = Number(new URLSearchParams(location.search).get('slide'));
+  if (!k) return;
+  document.documentElement.classList.add('so-um');
+  document.querySelectorAll('section.slide').forEach((s, i) => { s.hidden = i !== k - 1; });
 })();
 </script>
 </body>

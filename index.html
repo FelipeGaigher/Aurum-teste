@@ -253,6 +253,15 @@ li::marker { color: var(--color-text-muted); }
 .hub-deck-topo h2 { flex: 1; margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
 .hub-deck iframe { flex: 1; min-height: 0; width: 100%; border: 0; background-color: var(--color-bg-page); }
 html:has(.hub-deck[open]) { overflow: hidden; }
+
+.hub-deck-corpo { flex: 1; min-height: 0; display: flex; }
+.hub-deck-trilho { flex: none; width: var(--primitive-size-200); overflow-y: auto; padding: var(--space-3); border-right: var(--border-width) solid var(--color-border-default); background-color: var(--color-bg-subtle); }
+.hub-deck-trilho ol { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.hub-deck-trilho button { display: grid; gap: var(--space-1); width: 100%; padding: var(--space-1); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); background-color: var(--color-bg-surface); color: var(--color-text-muted); font: inherit; font-size: var(--font-size-label); text-align: left; cursor: pointer; }
+.hub-deck-trilho button img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: calc(var(--radius-card) - var(--border-width)); }
+.hub-deck-trilho button:hover { border-color: var(--color-border-strong); color: var(--color-text-default); }
+.hub-deck-trilho button[aria-current="true"] { border-color: var(--color-action); color: var(--color-action); box-shadow: 0 0 0 var(--border-width) var(--color-action); }
+.hub-deck-trilho button:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }
 </style>
 </head>
 <body>
@@ -528,30 +537,68 @@ html:has(.hub-deck[open]) { overflow: hidden; }
     <a class="botao botao-secundario" id="hub-deck-aba" href="01-slides-q1.html" target="_blank" rel="noopener">Abrir em nova aba</a>
     <button class="botao botao-texto" type="button" id="hub-deck-fechar">Fechar</button>
   </div>
-  <iframe id="hub-deck-quadro" title="Slides" src="about:blank" loading="lazy"></iframe>
+  <div class="hub-deck-corpo">
+    <nav class="hub-deck-trilho" aria-label="Slides do deck"><ol id="hub-deck-miniaturas"></ol></nav>
+    <iframe id="hub-deck-quadro" title="Slides" src="about:blank"></iframe>
+  </div>
 </dialog>
 <script>
 (() => {
   const modal = document.getElementById('hub-deck');
   if (!modal || typeof modal.showModal !== 'function') return;
+  // Um slide por vez: o deck abre com ?slide=N e as miniaturas vêm dos PNG exportados em slides/.
+  const SLIDES = {
+    1: ['q1-01-q1s1', 'q1-02-q1s2', 'q1-03-q1s3', 'q1-04-q1s4', 'q1-05-q1s5'],
+    2: ['q2-01-s1', 'q2-02-s2', 'q2-03-s3', 'q2-04-s4', 'q2-05-s5', 'q2-06-s6'],
+    3: ['q3-01-q3tela', 'q3-02-q3s1', 'q3-03-q3s2', 'q3-04-q3s3'],
+  };
   const titulo = document.getElementById('hub-deck-titulo');
   const quadro = document.getElementById('hub-deck-quadro');
   const aba = document.getElementById('hub-deck-aba');
   const fechar = document.getElementById('hub-deck-fechar');
-  let gatilho = null;
+  const miniaturas = document.getElementById('hub-deck-miniaturas');
+  let gatilho = null, deck = '', atual = 1, total = 0;
   const ehDeck = (href) => /^0[1-3]-slides-q[1-3]\.html$/.test(href || '');
+  function mostrar(k) {
+    atual = Math.min(Math.max(k, 1), total);
+    quadro.src = `${deck}?slide=${atual}`;
+    quadro.title = `${titulo.textContent}, slide ${atual} de ${total}`;
+    miniaturas.querySelectorAll('button').forEach((b, i) => b.setAttribute('aria-current', i + 1 === atual ? 'true' : 'false'));
+  }
+  function abrir(a) {
+    const n = a.getAttribute('href').match(/q([1-3])/)[1];
+    deck = a.getAttribute('href');
+    total = SLIDES[n].length;
+    titulo.textContent = 'Slides da Questão ' + n;
+    aba.href = deck;
+    miniaturas.replaceChildren(...SLIDES[n].map((nome, i) => {
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', `Slide ${i + 1} de ${total}`);
+      const img = document.createElement('img');
+      img.src = `slides/${nome}.png`; img.alt = ''; img.loading = 'lazy'; img.width = 1920; img.height = 1080;
+      const rotulo = document.createElement('span');
+      rotulo.textContent = `${i + 1} de ${total}`;
+      b.append(img, rotulo);
+      b.addEventListener('click', () => mostrar(i + 1));
+      li.append(b);
+      return li;
+    }));
+    mostrar(1);
+    modal.showModal();
+    fechar.focus();
+  }
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');
     if (!a || !ehDeck(a.getAttribute('href')) || e.ctrlKey || e.metaKey || e.button !== 0 || a.target === '_blank') return;
     e.preventDefault();
     gatilho = a;
-    const n = a.getAttribute('href').match(/q([1-3])/)[1];
-    titulo.textContent = 'Slides da Questão ' + n;
-    aba.href = a.getAttribute('href');
-    quadro.title = titulo.textContent;
-    quadro.src = a.getAttribute('href');
-    modal.showModal();
-    fechar.focus();
+    abrir(a);
+  });
+  modal.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); mostrar(atual + 1); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); mostrar(atual - 1); }
   });
   fechar.addEventListener('click', () => modal.close());
   modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
