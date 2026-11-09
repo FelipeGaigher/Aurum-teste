@@ -70,6 +70,7 @@ body { font-size: var(--font-size-emphasis); }
 .hub-layout {
   --nav-largura: calc(var(--size-sidebar) + var(--space-5));
   --nav-topo: calc(var(--component-header-height) + var(--space-5));
+  --espaco-secao: calc(var(--space-6) + var(--space-5));
   display: grid;
   grid-template-columns: var(--nav-largura) minmax(0, 1fr);
   gap: var(--space-5);
@@ -78,7 +79,9 @@ body { font-size: var(--font-size-emphasis); }
   margin: 0 auto;
   padding: var(--space-6) var(--space-5) var(--space-7);
 }
-.hub { min-width: 0; display: grid; gap: var(--space-6); }
+.hub { min-width: 0; display: grid; gap: var(--espaco-secao); }
+.secao { min-width: 0; }
+.secao > .secao-titulo { padding-bottom: var(--space-2); border-bottom: calc(var(--border-width) * 2) solid var(--color-border-default); }
 
 /* sumário da página: fixo enquanto o conteúdo rola, mesmo desenho do design system */
 .hub-nav {
@@ -136,6 +139,9 @@ body { font-size: var(--font-size-emphasis); }
 .hub-nav a[aria-current="location"] svg.icone, .hub-nav a[aria-current="location"] .icone-ia { color: currentColor; }
 html { scroll-padding-top: 0; }
 .hub-alvo { scroll-margin-top: calc(var(--component-header-height) + var(--space-4)); }
+.perfil-atalhos { justify-self: stretch; display: flex; gap: var(--space-2); margin-top: var(--space-3); }
+.hub-nav .perfil-atalhos a { flex: 1; justify-content: center; width: auto; min-height: var(--component-control-height); padding: 0; }
+.hub-nav .perfil-atalhos a svg.icone { width: var(--size-icon); height: var(--size-icon); color: currentColor; }
 .card { min-width: 0; padding: var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); box-shadow: var(--component-card-shadow); }
 .card > :last-child, .card-corpo > :last-child { margin-bottom: 0; }
 h2 { margin: 0 0 var(--space-3); font-size: var(--font-size-dialog); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
@@ -149,7 +155,7 @@ li::marker { color: var(--color-text-muted); }
 .secao-titulo { margin: 0 0 var(--space-4); font-size: var(--font-size-title); }
 
 /* abertura */
-.abertura { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--space-6); padding: var(--space-6); }
+.abertura { padding: var(--space-6); }
 .sup { margin: 0 0 var(--space-2); color: var(--color-text-muted); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; }
 .abertura h1 { margin: 0 0 var(--space-2); font-size: var(--primitive-font-28); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
 .autor { margin: 0 0 var(--space-5); color: var(--color-text-muted); }
@@ -159,7 +165,6 @@ li::marker { color: var(--color-text-muted); }
 .numeros .tag strong { font-variant-numeric: tabular-nums; }
 .acoes-abertura { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .acoes-abertura .botao { text-decoration: none; }
-.como-ler { padding-left: var(--space-6); border-left: var(--border-width) solid var(--color-border-default); }
 .decisao, .ia { margin: 0 0 var(--space-3); padding: var(--space-3) var(--space-4); background-color: var(--color-bg-subtle); border-left: var(--focus-width) solid var(--color-action); border-radius: var(--radius-card); }
 .decisao > :last-child { margin-bottom: 0; }
 
@@ -167,14 +172,16 @@ li::marker { color: var(--color-text-muted); }
 .resumo { margin-bottom: var(--space-5); }
 .tabela td:first-child { font-weight: var(--font-weight-semibold); white-space: nowrap; }
 .tabela td { padding-top: var(--space-2); padding-bottom: var(--space-2); }
-.questoes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.45fr); gap: var(--space-4); align-items: start; }
-.questao { padding: 0; overflow: hidden; }
+.questoes { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+.questao-corpo { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+.questao-texto { min-width: 0; }
+.questao-texto > :last-child { margin-bottom: 0; }
+.questao-deck { display: block; border-radius: var(--radius-card); }
+.questao-deck:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }
+.questao-deck:hover .miniatura { border-color: var(--color-action); }
 .questao-q3 { border-color: var(--color-action); }
-.miniatura { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; object-position: top left; background-color: var(--color-bg-subtle); border-bottom: var(--border-width) solid var(--component-card-border); }
+.miniatura { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; object-position: top left; background-color: var(--color-bg-subtle); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
 .card-corpo { padding: var(--space-4) var(--space-5) var(--space-5); }
-.questao .tag { margin-bottom: var(--space-2); }
-.questao h2 { font-size: var(--font-size-emphasis); }
-.questao-q3 h2 { font-size: var(--font-size-dialog); }
 .pedido { display: grid; gap: var(--space-2); margin: 0 0 var(--space-3); padding: var(--space-3) 0; border-top: var(--border-width) solid var(--color-border-default); border-bottom: var(--border-width) solid var(--color-border-default); font-size: var(--font-size-body); }
 .pedido dt { color: var(--color-text-muted); font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); }
 .pedido dd { margin: 0 0 var(--space-1); }
@@ -190,8 +197,6 @@ li::marker { color: var(--color-text-muted); }
 .paginas a.tag:hover { background-color: var(--color-bg-hover); color: var(--color-action); }
 
 /* ajustes, evidência e repositório */
-.apoio { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: var(--space-4); align-items: start; }
-.apoio-lado { display: grid; gap: var(--space-4); }
 .lista-icone { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
 .lista-icone li { display: grid; grid-template-columns: var(--size-icon) minmax(0, 1fr); gap: var(--space-3); padding: var(--space-3) 0; border-top: var(--border-width) solid var(--color-border-default); }
 .lista-icone li:first-child { border-top: 0; padding-top: 0; }
@@ -223,18 +228,18 @@ li::marker { color: var(--color-text-muted); }
   .hub-nav a { white-space: nowrap; }
   .hub-alvo { scroll-margin-top: calc(var(--component-header-height) + var(--size-option) + var(--space-4)); }
 }
+@media (max-width: 1099px) {
+  .questao-corpo { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+}
 @media (max-width: 900px) {
-  .abertura, .questoes, .apoio { grid-template-columns: minmax(0, 1fr); }
-  .como-ler { padding-left: 0; padding-top: var(--space-5); border-left: 0; border-top: var(--border-width) solid var(--color-border-default); }
 }
 @media (max-width: 700px) {
   .cabecalho { grid-template-columns: auto minmax(0, 1fr) auto; }
   .marca { padding-left: var(--space-4); }
   .hub-layout { padding: var(--space-4) var(--space-4) var(--space-6); }
   .hub { gap: var(--space-5); }
-  .abertura { padding: var(--space-4); gap: var(--space-5); }
+  .abertura { padding: var(--space-4); }
   .card { padding: var(--space-4); }
-  .questao { padding: 0; }
   .card-corpo { padding: var(--space-4); }
   .ia { padding: var(--space-4); }
   .tabela thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
@@ -300,6 +305,11 @@ html:has(.hub-deck[open]) { overflow: hidden; }
       <span class="marca-aurum"><img src="assets/aurum.png" alt="Aurum" onerror="this.nextElementSibling.hidden = false; this.remove()"><span hidden>Aurum</span></span>
       <span class="marca-astrea"><img src="assets/astrea.png" alt="Astrea"></span>
     </div>
+    <div class="perfil-atalhos">
+      <a class="botao botao-secundario" href="prototipo/area-de-trabalho.html" aria-label="Abrir o protótipo" title="Abrir o protótipo"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg></a>
+      <a class="botao botao-secundario" href="https://www.figma.com/design/OT2rzDJHctCE9WSfR19c2g/" target="_blank" rel="noopener" aria-label="Abrir o arquivo do Figma" title="Abrir o arquivo do Figma"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5zM12 2h3.5a3.5 3.5 0 1 1 0 7H12zM5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5zM12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 1 1-7 0zM5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z"/></svg></a>
+      <a class="botao botao-secundario" href="https://github.com/FelipeGaigher/Aurum-teste" target="_blank" rel="noopener" aria-label="Abrir o repositório no GitHub" title="Abrir o repositório no GitHub"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+    </div>
   </div>
   <ul>
     <li><a href="#como-ler"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.4M12 17h.01"/></svg>Como ler</a></li>
@@ -331,14 +341,17 @@ html:has(.hub-deck[open]) { overflow: hidden; }
       <a class="botao botao-secundario" href="https://www.figma.com/design/OT2rzDJHctCE9WSfR19c2g/">Arquivo do Figma</a>
     </div>
   </div>
-  <div class="como-ler hub-alvo" id="como-ler">
-    <h2>Como ler</h2>
+</section>
+
+<section class="secao hub-alvo" id="como-ler" aria-labelledby="titulo-como-ler">
+  <h2 class="secao-titulo" id="titulo-como-ler">Como ler</h2>
+  <div class="card">
     <p>A entrega segue a ordem do enunciado. Vêm as três questões, o protótipo navegável, os documentos de apoio e, no fim, o parágrafo de uso de IA. Cada questão tem os slides e o documento-fonte. A tela da Questão 3 está no Figma e no protótipo, que abre no navegador.</p>
     <p class="decisao">O <a href="https://www.figma.com/design/OT2rzDJHctCE9WSfR19c2g/">arquivo do Figma</a> reúne a entrega inteira: briefing, as três questões, o design system e o protótipo, uma página por bloco. Ele é a porta de entrada da apresentação. Esta página é o índice dos links.</p>
   </div>
 </section>
 
-<section class="hub-alvo" id="secao-entregar" aria-labelledby="entregar">
+<section class="secao hub-alvo" id="secao-entregar" aria-labelledby="entregar">
   <h2 class="secao-titulo" id="entregar">O que entregar, e onde</h2>
   <div class="tabela-quadro resumo">
     <table class="tabela">
@@ -353,12 +366,13 @@ html:has(.hub-deck[open]) { overflow: hidden; }
     </table>
   </div>
 
-  <div class="questoes">
-    <article class="card questao hub-alvo" id="questao-1">
-      <img class="miniatura" src="slides/q1-01-q1s1.png" width="1920" height="1080" loading="lazy" alt="Primeiro slide da Questão 1, com o diagnóstico de prazo da interface do Astrea">
-      <div class="card-corpo">
-        <span class="tag" data-cor="blue">Questão 1</span>
-        <h2>Questão 1: o Astrea sabe o que é um prazo, mas a interface ainda não mostra isso</h2>
+</section>
+
+    <section class="secao hub-alvo" id="questao-1" aria-labelledby="titulo-questao-1">
+      <h2 class="secao-titulo" id="titulo-questao-1">Questão 1: o Astrea sabe o que é um prazo, mas a interface ainda não mostra isso</h2>
+    <article class="card questao">
+      <div class="questao-corpo">
+        <div class="questao-texto">
         <dl class="pedido">
           <dt>O que a banca pediu</dt><dd>Cinco problemas, princípios e o que verificar. Até 5 páginas.</dd>
           <dt>O que foi entregue</dt><dd>5 slides e o diagnóstico.</dd>
@@ -376,14 +390,17 @@ html:has(.hub-deck[open]) { overflow: hidden; }
           <li><a class="botao botao-texto" href="01-slides-q1.html">Slides da Questão 1</a></li>
           <li><a class="botao botao-texto" href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/01-diagnostico.md">Diagnóstico, o documento-fonte com o detalhe de cada problema</a></li>
         </ul>
+        </div>
+        <a class="questao-deck" href="01-slides-q1.html"><img class="miniatura" src="slides/q1-01-q1s1.png" width="1920" height="1080" loading="lazy" alt="Primeiro slide da Questão 1, com o diagnóstico de prazo da interface do Astrea"></a>
       </div>
     </article>
+</section>
 
-    <article class="card questao hub-alvo" id="questao-2">
-      <img class="miniatura" src="slides/q2-01-s1.png" width="1920" height="1080" loading="lazy" alt="Primeiro slide da Questão 2, sobre o design system que nasce do roadmap dos squads">
-      <div class="card-corpo">
-        <span class="tag" data-cor="teal">Questão 2</span>
-        <h2>Questão 2: um design system que nasce do roadmap dos squads</h2>
+    <section class="secao hub-alvo" id="questao-2" aria-labelledby="titulo-questao-2">
+      <h2 class="secao-titulo" id="titulo-questao-2">Questão 2: um design system que nasce do roadmap dos squads</h2>
+    <article class="card questao">
+      <div class="questao-corpo">
+        <div class="questao-texto">
         <dl class="pedido">
           <dt>O que a banca pediu</dt><dd>Design system e plano incremental. Até 6 páginas.</dd>
           <dt>O que foi entregue</dt><dd>Uma apresentação de 6 slides e o plano.</dd>
@@ -401,14 +418,17 @@ html:has(.hub-deck[open]) { overflow: hidden; }
           <li><a class="botao botao-texto" href="02-slides-q2.html">Slides da Questão 2</a></li>
           <li><a class="botao botao-texto" href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/02-plano-ds.md">Plano do design system, o documento-fonte</a></li>
         </ul>
+        </div>
+        <a class="questao-deck" href="02-slides-q2.html"><img class="miniatura" src="slides/q2-01-s1.png" width="1920" height="1080" loading="lazy" alt="Primeiro slide da Questão 2, sobre o design system que nasce do roadmap dos squads"></a>
       </div>
     </article>
+</section>
 
-    <article class="card questao questao-q3 hub-alvo" id="questao-3">
-      <img class="miniatura" src="slides/q3-01-q3tela.png" width="1920" height="1080" loading="lazy" alt="A tela da Área de trabalho redesenhada, com a seção Atrasadas acima de Hoje e o chip de prazo em cada atividade">
-      <div class="card-corpo">
-        <span class="tag" data-cor="purple">Questão 3</span>
-        <h2>Questão 3: a Área de trabalho, com o prazo como dado dominante</h2>
+    <section class="secao hub-alvo" id="questao-3" aria-labelledby="titulo-questao-3">
+      <h2 class="secao-titulo" id="titulo-questao-3">Questão 3: a Área de trabalho, com o prazo como dado dominante</h2>
+    <article class="card questao questao-q3">
+      <div class="questao-corpo">
+        <div class="questao-texto">
         <dl class="pedido">
           <dt>O que a banca pediu</dt><dd>Uma tela em alta fidelidade e até 3 páginas.</dd>
           <dt>O que foi entregue</dt><dd>A Área de trabalho no Figma, 3 slides e um protótipo navegável.</dd>
@@ -431,13 +451,15 @@ html:has(.hub-deck[open]) { overflow: hidden; }
           <li><a class="botao botao-texto" href="https://www.figma.com/design/OT2rzDJHctCE9WSfR19c2g/?node-id=22-2">Design system no Figma, com os componentes e os estados</a></li>
           <li><a class="botao botao-texto" href="prototipo/design-system.html">Design system, com componentes, estados e propriedades</a></li>
         </ul>
+        </div>
+        <a class="questao-deck" href="03-slides-q3.html"><img class="miniatura" src="slides/q3-01-q3tela.png" width="1920" height="1080" loading="lazy" alt="A tela da Área de trabalho redesenhada, com a seção Atrasadas acima de Hoje e o chip de prazo em cada atividade"></a>
       </div>
     </article>
-  </div>
 </section>
 
-<section class="card prototipo hub-alvo" id="prototipo" aria-labelledby="titulo-prototipo">
-  <h2 id="titulo-prototipo">Protótipo navegável</h2>
+<section class="secao hub-alvo" id="prototipo" aria-labelledby="titulo-prototipo">
+  <h2 class="secao-titulo" id="titulo-prototipo">Protótipo navegável</h2>
+  <div class="card prototipo">
   <p>O protótipo é o Astrea inteiro, com o Kanban no topo do menu e os módulos abaixo. Ele tem tema claro e escuro e menu recolhível. Todo dado nele é fictício. O Kanban abre com os 6 primeiros meses do plano, os do redesign, como uma sprint real.</p>
   <ul class="paginas" aria-label="Páginas do protótipo">
     <li><a class="tag" href="prototipo/area-de-trabalho.html">Área de trabalho</a></li>
@@ -458,37 +480,38 @@ html:has(.hub-deck[open]) { overflow: hidden; }
     <li><a class="botao botao-texto" href="https://felipegaigher.github.io/Aurum-teste/prototipo/kanban.html">Gestão kanban</a></li>
     <li><a class="botao botao-texto" href="prototipo/design-system.html">Design system completo, com tokens, componentes e estados</a></li>
   </ul>
+  </div>
 </section>
-
-<div class="apoio">
-  <section class="card hub-alvo" id="ajustes" aria-labelledby="titulo-ajustes">
-    <h2 id="titulo-ajustes">Ajustes e processo</h2>
+<section class="secao hub-alvo" id="ajustes" aria-labelledby="titulo-ajustes">
+  <h2 class="secao-titulo" id="titulo-ajustes">Ajustes e processo</h2>
+  <div class="card">
     <ul class="lista-icone">
       <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/></svg><span><a href="05-ajustes-plataforma.html">Ajustes na plataforma</a>: fluxos alterados e recursos sem efeito visual, mas com peso no dia a dia.</span></li>
       <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16h16M8 15l4-4 3 3 5-6"/></svg><span><a href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/docs/2026-11-08-comparativo-astrea-prototipo.md">Comparativo Astrea hoje e protótipo</a>: nove fluxos, cliques e evidência por tela, com o que ainda falta.</span></li>
       <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg><span><a href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/docs/2026-11-08-varredura-astrea.md">Varredura do Astrea em produção</a>: inventário das ações de cada módulo, lido em 8 de novembro, sem dado real.</span></li>
       <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7"/></svg><span><a href="04-processo.html">Como este trabalho foi feito</a>: o processo de desenvolvimento, do diário ao protótipo.</span></li>
     </ul>
-  </section>
-
-  <div class="apoio-lado">
-    <section class="card hub-alvo" id="evidencia" aria-labelledby="titulo-evidencia">
-      <h2 id="titulo-evidencia">Evidência</h2>
+  </div>
+</section>
+<section class="secao hub-alvo" id="evidencia" aria-labelledby="titulo-evidencia">
+  <h2 class="secao-titulo" id="titulo-evidencia">Evidência</h2>
+  <div class="card">
       <ul class="lista-icone">
         <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v3H8zM6 5.5H4V21h16V5.5h-2M8 12h8M8 16h8"/></svg><span><a href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/01-pontos-de-atencao.md">Pontos de atenção</a>: o catálogo de 97 pontos, base do diagnóstico e do protótipo.</span></li>
         <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H10l-6 4z"/></svg><span><a href="https://github.com/FelipeGaigher/Aurum-teste/blob/main/01-pedidos-clientes.md">Pedidos de clientes</a>: 80 sugestões e 407 votos sobre a Área de trabalho.</span></li>
       </ul>
-    </section>
-    <section class="card hub-alvo" id="repositorio" aria-labelledby="titulo-repositorio">
-      <h2 id="titulo-repositorio">Repositório</h2>
+  </div>
+</section>
+<section class="secao hub-alvo" id="repositorio" aria-labelledby="titulo-repositorio">
+  <h2 class="secao-titulo" id="titulo-repositorio">Repositório</h2>
+  <div class="card">
       <ul class="lista-icone">
         <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"/></svg><span><a href="https://github.com/FelipeGaigher/Aurum-teste">github.com/FelipeGaigher/Aurum-teste</a>. Os arquivos de texto e HTML do repositório são a fonte. O Figma e o protótipo são a entrega.</span></li>
       </ul>
-    </section>
   </div>
-</div>
+</section>
 
-<section class="hub-alvo" id="ia" aria-labelledby="titulo-ia">
+<section class="secao hub-alvo" id="ia" aria-labelledby="titulo-ia">
   <h2 class="secao-titulo" id="titulo-ia">Uso de IA</h2>
   <div class="ia">
     <p>Usei o Claude Code como par de trabalho durante toda a atividade. A IA não escreveu a estratégia. Ela recebeu as minhas decisões em conversa e as transformou em documento-fonte, que eu iterei linha a linha. Um exemplo: apontei que a Área de trabalho abre numa lista só e esconde a tarefa atrasada das outras. A IA catalogou a observação como ponto de atenção, o PA-31, com tela e evidência. No protótipo isso virou a seção Atrasadas acima de Hoje. O comparativo de 08/11 mediu o resultado contra o produto. O protótipo saiu de uma spec e de um plano de 23 tasks. Cada subagente recebeu uma task e os arquivos dela, até sete em paralelo. Antes do commit, cada task passou por portões automáticos. Eles barram cor solta, referência de rede, dado real, cara de interface gerada por IA, frase longa e voz passiva. Um revisor em contexto limpo julgou cada onda contra a spec. Os decks nasceram em HTML, viraram PNG pelo Playwright e entraram no Figma. A IA também percorreu o Astrea em produção, só com leitura, e comparou cada fluxo com o protótipo. O comparativo achou quatro caminhos em que o protótipo perdia cliques, e eu mandei corrigir os quatro. A direção visual, os cinco problemas, o trade-off, o escopo e cada correção ao vivo foram decisões minhas.</p>
@@ -501,7 +524,7 @@ html:has(.hub-deck[open]) { overflow: hidden; }
 <script>
 (() => {
   const nav = document.querySelector('.hub-nav');
-  const alvos = [...nav.querySelectorAll('a')].map((a) => [document.getElementById(a.hash.slice(1)), a]);
+  const alvos = [...nav.querySelectorAll('ul a')].map((a) => [document.getElementById(a.hash.slice(1)), a]);
   const marcar = (a) => {
     if (!a || a.getAttribute('aria-current') === 'location') return;
     nav.querySelectorAll('[aria-current]').forEach((el) => el.removeAttribute('aria-current'));
@@ -514,7 +537,7 @@ html:has(.hub-deck[open]) { overflow: hidden; }
   let preso = false;
   const soltar = () => { preso = false; };
   nav.addEventListener('click', (e) => {
-    const a = e.target.closest('a');
+    const a = e.target.closest('ul a');
     if (!a) return;
     marcar(a);
     preso = true;
