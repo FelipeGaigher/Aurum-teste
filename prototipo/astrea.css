@@ -865,6 +865,7 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .botao-primario:hover, .botao-primario.is-hover {
   background-color: var(--component-button-primary-bg-hover);
   border-color: var(--component-button-primary-bg-hover);
+  color: var(--component-button-primary-text); /* um <a class="botao"> não herda o hover de link */
 }
 .botao-primario:active, .botao-primario.is-active {
   background-color: var(--component-button-primary-bg-active);
