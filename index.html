@@ -638,6 +638,12 @@ html:has(.hub-deck[open]) { overflow: hidden; }
   fechar.addEventListener('click', () => modal.close());
   modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
   modal.addEventListener('close', () => { quadro.src = 'about:blank'; if (gatilho) gatilho.focus(); });
+  // ?slides=q1 (ou #slides-q1) abre o deck direto no modal: é o link que o Leia-me da pasta usa.
+  const pedido = new URLSearchParams(location.search).get('slides') || (location.hash.match(/^#slides-(q[1-3])$/) || [])[1];
+  if (/^q[1-3]$/.test(pedido || '')) {
+    const atalho = document.querySelector(`a[href="0${pedido[1]}-slides-${pedido}.html"]`);
+    if (atalho) { gatilho = atalho; abrir(atalho); }
+  }
 })();
 </script>
 </body>
