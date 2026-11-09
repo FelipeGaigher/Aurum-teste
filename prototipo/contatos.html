@@ -540,7 +540,7 @@
   // --- comuns à ficha e ao adicionar ----------------------------------------
 
   // Padrão das páginas de segundo nível: trilha com seta e título no cabeçalho, como Processos e Atendimentos.
-  function topoDoRegistro(titulo, tags) {
+  function cabecalhoDoRegistro(titulo) {
     // A moldura monta o cabeçalho no DOMContentLoaded; esta função pode rodar antes.
     const aplicarCabecalho = () => {
       const lugar = document.querySelector('.titulo-cabecalho');
@@ -550,6 +550,11 @@
     };
     if (document.querySelector('.titulo-cabecalho')) aplicarCabecalho();
     else document.addEventListener('DOMContentLoaded', aplicarCabecalho);
+  }
+
+  // O formulário de adicionar usa o topo simples; a ficha usa o DS.topoDaFicha.
+  function topoDoRegistro(titulo, tags) {
+    cabecalhoDoRegistro(titulo);
     const topo = criar('div', 'registro-topo');
     if (tags.length) {
       const linha = criar('div', 'registro-linha');
@@ -619,6 +624,25 @@
       colunas: [['numero', 'Número'], ['responsavel', 'Responsável'], ['atividades', 'Atividades']],
       linhas: proprios.map((p) => ({ numero: p.numero, responsavel: p.responsavel, atividades: String(p.atividades.length) })),
       vazio: { titulo: 'Nenhum processo deste contato.' },
+    }), todos);
+    return secao;
+  }
+
+  // A aba lista os mesmos atendimentos que o cabeçalho conta: os registrados com este contato como cliente.
+  function atendimentosDoContato(c) {
+    const proprios = (window.DADOS.ATENDIMENTOS || []).filter((a) => a.cliente === c.nome);
+    if (!proprios.length) return vazio('Nenhum atendimento deste contato.', 'Atendimentos registrados com este contato aparecem aqui.');
+    const secao = criar('div', 'ficha-processos');
+    const todos = criar('a', 'contato-nome', 'Abrir Atendimentos sem filtro');
+    todos.href = 'atendimentos.html';
+    secao.append(DS.tabela({
+      rotulo: `Atendimentos de ${c.nome}`,
+      colunas: [['assunto', 'Assunto'], ['inicio', 'Início'], ['responsavel', 'Responsável'], ['processo', 'Processo']],
+      linhas: proprios.map((a) => {
+        const link = criar('a', 'contato-nome', a.assunto);
+        link.href = `atendimentos.html?ficha=1&id=${encodeURIComponent(a.id)}`;
+        return { assunto: link, inicio: a.inicio ? dataCurta(a.inicio) : '', responsavel: a.responsavel, processo: a.processo || '' };
+      }),
     }), todos);
     return secao;
   }
@@ -705,17 +729,69 @@
     return secao;
   }
 
+  // Cabeçalho do registro, no padrão da ficha do processo: o h1 traz o nome, e o identificador é o processo ligado.
+  function topoDoContato(c, docs, aviso) {
+    const avisar = (tipo, mensagem) => aviso.replaceChildren(DS.faixaAviso({ tipo, mensagem, fechar: true }));
+    const processo = c.processo ? window.DADOS.PROCESSOS.find((p) => p.numero === c.processo) : null;
+    const urlDoProcesso = (numero) => `processos.html?ficha=${window.DADOS.PROCESSOS.findIndex((p) => p.numero === numero) + 1}`;
+    const atendimentos = (window.DADOS.ATENDIMENTOS || []).filter((a) => a.cliente === c.nome).length;
+    const aoDireita = (menu) => { menu.querySelector('.menu-suspenso').classList.add('is-direita'); return menu; };
+
+    const etiqueta = aoDireita(DS.menuAcoes({ rotulo: 'Etiqueta', itens: [
+      { rotulo: 'Nova etiqueta', aoClicar: () => avisar('info', 'Criar etiqueta pela ficha fica fora do protótipo.') },
+    ] }));
+    const itensMais = [{ rotulo: 'Imprimir', aoClicar: () => window.print() }];
+    if (processo) itensMais.unshift({ rotulo: 'Abrir ficha do processo', aoClicar: () => { location.href = urlDoProcesso(c.processo); } });
+    itensMais.push({ rotulo: 'Excluir contato', destrutivo: true, aoClicar: () => DS.dialogo({
+      titulo: 'Excluir este contato?', texto: 'Documentos anexados a ele também saem. Não dá para desfazer.',
+      acoes: [{ rotulo: 'Cancelar', variante: 'texto' }, { rotulo: 'Excluir', variante: 'destrutivo', aoClicar: () => { location.href = 'contatos.html'; } }],
+    }).abrir() });
+    const mais = aoDireita(DS.menuAcoes({ rotulo: 'Mais ações', itens: itensMais }));
+    const adicionar = aoDireita(DS.menuAcoes({ rotulo: 'Adicionar', itens: [
+      { rotulo: 'Atendimento', aoClicar: () => { location.href = 'atendimentos.html?adicionar=1'; } },
+      { rotulo: 'Documento', aoClicar: () => avisar('info', SEM_ARQUIVO) },
+      { rotulo: 'Processo', aoClicar: () => { location.href = 'processos.html?adicionar=processo'; } },
+    ] }));
+    adicionar.classList.add('is-primario');
+    adicionar.querySelector('button').prepend(DS.icone('mais'));
+
+    const dados = [
+      { rotulo: 'Telefone', valor: c.telefone },
+      { rotulo: 'E-mail', valor: c.email },
+    ];
+    if (processo) dados.push({ rotulo: 'Responsável', valor: processo.responsavel, pessoa: true });
+    dados.push(
+      { rotulo: 'Atendimentos', valor: atendimentos === 1 ? '1 atendimento' : `${atendimentos} atendimentos` },
+      { rotulo: 'Documentos', valor: docs.length === 1 ? '1 documento' : `${docs.length} documentos` },
+    );
+    const tags = c.perfil === 'clientes' ? ['Cliente', c.tipo] : [c.tipo];
+    return DS.topoDaFicha({
+      rotulo: processo ? 'Processo do contato' : 'E-mail do contato',
+      identificador: processo ? c.processo : c.email,
+      copiar: processo ? c.processo : undefined,
+      href: processo ? urlDoProcesso(c.processo) : undefined,
+      tags,
+      acoes: [etiqueta, mais, adicionar],
+      dados,
+    });
+  }
+
+  const atendimentosDe = (c) => (window.DADOS.ATENDIMENTOS || []).filter((a) => a.cliente === c.nome);
+
   function montarFicha(id) {
     const c = CONTATOS.find((x) => x.id === id) || CONTATOS[0];
     const docs = (window.DADOS.DOCUMENTOS_DE_CONTATO || {})[c.id] || [];
-    main.append(topoDoRegistro(c.nome, [DS.tag({ rotulo: 'Tipo: Cliente' }), DS.tag({ rotulo: c.tipo })]));
+    cabecalhoDoRegistro(c.nome);
+    const aviso = criar('div', 'pagina-aviso');
+    aviso.id = 'pagina-aviso';
+    main.append(topoDoContato(c, docs, aviso), aviso);
     // Oito abas na ordem do Astrea.
     main.append(DS.abas({
       rotulo: 'Seções do contato',
       itens: [
         { chave: 'cadastro', rotulo: 'Cadastro', conteudo: leitura(c) },
         { chave: 'documentos', rotulo: docs.length ? `Documentos (${docs.length})` : 'Documentos', conteudo: documentosDoContato(docs) },
-        { chave: 'atendimentos', rotulo: 'Atendimentos', conteudo: vazio('Nenhum atendimento deste contato.', 'Atendimentos registrados com este contato aparecem aqui.') },
+        { chave: 'atendimentos', rotulo: atendimentosDe(c).length ? `Atendimentos (${atendimentosDe(c).length})` : 'Atendimentos', conteudo: atendimentosDoContato(c) },
         { chave: 'processos', rotulo: 'Processos', conteudo: processosDoContato(c) },
         { chave: 'despesas', rotulo: 'Despesas', conteudo: bloqueio('Despesas fazem parte do Financeiro') },
         { chave: 'honorarios', rotulo: 'Honorários', conteudo: bloqueio('Honorários fazem parte do Financeiro') },

@@ -1570,6 +1570,44 @@ body[data-menu="recolhido"] .rodape-menu { display: none; }
 .card-registro-linha dd { margin: 0; min-width: 0; font-size: var(--font-size-body); color: var(--color-text-default); overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
 .card-registro-rodape { display: flex; flex-wrap: wrap; gap: var(--space-1); margin-top: auto; padding-top: var(--space-3); }
 
+/* topo da ficha: o cabeçalho do registro do processos.html (.ficha-topo), para atendimento e contato */
+.topo-da-ficha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "numero acoes" "leitura leitura";
+  align-items: start;
+  gap: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background-color: var(--component-card-bg);
+  border: var(--border-width) solid var(--component-card-border);
+  border-radius: var(--radius-card);
+}
+.topo-da-ficha.is-sem-dados { grid-template-areas: "numero acoes"; }
+.topo-da-ficha-identificador { grid-area: numero; display: grid; gap: var(--space-1); min-width: 0; }
+.topo-da-ficha-rotulo { margin: 0; color: var(--color-text-muted); font-size: var(--font-size-label); }
+.topo-da-ficha-valor { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; font-size: var(--font-size-title); font-weight: var(--font-weight-medium); line-height: var(--font-leading-tight); }
+.topo-da-ficha-id { min-width: 0; color: var(--color-text-default); font-size: var(--font-size-title); font-weight: var(--font-weight-medium); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+a.topo-da-ficha-id { text-decoration-line: underline; text-decoration-color: var(--color-border-default); text-underline-offset: var(--space-1); }
+a.topo-da-ficha-id:hover { color: var(--color-action); text-decoration-color: currentColor; }
+.topo-da-ficha-tags { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: var(--space-1) 0 0; }
+.topo-da-ficha-acoes { grid-area: acoes; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-2); }
+.topo-da-ficha-acoes .menu-acoes.is-primario > .botao { background-color: var(--component-button-primary-bg); border-color: var(--component-button-primary-bg); color: var(--component-button-primary-text); }
+.topo-da-ficha-acoes .menu-acoes.is-primario > .botao:hover { background-color: var(--component-button-primary-bg-hover); border-color: var(--component-button-primary-bg-hover); }
+.topo-da-ficha-acoes .menu-acoes.is-primario > .botao:active { background-color: var(--component-button-primary-bg-active); }
+.topo-da-ficha-dados { display: grid; grid-area: leitura; grid-template-columns: repeat(auto-fit, minmax(calc(var(--size-sidebar) * 0.8), 1fr)); gap: var(--space-4) var(--space-5); padding-top: var(--space-4); border-top: var(--border-width) solid var(--color-border-default); margin: 0; min-width: 0; }
+.topo-da-ficha-dados div { display: grid; align-content: start; gap: var(--space-1); min-width: 0; }
+.topo-da-ficha-dados dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
+.topo-da-ficha-dados dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; font-size: var(--font-size-emphasis); font-weight: var(--font-weight-medium); overflow-wrap: anywhere; }
+@media (max-width: 1100px) {
+  .topo-da-ficha-dados { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .topo-da-ficha { grid-template-columns: minmax(0, 1fr); grid-template-areas: "numero" "acoes" "leitura"; }
+  .topo-da-ficha.is-sem-dados { grid-template-areas: "numero" "acoes"; }
+  .topo-da-ficha-acoes { justify-content: flex-start; }
+}
+
 /* tabela: rola dentro do quadro, nunca a página */
 .tabela-quadro { max-width: 100%; overflow-x: auto; border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); background-color: var(--color-bg-surface); }
 .tabela { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }

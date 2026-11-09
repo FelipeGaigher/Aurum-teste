@@ -61,7 +61,7 @@
   .detalhe-numero { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); }
   .celula-numero { display: inline-flex; align-items: center; gap: var(--space-1); white-space: nowrap; }
   .detalhe-anotacoes-titulo { margin: 0 0 var(--space-2); font-size: var(--font-size-emphasis); font-weight: var(--font-weight-semibold); }
-  .tabela .numero-processo, .ficha-leitura .numero-processo { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .tabela .numero-processo { white-space: nowrap; font-variant-numeric: tabular-nums; }
   .texto-apagado { color: var(--color-text-muted); }
 
   /* O status diz o nome; a borda e o fundo reforçam. */
@@ -69,20 +69,10 @@
   .chip-status-aguardando { background-color: var(--color-bg-warning); border-color: var(--color-text-warning); }
   .chip-status-concluido { background-color: var(--color-bg-surface); border-color: var(--color-text-success); }
 
-  /* Ficha: cabeçalho de leitura em uma linha que quebra. */
-  .ficha-topo { display: grid; gap: var(--space-3); margin-bottom: var(--space-5); }
-  .ficha-leitura { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); margin: 0; min-width: 0; }
-  .ficha-leitura div { display: grid; gap: var(--space-1); min-width: 0; }
-  .ficha-leitura dt { color: var(--color-text-muted); font-size: var(--font-size-label); }
-  .ficha-leitura dd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; overflow-wrap: anywhere; }
-  .ficha-etiquetas { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; }
-  .ficha-etiquetas .tag { padding-right: 0; }
-
   .ficha-grade { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-5) var(--space-6); align-items: start; }
   .ficha-coluna { display: grid; gap: var(--space-4); min-width: 0; align-content: start; }
   /* Cada bloco da ficha é um contêiner (pedido de Felipe: as informações estavam soltas). */
   .bloco { min-width: 0; padding: var(--space-4) var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
-  .ficha-topo { padding: var(--space-4) var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
   .bloco-cabeca {
     display: flex;
     flex-wrap: wrap;
@@ -708,33 +698,6 @@
     cabecalhoDeSegundoNivel(a.assunto);
     const foraDoPrototipo = (texto) => () => avisar('info', texto);
 
-    // Cabeçalho: Início, Status, Processo, Responsável; depois a etiqueta de área.
-    const leitura = elemento('dl', 'ficha-leitura');
-    const par = (rotulo, ...valor) => {
-      const div = elemento('div');
-      const dd = elemento('dd');
-      dd.append(...valor);
-      div.append(elemento('dt', null, rotulo), dd);
-      leitura.append(div);
-    };
-    par('Início', dataCurta(a.inicio));
-    par('Status', chipStatus(a.status));
-    par('Processo', a.processo ? link(a.processo, fichaDoProcesso(a.processo), 'numero-processo') : numeroDoProcesso(''));
-    par('Responsável', DS.avatar({ nome: a.responsavel, mostrarNome: true }));
-
-    const etiquetas = elemento('p', 'ficha-etiquetas');
-    if (a.area) {
-      const tag = DS.tag({ rotulo: a.area });
-      const remover = DS.botao({ variante: 'icone', tamanho: 'pequeno', iconeEsquerda: 'fechar', rotulo: `Remover etiqueta ${a.area}` });
-      remover.addEventListener('click', foraDoPrototipo(`Remover a etiqueta "${a.area}" fica fora do protótipo.`));
-      tag.append(remover);
-      etiquetas.append(tag);
-    } else {
-      etiquetas.append(elemento('span', 'texto-apagado', 'Sem etiqueta'));
-    }
-    const topo = elemento('div', 'ficha-topo');
-    topo.append(leitura, etiquetas);
-
     const aviso = elemento('div', 'pagina-aviso');
     aviso.id = 'pagina-aviso';
 
@@ -818,6 +781,47 @@
       }
       b.cabeca.append(mais);
       direita.append(b.sec);
+    });
+
+    // Cabeçalho do registro, no padrão da ficha do processo: o h1 traz o assunto, e o identificador é o processo ligado.
+    const aoDireita = (menu) => { menu.querySelector('.menu-suspenso').classList.add('is-direita'); return menu; };
+    const etiqueta = aoDireita(DS.menuAcoes({ rotulo: 'Etiqueta', itens: ETIQUETAS.filter(([v]) => v)
+      .map(([, nome]) => ({ rotulo: nome, aoClicar: () => avisar('sucesso', `Etiqueta "${nome}" aplicada.`) })) }));
+    const itensMais = [{ rotulo: 'Imprimir', aoClicar: () => window.print() }];
+    if (a.processo) itensMais.unshift({ rotulo: 'Abrir ficha do processo', aoClicar: () => { location.href = fichaDoProcesso(a.processo); } });
+    itensMais.push({ rotulo: 'Excluir atendimento', destrutivo: true, aoClicar: () => DS.dialogo({
+      titulo: 'Excluir este atendimento?', texto: 'Anotações, honorários e timesheets ligados a ele também saem. Não dá para desfazer.',
+      acoes: [{ rotulo: 'Cancelar', variante: 'texto' }, { rotulo: 'Excluir', variante: 'destrutivo', aoClicar: () => { location.href = PAGINA; } }],
+    }).abrir() });
+    const mais = aoDireita(DS.menuAcoes({ rotulo: 'Mais ações', itens: itensMais }));
+    const adicionar = aoDireita(DS.menuAcoes({ rotulo: 'Adicionar', itens: [
+      { rotulo: 'Anotação', aoClicar: () => {
+        const entrada = area.querySelector('textarea');
+        entrada.scrollIntoView({ block: 'center' });
+        entrada.focus();
+      } },
+      { rotulo: 'Tarefa ou evento', aoClicar: () => DS.painelCriarAtividade({ tipo: 'tarefa', processo: a.processo || undefined })
+        .abrir(adicionar.querySelector('button')) },
+      { rotulo: 'Documento', aoClicar: foraDoPrototipo('Enviar documentos fica fora do protótipo.') },
+    ] }));
+    adicionar.classList.add('is-primario');
+    adicionar.querySelector('button').prepend(DS.icone('mais'));
+
+    const dados = [
+      { rotulo: 'Cliente', valor: a.cliente },
+      { rotulo: 'Status', elemento: chipStatus(a.status) },
+      { rotulo: 'Responsável', valor: a.responsavel, pessoa: true },
+      { rotulo: 'Início', valor: dataCurta(a.inicio) },
+      { rotulo: 'Honorários', valor: a.honorarios ? reais(a.honorarios) : 'Sem honorários' },
+    ];
+    const topo = DS.topoDaFicha({
+      rotulo: a.processo ? 'Processo do atendimento' : 'Atendimento',
+      identificador: a.processo || 'Sem processo',
+      copiar: a.processo || undefined,
+      href: a.processo ? fichaDoProcesso(a.processo) : undefined,
+      tags: a.area ? [DS.tag({ rotulo: a.area })] : [],
+      acoes: [etiqueta, mais, adicionar],
+      dados,
     });
 
     const grade = elemento('div', 'ficha-grade');

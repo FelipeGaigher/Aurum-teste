@@ -1760,6 +1760,52 @@
     return raiz;
   }
 
+  // Topo da ficha: o padrão do processos.html. Rótulo pequeno e identificador grande (com copiar e link),
+  // as ações à direita e, embaixo, a linha de dados-chave com o rótulo em cima e o valor em destaque.
+  function topoDaFicha(props = {}) {
+    const { rotulo, identificador, copiar, href, tags = [], acoes = [], dados = [] } = props;
+    exigir(rotulo && identificador, 'topoDaFicha', 'rotulo e identificador são obrigatórios');
+    exigir(Array.isArray(tags) && Array.isArray(acoes) && Array.isArray(dados), 'topoDaFicha', 'tags, acoes e dados são listas');
+    const raiz = criar('div', 'topo-da-ficha');
+    if (!dados.length) raiz.classList.add('is-sem-dados');
+
+    const id = criar('div', 'topo-da-ficha-identificador');
+    const linha = criar('p', 'topo-da-ficha-valor');
+    const valor = criar(href ? 'a' : 'span', 'topo-da-ficha-id', identificador);
+    if (href) valor.href = href;
+    linha.append(valor);
+    if (copiar) linha.append(botaoCopiar(copiar));
+    id.append(criar('p', 'topo-da-ficha-rotulo', rotulo), linha);
+    if (tags.length) {
+      const grupo = criar('p', 'topo-da-ficha-tags');
+      grupo.append(...tags.map((t) => (t instanceof HTMLElement ? t : tag({ rotulo: t }))));
+      id.append(grupo);
+    }
+    raiz.append(id);
+
+    if (acoes.length) {
+      const caixa = criar('div', 'topo-da-ficha-acoes');
+      caixa.append(...acoes);
+      raiz.append(caixa);
+    }
+
+    if (dados.length) {
+      const lista = criar('dl', 'topo-da-ficha-dados');
+      dados.forEach(({ rotulo: r, valor: v, elemento, pessoa }) => {
+        exigir(r, 'topoDaFicha', 'cada dado tem rotulo');
+        const item = criar('div');
+        const dd = criar('dd');
+        if (elemento) dd.append(...(Array.isArray(elemento) ? elemento : [elemento]));
+        else if (pessoa && v) dd.append(avatar({ nome: v, mostrarNome: true }));
+        else preencherValor(dd, v);
+        item.append(criar('dt', null, r), dd);
+        lista.append(item);
+      });
+      raiz.append(lista);
+    }
+    return raiz;
+  }
+
   // PA-66: valor ausente mostra traço, e o leitor de tela ouve "Não informado".
   function preencherValor(alvo, valor) {
     if (valor instanceof HTMLElement) alvo.append(valor);
@@ -2786,7 +2832,7 @@
     ICONES: Object.keys(ICONES), icone, botao, grupoBotoes, menuAcoes,
     campo, areaTexto, busca, seletor, seletorMultiplo, seletorPessoas, data, periodo, caixa, radio, chave,
     toast, faixaAviso, dialogo, tooltip, progresso, skeleton, estadoVazio, upsell,
-    descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade, cardAtividade, cardContato, cardRegistro, paginacao,
+    descreverPrazo, chipPrazo, chipFiltro, tag, selo, avatar, tabela, linhaAtividade, cardAtividade, cardContato, cardRegistro, topoDaFicha, paginacao,
     abas, trilha, barraFiltros, painelLateral, painelNotificacoes, barraAcoes, stepper, painelCriarAtividade,
     painelDetalhe, divisorRedimensionavel, botaoCopiar, escalaDaPagina,
   };
