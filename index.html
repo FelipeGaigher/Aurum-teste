@@ -134,7 +134,8 @@ body { font-size: var(--font-size-emphasis); }
   font-weight: var(--font-weight-semibold);
 }
 .hub-nav a[aria-current="location"] svg.icone, .hub-nav a[aria-current="location"] .icone-ia { color: currentColor; }
-.hub-alvo { scroll-margin-top: calc(var(--component-header-height) + var(--space-5)); }
+html { scroll-padding-top: 0; }
+.hub-alvo { scroll-margin-top: calc(var(--component-header-height) + var(--space-4)); }
 .card { min-width: 0; padding: var(--space-5); background-color: var(--component-card-bg); border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); box-shadow: var(--component-card-shadow); }
 .card > :last-child, .card-corpo > :last-child { margin-bottom: 0; }
 h2 { margin: 0 0 var(--space-3); font-size: var(--font-size-dialog); font-weight: var(--font-weight-semibold); line-height: var(--font-leading-tight); }
@@ -182,8 +183,8 @@ li::marker { color: var(--color-text-muted); }
 .links .botao:hover { background: none; text-decoration: underline; }
 
 /* protótipo */
-.prototipo { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); padding: 0; overflow: hidden; }
-.prototipo .captura { display: block; width: 100%; height: 100%; min-height: 320px; object-fit: cover; object-position: top left; border-right: var(--border-width) solid var(--component-card-border); }
+.prototipo p { max-width: 80ch; }
+.prototipo .captura { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; margin: 0 0 var(--space-4); object-fit: cover; object-position: top left; border: var(--border-width) solid var(--component-card-border); border-radius: var(--radius-card); }
 .paginas { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-4); padding: 0; list-style: none; }
 .paginas a.tag { min-height: var(--size-icon-button); padding: 0 var(--space-3); font-size: var(--font-size-body); text-decoration: none; }
 .paginas a.tag:hover { background-color: var(--color-bg-hover); color: var(--color-action); }
@@ -203,7 +204,6 @@ li::marker { color: var(--color-text-muted); }
 .ia p { max-width: 80ch; margin: 0; }
 
 @media (max-width: 1099px) {
-  html { scroll-padding-top: calc(var(--component-header-height) + var(--size-option) + var(--space-5)); }
   .hub-layout { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
   .hub-nav {
     top: var(--component-header-height);
@@ -221,12 +221,11 @@ li::marker { color: var(--color-text-muted); }
   .hub-nav a { min-height: var(--size-option); }
   .hub-nav li { flex: none; }
   .hub-nav a { white-space: nowrap; }
-  .hub-alvo { scroll-margin-top: calc(var(--component-header-height) + var(--size-option) + var(--space-5)); }
+  .hub-alvo { scroll-margin-top: calc(var(--component-header-height) + var(--size-option) + var(--space-4)); }
 }
 @media (max-width: 900px) {
-  .abertura, .questoes, .prototipo, .apoio { grid-template-columns: minmax(0, 1fr); }
+  .abertura, .questoes, .apoio { grid-template-columns: minmax(0, 1fr); }
   .como-ler { padding-left: 0; padding-top: var(--space-5); border-left: 0; border-top: var(--border-width) solid var(--color-border-default); }
-  .prototipo .captura { height: auto; min-height: 0; aspect-ratio: 16 / 9; border-right: 0; border-bottom: var(--border-width) solid var(--component-card-border); }
 }
 @media (max-width: 700px) {
   .cabecalho { grid-template-columns: auto minmax(0, 1fr) auto; }
@@ -235,7 +234,7 @@ li::marker { color: var(--color-text-muted); }
   .hub { gap: var(--space-5); }
   .abertura { padding: var(--space-4); gap: var(--space-5); }
   .card { padding: var(--space-4); }
-  .questao, .prototipo { padding: 0; }
+  .questao { padding: 0; }
   .card-corpo { padding: var(--space-4); }
   .ia { padding: var(--space-4); }
   .tabela thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
@@ -293,7 +292,7 @@ html:has(.hub-deck[open]) { overflow: hidden; }
   </div>
   <ul>
     <li><a href="#como-ler"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.4M12 17h.01"/></svg>Como ler</a></li>
-    <li><a href="#entregar"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/></svg>O que entregar</a></li>
+    <li><a href="#secao-entregar"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/></svg>O que entregar</a></li>
     <li><a href="#questao-1"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Questão 1</a></li>
     <li><a href="#questao-2"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 3 9l9 5 9-5zM3 14l9 5 9-5"/></svg>Questão 2</a></li>
     <li><a href="#questao-3"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="10" rx="1"/><rect x="17" y="4" width="4" height="13" rx="1"/></svg>Questão 3</a></li>
@@ -328,7 +327,7 @@ html:has(.hub-deck[open]) { overflow: hidden; }
   </div>
 </section>
 
-<section class="hub-alvo" aria-labelledby="entregar">
+<section class="hub-alvo" id="secao-entregar" aria-labelledby="entregar">
   <h2 class="secao-titulo" id="entregar">O que entregar, e onde</h2>
   <div class="tabela-quadro resumo">
     <table class="tabela">
@@ -427,29 +426,27 @@ html:has(.hub-deck[open]) { overflow: hidden; }
 </section>
 
 <section class="card prototipo hub-alvo" id="prototipo" aria-labelledby="titulo-prototipo">
+  <h2 id="titulo-prototipo">Protótipo navegável</h2>
+  <p>O protótipo é o Astrea inteiro, com o Kanban no topo do menu e os módulos abaixo. Ele tem tema claro e escuro e menu recolhível. Todo dado nele é fictício. O Kanban abre com os 6 primeiros meses do plano, os do redesign, como uma sprint real.</p>
+  <ul class="paginas" aria-label="Páginas do protótipo">
+    <li><a class="tag" href="prototipo/area-de-trabalho.html">Área de trabalho</a></li>
+    <li><a class="tag" href="prototipo/agenda.html">Agenda</a></li>
+    <li><a class="tag" href="prototipo/contatos.html">Contatos</a></li>
+    <li><a class="tag" href="prototipo/atendimentos.html">Atendimentos</a></li>
+    <li><a class="tag" href="prototipo/processos.html">Processos</a></li>
+    <li><a class="tag" href="prototipo/documentos.html">Documentos</a></li>
+    <li><a class="tag" href="prototipo/questionarios.html">Questionários</a></li>
+    <li><a class="tag" href="prototipo/kanban.html">Gestão kanban</a></li>
+    <li><a class="tag" href="prototipo/design-system.html">Design system</a></li>
+  </ul>
   <img class="captura" src="prototipo/capturas/area-de-trabalho-1920.png" width="1920" height="1080" loading="lazy" alt="Captura do protótipo na Área de trabalho, com o menu lateral, o seletor de listas e as atividades agrupadas por prazo">
-  <div class="card-corpo">
-    <h2 id="titulo-prototipo">Protótipo navegável</h2>
-    <p>O protótipo é o Astrea inteiro, com o Kanban no topo do menu e os módulos abaixo. Ele tem tema claro e escuro e menu recolhível. Todo dado nele é fictício. O Kanban abre com os 6 primeiros meses do plano, os do redesign, como uma sprint real.</p>
-    <ul class="paginas" aria-label="Páginas do protótipo">
-      <li><a class="tag" href="prototipo/area-de-trabalho.html">Área de trabalho</a></li>
-      <li><a class="tag" href="prototipo/agenda.html">Agenda</a></li>
-      <li><a class="tag" href="prototipo/contatos.html">Contatos</a></li>
-      <li><a class="tag" href="prototipo/atendimentos.html">Atendimentos</a></li>
-      <li><a class="tag" href="prototipo/processos.html">Processos</a></li>
-      <li><a class="tag" href="prototipo/documentos.html">Documentos</a></li>
-      <li><a class="tag" href="prototipo/questionarios.html">Questionários</a></li>
-      <li><a class="tag" href="prototipo/kanban.html">Gestão kanban</a></li>
-      <li><a class="tag" href="prototipo/design-system.html">Design system</a></li>
-    </ul>
-    <ul class="links">
-      <li><a class="botao botao-texto" href="prototipo/area-de-trabalho.html">Entrada do protótipo, na Área de trabalho</a></li>
-      <li><a class="botao botao-texto" href="prototipo/questionarios.html">Questionários: as três questões respondidas dentro do protótipo, com abas e painel de detalhe</a></li>
-      <li><a class="botao botao-texto" href="https://www.figma.com/design/OT2rzDJHctCE9WSfR19c2g/?node-id=62-2">Questionários no Figma, na página Protótipo</a></li>
-      <li><a class="botao botao-texto" href="https://felipegaigher.github.io/Aurum-teste/prototipo/kanban.html">Gestão kanban</a></li>
-      <li><a class="botao botao-texto" href="prototipo/design-system.html">Design system completo, com tokens, componentes e estados</a></li>
-    </ul>
-  </div>
+  <ul class="links">
+    <li><a class="botao botao-texto" href="prototipo/area-de-trabalho.html">Entrada do protótipo, na Área de trabalho</a></li>
+    <li><a class="botao botao-texto" href="prototipo/questionarios.html">Questionários: as três questões respondidas dentro do protótipo, com abas e painel de detalhe</a></li>
+    <li><a class="botao botao-texto" href="https://www.figma.com/design/OT2rzDJHctCE9WSfR19c2g/?node-id=62-2">Questionários no Figma, na página Protótipo</a></li>
+    <li><a class="botao botao-texto" href="https://felipegaigher.github.io/Aurum-teste/prototipo/kanban.html">Gestão kanban</a></li>
+    <li><a class="botao botao-texto" href="prototipo/design-system.html">Design system completo, com tokens, componentes e estados</a></li>
+  </ul>
 </section>
 
 <div class="apoio">
@@ -503,14 +500,24 @@ html:has(.hub-deck[open]) { overflow: hidden; }
     if (r.top < n.top || r.bottom > n.bottom) nav.scrollTop += r.top - n.top - n.height / 2;
     if (r.left < n.left || r.right > n.right) nav.scrollLeft += r.left - n.left - n.width / 2;
   };
-  nav.addEventListener('click', (e) => marcar(e.target.closest('a')));
+  let preso = false;
+  const soltar = () => { preso = false; };
+  nav.addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    marcar(a);
+    preso = true;
+    setTimeout(soltar, 1200);
+  });
+  window.addEventListener("scrollend", () => setTimeout(soltar, 150));
   const visiveis = new Set();
-  const topo = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+  // a linha de leitura fica a meio caminho entre o cabeçalho e o topo da seção alvo
+  const topo = Math.ceil(document.querySelector(".cabecalho").getBoundingClientRect().bottom) + 7;
   const observador = new IntersectionObserver((entradas) => {
     entradas.forEach((e) => (e.isIntersecting ? visiveis.add(e.target) : visiveis.delete(e.target)));
     const atual = alvos.find(([el]) => visiveis.has(el));
-    if (atual) marcar(atual[1]);
-  }, { rootMargin: `-${Math.round(topo)}px 0px -60% 0px` });
+    if (atual && !preso) marcar(atual[1]);
+  }, { rootMargin: `-${topo}px 0px -70% 0px` });
   alvos.forEach(([el]) => observador.observe(el));
 })();
 </script>
