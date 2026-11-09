@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capa, atividade prática Astrea</title>
+<link rel="stylesheet" href="prototipo/astrea.css">
+<style>
+/* Capa de 1920 por 1080 para a página 00 do Figma: marcas, título, as três questões e a tela que o redesign entrega. */
+:root { --escala-da-pagina: 1; }
+body { margin: 0; background-color: var(--color-bg-subtle); }
+.capa { position: relative; box-sizing: border-box; width: 1920px; height: 1080px; margin: 0 auto; padding: calc(var(--space-7) * 1.5) calc(var(--space-7) * 2); display: grid; grid-template-columns: minmax(0, 46fr) minmax(0, 54fr); grid-template-rows: auto 1fr auto; column-gap: calc(var(--space-7) * 1.5); overflow: hidden; background-color: var(--color-bg-page); color: var(--color-text-default); }
+.marcas { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--space-4); }
+.marcas img { display: block; height: 40px; width: auto; }
+.marcas .divisor { width: var(--border-width); height: 36px; background-color: var(--color-border-default); }
+.texto { align-self: center; display: grid; gap: var(--space-5); }
+.eyebrow { margin: 0; font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-action); }
+h1 { margin: 0; font-size: 64px; line-height: 1.1; font-weight: var(--font-weight-semibold); letter-spacing: -0.01em; }
+.lede { margin: 0; font-size: 24px; line-height: 1.4; color: var(--color-text-muted); }
+.questoes { display: grid; gap: var(--space-3); margin-top: var(--space-3); }
+.questao { display: grid; grid-template-columns: auto 1fr; column-gap: var(--space-4); align-items: baseline; padding: var(--space-4) var(--space-5); background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); }
+.questao b { font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-action); }
+.questao p { margin: 0; font-size: 20px; line-height: 1.4; }
+.mockup { align-self: center; justify-self: end; width: 100%; border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); background-color: var(--color-bg-surface); box-shadow: var(--shadow-card); overflow: hidden; }
+.mockup-barra { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-bottom: var(--border-width) solid var(--color-border-default); background-color: var(--color-bg-subtle); }
+.mockup-barra i { width: 10px; height: 10px; border-radius: var(--radius-round); background-color: var(--color-border-strong); }
+.mockup-barra span { margin-left: var(--space-3); font-size: var(--font-size-label); color: var(--color-text-muted); }
+.mockup img { display: block; width: 100%; height: auto; }
+.rodape { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); font-size: var(--font-size-body); color: var(--color-text-muted); }
+.rodape a { color: var(--color-action); }
+</style>
+</head>
+<body>
+<main class="capa">
+  <div class="marcas">
+    <img src="assets/aurum.png" alt="Aurum">
+    <span class="divisor" aria-hidden="true"></span>
+    <img src="assets/astrea.png" alt="Astrea">
+  </div>
+  <section class="texto">
+    <p class="eyebrow">Atividade prática · UX/UI Designer Especialista · Aurum, produto Astrea</p>
+    <h1>O Astrea sabe o que é um prazo. A interface ainda não mostra isso.</h1>
+    <p class="lede">Diagnóstico, design system e a primeira tela de um redesign incremental de 12 meses, sem parar o produto.</p>
+    <div class="questoes">
+      <article class="questao"><b>Questão 1</b><p>Cinco problemas com evidência, seis princípios e o que validar antes de seguir.</p></article>
+      <article class="questao"><b>Questão 2</b><p>Arquitetura do design system, governança, seis fases, o time, três riscos e métricas.</p></article>
+      <article class="questao"><b>Questão 3</b><p>A Área de trabalho em alta fidelidade, quatro componentes com estados e uma decisão difícil.</p></article>
+    </div>
+  </section>
+  <figure class="mockup">
+    <div class="mockup-barra" aria-hidden="true"><i></i><i></i><i></i><span>astrea · Área de trabalho</span></div>
+    <img src="prototipo/capturas/area-de-trabalho-1920-detalhe.png" width="1920" height="1080" alt="Área de trabalho redesenhada: Atrasadas acima de Hoje, chip de prazo em cada linha e o painel de detalhe ao lado">
+  </figure>
+  <footer class="rodape">
+    <span>Felipe Gaigher · 8 de novembro de 2026 · Comece pela página 01 Briefing</span>
+    <span>Link único da entrega: <a href="https://felipegaigher.github.io/Aurum-teste/">felipegaigher.github.io/Aurum-teste</a></span>
+  </footer>
+</main>
+</body>
+</html>
