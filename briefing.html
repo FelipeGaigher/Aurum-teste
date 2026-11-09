@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Briefing, atividade prática Astrea</title>
+<link rel="stylesheet" href="prototipo/astrea.css">
+<style>
+/* Briefing de 1920 por 1080 para a página 01 do Figma, no mesmo desenho da capa: marcas, título e seis blocos. */
+:root { --escala-da-pagina: 1; }
+body { margin: 0; background-color: var(--color-bg-subtle); }
+.briefing { box-sizing: border-box; width: 1920px; height: 1080px; margin: 0 auto; padding: calc(var(--space-7) * 1.5) calc(var(--space-7) * 2); display: grid; grid-template-rows: auto auto 1fr auto; row-gap: var(--space-6); overflow: hidden; background-color: var(--color-bg-page); color: var(--color-text-default); }
+.marcas { display: flex; align-items: center; gap: var(--space-4); }
+.marcas img { display: block; height: 40px; width: auto; }
+.marcas .divisor { width: var(--border-width); height: 36px; background-color: var(--color-border-default); }
+.titulo { display: grid; gap: var(--space-2); }
+.eyebrow { margin: 0; font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-action); }
+h1 { margin: 0; font-size: 44px; line-height: 1.15; font-weight: var(--font-weight-semibold); letter-spacing: -0.01em; }
+.blocos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: var(--space-5); min-height: 0; }
+.bloco { display: grid; grid-template-rows: auto 1fr; gap: var(--space-3); padding: var(--space-5) var(--space-6); background-color: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); }
+.bloco h2 { display: flex; align-items: baseline; gap: var(--space-3); margin: 0; font-size: 24px; font-weight: var(--font-weight-semibold); }
+.bloco h2 b { font-size: var(--font-size-label); font-weight: var(--font-weight-semibold); letter-spacing: var(--font-tracking-caps); text-transform: uppercase; color: var(--color-action); }
+.bloco p { margin: 0; font-size: 19px; line-height: 1.45; }
+.bloco ul { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2); font-size: 18px; line-height: 1.35; }
+.bloco li span { color: var(--color-text-muted); }
+.bloco a { color: var(--color-action); word-break: break-all; }
+.rodape { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); font-size: var(--font-size-body); color: var(--color-text-muted); }
+.rodape a { color: var(--color-action); }
+</style>
+</head>
+<body>
+<main class="briefing">
+  <div class="marcas">
+    <img src="assets/aurum.png" alt="Aurum">
+    <span class="divisor" aria-hidden="true"></span>
+    <img src="assets/astrea.png" alt="Astrea">
+  </div>
+  <div class="titulo">
+    <p class="eyebrow">Briefing · Atividade prática · UX/UI Designer Especialista</p>
+    <h1>A demanda, o que organizar, os times, o desenvolvimento e o processo.</h1>
+  </div>
+  <div class="blocos">
+    <section class="bloco">
+      <h2><b>1</b>A demanda</h2>
+      <p>Atividade prática para a vaga de UX/UI Designer Especialista na Aurum. O produto é o Astrea, gestão para escritórios de advocacia. O cenário é modernizar a interface em 12 meses sem parar o produto. Telas novas e antigas convivem, não existe design system estruturado, os 4 designers estão em squads diferentes e a IA entra nos fluxos. O recorte é a gestão de atividades: Agenda, Área de trabalho e Kanban.</p>
+    </section>
+    <section class="bloco">
+      <h2><b>2</b>O que organizar</h2>
+      <p>A leitura do produto achou 97 pontos de atenção, de PA-01 a PA-97, em todos os módulos. O CSS tem 646 variáveis, 609 delas do Nectar, o design system legado em código. Três azuis, três cinzas e três jeitos de criar uma atividade. Os cinco problemas da Questão 1 são o recorte da gestão de atividades. O catálogo inteiro é o backlog do redesign.</p>
+    </section>
+    <section class="bloco">
+      <h2><b>3</b>Os times</h2>
+      <p>A direção do design system decide, a Engenharia veta com justificativa e os squads contribuem a partir do trabalho real. A divisão entre os 4 designers sai de uma conversa individual com cada um, nas duas primeiras semanas. Os líderes de squad entram como patrocinadores e combinam o tempo. Componente novo entra quando 2 ou mais squads precisam.</p>
+    </section>
+    <section class="bloco">
+      <h2><b>4</b>O desenvolvimento</h2>
+      <p>Seis fases em 12 meses. Nos seis primeiros, o redesign: tokens semânticos sobre o Nectar, a moldura, Configuração e Administração atrás de feature flag e, por último, os fluxos principais. Depois, onboarding do novo layout com o legado desligado e IA em todos os fluxos, com o design system em regime. O Kanban do protótipo mostra os seis primeiros meses em 12 sprints.</p>
+    </section>
+    <section class="bloco">
+      <h2><b>5</b>O processo</h2>
+      <p>Dois dias de trabalho, com o Claude Code como par do início ao fim. A IA leu o produto logado, só em leitura, escreveu os documentos-fonte e o código e executou os portões de verificação. Felipe decidiu a direção visual, os problemas, o trade-off e o escopo. Cada decisão ficou num arquivo do repositório, e cada entrega ficou num commit.</p>
+    </section>
+    <section class="bloco">
+      <h2><b>6</b>Os links</h2>
+      <ul>
+        <li><a href="https://felipegaigher.github.io/Aurum-teste/">felipegaigher.github.io/Aurum-teste</a> <span>· link único da entrega</span></li>
+        <li><a href="https://felipegaigher.github.io/Aurum-teste/?slides=q1">…/Aurum-teste/?slides=q1</a> <span>· Questão 1</span></li>
+        <li><a href="https://felipegaigher.github.io/Aurum-teste/?slides=q2">…/Aurum-teste/?slides=q2</a> <span>· Questão 2</span></li>
+        <li><a href="https://felipegaigher.github.io/Aurum-teste/?slides=q3">…/Aurum-teste/?slides=q3</a> <span>· Questão 3</span></li>
+        <li><a href="https://felipegaigher.github.io/Aurum-teste/prototipo/area-de-trabalho.html">…/prototipo/area-de-trabalho.html</a> <span>· protótipo navegável</span></li>
+        <li><a href="https://felipegaigher.github.io/Aurum-teste/prototipo/kanban.html">…/prototipo/kanban.html</a> <span>· Kanban do redesign</span></li>
+        <li><a href="https://felipegaigher.github.io/Aurum-teste/prototipo/design-system.html">…/prototipo/design-system.html</a> <span>· design system</span></li>
+        <li><a href="https://github.com/FelipeGaigher/Aurum-teste">github.com/FelipeGaigher/Aurum-teste</a> <span>· repositório e documentos-fonte</span></li>
+      </ul>
+    </section>
+  </div>
+  <footer class="rodape">
+    <span>Felipe Gaigher · 8 de novembro de 2026 · Depois do briefing, siga para a página 02 Questão 1</span>
+    <span>Link único da entrega: <a href="https://felipegaigher.github.io/Aurum-teste/">felipegaigher.github.io/Aurum-teste</a></span>
+  </footer>
+</main>
+</body>
+</html>
