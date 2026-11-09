@@ -257,8 +257,10 @@ html:has(.hub-deck[open]) { overflow: hidden; }
 .hub-deck-corpo { flex: 1; min-height: 0; display: flex; }
 .hub-deck-trilho { flex: none; width: var(--primitive-size-200); overflow-y: auto; padding: var(--space-3); border-right: var(--border-width) solid var(--color-border-default); background-color: var(--color-bg-subtle); }
 .hub-deck-trilho ol { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
-.hub-deck-trilho button { display: grid; gap: var(--space-1); width: 100%; padding: var(--space-1); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); background-color: var(--color-bg-surface); color: var(--color-text-muted); font: inherit; font-size: var(--font-size-label); text-align: left; cursor: pointer; }
-.hub-deck-trilho button img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: calc(var(--radius-card) - var(--border-width)); }
+.hub-deck-trilho li { min-width: 0; }
+.hub-deck-trilho button { display: block; box-sizing: border-box; width: 100%; padding: var(--space-1); border: var(--border-width) solid var(--color-border-default); border-radius: var(--radius-card); background-color: var(--color-bg-surface); color: var(--color-text-muted); font: inherit; font-size: var(--font-size-label); text-align: left; cursor: pointer; }
+.hub-deck-trilho button img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: calc(var(--radius-card) - var(--border-width)); }
+.hub-deck-trilho button span { display: block; margin-top: var(--space-1); }
 .hub-deck-trilho button:hover { border-color: var(--color-border-strong); color: var(--color-text-default); }
 .hub-deck-trilho button[aria-current="true"] { border-color: var(--color-action); color: var(--color-action); box-shadow: 0 0 0 var(--border-width) var(--color-action); }
 .hub-deck-trilho button:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-width); }

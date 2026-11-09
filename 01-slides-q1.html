@@ -543,9 +543,10 @@ svg .verm { fill: var(--color-action); }
 .principio .no-prototipo { font-size: var(--deck-corpo); }
 
 /* ?slide=N mostra um slide só, ajustado à altura da janela: é como o hub exibe o deck no modal. */
-html.so-um body { box-sizing: border-box; min-height: 100vh; margin: 0; padding: var(--space-3); display: grid; place-items: center; }
+html.so-um body { box-sizing: border-box; min-height: 100vh; margin: 0; padding: var(--space-3); display: grid; place-items: center; overflow: hidden; }
 html.so-um .capa, html.so-um .slide[hidden] { display: none; }
-html.so-um .slide { width: min(100%, calc((100vh - 2 * var(--space-3)) * 16 / 9)); margin: 0; }
+html.so-um .palco { position: relative; overflow: visible; }
+html.so-um .palco .slide { position: absolute; top: 0; left: 0; width: 1600px; height: 900px; aspect-ratio: auto; margin: 0; transform-origin: top left; }
 </style>
 </head>
 <body>
@@ -893,7 +894,23 @@ html.so-um .slide { width: min(100%, calc((100vh - 2 * var(--space-3)) * 16 / 9)
   const k = Number(new URLSearchParams(location.search).get('slide'));
   if (!k) return;
   document.documentElement.classList.add('so-um');
-  document.querySelectorAll('section.slide').forEach((s, i) => { s.hidden = i !== k - 1; });
+  const slides = document.querySelectorAll('section.slide');
+  slides.forEach((s, i) => { s.hidden = i !== k - 1; });
+  const alvo = slides[k - 1];
+  if (!alvo) return;
+  const palco = document.createElement('div');
+  palco.className = 'palco';
+  alvo.parentNode.insertBefore(palco, alvo);
+  palco.append(alvo);
+  const ajustar = () => {
+    const folga = 24;
+    const escala = Math.min((innerWidth - folga) / 1600, (innerHeight - folga) / 900);
+    palco.style.width = `${Math.floor(1600 * escala)}px`;
+    palco.style.height = `${Math.floor(900 * escala)}px`;
+    alvo.style.transform = `scale(${escala})`;
+  };
+  ajustar();
+  addEventListener('resize', ajustar);
 })();
 </script>
 </body>
