@@ -595,8 +595,8 @@ svg .verm { fill: var(--color-action); }
 /* ?slide=N mostra um slide só, ajustado à altura da janela: é como o hub exibe o deck no modal. */
 html.so-um body { box-sizing: border-box; min-height: 100vh; margin: 0; padding: var(--space-3); display: grid; place-items: center; overflow: hidden; }
 html.so-um .capa, html.so-um .slide[hidden] { display: none; }
-html.so-um .palco { position: relative; overflow: visible; }
-html.so-um .palco .slide { position: absolute; top: 0; left: 0; width: 1600px; height: 900px; aspect-ratio: auto; margin: 0; transform-origin: top left; }
+html.so-um .palco-so-um { position: relative; overflow: visible; }
+html.so-um .palco-so-um .slide { position: absolute; top: 0; left: 0; box-sizing: border-box; width: 1600px; min-width: 0; max-width: none; height: 900px; min-height: 0; max-height: none; aspect-ratio: auto; margin: 0; transform-origin: top left; }
 /* chave de tema: o checkbox fica oculto sobre o ícone, como no hub; o script marca data-tema no <html> */
 .barra-tema { display: flex; justify-content: flex-end; }
 .chave-tema { position: relative; display: inline-grid; place-items: center; width: var(--size-shortcut); height: var(--size-shortcut); border-radius: var(--radius); color: var(--color-text-muted); cursor: pointer; }
@@ -977,7 +977,7 @@ html.so-um .barra-tema { display: none; }
   const alvo = slides[k - 1];
   if (!alvo) return;
   const palco = document.createElement('div');
-  palco.className = 'palco';
+  palco.className = 'palco-so-um';
   alvo.parentNode.insertBefore(palco, alvo);
   palco.append(alvo);
   const ajustar = () => {
